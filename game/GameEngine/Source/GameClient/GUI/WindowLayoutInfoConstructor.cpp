@@ -13,35 +13,7 @@ typedef void (*WindowLayoutInitFunc)(WindowLayout *, void *);
 typedef void (*WindowLayoutUpdateFunc)(WindowLayout *, void *);
 typedef void (*WindowLayoutShutdownFunc)(WindowLayout *, void *);
 
-template <typename T>
-class StringBase
-{
-    friend class AsciiString;
-
-private:
-    StringBase() : m_data(0) {}
-    StringBase(const StringBase<T> &other);
-    ~StringBase();
-
-    struct Data
-    {
-        int m_refCount;
-        unsigned short m_length;
-        unsigned short m_capacity;
-        T m_text[1];
-    };
-
-    Data *m_data;
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-    static AsciiString TheEmptyString;
-    AsciiString() : StringBase<char>() {}
-    AsciiString(const AsciiString &other) : StringBase<char>(other) {}
-    ~AsciiString() {}
-};
+#include "../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 typedef std::list<GameWindow *> GameWindowList;
 
