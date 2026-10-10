@@ -4,26 +4,23 @@
 // then getSlot(0)->getName() into the out UnicodeString. this is unused;
 // the EH frame only constructs the getName temporary on the hit path.
 
-template <typename T> class StringBase
+#include "../../../../Libraries/Source/WWVegas/WWLib/unicode_string.h"
+
+inline UnicodeString::UnicodeString() : m_text(0) {}
+inline UnicodeString::UnicodeString(const UnicodeString &other)
 {
-	friend class UnicodeString;
-
-private:
-	StringBase() : m_data( 0 ) {}
-	StringBase( const StringBase<T> &other );
-	~StringBase();
-
-	void *m_data;
-};
-
-class UnicodeString : private StringBase<unsigned short>
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(
+        *(const StringBase<unsigned short> *)&other);
+}
+inline UnicodeString::~UnicodeString()
 {
-public:
-	UnicodeString() : StringBase<unsigned short>() {}
-	UnicodeString( const UnicodeString &other ) : StringBase<unsigned short>( other ) {}
-	~UnicodeString() {}
-	UnicodeString &operator=( const UnicodeString &other );
-};
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
+inline UnicodeString &UnicodeString::operator=(const UnicodeString &other)
+{
+    ((StringBase<unsigned short> *)this)->set(*(const StringBase<unsigned short> *)&other);
+    return *this;
+}
 
 class GameSlot
 {
@@ -31,10 +28,15 @@ public:
 	UnicodeString getName() const;
 };
 
-class GameSpyStagingRoom
+class GameInfo
 {
 public:
 	GameSlot *getSlot( int index );
+};
+
+// ILT0001EC18 calls the existing GameInfo base method at0061E8B0.
+class GameSpyStagingRoom : public GameInfo
+{
 };
 
 #define GAMESPY_SLOT( n ) virtual void gamespySlot##n() = 0
