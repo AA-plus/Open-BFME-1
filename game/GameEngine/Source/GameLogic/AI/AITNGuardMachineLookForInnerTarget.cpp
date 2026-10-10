@@ -80,11 +80,6 @@ class StateMachine
 public:
 	virtual ~StateMachine();
 
-	Object *getOwner()
-	{
-		return *(Object **)((unsigned char *)this + 0x10);
-	}
-
 	Object *getOwner() const
 	{
 		return *(Object **)((const unsigned char *)this + 0x10);
@@ -100,12 +95,8 @@ private:
 class AIUpdateInterface
 {
 public:
-	Object *getGoalObject()
-	{
-		return m_stateMachine->getGoalObject();
-	}
-
 private:
+	friend class AITNGuardMachine;
 	unsigned char m_beforeStateMachine[0x30];
 	StateMachine *m_stateMachine;
 };
@@ -134,12 +125,8 @@ public:
 		return m_body;
 	}
 
-	AIUpdateInterface *getAI()
-	{
-		return m_ai;
-	}
-
 private:
+	friend class AITNGuardMachine;
 	unsigned char m_beforeID[0x74];
 	ObjectID m_id;
 	unsigned char m_beforeBody[0x200 - 0x78];
@@ -181,13 +168,8 @@ private:
 // upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Player.h
 class Player
 {
-public:
-	TunnelTracker *getTunnelSystem()
-	{
-		return m_tunnelSystem;
-	}
-
 private:
+	friend class AITNGuardMachine;
 	unsigned char m_beforeTunnelSystem[0x22c];
 	TunnelTracker *m_tunnelSystem;
 };
@@ -287,7 +269,7 @@ private:
 // ?lookForInnerTarget@AITNGuardMachine@@QAE_NXZ
 bool AITNGuardMachine::lookForInnerTarget()
 {
-	Object *owner = getOwner();
+	Object *owner = *(Object **)((unsigned char *)this + 0x10);
 
 	Object *teamVictim = 0;
 	if (owner->getTeam()->getPrototype()->getTemplateInfo()->m_attackCommonTarget)
@@ -300,11 +282,11 @@ bool AITNGuardMachine::lookForInnerTarget()
 		}
 	}
 
-	Player *ownerPlayer = getOwner()->getControllingPlayer();
+	Player *ownerPlayer = (*(Object **)((unsigned char *)this + 0x10))->getControllingPlayer();
 	if (!ownerPlayer)
 		return false;
 
-	TunnelTracker *tunnels = ownerPlayer->getTunnelSystem();
+	TunnelTracker *tunnels = ownerPlayer->m_tunnelSystem;
 	if (tunnels == 0)
 		return false;
 
@@ -321,9 +303,9 @@ bool AITNGuardMachine::lookForInnerTarget()
 			Object *currentTunnel = TheGameLogic->findObjectByID(*iter);
 			if (currentTunnel)
 			{
-				if (currentTunnel->getAI())
+				if (currentTunnel->m_ai)
 				{
-					Object *victim = currentTunnel->getAI()->getGoalObject();
+					Object *victim = currentTunnel->m_ai->m_stateMachine->getGoalObject();
 					if (owner->getRelationship(victim) == ENEMIES)
 					{
 						setNemesisID(victim->getID());
@@ -351,7 +333,7 @@ bool AITNGuardMachine::lookForInnerTarget()
 								if (owner->getRelationship(attacker) != ENEMIES)
 									continue;
 
-								CanAttackResult result = getOwner()->getAbleToAttackSpecificObject(
+								CanAttackResult result = (*(Object **)((unsigned char *)this + 0x10))->getAbleToAttackSpecificObject(
 									ATTACK_TUNNEL_NETWORK_GUARD, attacker, CMD_FROM_AI);
 								if (result == ATTACKRESULT_POSSIBLE
 									|| result == ATTACKRESULT_POSSIBLE_AFTER_MOVING)

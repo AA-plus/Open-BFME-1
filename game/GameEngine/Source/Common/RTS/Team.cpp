@@ -2097,39 +2097,7 @@ Relationship Team::getRelationship(const Team *that) const
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
-// byte-exact reconstruction: game/GameEngine/Source/Common/RTS/Team_getTeamTargetObject.cpp
-// ?getTeamTargetObject@Team@@QAEPAVObject@@XZ present-unmatched
-Object *Team::getTeamTargetObject(void)
-{
-	if (m_commonAttackTarget == INVALID_ID) {
-		return NULL;
-	}			 
-	Object *target = TheGameLogic->findObjectByID(m_commonAttackTarget);
-	if (target) {
-		//If the enemy unit is stealthed and not detected, then we can't attack it!
-	if( target->testStatus( OBJECT_STATUS_STEALTHED ) && 
-			!target->testStatus( OBJECT_STATUS_DETECTED ) &&
-			!target->testStatus( OBJECT_STATUS_DISGUISED ) )
-		{
-			target = NULL;
-		}
-	}
-	if (target && target->isEffectivelyDead()) {
-		target = NULL;
-	}
-	if (target && target->getContainedBy()) {
-		target = NULL; // target entered a building or vehicle, so stop targeting.
-	}
-	if (target && target->isKindOf(KINDOF_AIRCRAFT)) {
-		// It is just generally bad to have an aircraft as the team target. 
-		// Let team members acquire aircraft individually.  jba. [8/27/2003]
-		target = NULL;
-	}
-	if (target == NULL) {
-		m_commonAttackTarget = INVALID_ID;
-	}
-	return target;
-}
+// Retail getTeamTargetObject is owned by TeamTargetObject.cpp.
 
 // ------------------------------------------------------------------------
 void Team::setOverrideTeamRelationship( TeamID teamID, Relationship r)
