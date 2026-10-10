@@ -23,20 +23,7 @@ enum NameKeyType
 	NAMEKEY_FORCE_LONG = 0x7fffffff
 };
 
-#include "string_base.h"
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString : private StringBase<char>
-{
-public:
-	Bool isEmpty() const
-	{
-		return StringBase<char>::isEmpty();
-	}
-
-private:
-	char *m_text;
-};
+#include "ascii_string.h"
 
 class Object;
 class BfmeY982;
@@ -101,12 +88,16 @@ class Object
 {
 public:
 	Player *getControllingPlayer() const;
-	Module *findModule(NameKeyType key) const;
 	ProjectileUpdateInterface *getProjectileUpdateInterface() const;
 	const Coord3D *getPosition() const
 	{
 		return (const Coord3D *)((const char *)this + 0x38);
 	}
+protected:
+    // Retail ILT 0x0002AE23 resolves to the protected ledger declaration.
+    Module *findModule(NameKeyType key) const;
+    friend class ScriptActions;
+
 };
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/ThingFactory.h
@@ -222,7 +213,7 @@ void ScriptActions::doBuildBaseBuilding(const AsciiString &buildingType,
 	Object *newObject = (base->*buildThunk.call)(templateValue, -2, 0);
 	if (!newObject)
 		return;
-	if (referenceName.isEmpty())
+	if (referenceName.StringBase<char>::isEmpty())
 		return;
 
 	TheScriptEngine->assignUnitReference(referenceName, newObject);
@@ -267,7 +258,7 @@ void ScriptActions::doBuildBaseBuildingInSlot(const AsciiString &buildingType,
 	Object *newObject = (base->*buildThunk.call)(templateValue, slotValue, 0);
 	if (!newObject)
 		return;
-	if (referenceName.isEmpty())
+	if (referenceName.StringBase<char>::isEmpty())
 		return;
 
 	TheScriptEngine->assignUnitReference(referenceName, newObject);

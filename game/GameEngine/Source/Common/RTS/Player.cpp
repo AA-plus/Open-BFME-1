@@ -3546,18 +3546,7 @@ Bool Player::canBuild(const ThingTemplate *tmplate) const
 }
 
 //=================================================================================================
-// byte-exact reconstruction: game/GameEngine/Source/Common/RTS/PlayerCanAffordBuild.cpp
-// ?canAffordBuild@Player@@QBE_NPBVThingTemplate@@@Z present-unmatched
-Bool Player::canAffordBuild( const ThingTemplate *whatToBuild ) const
-{
-	// make sure we have enough money to build this
-	const Money *money = getMoney();
-	if( whatToBuild->calcCostToBuild( this ) <= money->countMoney() )
-	{
-		return true;
-	}
-	return false;
-}
+// Native canAffordBuild is owned by PlayerProductionCost.cpp.
 
 //=================================================================================================
 // ?deleteUpgradeList@Player@@IAEXXZ present-unmatched
