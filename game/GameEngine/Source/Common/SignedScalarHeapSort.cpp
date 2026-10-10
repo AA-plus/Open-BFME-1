@@ -12,27 +12,10 @@
 
 #include <algorithm>
 
-void q4IntSort( int *first, int *last )
-{
-	_STL::sort( first, last );
-}
-
-void q4IntPushHeap( int *first, int *last )
-{
-	_STL::push_heap( first, last );
-}
-
-void q4IntPopHeap( int *first, int *last )
-{
-	_STL::pop_heap( first, last );
-}
-
-void q4IntMakeHeap( int *first, int *last )
-{
-	_STL::make_heap( first, last );
-}
-
-void q4IntPartialSort( int *first, int *middle, int *last )
-{
-	_STL::partial_sort( first, middle, last );
-}
+// Emit the five recorded helpers directly. The public algorithm anchors also
+// instantiated unrelated insertion-sort copy helpers that differ from retail.
+template void _STL::__adjust_heap(int *, int, int, int, _STL::less<int>);
+template void _STL::__introsort_loop(int *, int *, int *, int, _STL::less<int>);
+template void _STL::__partial_sort(int *, int *, int *, int *, _STL::less<int>);
+template void _STL::__push_heap(int *, int, int, int, _STL::less<int>);
+template void _STL::__unguarded_insertion_sort_aux(int *, int *, int *, _STL::less<int>);
