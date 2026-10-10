@@ -81,9 +81,6 @@ enum ModuleParseMode
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/ThingTemplate.h
 class ThingTemplate
 {
-public:
-	const AsciiString &getName(void) const { return m_nameString; }
-
 protected:
 	static void __cdecl parseRemoveModule(INI *ini, void *instance, void *store, const void *userData);
 	static void parseReplaceModule(INI *ini, void *instance, void *store, const void *userData);
@@ -116,7 +113,7 @@ void __cdecl ThingTemplate::parseRemoveModule(INI *ini, void *instance, void *st
 	Bool removed = self->removeModuleInfo(modToRemove, removedModuleName);
 	if (!removed)
 	{
-		throw INIException(3, "RemoveModule %s was not found for %s.", modToRemove, self->getName().str());
+		throw INIException(3, "RemoveModule %s was not found for %s.", modToRemove, self->m_nameString.str());
 	}
 
 	self->m_moduleParsingMode = oldMode;
@@ -140,13 +137,13 @@ void ThingTemplate::parseReplaceModule(INI *ini, void *instance, void *store, co
 	AsciiString removedModuleName;
 	Bool removed = self->removeModuleInfo(modToRemove, removedModuleName);
 	if (!removed)
-		throw INIException(3, "ReplaceModule %s was not found for %s, cannot continue.", modToRemove, self->getName().str());
+		throw INIException(3, "ReplaceModule %s was not found for %s, cannot continue.", modToRemove, self->m_nameString.str());
 
 	self->m_moduleBeingReplacedName = removedModuleName;
 	self->m_moduleBeingReplacedTag = modToRemove;
 	ini->initFromINI(self, self->getFieldParse());
-	self->m_moduleBeingReplacedName.clear();
-	self->m_moduleBeingReplacedTag.clear();
+	self->m_moduleBeingReplacedName.StringBase<char>::clear();
+	self->m_moduleBeingReplacedTag.StringBase<char>::clear();
 
 	self->m_moduleParsingMode = oldMode;
 }
