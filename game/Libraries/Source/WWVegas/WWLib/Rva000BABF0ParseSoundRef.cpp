@@ -12,25 +12,7 @@
 extern "C" __declspec(dllimport) long __stdcall InterlockedDecrement( long volatile *lpAddend );
 extern "C" __declspec(dllimport) int __cdecl _strcmpi( const char *a, const char *b );
 
-template <typename T> class StringBase
-{
-	friend class AsciiString;
-
-private:
-	StringBase( const T *text );
-	StringBase( const StringBase<T> &other );
-	~StringBase();
-
-	void *m_data;
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString( const char *text ) : StringBase<char>( text ) {}
-	AsciiString( const AsciiString &other ) : StringBase<char>( other ) {}
-	~AsciiString() {}
-};
+#include "ascii_string.h"
 
 class INIException
 {
