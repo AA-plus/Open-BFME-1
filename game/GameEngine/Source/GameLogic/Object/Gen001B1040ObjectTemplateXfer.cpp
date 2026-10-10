@@ -1,4 +1,4 @@
-// cl: /O2 /Ob1 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
+// cl: /O2 /Ob1 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 // BFME 0x001B1040: transfer an object/drawable reference and its template name.
 // The dump is the small save/load helper beside the proven BFME Xfer bodies.
 
@@ -9,14 +9,7 @@ enum ObjectID
 	INVALID_OBJECT_ID = 0
 };
 
-class AsciiString
-{
-public:
-	AsciiString(const char *text);
-	~AsciiString();
-	void set(const AsciiString &text);
-	char *m_data;
-};
+#include "ascii_string.h"
 
 struct XferVersion
 {
@@ -158,7 +151,7 @@ void Gen_001B1040::xfer(Xfer *xfer)
 				m_drawable = object->getDrawable();
 		}
 
-		if (name.m_data != 0 && *((unsigned short *)(name.m_data + 4)) != 0)
+		if ((*reinterpret_cast<char *const *>(&name)) != 0 && *((unsigned short *)((*reinterpret_cast<char *const *>(&name)) + 4)) != 0)
 			m_template = ((BfmeThingFactory *)TheThingFactory)->findTemplate(name);
 	}
 	else if (xfer->IsStoring())
@@ -173,7 +166,7 @@ void Gen_001B1040::xfer(Xfer *xfer)
 
 		AsciiString name(g_Rva0107301CEmptyString);
 		if (m_template != 0)
-			name.set(m_template->m_name);
+			name.StringBase<char>::set(m_template->m_name);
 
 		Rva0010C3C0((MidVirtualSlot90Receiver *)xfer, &objectID);
 		xfer->xferAsciiString(name);
