@@ -5,31 +5,7 @@
 // the shell's current file name; case 1 gets or stores the GameSpy misc
 // preference named InAdvMode.
 
-template <typename T> class StringBase
-{
-	friend class AsciiString;
-
-private:
-	StringBase( const T *text );
-	StringBase( const StringBase<T> &other );
-	~StringBase();
-
-protected:
-	void *m_data;
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString( const char *text ) : StringBase<char>( text ) {}
-	AsciiString( const AsciiString &other ) : StringBase<char>( other ) {}
-	~AsciiString() {}
-
-	const char *str() const
-	{
-		return m_data ? (const char *)m_data + 8 : "";
-	}
-};
+#include "../../../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 class UserPreferences
 {
@@ -81,7 +57,7 @@ void BfmeAptScreenOnlineShell::_bfme_onlineAdvMode(
 	case 0:
 		if( !setting )
 		{
-			const char *source = m_fileName.str();
+			const char *source = m_fileName.StringBase<char>::str();
 			char *destination = output;
 			char copied;
 			do
