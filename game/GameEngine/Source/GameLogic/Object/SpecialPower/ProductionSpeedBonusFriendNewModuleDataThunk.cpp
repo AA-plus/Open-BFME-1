@@ -34,10 +34,8 @@ public:
 // ?friend_newModuleData@ProductionSpeedBonus@@SAPAVModuleData@@PAVINI@@@Z), and the only symbol the
 // build defines at that address is the five-byte ILT thunk ?j_0002d713@@YAXXZ, which
 // game/gen_small/gthunks_050.cpp implements as a `jmp` to the module-data
-// class's static field-parse builder.  The old
-// `extern "C" ProductionSpeedBonusFieldParse` was invented in this TU and nothing
-// defines it; the thunk is retail's real spelling of this operand.
-extern "C" void __cdecl __identifier("ProductionSpeedBonusFieldParse")();
+// class's static field-parse builder. The callback names that exact ILT row.
+void __cdecl j_0002d713();
 
 class ProductionSpeedBonus
 {
@@ -51,6 +49,6 @@ ModuleData *ProductionSpeedBonus::friend_newModuleData(INI *ini)
 	ProductionSpeedBonusModuleData *data = new ProductionSpeedBonusModuleData;
 	if (ini)
 		ini->initFromINIMultiProc(data,
-			reinterpret_cast<void (__cdecl *)(MultiIniFieldParse &)>(__identifier("ProductionSpeedBonusFieldParse")));
+			reinterpret_cast<void (__cdecl *)(MultiIniFieldParse &)>(j_0002d713));
 	return (ModuleData *)data;
 }
