@@ -58,33 +58,9 @@
 	((GeometryInfo*)store)->calcBoundingStuff();
 }
 
-//=============================================================================
-/*static*/ void GeometryInfo::parseGeometryIsSmall( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
-{
-	((GeometryInfo*)store)->m_isSmall = INI::scanBool(ini->getNextToken());
-	((GeometryInfo*)store)->calcBoundingStuff();
-}
-
-//=============================================================================
-/*static*/ void GeometryInfo::parseGeometryHeight( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
-{
-	((GeometryInfo*)store)->m_height = INI::scanReal(ini->getNextToken());
-	((GeometryInfo*)store)->calcBoundingStuff();
-}
-
-//=============================================================================
-/*static*/ void GeometryInfo::parseGeometryMajorRadius( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
-{
-	((GeometryInfo*)store)->m_majorRadius = INI::scanReal(ini->getNextToken());
-	((GeometryInfo*)store)->calcBoundingStuff();
-}
-
-//=============================================================================
-/*static*/ void GeometryInfo::parseGeometryMinorRadius( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
-{
-	((GeometryInfo*)store)->m_minorRadius = INI::scanReal(ini->getNextToken());
-	((GeometryInfo*)store)->calcBoundingStuff();
-}
+// Retail callbacks are defined in GeometryIsSmall_Thunk.cpp,
+// GeometryParseHeightAndMajorRadius.cpp and GeometryParseMinorRadius.cpp.
+// BFME updates the shape vector; these former scalar-layout copies differed.
 
 //-----------------------------------------------------------------------------
 // ?GeometryInfo::set present-unmatched
