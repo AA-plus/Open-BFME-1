@@ -4,37 +4,30 @@ typedef unsigned short WideChar;
 typedef int Color;
 typedef int Int;
 
-template <typename T> class StringBase
+#include "../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
+#include "../../../../Libraries/Source/WWVegas/WWLib/unicode_string.h"
+
+// Retail builds and releases the base string storage directly. Visible
+// constructors preserve the outgoing by-value temporary's unwind ordering.
+inline UnicodeString::UnicodeString() : m_text(0) {}
+inline UnicodeString::UnicodeString(const WideChar *text)
 {
-	friend class UnicodeString;
-
-private:
-	StringBase() : m_data( 0 ) {}
-	StringBase( const T *text );
-	StringBase( const StringBase<T> &other );
-	~StringBase();
-
-public:
-	void set( const StringBase<T> &other );
-
-protected:
-	void *m_data;
-};
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/UnicodeString.h
-class UnicodeString : private StringBase<WideChar>
+    ((StringBase<WideChar> *)this)->StringBase<WideChar>::StringBase(text);
+}
+inline UnicodeString::UnicodeString(const UnicodeString &other)
 {
-public:
-	UnicodeString() {}
-	UnicodeString( const WideChar *text ) : StringBase<WideChar>( text ) {}
-	UnicodeString( const UnicodeString &other ) : StringBase<WideChar>( other ) {}
-	~UnicodeString() {}
-	UnicodeString &operator=( const UnicodeString &other )
-	{
-		set( other );
-		return *this;
-	}
-};
+    ((StringBase<WideChar> *)this)->StringBase<WideChar>::StringBase(
+        *(const StringBase<WideChar> *)&other);
+}
+inline UnicodeString::~UnicodeString()
+{
+    ((StringBase<WideChar> *)this)->releaseBuffer();
+}
+inline UnicodeString &UnicodeString::operator=(const UnicodeString &other)
+{
+    ((StringBase<WideChar> *)this)->set(*(const StringBase<WideChar> *)&other);
+    return *this;
+}
 
 class GameWindow;
 
@@ -60,32 +53,6 @@ class MpGameSetupPreferences
 public:
 	virtual void slot00() = 0;
 	virtual UserPreferences *getPreferences() = 0;
-};
-
-template <> class StringBase<char>
-{
-	friend class AsciiString;
-
-private:
-	StringBase() : m_data( 0 ) {}
-	StringBase( const char *text );
-	StringBase( const StringBase<char> &other );
-	~StringBase();
-
-public:
-	void set( const StringBase<char> &other );
-
-protected:
-	void *m_data;
-};
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString( const char *text ) : StringBase<char>( text ) {}
-	AsciiString( const AsciiString &other ) : StringBase<char>( other ) {}
-	~AsciiString() {}
 };
 
 class GameTextInterface
