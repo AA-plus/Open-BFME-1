@@ -1,43 +1,8 @@
-// cl: /GX
+// cl: /GX /Igame/Libraries/Source/WWVegas/WWLib
+#include "ascii_string.h"
 
-class AsciiString;
 AsciiString GetBasePathFromPath(AsciiString path);
 AsciiString GetSoloINIFromMap(AsciiString path);
-
-template <typename T>
-class StringBase
-{
-	friend class AsciiString;
-
-	StringBase() : m_data(0) {}
-	StringBase(const StringBase<T> &other);
-	StringBase(const T *str);
-	~StringBase();
-
-	struct Header
-	{
-		int ref_count;
-		unsigned short length;
-		unsigned short capacity;
-		T data[1];
-	};
-
-	Header *m_data;
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString() : StringBase<char>() {}
-	AsciiString(const AsciiString &other) : StringBase<char>(other) {}
-	AsciiString(const char *text) : StringBase<char>(text) {}
-	~AsciiString() {}
-	const char *str() const
-	{
-		return m_data ? &m_data->data[0] : "";
-	}
-	void format(AsciiString format, ...);
-};
 
 AsciiString GetSoloINIFromMap(AsciiString path)
 {
