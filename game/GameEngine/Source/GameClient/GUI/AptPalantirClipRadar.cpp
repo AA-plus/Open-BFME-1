@@ -7,9 +7,11 @@ struct PalantirPoint
 };
 
 extern int g_aptPalantirRadarLeft;
-extern int g_aptPalantirRadarTop;
-extern int g_aptPalantirRadarRight;
-extern int g_aptPalantirRadarBottom;
+// Retail's clip rectangle has four consecutive, zero-initialized int edges.
+// The left edge is owned by AptPalantirRenderRadar.cpp.
+int g_aptPalantirRadarTop = 0;
+int g_aptPalantirRadarRight = 0;
+int g_aptPalantirRadarBottom = 0;
 
 // ?aptPalantirClipRadar@@YAXPBUPalantirPoint@@0@Z
 void __cdecl aptPalantirClipRadar( const PalantirPoint *origin, const PalantirPoint *extent )
