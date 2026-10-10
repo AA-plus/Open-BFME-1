@@ -169,14 +169,13 @@ public:
 	int m_gameMode;
 };
 
-// Retail 0x012F3330 is EA's GameWindowTransitionsHandler *TheTransitionHandler;
-// TransitionHandler below is this TU's view of the object, so uses cast.
-class GameWindowTransitionsHandler;
-
-class TransitionHandler
+// Retail ILT 0x00045C28 reaches GameWindowTransitionsHandler::setGroup
+// at 0x0048AD80; the second argument is the native Bool.
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameClient/GameWindowTransitions.h
+class GameWindowTransitionsHandler
 {
 public:
-	void setGroup(AsciiString groupName, int immediate = 0);
+	void setGroup(AsciiString groupName, bool immediate = false);
 };
 
 extern GameWindowManager *TheWindowManager;
@@ -185,11 +184,6 @@ extern RecorderClass *TheRecorder;
 extern LANAPI *TheLAN;
 extern GameLogic *TheGameLogic;
 extern GameWindowTransitionsHandler *TheTransitionHandler;
-
-static TransitionHandler *localTheTransitionHandler()
-{
-	return (TransitionHandler *)TheTransitionHandler;
-}
 
 extern _STL::string LastReplayFileName;
 extern Bool DontShowMainMenu;
@@ -301,29 +295,29 @@ void Rva004E8DC0ScoreScreen::init(WindowLayout *layout, void *)
 		if (TheRecorder->isMultiplayer())
 		{
 			initReplayMultiPlayer();
-			localTheTransitionHandler()->setGroup("ScoreScreenShow");
+			TheTransitionHandler->setGroup("ScoreScreenShow");
 		}
 		else
 		{
 			overidePlayerDisplayName = TRUE;
 			initReplaySinglePlayer();
-			localTheTransitionHandler()->setGroup("ScoreScreenShow");
+			TheTransitionHandler->setGroup("ScoreScreenShow");
 		}
 	}
 	else if (TheGameLogic->m_gameMode == 5)
 	{
 		initInternetMultiPlayer();
-		localTheTransitionHandler()->setGroup("ScoreScreenShow");
+		TheTransitionHandler->setGroup("ScoreScreenShow");
 	}
 	else if (TheGameLogic->m_gameMode == 1)
 	{
 		initLANMultiPlayer();
-		localTheTransitionHandler()->setGroup("ScoreScreenShow");
+		TheTransitionHandler->setGroup("ScoreScreenShow");
 	}
 	else if (TheGameLogic->m_gameMode == 2)
 	{
 		initSkirmish();
-		localTheTransitionHandler()->setGroup("ScoreScreenShow");
+		TheTransitionHandler->setGroup("ScoreScreenShow");
 	}
 	else
 	{

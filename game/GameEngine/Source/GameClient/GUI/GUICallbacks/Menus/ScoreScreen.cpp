@@ -909,19 +909,8 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 	setFPMode();
 }
 
-void initSinglePlayer( void )
-{
-	screenType = SCORESCREEN_SINGLEPLAYER;
-	TheCampaignManager->setRankPoints(ThePlayerList->getLocalPlayer()->getSkillPoints());
-	TheCampaignManager->setGameDifficulty(TheScriptEngine->getGlobalDifficulty());
-	grabSinglePlayerInfo();
-	s_needToFinishSinglePlayerInit = TRUE;
-	s_blankLayout = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");
-	DEBUG_ASSERTCRASH(s_blankLayout,("We Couldn't Load Menus/BlankWindow.wnd"));
-	s_blankLayout->hide(FALSE);
-	s_blankLayout->bringForward();
-	s_blankLayout->getFirstWindow()->winClearStatus(WIN_STATUS_IMAGE);
-}
+// Retail implementation lives in the canonical ScoreScreen initializer TU.
+
 
 void displayChallengeWinLoss( const Image *imageGeneral, const UnicodeString strHeader, const UnicodeString strRemarks )
 {
@@ -1129,132 +1118,23 @@ void finishSinglePlayerInit( void )
 
 /** Special Init path for making this a single player replay Score Screen */
 //-------------------------------------------------------------------------------------------------
-void initReplaySinglePlayer( void )
-{
-	screenType = SCORESCREEN_REPLAY;
-	grabSinglePlayerInfo();
-	if(staticTextGameSaved)
-		staticTextGameSaved->winHide(TRUE);
-	if (textEntryChat)
-		textEntryChat->winHide(TRUE);
-	if (buttonEmote)
-		buttonEmote->winHide(TRUE);
-	if (chatBoxBorder)
-		chatBoxBorder->winHide(TRUE);
-	if (buttonContinue)
-		buttonContinue->winHide(TRUE);
-	if (buttonBuddies)
-		buttonBuddies->winHide(TRUE);
-	if (listboxChatWindowScoreScreen)
-		listboxChatWindowScoreScreen->winHide(TRUE);
-	if( listboxAcademyWindowScoreScreen )
-		listboxAcademyWindowScoreScreen->winHide( TRUE );
-	if( staticTextAcademyTitle )
-		staticTextAcademyTitle->winHide( TRUE );
+// Retail implementation lives in the canonical ScoreScreen initializer TU.
 
-//	if (buttonRehost)
-//		buttonRehost->winHide(TRUE);
-}
 
 /** Special Init path for making this a Multiplayer Score Screen(LAN) */
 //-------------------------------------------------------------------------------------------------
-void initLANMultiPlayer(void)
-{
-	screenType = SCORESCREEN_LAN;
-	grabMultiPlayerInfo();
-	GadgetTextEntrySetText(textEntryChat, UnicodeString::TheEmptyString);
-	TheWindowManager->winSetFocus( textEntryChat );
-	if(staticTextGameSaved)
-		staticTextGameSaved->winHide(TRUE);
-	if (textEntryChat)
-		textEntryChat->winHide(FALSE);
-	if (buttonEmote)
-		buttonEmote->winHide(FALSE);
-	if (buttonContinue)
-		buttonContinue->winHide(TRUE);
-	if (listboxChatWindowScoreScreen)
-		listboxChatWindowScoreScreen->winHide(FALSE);
-	//No academy in LAN
-	if( listboxAcademyWindowScoreScreen )
-		listboxAcademyWindowScoreScreen->winHide( TRUE );
-	if( staticTextAcademyTitle )
-		staticTextAcademyTitle->winHide( TRUE );
-	if (chatBoxBorder)
-		chatBoxBorder->winHide(FALSE);
-	if (buttonBuddies)
-		buttonBuddies->winHide(TRUE);
-}
+// Retail implementation lives in the canonical ScoreScreen initializer TU.
+
 
 /** Special Init path for making this a Multiplayer Score Screen(Internet) */
 //-------------------------------------------------------------------------------------------------
-void initInternetMultiPlayer(void)
-{
-	screenType = SCORESCREEN_INTERNET;
-	grabMultiPlayerInfo();
-	GadgetTextEntrySetText(textEntryChat, UnicodeString::TheEmptyString);
-	TheWindowManager->winSetFocus( textEntryChat );
-	if(staticTextGameSaved)
-		staticTextGameSaved->winHide(TRUE);
-	if (buttonContinue)
-		buttonContinue->winHide(TRUE);
-	if (textEntryChat)
-		textEntryChat->winHide(TRUE);
-	if (buttonEmote)
-		buttonEmote->winHide(TRUE);
-	if (listboxChatWindowScoreScreen)
-		listboxChatWindowScoreScreen->winHide(FALSE);
-	
-	//Provide academy advice in internet games.
-	if( listboxAcademyWindowScoreScreen )
-		listboxAcademyWindowScoreScreen->winHide( FALSE );
-	if( staticTextAcademyTitle )
-		staticTextAcademyTitle->winHide( FALSE );
+// Retail implementation lives in the canonical ScoreScreen initializer TU.
 
-	if (chatBoxBorder)
-		chatBoxBorder->winHide(FALSE);
-
-	if(TheGameSpyInfo && TheGameSpyInfo->getLocalProfileID() ==0)
-		buttonBuddies->winHide(TRUE);
-	else
-		buttonBuddies->winHide(FALSE);
-
-	if (!TheGameSpyBuddyMessageQueue)
-		return;
-	BuddyRequest req;
-	req.buddyRequestType = BuddyRequest::BUDDYREQUEST_SETSTATUS;
-	req.arg.status.status = GP_ONLINE;
-	strcpy(req.arg.status.statusString, "Online");
-	strcpy(req.arg.status.locationString, "");
-	TheGameSpyBuddyMessageQueue->addRequest(req);
-}
 
 /** Special Init path for making this a Multiplayer Score Screen(Replay) */
 //-------------------------------------------------------------------------------------------------
-void initReplayMultiPlayer(void)
-{
-	screenType = SCORESCREEN_REPLAY;
-	grabMultiPlayerInfo();
-	if(staticTextGameSaved)
-		staticTextGameSaved->winHide(TRUE);
-	if (textEntryChat)
-		textEntryChat->winHide(TRUE);
-	if (buttonEmote)
-		buttonEmote->winHide(TRUE);
-	if (listboxChatWindowScoreScreen)
-		listboxChatWindowScoreScreen->winHide(TRUE);
-	if( listboxAcademyWindowScoreScreen )
-		listboxAcademyWindowScoreScreen->winHide( TRUE );
-	if( staticTextAcademyTitle )
-		staticTextAcademyTitle->winHide( TRUE );
-	if (chatBoxBorder)
-		chatBoxBorder->winHide(TRUE);
-	if (buttonContinue)
-		buttonContinue->winHide(TRUE);
-	if (buttonBuddies)
-		buttonBuddies->winHide(TRUE);
-//	if (buttonRehost)
-//		buttonRehost->winHide(TRUE);
-}
+// Retail implementation lives in the canonical ScoreScreen initializer TU.
+
 
 
 // BFME makes GameInfo::getLocalSlotNum virtual: retail dispatches it through
