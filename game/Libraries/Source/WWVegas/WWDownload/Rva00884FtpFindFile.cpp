@@ -57,7 +57,7 @@ public:
 	int m_socket4;
 	int m_socket8;
 	int d_00885920(void);
-	inline int d_00885530(const char *command, int size);
+	int d_00885530(const char *command, int size);
 };
 
 class Rva00885980Class
@@ -96,6 +96,21 @@ private:
 extern "C" __declspec(dllimport) time_t __cdecl time(time_t *);
 extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char *);
 #pragma intrinsic(strlen)
+
+// Rva00885920Class::d_00885530 (0x00885530, Rva00885920.cpp) is expanded at
+// two sites in retail and called at the third; the expanded sites use a
+// TU-static helper so this TU emits no second COMDAT copy of it.
+static __forceinline int sendCommandOf(Rva00885920Class *ftp, const char *command, int size)
+{
+    int sent = send(ftp->m_socket4, command, size, 0);
+    if (sent > 0)
+    {
+        OutputDebugStringA("-->");
+        OutputDebugStringA(command);
+        return FTP_SUCCEEDED;
+    }
+    return FTP_FAILED;
+}
 
 static int s_iRemoteFileSize = -1;
 
@@ -136,7 +151,7 @@ HRESULT Rva00884Ftp::FindFile(LPCSTR szRemoteFileName, int *piSize)
 	{
 		sprintf(command, "CWD %s\r\n", m_szRemoteFilePath);
 
-		if (((Rva00885920Class *)this)->d_00885530(command, 6 + strlen(m_szRemoteFilePath)) < 0)
+		if (sendCommandOf((Rva00885920Class *)this, command, 6 + strlen(m_szRemoteFilePath)) < 0)
 		{
 			return FTP_TRYING;
 		}
@@ -182,7 +197,7 @@ HRESULT Rva00884Ftp::FindFile(LPCSTR szRemoteFileName, int *piSize)
 	{
 		sprintf(command, "LIST %s\r\n", m_szRemoteFileName);
 
-		if (((Rva00885920Class *)this)->d_00885530(command, 7 + strlen(m_szRemoteFileName)) < 0)
+		if (sendCommandOf((Rva00885920Class *)this, command, 7 + strlen(m_szRemoteFileName)) < 0)
 		{
 			return FTP_TRYING;
 		}
@@ -292,17 +307,4 @@ HRESULT Rva00884Ftp::FindFile(LPCSTR szRemoteFileName, int *piSize)
 	}
 
 	return FTP_FAILED;
-}
-
-// ?d_00885530@Rva00885920Class@@QAEHPBDH@Z
-inline int Rva00885920Class::d_00885530(const char *command, int size)
-{
-    int sent = send(m_socket4, command, size, 0);
-    if (sent > 0)
-    {
-        OutputDebugStringA("-->");
-        OutputDebugStringA(command);
-        return FTP_SUCCEEDED;
-    }
-    return FTP_FAILED;
 }
