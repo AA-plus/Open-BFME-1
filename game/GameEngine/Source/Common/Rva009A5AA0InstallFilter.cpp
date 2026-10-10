@@ -13,9 +13,9 @@ extern void __cdecl bfmeInstallCpuDispatchTable(void);
 typedef void (__cdecl *Rva009A5AA0TierInstaller)(int);
 
 extern unsigned char g_bfmeClampTable[];	// retail 0x01356EE0; zero point at +256
-extern const void *g_rva01356A88;
-extern int g_rva01356940[64];
-extern unsigned short *Rva009C0D10Src;			// retail 0x01356A7C
+const void *g_rva01356A88 = 0;
+int g_rva01356940[64];
+extern int *g_bfmeFilterLimit;			// retail 0x01356A7C
 // VA 0x01356A9C is a zero-filled 4-byte pointer: this retail body stores
 // int-table addresses, and RVA 0x009C2170 loads it for indexed dword reads.
 int *g_rva01356A9C = 0;
@@ -24,12 +24,13 @@ int *g_rva01356A9C = 0;
 const unsigned int *g_rva01356AA0 = 0;
 const unsigned int *g_rva01356A98 = 0;
 
-extern unsigned short g_rva012D7C58[128];
-extern unsigned short g_rva012D7D58[128];
-extern unsigned short g_rva012D7E58[128];
-extern int g_rva012D7858[64];
-extern int g_rva012D7958[64];
-extern int g_rva012D7A58[64];
+// Retail .data tables (byte-equal initialisers; DIR32-referenced by this body).
+int g_Va012D7858[64] = {30, 25, 20, 20, 15, 15, 14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1};
+int g_Va012D7958[64] = {15, 15, 15, 15, 10, 10, 10, 10, 10, 10, 10, 10, 10, 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 0, 0, 0};
+int g_Va012D7A58[64] = {15, 15, 15, 15, 10, 10, 10, 10, 10, 10, 10, 10, 10, 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 0, 0, 0};
+unsigned short g_Va012D7C58[128] = {30, 0, 25, 0, 20, 0, 20, 0, 15, 0, 15, 0, 14, 0, 14, 0, 13, 0, 13, 0, 12, 0, 12, 0, 11, 0, 11, 0, 10, 0, 10, 0, 9, 0, 9, 0, 8, 0, 8, 0, 7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 6, 0, 6, 0, 6, 0, 5, 0, 5, 0, 5, 0, 5, 0, 4, 0, 4, 0, 4, 0, 4, 0, 3, 0, 3, 0, 3, 0, 3, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0};
+unsigned short g_Va012D7D58[128] = {14, 0, 14, 0, 13, 0, 13, 0, 12, 0, 12, 0, 10, 0, 10, 0, 10, 0, 10, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 7, 0, 7, 0, 7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 6, 0, 6, 0, 6, 0, 6, 0, 6, 0, 5, 0, 5, 0, 5, 0, 5, 0, 4, 0, 4, 0, 4, 0, 4, 0, 4, 0, 4, 0, 4, 0, 3, 0, 3, 0, 3, 0, 3, 0, 2, 0};
+unsigned short g_Va012D7E58[128] = {14, 0, 14, 0, 13, 0, 13, 0, 12, 0, 12, 0, 10, 0, 10, 0, 10, 0, 10, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 8, 0, 7, 0, 7, 0, 7, 0, 7, 0, 7, 0, 7, 0, 6, 0, 6, 0, 6, 0, 6, 0, 6, 0, 6, 0, 5, 0, 5, 0, 5, 0, 5, 0, 4, 0, 4, 0, 4, 0, 4, 0, 4, 0, 4, 0, 4, 0, 3, 0, 3, 0, 3, 0, 3, 0, 2, 0};
 
 void __cdecl Rva009A5AA0InstallFilter(void *firstTable, void *secondTable, void *sourceTable, int tier)
 {
@@ -57,18 +58,18 @@ void __cdecl Rva009A5AA0InstallFilter(void *firstTable, void *secondTable, void 
 
 	if ((unsigned)tier >= 6)
 	{
-		Rva009C0D10Src = g_rva012D7E58;
-		g_rva01356A9C = g_rva012D7A58;
+		g_bfmeFilterLimit = (int *)g_Va012D7E58;
+		g_rva01356A9C = g_Va012D7A58;
 	}
 	else if ((unsigned)tier >= 5)
 	{
-		Rva009C0D10Src = g_rva012D7D58;
-		g_rva01356A9C = g_rva012D7958;
+		g_bfmeFilterLimit = (int *)g_Va012D7D58;
+		g_rva01356A9C = g_Va012D7958;
 	}
 	else
 	{
-		Rva009C0D10Src = g_rva012D7C58;
-		g_rva01356A9C = g_rva012D7858;
+		g_bfmeFilterLimit = (int *)g_Va012D7C58;
+		g_rva01356A9C = g_Va012D7858;
 	}
 	((Rva009A5AA0TierInstaller)bfmeInstallCpuDispatchTable)(tier);
 }

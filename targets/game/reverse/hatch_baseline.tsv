@@ -539,6 +539,12 @@ address_global	game/GameEngine/Source/Common/Rva00898D60GlobalTail.cpp	g_Rva0133
 address_global	game/GameEngine/Source/Common/Rva008AD3F0Constructor.cpp	g_Va013385F8	2
 address_global	game/GameEngine/Source/Common/Rva008AD3F0Constructor.cpp	g_Va013387D8	2
 address_global	game/GameEngine/Source/Common/Rva008C4270HeaderedDeletingDtor.cpp	g_Va01337830	3
+address_global	game/GameEngine/Source/Common/Rva009A5AA0InstallFilter.cpp	g_Va012D7858	2	allow=996339d1ed0cee70b28a39548c2186f4acdde1b4
+address_global	game/GameEngine/Source/Common/Rva009A5AA0InstallFilter.cpp	g_Va012D7958	2	allow=996339d1ed0cee70b28a39548c2186f4acdde1b4
+address_global	game/GameEngine/Source/Common/Rva009A5AA0InstallFilter.cpp	g_Va012D7A58	2	allow=996339d1ed0cee70b28a39548c2186f4acdde1b4
+address_global	game/GameEngine/Source/Common/Rva009A5AA0InstallFilter.cpp	g_Va012D7C58	2	allow=996339d1ed0cee70b28a39548c2186f4acdde1b4
+address_global	game/GameEngine/Source/Common/Rva009A5AA0InstallFilter.cpp	g_Va012D7D58	2	allow=996339d1ed0cee70b28a39548c2186f4acdde1b4
+address_global	game/GameEngine/Source/Common/Rva009A5AA0InstallFilter.cpp	g_Va012D7E58	2	allow=996339d1ed0cee70b28a39548c2186f4acdde1b4
 address_global	game/GameEngine/Source/Common/Rva009A6780BuildQuantizers.cpp	g_Rva01141808	3
 address_global	game/GameEngine/Source/Common/Rva009A6780BuildQuantizers.cpp	g_Rva01141908	2
 address_global	game/GameEngine/Source/Common/Rva009A6780BuildQuantizers.cpp	g_Rva01141A08	2
