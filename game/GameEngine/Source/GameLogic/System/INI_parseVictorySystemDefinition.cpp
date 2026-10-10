@@ -1,53 +1,10 @@
-// cl: /DNDEBUG /MD /EHsc /Ob1
+// cl: /DNDEBUG /MD /EHsc /Ob1 /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 
 extern "C" unsigned int __cdecl strlen(const char *text);
 #pragma intrinsic(strlen)
 
-template <typename T>
-class StringBase
-{
-	friend class AsciiString;
-
-private:
-	StringBase() : m_data(0) {}
-
-	struct Header
-	{
-		int ref_count;
-		unsigned short length;
-		unsigned short capacity;
-	};
-
-	Header *m_data;
-
-public:
-	void set(const T *text, int length);
-
-private:
-	void releaseBuffer();
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString() : StringBase<char>() {}
-
-	~AsciiString()
-	{
-		((StringBase<char> *)this)->releaseBuffer();
-	}
-
-	void set(const char *text, int length)
-	{
-		((StringBase<char> *)this)->set(text, length);
-	}
-
-	const char *str() const
-	{
-		return m_data ? (const char *)((const char *)m_data + 8) : "";
-	}
-};
+#include "ascii_string.h"
 
 struct FieldParse;
 
@@ -142,7 +99,7 @@ void __cdecl iniParseVictorySystemDefinition(INI *ini)
 {
 	AsciiString name;
 	const char *token = ini->getNextToken();
-	name.set(token, token ? (int)strlen(token) : 0);
+	name.StringBase<char>::set(token, token ? (int)strlen(token) : 0);
 
 	if (TheVictorySystem == 0)
 	{
