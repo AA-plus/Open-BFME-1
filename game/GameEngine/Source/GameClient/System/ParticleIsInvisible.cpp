@@ -25,14 +25,16 @@ public:
 	ParticleType m_particleType;
 };
 
-ParticleSystem *Make00001B18();
+// ?bfmeNullSystemZA@@YAPAVParticleSystemZA@@XZ (matched, 0x005CFF50; ILT 0x00001B18)
+class ParticleSystemZA;
+ParticleSystemZA *bfmeNullSystemZA();
 
 class ParticleSystemHandle
 {
 public:
 	ParticleSystem *operator->() const
 	{
-		return m_system ? m_system : Make00001B18();
+		return m_system ? m_system : (ParticleSystem *)bfmeNullSystemZA();
 	}
 
 private:
