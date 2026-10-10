@@ -1,44 +1,9 @@
 // Retail 0x007E5420: VP6 stream movie-audio setup.
 // The stream layout is shared with the neighbouring VP6 decode/render bodies:
 // the two audio handles live at +0x5c and +0x60.
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 
-// Retail's AsciiString derives from StringBase<char>: its own copy ctor is the
-// forwarder at 0x0005EE50 and it holds nothing of its own, so a caller that
-// copies a string encodes the base body at 0x00887B60 directly. The delegation
-// has to be visible here for this TU to encode the same call.
-template <typename T>
-class StringBase
-{
-	friend class AsciiString;
-
-private:
-	StringBase(const StringBase<T> &src);
-
-	struct Header
-	{
-		int ref_count;
-		unsigned short length;
-		unsigned short capacity;
-		T data[1];
-	};
-
-	Header *m_data;
-};
-
-class AsciiString
-{
-public:
-	// Retail inlines this forwarder, so the call site encodes
-	// StringBase<char>'s copy ctor at 0x00887B60 directly.
-	AsciiString(const AsciiString &other)
-	{
-		((StringBase<char> *)this)->StringBase<char>::StringBase(
-			*(const StringBase<char> *)&other);
-	}
-	~AsciiString();
-	void concat(const char *text, int length);
-};
+#include "ascii_string.h"
 
 class AudioEventRTS
 {
@@ -158,7 +123,7 @@ int Rva007E5420Vp6Stream::setAudio(const AsciiString &name)
 	m_musicHandle = 1;
 
 	AsciiString musicName(name);
-	musicName.concat("_Music", 6);
+	musicName.StringBase<char>::concat("_Music", 6);
 
 	if (TheAudio)
 	{
