@@ -3,7 +3,8 @@ extern "C" unsigned int __cdecl strlen(const char*);
 extern "C" int __cdecl memcmp(const void*, const void*, unsigned int);
 extern "C" char* __cdecl strchr(const char*, int);
 #pragma intrinsic(strlen, memcmp)
-int __cdecl bfmeCompareVSC(const char* a, const char* b);
+// Retail 0x009F6FA0 is the MSVCR71._strcmpi thunk at IAT VA 0x0135933C.
+extern "C" int __cdecl _strcmpi(const char* a, const char* b);
 struct BfmeStringPool3AF0 { void* (__cdecl* m_alloc)(unsigned int bytes); };
 extern BfmeStringPool3AF0* g_rva01337A30AllocPair;
 struct Rva0089E4F0Data { unsigned short m_refs; unsigned short m_len; unsigned short m_cap; unsigned short m_hash; char m_chars[1]; };
@@ -37,7 +38,7 @@ bool Rva0089E4F0String::equalsHashed(const Rva0089E4F0String* other)
 		return true;
 	if (m_data->m_hash != other->m_data->m_hash)
 		return false;
-	return bfmeCompareVSC(m_data->m_chars, other->m_data->m_chars) == 0;
+	return _strcmpi(m_data->m_chars, other->m_data->m_chars) == 0;
 }
 // ?allocate@Rva0089E4F0String@@QAEXH@Z
 void Rva0089E4F0String::allocate(int length)
