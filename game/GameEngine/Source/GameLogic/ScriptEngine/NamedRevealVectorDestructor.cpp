@@ -15,4 +15,4 @@ struct NamedReveal
 	AsciiString m_playerName;
 };
 
-template class _STL::vector<NamedReveal>;
+template _STL::vector<NamedReveal>::~vector();
