@@ -5,11 +5,18 @@
 // one additional integer setting.  The same-TU cache helper below retains the
 // private EBX/EDI argument convention emitted by the retail optimizer.
 
+// The four-key predicate is already owned by this address-derived class.
+// Retail reads the third key as one byte and returns a bool in AL (RET 16).
+class Gen_0093D2D0
+{
+public:
+	bool process(void *key, float value, unsigned char flag, int id);
+};
+
 class FontCharsClass
 {
 public:
 	FontCharsClass();
-	bool Is_Font(const char *name, float point_size, bool is_bold, int extra_setting);
 	void Initialize_GDI_Font(const char *name, float point_size, bool is_bold,
 		int extra_setting);
 	void Add_Ref() { ++m_ref_count; }
@@ -71,7 +78,8 @@ static __declspec(noinline) FontCharsClass *BFME_Get_Font_Chars(
 {
 	for (int i = 0; i < BFMEFontCharsListCell().m_active_count; ++i)
 	{
-		if (BFMEFontCharsListCell()[i]->Is_Font(name, point_size, is_bold, extra_setting))
+		if (reinterpret_cast<Gen_0093D2D0 *>(BFMEFontCharsListCell()[i])->process(
+			(void *)name, point_size, (unsigned char)is_bold, extra_setting))
 		{
 			BFMEFontCharsListCell()[i]->Add_Ref();
 			return BFMEFontCharsListCell()[i];
