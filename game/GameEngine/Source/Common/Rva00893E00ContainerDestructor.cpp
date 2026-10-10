@@ -10,7 +10,8 @@ private:
     unsigned m_value;
 };
 
-extern void b_008939c0(void);
+class BfmeElemCU;
+void *Rva008939C0(BfmeElemCU *source, int oldCount, int newCount);
 
 class Gen_t_00894a10_p12cd
 {
@@ -27,5 +28,5 @@ private:
 Gen_t_00894a10_p12cd::~Gen_t_00894a10_p12cd(void)
 {
     if (m_data != m_inline)
-        ((void (__cdecl *)(void *, void *, void *))b_008939c0)(m_data, 0, 0);
+        Rva008939C0((BfmeElemCU *)m_data, 0, 0);
 }
