@@ -69,12 +69,9 @@
 #include "ww3d.h"
 #include "wwmemlog.h"
 
-// BFME keeps these arithmetic constants in the image's shared data rather
-// than using immediate literals in Compute_Current_Frame.
+// These mutable/shared operands retain their retail image bindings.
 extern const float g_rva01075350;
 extern float g_bfmeDefaultBU;
-extern const float BfmeShadowScale;
-extern float g_millisecondsToSeconds;
 
 static inline float Bfme_Frame_Zero(void)
 {
@@ -864,7 +861,7 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 				float delta = ModeAnim.Motion->Get_Frame_Rate() * ModeAnim.frameRateMultiplier;
 				delta *= sync_time_diff;
 				delta *= ModeAnim.animDirection;
-				delta *= g_millisecondsToSeconds;
+				delta *= 0.001f;
 				frame += delta;
 
 				//
@@ -909,7 +906,7 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 								// If it is still too far out, reset
 								if ( frame >= ModeAnim.Motion->Get_Num_Frames() - 1 )
 									frame = (ModeAnim.Motion->Get_Num_Frames() - 1);
-								direction = *(volatile const float *)&ModeAnim.animDirection * BfmeShadowScale;
+								direction = *(volatile const float *)&ModeAnim.animDirection * -1.0f;
 							}
 						}
 						else
@@ -920,7 +917,7 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 								// If it is still too far out, reset
 								if ( frame >= ModeAnim.Motion->Get_Num_Frames() - 1 )
 									frame = g_rva01075350;
-								direction = *(volatile const float *)&ModeAnim.animDirection * BfmeShadowScale;
+								direction = *(volatile const float *)&ModeAnim.animDirection * -1.0f;
 							}
 						}
 						break;
