@@ -1,23 +1,6 @@
-// cl: /DNDEBUG /MD /EHsc
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 
-class AsciiString
-{
-public:
-	AsciiString( const char *text );
-	~AsciiString()
-	{
-		releaseBuffer();
-	}
-
-	const char *str() const
-	{
-		return m_data ? (const char *)m_data + 8 : "";
-	}
-
-private:
-	void releaseBuffer();
-	void *m_data;
-};
+#include "ascii_string.h"
 
 class Image;
 
@@ -39,7 +22,7 @@ int __cdecl Rva0046F910( int rank, AsciiString *side )
 	char imageNameBuffer[ 256 ];
 	int image;
 
-	sprintf( imageNameBuffer, "AptRankIcon%s%d", side->str(), rank );
+	sprintf( imageNameBuffer, "AptRankIcon%s%d", side->StringBase<char>::str(), rank );
 	{
 		AsciiString imageName( imageNameBuffer );
 		image = (int)TheMappedImageCollection->findImageByName( imageName );
