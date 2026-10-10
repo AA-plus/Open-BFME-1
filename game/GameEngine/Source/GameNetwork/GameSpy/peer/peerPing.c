@@ -62,7 +62,8 @@ static int piSocketInit(const char *localAddress, unsigned short localPort)
 
 	memset(&sockaddr, 0, sizeof(SOCKADDR_IN));
 	sockaddr.sin_family = AF_INET;
-	sockaddr.sin_port = htons(localPort);
+	// Retail calls the ntohs import stub at RVA 0x0081BE14.
+	sockaddr.sin_port = ntohs(localPort);
 	if (localAddress != 0)
 	{
 		unsigned int IP;
@@ -340,7 +341,7 @@ void pingerPing(unsigned int IP, unsigned short port, pingerGotPing reply,
 
 	memset(&to, 0, sizeof(SOCKADDR_IN));
 	to.sin_family = AF_INET;
-	to.sin_port = htons(port);
+	to.sin_port = ntohs(port);
 	to.sin_addr.s_addr = IP;
 
 	ID = piNextID;

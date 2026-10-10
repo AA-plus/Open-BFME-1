@@ -341,7 +341,8 @@ static void pingerProcessPing(piUDPPing *udpPing,
 		piProcessTrip3(udpPing, data, from, recvTime);
 }
 
-static __declspec(noinline) void piProcessIncoming(void)
+// peerPing.c pingerThink calls this same no-argument retail body.
+__declspec(noinline) void piProcessIncoming(void)
 {
 	int rcode;
 	unsigned char buffer[32];
