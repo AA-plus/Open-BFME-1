@@ -46,4 +46,4 @@ struct Rva0013C2D0Record : public Rva0013AD20View
 	}
 };
 
-template class _STL::vector<Rva0013C2D0Record>;
+template _STL::vector<Rva0013C2D0Record>::~vector();
