@@ -3,7 +3,7 @@
 //
 // Retail 0x00728C50: W3DTerrainBackground destructor.  Calls freeTerrainBuffers
 // then releases the two textures at +0x2C/+0x30 (TextureBaseClass::Release_Ref)
-// the map at +0x4C (inline RefCount) and the +0xC0 block (Gen00881EF0).
+// the map at +0x4C (inline RefCount) and the +0xC0 block (operator delete[]).
 // +0x2C/+0x30 have compiler-generated member dtors so the TU is /EHsc.
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2/texture.h
@@ -28,7 +28,8 @@ private:
 	int NumRefs;
 };
 
-extern "C" void Gen00881EF0(void *);
+// Retail calls the native array deallocator at RVA 0x00881EF0.
+void __cdecl operator delete[](void *);
 
 struct TerrainTexPtr
 {
@@ -77,7 +78,7 @@ W3DTerrainBackground::~W3DTerrainBackground(void)
 	REF_PTR_RELEASE(m_map);
 	if (m_blockC0)
 	{
-		Gen00881EF0(m_blockC0);
+		::operator delete[](m_blockC0);
 		m_blockC0 = 0;
 	}
 }
