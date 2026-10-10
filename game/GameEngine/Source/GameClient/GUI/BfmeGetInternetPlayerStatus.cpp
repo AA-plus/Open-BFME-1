@@ -4,7 +4,8 @@
 // Retail 0x00513740. The APT callback checks the internet game mode, finds a
 // connected occupied slot by display name, and reports its player state.
 
-#include "../../../../Libraries/Source/WWVegas/WWLib/string_base.h"
+#include "../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
+#include "../../../../Libraries/Source/WWVegas/WWLib/unicode_string.h"
 
 typedef int Int;
 typedef bool Bool;
@@ -14,26 +15,17 @@ enum NameKeyType
 	NAMEKEY_INVALID = 0
 };
 
-class UnicodeString : private StringBase<unsigned short>
+// The slot-name temporary copies and releases the native base storage.
+inline UnicodeString::UnicodeString() : m_text(0) {}
+inline UnicodeString::UnicodeString(const UnicodeString &other)
 {
-public:
-	UnicodeString() : StringBase<unsigned short>() {}
-	UnicodeString( const UnicodeString &other ) : StringBase<unsigned short>( other ) {}
-	~UnicodeString() {}
-
-	int compare( const UnicodeString &other ) const throw()
-	{
-		return ((const StringBase<unsigned short> *)this)->compare(
-			(const StringBase<unsigned short> &)other );
-	}
-};
-
-class AsciiString : private StringBase<char>
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(
+        *(const StringBase<unsigned short> *)&other);
+}
+inline UnicodeString::~UnicodeString()
 {
-public:
-	AsciiString( const AsciiString &other ) : StringBase<char>( other ) {}
-	~AsciiString() {}
-};
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
 class GameSlot
 {
@@ -181,7 +173,8 @@ int Rva00513740Owner::_bfme_getInternetPlayerStatus( const UnicodeString &name )
 			continue;
 
 		UnicodeString slotName = slot->getName();
-		if( name.compare( slotName ) != 0 )
+		if( ((const StringBase<unsigned short> *)&name)->compare(
+			*(const StringBase<unsigned short> *)&slotName) != 0 )
 			continue;
 
 		if( !TheNetwork->isPlayerConnected( slotNum ) )
