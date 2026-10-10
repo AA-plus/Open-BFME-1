@@ -1467,33 +1467,6 @@ void MeshGeometryClass::Compute_Plane(int pidx,PlaneClass * set_plane) const
 
 
 /***********************************************************************************************
- * MeshGeometryClass::Generate_Culling_Tree -- Generate an AABTree for this mesh               *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *    This function should not normally be needed during run-time.                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   11/9/2000  gth : Created.                                                                 *
- *=============================================================================================*/
-// ?MeshGeometryClass::Generate_Culling_Tree present-unmatched
-void MeshGeometryClass::Generate_Culling_Tree(void)
-{
-	WWMEMLOG(MEM_CULLINGDATA);
-	{
-		AABTreeBuilderClass builder;
-		builder.Build_AABTree(PolyCount,Poly->Get_Array(),VertexCount,Vertex->Get_Array());
-	
-		CullTree = NEW_REF(AABTreeClass,(&builder));
-		CullTree->Set_Mesh(this);
-	}
-}
-
-
-/***********************************************************************************************
  * MeshGeometryClass::Load_W3D -- Load a mesh from a w3d file                                  *
  *                                                                                             *
  *    This function will extract just the geometry information from a W3D mesh.  It must       *
