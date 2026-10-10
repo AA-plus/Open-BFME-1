@@ -37,11 +37,13 @@ public:
 	AsciiString getMapDir() const;
 	AsciiString getMapExtension() const;
 	const MapMetaData *findMap(AsciiString mapName);
-	MapCacheNode *bfmeFind(const AsciiString &mapName);
 
 private:
 	MapCacheNode *m_head;
 };
+
+// Retail ILT 000263D7 reaches the const tree lookup at 000773E0.
+extern void j_000263d7();
 
 // ?getMapDir@MapCache@@QBE?AVAsciiString@@XZ
 // Retail 0x0044FF90, 33 bytes.
@@ -63,8 +65,10 @@ AsciiString MapCache::getMapExtension() const
 // that lands on the tree head found nothing.
 const MapMetaData *MapCache::findMap(AsciiString mapName)
 {
-	mapName.toLower();
-	MapCacheNode *it = bfmeFind(mapName);
+	mapName.StringBase<char>::toLower();
+	typedef MapCacheNode *(MapCache::*TreeFind)(const AsciiString &) const;
+	union { void (*fn)(); TreeFind call; } lookup = { j_000263d7 };
+	MapCacheNode *it = (this->*lookup.call)(mapName);
 	if (it == m_head)
 		return 0;
 	return &(it->second);
