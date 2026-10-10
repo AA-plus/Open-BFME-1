@@ -37,10 +37,14 @@ public:
 	__declspec(nothrow) ~allocator(void) {}
 };
 
+template <class Pointer, class Value, class Alloc>
+class _STLP_alloc_proxy;
+
 template <bool threads, int instance>
 class __node_alloc
 {
-public:
+	template <class Pointer, class Value, class Alloc>
+	friend class _STLP_alloc_proxy;
 	static void _M_deallocate(void *pointer, unsigned int bytes);
 };
 
@@ -60,7 +64,7 @@ public:
 			if (count > 128)
 				::operator delete(pointer);
 			else
-				__node_alloc<false, 0>::_M_deallocate(pointer, count);
+				__node_alloc<true, 0>::_M_deallocate(pointer, count);
 		}
 	}
 };
