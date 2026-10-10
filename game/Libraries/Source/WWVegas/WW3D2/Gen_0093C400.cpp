@@ -1,13 +1,9 @@
 // Clean reconstruction of the two-stage guarded release at retail RVA
-// 0x0093C400.  The owning type and imported routine identities are not
-// recovered; the field offsets and stdcall call boundaries are observed.
+// 0x0093C400. The owning type remains unknown. Retail's PE import directory
+// identifies the IAT cells at 013590FC/013590C8/013590C4 as the GDI routines
+// SelectObject/DeleteObject/DeleteDC, respectively.
 
-typedef void (__stdcall *Gen_0093C400_Pair)(void *, void *);
-typedef void (__stdcall *Gen_0093C400_One)(void *);
-
-extern Gen_0093C400_Pair g_pair;
-extern Gen_0093C400_One g_release;
-extern Gen_0093C400_One g_destroy;
+#include <windows.h>
 
 class Gen_0093C400
 {
@@ -25,12 +21,12 @@ private:
 void Gen_0093C400::process()
 {
 	if (m_second != 0) {
-		g_pair(m_third, m_first);
-		g_release(m_second);
+		SelectObject((HDC)m_third, (HGDIOBJ)m_first);
+		DeleteObject((HGDIOBJ)m_second);
 		m_second = 0;
 	}
 	if (m_third != 0) {
-		g_destroy(m_third);
+		DeleteDC((HDC)m_third);
 		m_third = 0;
 	}
 }
