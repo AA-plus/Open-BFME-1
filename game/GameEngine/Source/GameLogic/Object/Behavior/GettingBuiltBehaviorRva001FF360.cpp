@@ -1,4 +1,4 @@
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 //
 // Retail 0x001FF360 is slot 1 of GettingBuiltBehavior's secondary vtable
@@ -38,29 +38,11 @@ struct Coord3D
 	Real z;
 };
 
-template <typename T>
-struct StringData
+#include "ascii_string.h"
+template<> inline bool StringBase<char>::isEmpty() const
 {
-	Int m_refCount;
-	unsigned short m_length;
-	unsigned short m_capacity;
-	T m_text[1];
-};
-
-template <typename T>
-class StringBase
-{
-friend class AsciiString;
-
-private:
-	StringData<T> *m_data;
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-	Bool isEmpty() const { return !m_data || m_data->m_length == 0; }
-};
+    return !m_data || m_data->length == 0;
+}
 
 class PlayerTemplateView
 {
@@ -213,12 +195,17 @@ public:
 class ThingFactory
 {
 public:
-	const ThingTemplate *findTemplate(const AsciiString &name);
 	Object *newObject(const ThingTemplate *thingTemplate, Team *team,
 		const ObjectStatusMaskType &status, UnsignedInt unknown);
 };
 
 extern ThingFactory *TheThingFactory;
+// ILT 0x00028560 reaches the matched BfmeThingFactory lookup at 0x00137E80.
+class BfmeThingFactory
+{
+public:
+    const ThingTemplate *findTemplate(const AsciiString &name);
+};
 
 class ModuleData
 {
@@ -307,7 +294,7 @@ void GettingBuiltBehavior::rva001FF360(Object *other)
 	Object *object = getObject();
 	const GettingBuiltBehaviorModuleData *data = getGettingBuiltBehaviorModuleData();
 
-	if (data->m_workerName.isEmpty())
+	if (data->m_workerName.StringBase<char>::isEmpty())
 	{
 		rvaSlot04(other);
 		return;
@@ -321,11 +308,11 @@ void GettingBuiltBehavior::rva001FF360(Object *other)
 	if (data->m_useAlternateWorker &&
 		object->getControllingPlayer()->getPlayerTemplate()->m_field118)
 	{
-		workerTemplate = TheThingFactory->findTemplate(data->m_alternateWorkerName);
+		workerTemplate = reinterpret_cast<BfmeThingFactory *>(TheThingFactory)->findTemplate(data->m_alternateWorkerName);
 	}
 	else
 	{
-		workerTemplate = TheThingFactory->findTemplate(data->m_workerName);
+		workerTemplate = reinterpret_cast<BfmeThingFactory *>(TheThingFactory)->findTemplate(data->m_workerName);
 	}
 	if (workerTemplate == 0)
 		return;
