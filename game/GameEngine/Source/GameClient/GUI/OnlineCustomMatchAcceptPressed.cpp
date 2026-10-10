@@ -21,39 +21,14 @@ typedef int Int;
 typedef bool Bool;
 static const Int MAX_SLOTS = 8;
 
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/UnicodeString.h
-template <typename T> class StringBase
+#include "../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
+#include "../../../../Libraries/Source/WWVegas/WWLib/unicode_string.h"
+
+inline UnicodeString::UnicodeString() : m_text(0) {}
+inline UnicodeString::~UnicodeString()
 {
-protected:
-	StringBase() : m_data( 0 ) {}
-	~StringBase() { releaseBuffer(); }
-
-	void *m_data;
-
-private:
-	void releaseBuffer();
-};
-
-class UnicodeString : private StringBase<unsigned short>
-{
-public:
-	UnicodeString() : StringBase<unsigned short>() {}
-	~UnicodeString() {}
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString() : StringBase<char>() {}
-	~AsciiString() {}
-
-	void translate( const UnicodeString &other );
-
-	const char *str() const
-	{
-		return m_data ? (const char *)m_data + 8 : "";
-	}
-};
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
 // upstream layout: inputs/reference/shims/nat/GameNetwork/GameSpy/PeerThread.h
 class PeerRequest
@@ -213,7 +188,7 @@ void Rva0053DBE0Screen::bfmeAcceptPressed( Bool accepted )
 		req.peerRequestType = 13;
 		req.UTM.isStagingRoom = true;
 		req.id = "accept";
-		req.nick = asciiName.str();
+		req.nick = asciiName.StringBase<char>::str();
 		req.options = "true";
 		TheGameSpyPeerMessageQueue->addRequest( req );
 	}
