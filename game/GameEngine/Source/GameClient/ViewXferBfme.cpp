@@ -206,7 +206,8 @@ public:
 
 class Xfer; class MidVirtualSlot90Receiver;
 Xfer & Rva0010C3C0(MidVirtualSlot90Receiver *receiver, void *value);
-void BfmeParticleSystemXferHandle(Xfer &xfer, void *value);
+class MidVirtualSlot90Receiver;
+void Rva0010C3E0(MidVirtualSlot90Receiver *xfer, void *value);
 
 void View::xfer(Xfer *xfer)
 {
@@ -252,7 +253,7 @@ void View::xfer(Xfer *xfer)
 	xfer->xferReal(&m_currentHeightAboveGround);
 
 	Rva0010C3C0((MidVirtualSlot90Receiver *)xfer, &m_terrainHeightUnderCamera);
-	BfmeParticleSystemXferHandle(*xfer, &m_bfme5c);
+	Rva0010C3E0((MidVirtualSlot90Receiver *)xfer, &m_bfme5c);
 	xfer->xferUser(&m_bfme60, 4);
 	xfer->xferReal(&m_bfme64);
 	xfer->xferReal(&m_bfme68);
