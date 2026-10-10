@@ -31,7 +31,7 @@ class Shell
 {
 public:
 	void push(AsciiString filename, bool shutdownImmediate);
-	void shutdownComplete(WindowLayout *layout, int unknown);
+	void shutdownComplete(WindowLayout *layout, bool unknown);
 private:
 	unsigned char m_unknown0[4];
 	WindowLayout *m_screenStack[17];
@@ -43,7 +43,7 @@ private:
 
 void Shell::push(AsciiString filename, bool shutdownImmediate)
 {
-	if (filename.isEmpty())
+	if (filename.StringBase<char>::isEmpty())
 		return;
 
 	if (TheGameSpyInfo)
