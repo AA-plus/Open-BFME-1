@@ -10,20 +10,7 @@ enum NameKeyType
 	NAMEKEY_FORCE_LONG = 0x7fffffff
 };
 
-#include "string_base.h"
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString : private StringBase<char>
-{
-public:
-	Bool isEmpty() const
-	{
-		return StringBase<char>::isEmpty();
-	}
-
-private:
-	char *m_text;
-};
+#include "ascii_string.h"
 
 class Player;
 class Object;
@@ -88,7 +75,9 @@ class Object
 {
 public:
 	Player *getControllingPlayer() const;
+protected:
 	Module *findModule(NameKeyType key) const;
+	friend class ScriptActions;
 };
 
 class ScriptActions
@@ -133,7 +122,7 @@ void ScriptActions::doNamedBaseUnpack(const AsciiString &baseName,
 	union { void *asVoid; UnpackCall asMember; } unpackCast;
 	unpackCast.asVoid = (void *)j_0004b268;
 	(base->*unpackCast.asMember)(free, 0);
-	if (referenceName.isEmpty())
+	if (referenceName.StringBase<char>::isEmpty())
 		return;
 
 	TheScriptEngine->assignUnitReference(referenceName, baseObject);
