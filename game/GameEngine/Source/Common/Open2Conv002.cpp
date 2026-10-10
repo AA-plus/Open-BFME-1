@@ -151,12 +151,18 @@ void Rva0059FCF0::begin( void )
 // both are __thiscall and nullary; the second leaves through `jmp`, which is
 // what a void call in tail position compiles to.
 
+// Retail tail ILT 0x00039671 reaches the matched 0x005A3EF0 member.
+class Rva005A3EF0Keyboard
+{
+public:
+	void processKeyEvents();
+};
+
 class Rva005A41F0
 {
 public:
 	void advance( void );
 	void tick( void );
-	void publish( void );
 	char m_pad[0xe18];
 	int m_counter;
 };
@@ -166,7 +172,7 @@ void Rva005A41F0::advance( void )
 {
 	++m_counter;
 	tick();
-	publish();
+	((Rva005A3EF0Keyboard *)this)->processKeyEvents();
 }
 
 // ---------------------------------------------------------------------------
@@ -179,11 +185,14 @@ void Rva005A41F0::advance( void )
 // hands the object back, and the create path is a tail jump because its
 // return value becomes this one's.
 
+// Retail tail ILT 0x00001B18 reaches the matched cdecl null-system accessor.
+class ParticleSystemZA;
+ParticleSystemZA *bfmeNullSystemZA();
+
 class Rva005D0490
 {
 public:
 	void *ensure( void );
-	void *create( void );
 	void *m_held;
 };
 
@@ -191,7 +200,7 @@ public:
 void *Rva005D0490::ensure( void )
 {
 	if( !m_held )
-		return create();
+		return bfmeNullSystemZA();
 	return m_held;
 }
 
@@ -323,12 +332,25 @@ void Rva005F5500( void )
 //
 // `jbe` makes the comparison unsigned, so both members are unsigned.
 
+// Retail call ILT 0x00025CED reaches the matched private member at 0x0061CE00;
+// tail ILT 0x000377E0 reaches the matched member at 0x0060C030.
+class Gen0060BE20
+{
+	friend class Rva0060C120;
+private:
+	void refresh();
+};
+
+class Rva0060BEB0Object
+{
+public:
+	void stopParticleSystems();
+};
+
 class Rva0060C120
 {
 public:
 	void poll( void );
-	void refresh( void );
-	void overflow( void );
 	char m_pad[0x30];
 	unsigned int m_used;
 	char m_pad2[0xc];
@@ -338,7 +360,7 @@ public:
 // @?poll@Rva0060C120@@QAEXXZ 0x0060C120
 void Rva0060C120::poll( void )
 {
-	refresh();
+	((Gen0060BE20 *)this)->refresh();
 	if( m_used > m_limit )
-		overflow();
+		((Rva0060BEB0Object *)this)->stopParticleSystems();
 }
