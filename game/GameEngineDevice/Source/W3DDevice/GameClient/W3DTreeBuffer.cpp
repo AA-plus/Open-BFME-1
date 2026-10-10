@@ -536,36 +536,8 @@ public:
 /** Culls the trees, marking the visible flag.  If a tree becomes visible, it sets
 it's sortKey */
 //=============================================================================
-// byte-exact reconstruction: game/GameEngineDevice/Source/W3DDevice/GameClient/Gen_0071C0E0_W3DTreeBuffer_UpdateSway.cpp
-// ?updateSway@W3DTreeBuffer@@IAEXABUBreezeInfo@@@Z present-unmatched
-void W3DTreeBuffer::updateSway(const BreezeInfo& info)
-{
-	Int i;
-	for	(i=0; i<NUM_SWAY_ENTRIES; i++) {
-		Real factor = Cos(i*2.0f*PI/(NUM_SWAY_ENTRIES+1.0f));
-		Real angle = info.m_lean + (info.m_intensity  * factor);
-		Real S = Sin(angle);
-		Real C = Cos(angle);
-		m_swayOffsets[i].X = info.m_directionVec.x * S;
-		m_swayOffsets[i].Y = info.m_directionVec.y * S;
-		m_swayOffsets[i].Z = C - 1.0f;
-	}
-	
-	Real delta				= info.m_randomness * 0.5f;
-	for	(i=0; i<m_numTrees; i++) {
-		m_trees[i].swayType = 1+GameClientRandomValue(0, MAX_SWAY_TYPES-1);
-	}
-	for (i=0; i<MAX_SWAY_TYPES; i++) {
-		m_curSwayStep[i] = NUM_SWAY_ENTRIES / (Real)info.m_breezePeriod;
-		m_curSwayStep[i]	*= GameClientRandomValueReal(1.0f-delta, 1.0f+delta);
-		if (m_curSwayStep[i]<0.0f) {
-			m_curSwayStep[i] = 0.0f;
-		}
-		m_curSwayOffset[i] = 0;
-		m_curSwayFactor[i] = GameClientRandomValueReal(1.0f-delta, 1.0f+delta);
-	}	
-	m_curSwayVersion = info.m_breezeVersion;
-}
+// BFME updateSway is owned by W3DTreeBufferUpdateSway.cpp at RVA 0x00732500.
+// Its tree stride and sway timing differ from this Zero Hour implementation.
 
 #if 0 // sort is not used, and messes up the order jba. [6/6/2003]
 //=============================================================================
