@@ -1,4 +1,4 @@
-// cl: /DNDEBUG /MD /EHsc
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 
 // Open-BFME5: W3DDisplayStringBase's destructor, retail 0x004100B0, 93 bytes.
 // The body carried only a machine byte-dump row; the symbols.csv pin names it.
@@ -11,16 +11,12 @@
 // alike; the unwind slot is what separates them, standing at 0 while the member
 // is still alive and dropping to -1 for its destruction.
 
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/UnicodeString.h
-class UnicodeString
-{
-public:
-	~UnicodeString();					// retail 0x008881D0
-	void clear();						// same body
+#include "unicode_string.h"
 
-private:
-	void *m_data;
-};
+inline UnicodeString::~UnicodeString()
+{
+	((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
 class W3DDisplayStringBase
 {
@@ -35,7 +31,7 @@ private:
 // ??1W3DDisplayStringBase@@UAE@XZ
 W3DDisplayStringBase::~W3DDisplayStringBase()
 {
-	m_bfmeText.clear();
+	reinterpret_cast<StringBase<unsigned short> &>(m_bfmeText).clear();
 
 	m_bfme08 = 0;
 }
