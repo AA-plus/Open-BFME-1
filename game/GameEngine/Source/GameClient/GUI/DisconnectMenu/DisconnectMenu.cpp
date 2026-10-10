@@ -26,13 +26,16 @@ Int g_bfmeChatColor = (Int)0xFFFF0000;
 extern "C" __declspec(dllimport) int __cdecl sprintf(char *buffer,
 	const char *format, ...);
 
-class WindowManager
+// ILT 00015235 reaches the matched BfmeLevelAN::bfmeBuildAN at 004675F0:
+// eight dword arguments, thiscall RET20, and a pointer return ignored here.
+class BfmeLevelAN
 {
 public:
-	void unidentified_00015235(int movie, const char *function, int argumentCount,
-		const void *argument, int unused1, int unused2, int unused3, int unused4);
+	char *bfmeBuildAN(unsigned int level, int p2, int p3, int p4, int p5,
+		int p6, int p7, int p8);
 };
 
+class WindowManager;
 extern WindowManager *g_rva012F19E8WindowManager;
 
 
@@ -45,7 +48,8 @@ public:
 	virtual void runUpdate(void *context);
 };
 
-extern WindowLayout *_disconnectMenuLayout;
+// Retail's zero-initialized layout cell, read by _bfme_updateScreen at 0050E5F0.
+WindowLayout *_disconnectMenuLayout = 0;
 
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameClient/DisconnectMenu.h
@@ -77,8 +81,8 @@ void DisconnectMenu::_bfme_showPlayerControls(int slot, bool show)
 	sprintf(slotText, "%d", slot);
 
 	const char *function = show ? "ShowKickButton" : "HideKickButton";
-	g_rva012F19E8WindowManager->unidentified_00015235(
-		m_bfmeMovie, function, 1, slotText, 0, 0, 0, 0);
+	((BfmeLevelAN *)g_rva012F19E8WindowManager)->bfmeBuildAN(
+		(unsigned int)m_bfmeMovie, (int)function, 1, (int)slotText, 0, 0, 0, 0);
 	m_playerControlsShown[slot] = show;
 }
 
