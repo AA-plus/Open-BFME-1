@@ -13,14 +13,7 @@
 typedef bool Bool;
 typedef int Int;
 
-class AsciiString
-{
-public:
-	Bool isNotEmpty() const { return m_data != 0; }
-
-private:
-	char *m_data;
-};
+#include "../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 struct LivingWorldRegionPointerVector
 {
@@ -184,8 +177,9 @@ void LivingWorldLogic::setMissionObjectiveVisible(Int objectiveIndex, Bool visib
 	{
 		if (ThePlayerList->getLocalPlayer() != 0 &&
 			ThePlayerList->getLocalPlayer()->getPlayerTemplate() != 0 &&
-			ThePlayerList->getLocalPlayer()->getPlayerTemplate()->
-				getMissionObjectiveVisibleSound().isNotEmpty())
+			*reinterpret_cast<const void *const *>(
+                &ThePlayerList->getLocalPlayer()->getPlayerTemplate()->
+                    getMissionObjectiveVisibleSound()) != 0)
 		{
 			AudioEventRTS event(
 				ThePlayerList->getLocalPlayer()->getPlayerTemplate()->
