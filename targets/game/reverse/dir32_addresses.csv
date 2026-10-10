@@ -15502,7 +15502,6 @@ _g_bfmeD8F0Source,0x010BDCC0
 _g_bfmeDefaultBU,0x01075334
 _g_bfmeDefaultString1284,0x012D5298
 _g_bfmeDirtyZR,0x012EF418
-_g_bfmeDone1182,0x0134D058
 _g_bfmeDualDispatchSource,0x010BD158
 _g_bfmeEmpty1191,0x0107388B
 _g_bfmeEmptyAscii,0x0107388B
@@ -15567,7 +15566,6 @@ _g_bfmeState56AD10A,0x012F1028
 _g_bfmeState56AD10B,0x012F0898
 _g_bfmeStateDF,0x012F7048
 _g_bfmeStateDO,0x012F1028
-_g_bfmeTab1182,0x0134CC58
 _g_bfmeTerrainVisual,0x012F7014
 _g_bfmeThirdEB,0x012D718C
 _g_bfmeV1134,0x010F0AE0
