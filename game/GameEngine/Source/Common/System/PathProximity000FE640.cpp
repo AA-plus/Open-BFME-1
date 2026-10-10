@@ -13,14 +13,17 @@ inline Coord3D::Coord3D() {}
 inline Coord3D::~Coord3D() {}
 inline Coord3D::Coord3D(const Coord3D &v) { x=v.x; y=v.y; z=v.z; }
 inline Coord3D &Coord3D::operator=(const Coord3D &v) { struct Raw { unsigned x,y,z; }; *(Raw*)this=*(const Raw*)&v; return *this; }
-inline Coord3D &Coord3D::operator-=(const Coord3DBase &v) { x-=v.x; y-=v.y; z-=v.z; return *this; }
 __forceinline Coord3D &Coord3D::operator+=(const Coord3DBase &v) { x+=v.x; y+=v.y; z+=v.z; return *this; }
-__forceinline Coord3D &Coord3D::operator*=(float s) { x*=s; y*=s; z*=s; return *this; }
-inline float Coord3D::operator*(const Coord3DBase &v) const { return x*v.x+y*v.y+z*v.z; }
+// The canonical headers supply the layout and operator declarations, but not
+// their inline bodies. Keep this caller's inline arithmetic local so the
+// out-of-line copies remain owned by coord3d.cpp.
+static __forceinline Coord3D &Rva000FE640Subtract(Coord3D &self, const Coord3DBase &v) { self.x-=v.x; self.y-=v.y; self.z-=v.z; return self; }
+static __forceinline Coord3D &Rva000FE640Scale(Coord3D &self, float s) { self.x*=s; self.y*=s; self.z*=s; return self; }
+static __forceinline float Rva000FE640Dot(const Coord3D &self, const Coord3DBase &v) { return self.x*v.x+self.y*v.y+self.z*v.z; }
 enum KindOfType { Kind000FE640 = 0 };
 class Rva001CF980Result;
 #define BFME_HAVE_COORD3D
-#define THING_TU_MEMBERS bool isKindOf(KindOfType) const; const ThingTemplate *getTemplate() const;
+#define THING_TU_MEMBERS bool isKindOf(KindOfType) const;
 #define OBJECT_TU_MEMBERS Rva001CF980Result *queryAt001CF980();
 #include "object.h"
 class Overridable { public:
@@ -32,8 +35,8 @@ class ThingTemplate : public Overridable { public:
     char field08[0xc8];
     unsigned int fieldD0, fieldD4, fieldD8;
 };
-inline const ThingTemplate *Thing::getTemplate() const {
-    const ThingTemplate *t=m_template;
+static __forceinline const ThingTemplate *getTemplate(const Thing *self) {
+    const ThingTemplate *t=self->m_template;
     if(t && t->m_nextOverride) t=(const ThingTemplate*)t->m_nextOverride->getFinalOverride();
     return t;
 }
@@ -158,8 +161,8 @@ class PathProximity000FE640 { public:
     float field0C;
 };
 bool PathProximity000FE640::apply(Object *obj) {
-    if(obj->getTemplate()->fieldD0 & 0x1000000 ||
-       obj->getTemplate()->fieldD8 & 0x20 ||
+    if(getTemplate(obj)->fieldD0 & 0x1000000 ||
+       getTemplate(obj)->fieldD8 & 0x20 ||
        obj->isKindOf((KindOfType)0x67) ||
        obj->isKindOf((KindOfType)0x3b) ||
        obj->isKindOf((KindOfType)2) ||
@@ -174,15 +177,15 @@ bool PathProximity000FE640::apply(Object *obj) {
         Coord3D start=obj->m_cachedPos;
         Coord3D end=ai->m_path->field08->field0C;
         Coord3D point=*field08;
-        point-=start;
+        Rva000FE640Subtract(point, start);
         Coord3D direction=end;
-        direction-=start;
+        Rva000FE640Subtract(direction, start);
         float length=direction.GetLength();
         direction.Normalize();
-        float projection=direction*point;
+        float projection=Rva000FE640Dot(direction, point);
         if(projection<0.0f) point=start;
         else if(projection>length) point=end;
-        else { point=direction; point*=projection; point.x+=start.x; point.y+=start.y; point.z+=start.z; }
+        else { point=direction; Rva000FE640Scale(point, projection); point.x+=start.x; point.y+=start.y; point.z+=start.z; }
         float dx=point.x-field08->x;
         float dy=point.y-field08->y;
         float dz=point.z-field08->z;
