@@ -17,23 +17,18 @@ public:
 BfmeDropObjectA **__cdecl Rva008953C0Copy(
 	BfmeDropObjectA **first, BfmeDropObjectA **last, BfmeDropObjectA **result);
 
-class Rva00894D90Accessor
+// Rva00894D80Accessor::increment / Rva00894D90Accessor::decrement (0x00894D80 /
+// 0x00894D90, their own TUs) are expanded here through TU-static helpers so
+// this TU emits no second COMDAT copy of either.
+static __forceinline unsigned int incrementOf(unsigned int *value)
 {
-public:
-	static unsigned int decrement(unsigned int *value)
-	{
-		return --*value;
-	}
-};
+	return ++*value;
+}
 
-class Rva00894D80Accessor
+static __forceinline unsigned int decrementOf(unsigned int *value)
 {
-public:
-	static unsigned int increment(unsigned int *value)
-	{
-		return ++*value;
-	}
-};
+	return --*value;
+}
 
 class Rva008947A0Elem;
 
@@ -47,22 +42,22 @@ public:
 	BfmeElemCU(BfmeDropObjectA *value) : m_ptr(value)
 	{
 		if (m_ptr)
-			Rva00894D80Accessor::increment((unsigned int *)m_ptr);
+			incrementOf((unsigned int *)m_ptr);
 	}
 	~BfmeElemCU()
 	{
-		if (m_ptr && Rva00894D90Accessor::decrement((unsigned int *)m_ptr) == 0)
+		if (m_ptr && decrementOf((unsigned int *)m_ptr) == 0)
 			delete m_ptr;
 	}
 	BfmeElemCU &operator=(const BfmeElemCU &other)
 	{
 		if (this != &other)
 		{
-			if (m_ptr && Rva00894D90Accessor::decrement((unsigned int *)m_ptr) == 0)
+			if (m_ptr && decrementOf((unsigned int *)m_ptr) == 0)
 				delete m_ptr;
 			m_ptr = other.m_ptr;
 			if (m_ptr)
-				Rva00894D80Accessor::increment((unsigned int *)m_ptr);
+				incrementOf((unsigned int *)m_ptr);
 		}
 		return *this;
 	}
