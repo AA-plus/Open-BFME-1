@@ -8,6 +8,8 @@
 // BFME tail: if the AsciiString at Snapshot+0xB0 is non-empty, notify
 // TheTacticalView through vtable+0x220.
 
+#include "drawable.h"
+
 #define BFME_VSLOT(n) virtual void slot##n();
 
 enum DrawableID
@@ -18,12 +20,19 @@ class Drawable
 {
 public:
 	DrawableID getID() const;
-	Drawable *getNextDrawable() const { return m_nextDrawable; }
 
 private:
 	unsigned char m_pad[0x104];
+public:
 	Drawable *m_nextDrawable;
 };
+
+// drawable.h only forward-declares Drawable; its BFME layout is not defined.
+// Keep the witnessed +0x104 load local without emitting a competing member COMDAT.
+static __forceinline Drawable *getNextDrawable(const Drawable *draw)
+{
+	return draw->m_nextDrawable;
+}
 
 class SubsystemInterface
 {
@@ -109,7 +118,7 @@ void GameClient::loadPostProcess(void)
 {
 	SubsystemInterface *client = (SubsystemInterface *)((char *)this - 8);
 	Drawable *draw;
-	for (draw = client->getDrawableList(); draw; draw = draw->getNextDrawable())
+	for (draw = client->getDrawableList(); draw; draw = getNextDrawable(draw))
 		if (draw->getID() >= m_nextDrawableID)
 			m_nextDrawableID = (DrawableID)((unsigned)draw->getID() + 1);
 
