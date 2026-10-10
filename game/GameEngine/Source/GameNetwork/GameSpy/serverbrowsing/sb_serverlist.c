@@ -12,6 +12,9 @@
    the qr2+GP+ghttp core from 108 exact hits to 6.
    Win32 headers come from inputs/reference/shims/gamespy (see its windows.h): the
    toolchain ships no PlatformSDK, and the sweep shim next door is C++-only. */
+/* Retail calls the WSOCK32 byte-swap stubs: ntohs at RVA 0081BE14
+   (IAT VA 0135972C) and htonl at RVA 0081BDDE (IAT VA 01359718).
+   Use their imported identities rather than upstream htons/ntohl. */
 #include "sb_serverbrowsing.h"
 #include "sb_internal.h"
 #include "sb_ascii.h"
@@ -382,7 +385,7 @@ static SBError ServerListConnect(SBServerList *slist)
 	else //use the default format...
 		sprintf(masterHostname,"%s.ms%d.gamespy.com", slist->queryforgamename, masterIndex);
 	saddr.sin_family = AF_INET;
-	saddr.sin_port = htons(MSPORT2);
+	saddr.sin_port = ntohs(MSPORT2);
 	saddr.sin_addr.s_addr = inet_addr(masterHostname);
 	if (saddr.sin_addr.s_addr == INADDR_NONE)
 	{
@@ -577,7 +580,7 @@ SBError SBServerListConnectAndQuery(SBServerList *slist, const char *fieldList, 
 	{
 		BufferAddInt(&requestBuf, maxServers, &requestLen); 		
 	}
-	netLen = htons((unsigned short)requestLen);
+	netLen = ntohs((unsigned short)requestLen);
 	memcpy(outgoingRequest, &netLen, 2); //set the length...
 	
 	//now send!
@@ -647,7 +650,7 @@ SBError SBServerListGetLANList(SBServerList *slist, unsigned short startport, un
 		endport = (unsigned short)(startport + 500);
 	for (i = startport ; i <= endport ; i += 1)
 	{
-		saddr.sin_port = htons(i);
+		saddr.sin_port = ntohs(i);
 		if (queryversion == QVERSION_QR2) //send a QR2 echo request
 #ifdef SN_SYSTEMS 
 			sendto(slist->slsocket, (char*)qr2_echo_request,qr2requestlen,0,(struct sockaddr *)&saddr,sizeof(saddr));
@@ -1310,7 +1313,7 @@ static SBError ProcessPlayerSearch(SBServerList *slist, char *buf, int len)
 		memcpy(&ip, buf, 4);
 		memcpy(&port, buf + 4, 2);
 		memcpy(&lastSeen, buf + 6, 4);
-		lastSeen  = (unsigned int)ntohl((unsigned int)lastSeen);
+		lastSeen  = (unsigned int)htonl((unsigned int)lastSeen);
 		buf += 10;
 		len -= 10;
 		slen = NTSLengthSB(buf, len);
@@ -1356,7 +1359,7 @@ static SBError ProcessMaploop(SBServerList *slist, char *buf, int len)
 		return sbe_noerror; //not present any more
 	server = SBServerListNth(slist, i);
 	memcpy(&changeTime, buf + 6, 4);
-	changeTime = ntohl((unsigned int)changeTime);
+	changeTime = htonl((unsigned int)changeTime);
 	mapCount = (unsigned char)buf[10];
 	buf += 11;
 	len -= 11;
@@ -1547,7 +1550,7 @@ SBError SBGetServerRulesFromMaster(SBServerList *slist, goa_uint32 ip, unsigned 
 		return sbe_connecterror;
 
 	//the length
-	tmp = htons(msgLen);
+	tmp = ntohs(msgLen);
 	memcpy(requestBuffer, &tmp, 2);
 	//the message type
 	requestBuffer[2] = SERVER_INFO_REQUEST;
@@ -1571,7 +1574,7 @@ SBError SBSendMessageToServer(SBServerList *slist, goa_uint32 ip, unsigned short
 		return sbe_connecterror;
 
 	//the length
-	tmp = htons((unsigned short)(msgLen + len));
+	tmp = ntohs((unsigned short)(msgLen + len));
 	memcpy(requestBuffer, &tmp, 2);
 	//the message type
 	requestBuffer[2] = SEND_MESSAGE_REQUEST;
@@ -1616,7 +1619,7 @@ SBError SBSendPlayerSearchRequest(SBServerList *slist, char *searchName, int sea
 	if (msgLen > sizeof(requestBuffer))
 		return sbe_paramerror; //search string too long
 	memcpy(requestBuffer + 11, searchName, (size_t)namelen + 1);
-	msgLen = htons((unsigned short)(msgLen));
+	msgLen = ntohs((unsigned short)(msgLen));
 	memcpy(requestBuffer, &msgLen, 2);
 	ret = SendWithRetry(slist, requestBuffer, ntohs(msgLen));
 	if (ret != sbe_noerror)
@@ -1642,7 +1645,7 @@ SBError SBSendMaploopRequest(SBServerList *slist, SBServer server, SBMaploopCall
 
 	slist->MaploopCallback = callback;
 	//the length
-	tmp = htons((unsigned short)(msgLen));
+	tmp = ntohs((unsigned short)(msgLen));
 	memcpy(requestBuffer, &tmp, 2);
 	//the message type
 	requestBuffer[2] = MAPLOOP_REQUEST;
