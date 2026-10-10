@@ -539,15 +539,17 @@ public:
 };
 extern unsigned int g_Va012D4D10Count;
 struct Rva00882BA0Block;
-extern Rva00882BA0Block **g_rva0130E9CC, **g_rva0130E9D4;
-extern Rva00882580Block **g_0130E9D0;
+// Retail's three block-table pointers are initially zero-filled.
+Rva00882BA0Block **g_Va0130E9CC = 0;
+Rva00882BA0Block **g_Va0130E9D4 = 0;
+Rva00882580Block **g_Va0130E9D0 = 0;
 extern unsigned int g_rva0130EA04;
 
 void MemoryPool::_VerifyIntegrity()
 {
     unsigned int i;
     for (i = 0; i < g_Va012D4D10Count; ++i) {
-        Rva00882580Block *block = g_0130E9D0[i];
+        Rva00882580Block *block = g_Va0130E9D0[i];
         while (block) {
             block->check();
             if (g_rva0130E9F9)
@@ -558,7 +560,7 @@ void MemoryPool::_VerifyIntegrity()
     unsigned int count = g_rva0130EA04;
     if (count) {
         for (unsigned int j = 0; j < count; ++j) {
-            Rva00882580Block *block = (Rva00882580Block *)g_rva0130E9CC[j];
+            Rva00882580Block *block = (Rva00882580Block *)g_Va0130E9CC[j];
             if (block) {
                 block->check();
                 count = g_rva0130EA04;
@@ -566,7 +568,7 @@ void MemoryPool::_VerifyIntegrity()
         }
     }
     for (i = 0; i < g_Va012D4D10Count; ++i) {
-        Rva00882580Block *block = (Rva00882580Block *)g_rva0130E9D4[i];
+        Rva00882580Block *block = (Rva00882580Block *)g_Va0130E9D4[i];
         while (block) {
             block->check();
             block = *(Rva00882580Block **)((char *)block + 4);
