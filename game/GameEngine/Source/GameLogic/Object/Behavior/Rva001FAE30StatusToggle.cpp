@@ -140,12 +140,13 @@ public:
 };
 
 
-// ?setStatusBit@Object@@QAEXH_N@Z present-unmatched
-inline void Object::setStatusBit(Int bit, Bool set)
+// Object::setStatusBit (0x000D3EB0, ObjectStatusBits.cpp) is expanded here
+// through a TU-static helper so this TU emits no second COMDAT copy of it.
+static __forceinline void setStatusBitOf(Object *object, Int bit, Bool set)
 {
     ObjectStatusMaskType mask;
     mask.set(bit);
-    setStatus(mask, set);
+    object->setStatus(mask, set);
 }
 class BfmeObjE10 {
 public:
@@ -164,13 +165,13 @@ void Rva001FAE30Owner::rva001FAE30(Byte set)
 {
     Object *object = m_object;
     if (set) {
-        object->setStatusBit(53, true);
+        setStatusBitOf(object, 53, true);
         ((BfmeObjE10 *)object)->actionA(0x16);
         BfmeSink *sink = *(BfmeSink **)((char *)object + 0x204);
         if (sink == 0) return;
         sink->slot127(8);
     } else {
-        object->setStatusBit(53, false);
+        setStatusBitOf(object, 53, false);
         ((BfmeObjE10 *)object)->actionB(0x16);
         BfmeSink *sink = *(BfmeSink **)((char *)object + 0x204);
         if (sink == 0) return;
