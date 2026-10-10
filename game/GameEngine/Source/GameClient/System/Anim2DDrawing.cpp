@@ -77,7 +77,7 @@ public:
 };
 
 extern Display *TheDisplay;
-extern volatile Real g_bfmeScaleB3;
+// Retail FMUL reads the immutable 255.0f at VA 0x01084068.
 
 inline Int GameMakeColor(UnsignedByte red, UnsignedByte green,
 	UnsignedByte blue, UnsignedByte alpha)
@@ -154,7 +154,7 @@ void Rva005BA9E0Anim2D::draw(Int x, Int y)
 		image = 0;
 
 	Real alphaValue = m_alpha;
-	alphaValue *= g_bfmeScaleB3;
+	alphaValue *= 255.0f;
 	register Int alpha = alphaValue;
 	Int color = GameMakeColor(255, 255, 255, alpha);
 	const ICoord2D *imageSize = &((const BfmeImageFields *)image)->m_imageSize;
@@ -179,7 +179,7 @@ void Anim2D::draw(Int x, Int y, Int width, Int height)
 		image = 0;
 
 	Real alphaValue = m_alpha;
-	alphaValue *= g_bfmeScaleB3;
+	alphaValue *= 255.0f;
 	register Int alpha = alphaValue;
 	Int color = GameMakeColor(255, 255, 255, alpha);
 	TheDisplay->drawImageCore(image, (Real)x, (Real)y,
