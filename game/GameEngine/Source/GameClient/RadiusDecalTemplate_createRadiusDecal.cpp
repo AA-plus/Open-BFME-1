@@ -33,7 +33,6 @@ public:
 	unsigned char m_pad24[0x40];
 	bool m_unmodelled64;
 
-	void setColor(int value);
 
 	void setAngle(float angle)
 	{
@@ -44,6 +43,14 @@ public:
 	{
 		m_unmodelled08 = position;
 	}
+};
+
+// Retail ILT 0x0002B526 -> 0x00459880 uses the ledger's existing
+// one-int thiscall setter; the receiver remains the same shadow object.
+class BfmeColourABK
+{
+public:
+    void bfmeSetABK(int packed);
 };
 
 // BFME keeps a second 64-byte texture name after the Zero Hour one.
@@ -157,7 +164,7 @@ void RadiusDecalTemplate::createRadiusDecal(
 	if (owningPlayer == 0)
 		return;
 
-	if (m_name.isEmpty() || radius <= 0.0f)
+	if (m_name.StringBase<char>::isEmpty() || radius <= 0.0f)
 		return;
 
 	result.m_empty = false;
@@ -180,7 +187,7 @@ void RadiusDecalTemplate::createRadiusDecal(
 		if (result.m_decal)
 		{
 			result.m_decal->setAngle(0.0f);
-			result.m_decal->setColor(m_color == 0 ? owningPlayer->getPlayerColor() : m_color);
+			reinterpret_cast<BfmeColourABK *>(result.m_decal)->bfmeSetABK(m_color == 0 ? owningPlayer->getPlayerColor() : m_color);
 			result.m_decal->setPosition(pos);
 			if (radius > 110.0f)
 				result.m_decal->m_unmodelled64 = true;
