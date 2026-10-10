@@ -27,17 +27,8 @@ struct _Rb_tree_node_base
   _Base_ptr _M_left;
   _Base_ptr _M_right;
 
-  static _Base_ptr _S_minimum(_Base_ptr __x)
-  {
-    while (__x->_M_left != 0) __x = __x->_M_left;
-    return __x;
-  }
-
-  static _Base_ptr _S_maximum(_Base_ptr __x)
-  {
-    while (__x->_M_right != 0) __x = __x->_M_right;
-    return __x;
-  }
+  static _Base_ptr _S_minimum(_Base_ptr __x);
+  static _Base_ptr _S_maximum(_Base_ptr __x);
 };
 
 template <class _Dummy> class _Rb_global
