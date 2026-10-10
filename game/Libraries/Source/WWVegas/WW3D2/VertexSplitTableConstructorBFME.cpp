@@ -5,9 +5,9 @@
 // +0x2c, while the caps object keeps Support_NPatches at +0x13b.
 
 #include <new.h>
+#include "dx8wrapper.h"
 
 extern "C" void *memcpy(void *, const void *, unsigned int);
-extern "C" void *__cdecl bfmeArrayNew(unsigned int size);
 
 typedef unsigned short TriIndex[3];
 
@@ -52,17 +52,6 @@ public:
     }
 };
 
-extern BfmeCaps *BfmeCurrentCaps;
-
-class DX8Wrapper
-{
-public:
-    static const BfmeCaps *Get_Current_Caps(void)
-    {
-        return BfmeCurrentCaps;
-    }
-};
-
 class Vertex_Split_Table
 {
     MeshModelClass *mmc;
@@ -78,7 +67,9 @@ public:
         npatch_enable(false),
         allocated_polygon_array(false)
     {
-        if (DX8Wrapper::Get_Current_Caps()->Support_NPatches() && mmc->Needs_Vertex_Normals()) {
+        // The canonical caps pointer owns VA01340578; this view keeps the
+        // independently witnessed BFME Support_NPatches byte at +013B.
+        if (((const BfmeCaps *)DX8Wrapper::Get_Current_Caps())->Support_NPatches() && mmc->Needs_Vertex_Normals()) {
             if (*(const unsigned *)((const char *)mmc + 0x18) & 0x10000) {
                 npatch_enable=true;
             }
@@ -86,7 +77,8 @@ public:
 
         polygon_count=mmc->Get_Polygon_Count();
         allocated_polygon_array=true;
-        polygon_array=(TriIndex *)bfmeArrayNew(polygon_count*sizeof(TriIndex));
+        // callees.py identifies retail00881F70 as the array allocator.
+        polygon_array=(TriIndex *)::operator new[](polygon_count*sizeof(TriIndex));
         memcpy(
             polygon_array,
             mmc->Get_Polygon_Array(),
