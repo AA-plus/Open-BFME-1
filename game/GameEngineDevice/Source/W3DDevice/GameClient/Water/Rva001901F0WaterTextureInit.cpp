@@ -129,12 +129,12 @@ void Rva001901F0::init(int count)
 	ones[2] = one;
 	m_self = this;
 
-	m_name48.set(bfmeAskResult()->m_str30);
-	m_tex4c.set("Noise0000.tga", 13);
-	m_tex50.set("TWAlphaEdge.tga", 15);
-	m_tex54.set("WaterSurfaceBubbles.tga", 23);
-	m_tex58.set("WaterRippleBump.tga", 19);
-	m_tex5c.set("SkyEnv.tga", 10);
+	m_name48.StringBase<char>::set(bfmeAskResult()->m_str30);
+	reinterpret_cast<StringBase<char> &>(m_tex4c).set("Noise0000.tga", 13);
+	reinterpret_cast<StringBase<char> &>(m_tex50).set("TWAlphaEdge.tga", 15);
+	reinterpret_cast<StringBase<char> &>(m_tex54).set("WaterSurfaceBubbles.tga", 23);
+	reinterpret_cast<StringBase<char> &>(m_tex58).set("WaterRippleBump.tga", 19);
+	reinterpret_cast<StringBase<char> &>(m_tex5c).set("SkyEnv.tga", 10);
 
 	m_ptr80 = 0;
 	m_ptr84 = 0;
