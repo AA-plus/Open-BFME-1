@@ -1,6 +1,6 @@
 extern "C" unsigned char bfmeVftVG[];
 
-void bfmeFreeVG(void *what);
+void operator delete(void *what);
 
 class BfmeThingVG
 {
@@ -20,6 +20,6 @@ void *BfmeThingVG::bfmeKillVG(int flags)
 	m_bfmeOne = 0;
 	m_bfmeVft = bfmeVftVG;
 	if ((flags & 1) != 0)
-		bfmeFreeVG(this);
+		::operator delete(this);
 	return this;
 }
