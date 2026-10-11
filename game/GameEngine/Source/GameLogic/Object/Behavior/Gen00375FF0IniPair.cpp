@@ -5,16 +5,7 @@
 extern "C" unsigned int __cdecl strlen(const char *text);
 #pragma intrinsic(strlen)
 
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString
-{
-    char *m_text;
-
-public:
-    AsciiString() : m_text(0) {}
-    ~AsciiString();
-    void set(const char *text, int length);
-};
+#include "../../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/INI.h
 class INI
@@ -57,7 +48,7 @@ void __cdecl Gen_00375FF0::parse(register INI *ini, void *, const void *userData
 	Gen_t_00375e50_p8cd value;
 	const char *name = ini->getNextToken(0);
 	if (name != 0) {
-		value.m_name.set(name, (int)strlen(name));
+		value.m_name.StringBase<char>::set(name, (int)strlen(name));
 
 		const char *number = ini->getNextTokenOrNull(0);
 		if (number != 0) {
