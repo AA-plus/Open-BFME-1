@@ -62,7 +62,7 @@ extern float R3FieldSampleScale010F653C;
 extern float R3FieldSlope1096CF4;
 extern float R3FieldDiagonal10861AC;
 extern float g_bfmeDefaultBU;
-extern float g_bfmeDirectionWeight1285;
+extern const float g_bfmeDirectionWeight1285;
 extern "C" __declspec(dllimport) double __cdecl floor( double value );
 
 __forceinline int Rva0045A000FloatToInt( float value )
