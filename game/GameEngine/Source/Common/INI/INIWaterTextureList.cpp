@@ -1,4 +1,4 @@
-// cl: /DNDEBUG /MD /EHsc /Ob1
+// cl: /DNDEBUG /MD /EHsc /Ob1 /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 
 // The INI block registry pairs the block name 'WaterTextureList' with this
@@ -21,50 +21,7 @@ extern "C" unsigned int __cdecl strlen(const char *text);
 
 typedef int Int;
 
-template <typename T>
-class StringBase
-{
-	friend class AsciiString;
-
-private:
-	StringBase() : m_data(0) {}
-
-	struct Header
-	{
-		int ref_count;
-		unsigned short length;
-		unsigned short capacity;
-	};
-
-	Header *m_data;
-
-public:
-	void set(const T *text, int length);
-
-private:
-	void releaseBuffer();
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString() : StringBase<char>() {}
-
-	~AsciiString()
-	{
-		((StringBase<char> *)this)->releaseBuffer();
-	}
-
-	void set(const char *text, int length)
-	{
-		((StringBase<char> *)this)->set(text, length);
-	}
-
-	const char *str() const
-	{
-		return m_data ? (const char *)((const char *)m_data + 8) : "";
-	}
-};
+#include "ascii_string.h"
 
 struct FieldParse;
 
@@ -163,7 +120,7 @@ public:
 
 extern void *g_Rva00F36E5C; // VA 01336E5C debug manager cell (data_rows.csv owner)
 #define TheBfmeAwakenDebug (static_cast<BfmeAwakenDebug *>(g_Rva00F36E5C))
-extern Rva000AF530Table *g_012ED648;
+Rva000AF530Table *g_Va012ED648 = 0;
 extern const FieldParse g_0108132C[];
 extern void _bfme_debugRecordCallsite(int kind);
 
@@ -171,10 +128,10 @@ void INI::parseWaterTextureListDefinition(INI *ini)
 {
 	AsciiString name;
 	const char *token = ini->getNextToken();
-	name.set(token, token ? (int)strlen(token) : 0);
+	name.StringBase<char>::set(token, token ? (int)strlen(token) : 0);
 
 	// retail [0x012ED648]
-	Rva000C2A30Owner *list = g_012ED648->find(name);
+	Rva000C2A30Owner *list = g_Va012ED648->find(name);
 
 	if (list == 0)
 	{
