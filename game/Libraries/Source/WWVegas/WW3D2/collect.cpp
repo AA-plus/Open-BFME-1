@@ -86,6 +86,13 @@
 #include "w3derr.h"
 //#include "sr.hpp"
 
+// Retail's ProxyClass ID bodies (0x00933DF0/36, 0x00936D30/36) divide by the
+// 0x74-byte BFME element; proxy.h's 0x34 layout cannot produce them, so this
+// TU names the canonical specializations (VectorClassProxyIdThunk.cpp) instead
+// of emitting local copies.
+template<> int VectorClass<ProxyClass>::ID(ProxyClass const & ptr);
+template<> int DynamicVectorClass<ProxyClass>::ID(ProxyClass const * ptr);
+
 
 CollectionLoaderClass _CollectionLoader;
 
