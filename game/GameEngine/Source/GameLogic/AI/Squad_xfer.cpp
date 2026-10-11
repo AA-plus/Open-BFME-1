@@ -16,8 +16,9 @@ struct BfmeFormattedText
 
 extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
 	BfmeFormattedText *result, int tag, const char *format, ...);
-__declspec(noreturn) void __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
+// Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
+extern "C" void __stdcall _CxxThrowException(
+	void *object, _ThrowInfo *throwInfo);
 extern int g_rva005c5100ThrowInfo;
 
 struct XferVersion : public Xfer::Version
@@ -93,7 +94,8 @@ void Squad::xfer( Xfer *xfer )
 		{
 			BfmeFormattedText error;
 			bfmeFormatText( &error, 5, 0 );
-			_CxxThrowException( &error, &g_rva005c5100ThrowInfo );
+			_CxxThrowException( &error, (_ThrowInfo *)&g_rva005c5100ThrowInfo );
+			__assume(0);
 		}  // end of
 
 		// read all items

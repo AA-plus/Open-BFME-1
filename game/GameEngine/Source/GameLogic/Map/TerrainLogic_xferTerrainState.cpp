@@ -34,7 +34,8 @@ struct BfmeFormattedText
 };
 
 extern "C" BfmeFormattedText *__cdecl bfmeFormatText(BfmeFormattedText *, int, const char *, ...);
-extern __declspec(noreturn) void __stdcall _CxxThrowException(void *, void *);
+// Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
+extern "C" void __stdcall _CxxThrowException(void *object, _ThrowInfo *throwInfo);
 extern int g_guardTargetTypeThrowInfo;
 
 class Xfer
@@ -247,14 +248,16 @@ void TerrainLogic::xferTerrainState(Xfer *xfer)
 			{
 				BfmeFormattedText error;
 				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+				_CxxThrowException(&error, (_ThrowInfo *)&g_guardTargetTypeThrowInfo);
+				__assume(0);
 			}
 			m_waterToUpdate[i].waterTable = poly->getWaterHandle();
 			if (m_waterToUpdate[i].waterTable == 0)
 			{
 				BfmeFormattedText error;
 				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+				_CxxThrowException(&error, (_ThrowInfo *)&g_guardTargetTypeThrowInfo);
+				__assume(0);
 			}
 		}
 		xfer->xferReal(&m_waterToUpdate[i].changePerFrame);

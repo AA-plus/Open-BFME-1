@@ -68,8 +68,8 @@ struct BfmeFormattedText
 
 extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
 	BfmeFormattedText *result, Int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
+// Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
+extern "C" void __stdcall _CxxThrowException(void *object, _ThrowInfo *throwInfo);
 extern int g_guardTargetTypeThrowInfo;
 extern void j_0000240a();
 
@@ -181,7 +181,8 @@ void BoneFXUpdate::xfer(Xfer *xfer)
 		if (m_particleSystemIDs.empty() == false)
 		{
 			bfmeFormatText(&local.error, 5, 0);
-			_CxxThrowException(&local.error, &g_guardTargetTypeThrowInfo);
+			_CxxThrowException(&local.error, (_ThrowInfo *)&g_guardTargetTypeThrowInfo);
+			__assume(0);
 		}
 		for (UnsignedShort i = 0; i < particleSystemCount; ++i)
 		{

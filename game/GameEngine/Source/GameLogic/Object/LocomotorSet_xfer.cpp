@@ -7,7 +7,8 @@
 struct LocomotorVersion001BAAA0 { unsigned char version,current; unsigned char padding[2]; };
 struct LocomotorError001BAAA0 { char *text; int tag; };
 extern "C" LocomotorError001BAAA0 *__cdecl bfmeFormatText(LocomotorError001BAAA0*,int,const char*,...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void*,void*);
+// Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
+extern "C" void __stdcall _CxxThrowException(void *, _ThrowInfo *);
 extern "C" char g_rva005c5100ThrowInfo;
 class Xfer
 {
@@ -98,7 +99,8 @@ void LocomotorSet::xfer(Xfer *xfer) {
         if (!m_locomotors.empty()) {
             LocomotorError001BAAA0 error;
             bfmeFormatText(&error,4,0);
-            _CxxThrowException(&error,&g_rva005c5100ThrowInfo);
+            _CxxThrowException(&error,(_ThrowInfo *)&g_rva005c5100ThrowInfo);
+            __assume(0);
         }
         for (unsigned short i=0;i<count;++i) {
             AsciiString name;
@@ -107,7 +109,8 @@ void LocomotorSet::xfer(Xfer *xfer) {
             if (!lt) {
                 LocomotorError001BAAA0 error;
                 bfmeFormatText(&error,5,0);
-                _CxxThrowException(&error,&g_rva005c5100ThrowInfo);
+                _CxxThrowException(&error,(_ThrowInfo *)&g_rva005c5100ThrowInfo);
+                __assume(0);
             }
             Locomotor *loco=TheLocomotorStore->newLocomotor(lt);
             xfer->xferSnapshot(loco);

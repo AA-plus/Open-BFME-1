@@ -66,8 +66,8 @@ struct XferException
 extern "C" XferException *__cdecl bfmeFormatText(
 	XferException *result, int tag, const char *format, ...);
 extern int g_guardTargetTypeThrowInfo;
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
+// Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
+extern "C" void __stdcall _CxxThrowException(void *object, _ThrowInfo *throwInfo);
 
 class ObjectTypes
 {
@@ -137,7 +137,8 @@ void ObjectTypes::xfer(Xfer *xfer)
 		{
 			XferException error;
 			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+			_CxxThrowException(&error, (_ThrowInfo *)&g_guardTargetTypeThrowInfo);
+			__assume(0);
 		}
 
 		AsciiString typeName;

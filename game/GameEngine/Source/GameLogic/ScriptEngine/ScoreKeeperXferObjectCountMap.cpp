@@ -93,8 +93,8 @@ struct XferException
 
 extern "C" XferException *__cdecl bfmeFormatText(
 	XferException *result, Int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
+// Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
+extern "C" void __stdcall _CxxThrowException(void *object, _ThrowInfo *throwInfo);
 extern int g_guardTargetTypeThrowInfo;
 
 class Rva000EACD0ScoreKeeper
@@ -139,7 +139,8 @@ void Rva000EACD0ScoreKeeper::xferObjectCountMap(Xfer *xfer, ObjectCountMap *map)
 			{
 				XferException error;
 				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+				_CxxThrowException(&error, (_ThrowInfo *)&g_guardTargetTypeThrowInfo);
+				__assume(0);
 			}
 
 			xfer->xferInt(&count);
