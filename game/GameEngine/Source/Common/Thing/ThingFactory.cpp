@@ -107,14 +107,7 @@ ThingFactory::ThingFactory()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-// ??1ThingFactory@@ present-unmatched
-ThingFactory::~ThingFactory()
-{
-
-	// free all the template data
-	freeDatabase();
-
-}  // end ~ThingFactory
+// ThingFactory::~ThingFactory uses the retail body in ThingFactoryDestructorThunk.cpp.
 
 //-------------------------------------------------------------------------------------------------
 /** Create a new template with name 'name' and add to our template list */
