@@ -1,4 +1,4 @@
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/networkutil /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
 // stlport
 #define Matrix4x4 Matrix4  // BFME renamed it
 #define __PLACEMENT_VEC_NEW_INLINE  // always.h/GameMemory.h define array placement-new themselves
@@ -62,6 +62,7 @@ public:
 #include "GameNetwork/NetCommandMsg.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/NetworkUtil.h"
+// Retail command predicates return Int in EAX; their callers test only AL.
 #include "GameNetwork/GameMessageParser.h"
 
 #ifdef _INTERNAL
@@ -191,7 +192,7 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 	// be wrapped.
 	NetCommandMsg *msg = ref->getCommand();
 
-	if (!DoesCommandRequireACommandID(msg->getNetCommandType())) {
+	if (!(unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType())) {
 		DEBUG_CRASH(("Trying to wrap a command that doesn't have a unique command ID"));
 		return NetPacketList();
 	}
@@ -227,7 +228,7 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 			dataSizeThisPacket = bufferSize - bigPacketCurrentOffset;
 		}
 
-		if (DoesCommandRequireACommandID(wrapperMsg->getNetCommandType())) {
+		if ((unsigned char)DoesCommandRequireACommandID(wrapperMsg->getNetCommandType())) {
 			wrapperMsg->setID(GenerateNextCommandID());
 		}
 		wrapperMsg->setPlayerID(msg->getPlayerID());
@@ -2840,7 +2841,7 @@ NetCommandList * NetPacket::getCommandList() {
 //			DEBUG_LOG(("frame = %d, player = %d, command type = %d, id = %d\n", frame, playerID, commandType, commandID));
 
 			// increment to the next command ID.
-			if (DoesCommandRequireACommandID((NetCommandType)commandType)) {
+			if ((unsigned char)DoesCommandRequireACommandID((NetCommandType)commandType)) {
 				++commandID;
 			}
 
@@ -2902,7 +2903,7 @@ NetCommandList * NetPacket::getCommandList() {
 //			DEBUG_LOG(("frame = %d, player = %d, command type = %d, id = %d\n", frame, playerID, commandType, commandID));
 
 			// increment to the next command ID.
-			if (DoesCommandRequireACommandID((NetCommandType)commandType)) {
+			if ((unsigned char)DoesCommandRequireACommandID((NetCommandType)commandType)) {
 				++commandID;
 			}
 
