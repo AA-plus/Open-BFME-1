@@ -3734,65 +3734,7 @@ Real W3DShaderManager::GetCPUBenchTime(void)
 }
 
 
-// W3DShaderManager::setShroudTex =======================================================
-/** Puts the shroud texture into a texture stage.
- */
-//=============================================================================
-// ?setShroudTex@W3DShaderManager@@SAHH@Z present-unmatched
-Int W3DShaderManager::setShroudTex(Int stage)
-{
-	//We need to scale so shroud texel stretches over one full terrain cell.  Each texel
-	//is 1/128 the size of full texture. (assuming 128x128 vid-mem texture).
-	W3DShroud *shroud;
-	if ((shroud=TheTerrainRenderObject->getShroud()) != 0)
-	{	 
-		DX8Wrapper::Set_Texture(stage, shroud->getShroudTexture());
-
-		DX8Wrapper::Set_DX8_Texture_Stage_State(stage,  D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(stage,  D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);	
-		DX8Wrapper::Set_DX8_Texture_Stage_State( stage, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-		DX8Wrapper::Set_DX8_Texture_Stage_State( stage, D3DTSS_COLORARG2, D3DTA_CURRENT );
-		DX8Wrapper::Set_DX8_Texture_Stage_State( stage, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-		DX8Wrapper::Set_DX8_Texture_Stage_State( stage, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-		DX8Wrapper::Set_DX8_Texture_Stage_State( stage, D3DTSS_COLOROP,   D3DTOP_MODULATE );
-		DX8Wrapper::Set_DX8_Texture_Stage_State( stage, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG2 );
-		D3DXMATRIX inv;
-		float det;
-
-		Matrix4x4 curView;
-		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
-
-		D3DXMatrixInverse(&inv, &det, (D3DXMATRIX*)&curView);
-
-		D3DXMATRIX scale,offset;
-
-		//We need to make all world coordinates be relative to the heightmap data origin since that
-		//is where the shroud begins.
-
-		float xoffset = 0;
-		float yoffset = 0;
-		Real width=shroud->getCellWidth();
-		Real height=shroud->getCellHeight();
-
-		if (TheTerrainRenderObject->getMap())
-		{	//subtract origin position from all coordinates.  Origin is shifted by 1 cell width/height to allow for unused border texels.
-			xoffset = -(float)shroud->getDrawOriginX() + width;
-			yoffset = -(float)shroud->getDrawOriginY() + height;
-		}
-
-		D3DXMatrixTranslation(&offset, xoffset, yoffset,0);
-
-		width = 1.0f/(width*shroud->getTextureWidth());
-		height = 1.0f/(height*shroud->getTextureHeight());
-		D3DXMatrixScaling(&scale, width, height, 1);
-		*((D3DXMATRIX *)&curView) = (inv * offset) * scale;
-		DX8Wrapper::_Set_DX8_Transform((D3DTRANSFORMSTATETYPE )(D3DTS_TEXTURE0+stage), *((Matrix4x4*)&curView));
-		return TRUE;
-	}
-	return FALSE;
-}
-
-
+// Retail setShroudTex body: W3DShaderManager_setShroudTex.cpp.
 
 Int FlatTerrainShader2Stage::init( void )
 {
