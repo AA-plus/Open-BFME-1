@@ -70,7 +70,7 @@ Int parseMod(char *args[], Int num)
 		{
 			if (!modPath.StringBase<char>::endsWith("\\") &&
 				!modPath.StringBase<char>::endsWith("/"))
-				modPath.concat('\\');
+				modPath.StringBase<char>::concat('\\');
 			TheWritableGlobalData->m_modDir = modPath;
 		}
 		else

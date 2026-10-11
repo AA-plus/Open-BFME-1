@@ -1071,52 +1071,8 @@ Int parseUpdateImages(char *args[], int num)
 	return 1;
 }
 
-Int parseMod(char *args[], Int num)
-{
-	if (TheWritableGlobalData && num > 1)
-	{
-		AsciiString modPath = args[1];
-		if (strchr(modPath.str(), ':') || modPath.startsWith("/") || modPath.startsWith("\\"))
-		{
-			// full path passed in.  Don't append base path.
-		}
-		else
-		{
-			modPath.format("%s%s", TheGlobalData->getPath_UserData().str(), args[1]);
-		}
-		DEBUG_LOG(("Looking for mod '%s'\n", modPath.str()));
-
-		if (!TheLocalFileSystem->doesFileExist(modPath.str()))
-		{
-			DEBUG_LOG(("Mod does not exist.\n"));
-			return 2; // no such file/dir.
-		}
-
-		// now check for dir-ness
-		struct _stat statBuf;
-		if (_stat(modPath.str(), &statBuf) != 0)
-		{
-			DEBUG_LOG(("Could not _stat() mod.\n"));
-			return 2; // could not stat the file/dir.
-		}
-
-		if (statBuf.st_mode & _S_IFDIR)
-		{
-			if (!modPath.endsWith("\\") && !modPath.endsWith("/"))
-				modPath.concat('\\');
-			DEBUG_LOG(("Mod dir is '%s'.\n", modPath.str()));
-			TheWritableGlobalData->m_modDir = modPath;
-		}
-		else
-		{
-			DEBUG_LOG(("Mod file is '%s'.\n", modPath.str()));
-			TheWritableGlobalData->m_modBIG = modPath;
-		}
-
-		return 2;
-	}
-	return 1;
-}
+// Retail 0x000624F0 is owned by CommandLine_parseMod.cpp.
+Int parseMod(char *args[], Int num);
 
 static CommandLineParam params[] =
 {
