@@ -57,20 +57,14 @@
 /*static*/ AsciiString AsciiString::TheEmptyString;
 
 //-----------------------------------------------------------------------------
-inline char* skipSeps(char* p, const char* seps)
-{
-	while (*p && strchr(seps, *p) != NULL)
-		++p;
-	return p;
-}
+// BFME tokenization and its private helpers are owned by
+// game/Libraries/Source/WWVegas/WWLib/StringBaseSkipSeps.cpp.
+
 
 //-----------------------------------------------------------------------------
-inline char* skipNonSeps(char* p, const char* seps)
-{
-	while (*p && strchr(seps, *p) == NULL)
-		++p;
-	return p;
-}
+// BFME tokenization and its private helpers are owned by
+// game/Libraries/Source/WWVegas/WWLib/StringBaseSkipSeps.cpp.
+
 
 //-----------------------------------------------------------------------------
 static inline char* skipWhitespace(char* p)
@@ -359,33 +353,6 @@ Bool AsciiString::isNone() const
 }
 
 //-----------------------------------------------------------------------------
-// ?nextToken@AsciiString@@ present-unmatched
-Bool AsciiString::nextToken(AsciiString* tok, const char* seps)
-{
-	if (this->isEmpty() || tok == this)
-		return false;
+// BFME tokenization and its private helpers are owned by
+// game/Libraries/Source/WWVegas/WWLib/StringBaseSkipSeps.cpp.
 
-	if (seps == NULL)
-		seps = " \n\r\t";
-
-	char* start = skipSeps(peek(), seps);
-	char* end = skipNonSeps(start, seps);
-
-	if (end > start)
-	{
-		Int len = end - start;
-		char* tmp = tok->getBufferForRead(len + 1);
-		memcpy(tmp, start, len);
-		tmp[len] = 0;
-
-		this->set(end);
-
-		return true;
-	}
-	else
-	{
-		this->clear();
-		tok->clear();
-		return false;
-	}
-}
