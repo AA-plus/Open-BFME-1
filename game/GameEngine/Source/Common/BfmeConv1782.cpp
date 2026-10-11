@@ -88,10 +88,15 @@ class ClientRoot4120
 {
 public:
 	void bfmeCloseHV(void);
-	void bfmeOpenHV(void);
 
 	unsigned char m_pad[0xc6];
 	unsigned char m_resolutionChangePending;
+};
+
+class Gen_0042E800
+{
+public:
+	void bfmeRestore(void);
 };
 
 class GameClient;
@@ -139,7 +144,7 @@ void BfmeOwnerHV::bfmeEndHV(int reason)
 		if (m_bfmeFlagHV)
 			reinterpret_cast<ClientRoot4120 *>(TheGameClient)->bfmeCloseHV();
 		else
-			reinterpret_cast<ClientRoot4120 *>(TheGameClient)->bfmeOpenHV();
+			reinterpret_cast<Gen_0042E800 *>(TheGameClient)->bfmeRestore();
 
 		((Rva005A63D0Mouse *)TheMouse)->bfmeSetHV(0);
 		m_bfmeStateHV = 0;
