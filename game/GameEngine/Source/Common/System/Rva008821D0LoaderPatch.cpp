@@ -34,10 +34,12 @@ extern "C" RvaModuleHandle821D0 (__stdcall *g_rva0130E988LoadLibraryA)(
 extern void *rva00882140PatchAllModules(const char *dllName,
 	const char *functionName, void *replacement);
 
-extern unsigned char g_0130E990;
-extern RvaLoadLibraryW821D0 g_0130E984;
-extern RvaLoadLibraryExA821D0 g_0130E980;
-extern RvaLoadLibraryExW821D0 g_0130E97C;
+// Loader-owned bss cells: the matched loader alone writes them (once-flag
+// at VA 0x0130E990, GetProcAddress results at 0x0130E97C..0x0130E984).
+extern "C" unsigned char g_Va0130E990 = 0;
+extern "C" RvaLoadLibraryW821D0 g_Va0130E984 = 0;
+extern "C" RvaLoadLibraryExA821D0 g_Va0130E980 = 0;
+extern "C" RvaLoadLibraryExW821D0 g_Va0130E97C = 0;
 
 extern RvaModuleHandle821D0 __stdcall d_00881fb0(const char *name);
 extern RvaModuleHandle821D0 __stdcall d_00881fd0(const unsigned short *name);
@@ -51,27 +53,27 @@ extern void d_00881d20(void *ptr);
 extern void rva00881D40(void *, int);
 extern void *d_00881d70(unsigned int size);
 extern void *d_00881d90(unsigned int size);
-extern void d_00881db0(void);
+extern unsigned int d_00881db0(void *ptr);
 extern size_t rva00881DC0(void *, int);
 extern void *rva00881DD0(void *, size_t);
 extern void *d_00881df0(void *ptr, unsigned int size);
 extern char *d_00881e10(const char *src);
 extern unsigned short *d_00881e60(const unsigned short *src);
-extern void d_00881ea0(void);
+extern unsigned char *d_00881ea0(const unsigned char *src);
 
 // ?rva008821d0LoaderPatch@@YAXXZ
 void rva008821d0LoaderPatch(void)
 {
-	if (g_0130E990 != 0)
+	if (g_Va0130E990 != 0)
 		return;
 
 	if (g_rva0130E988LoadLibraryA != 0)
 	{
-		g_0130E990 = 1;
+		g_Va0130E990 = 1;
 	}
 	else
 	{
-		g_0130E990 = 1;
+		g_Va0130E990 = 1;
 		g_rva0130E988LoadLibraryA =
 			(RvaModuleHandle821D0 (__stdcall *)(const char *))GetProcAddress(
 				LoadLibraryA("kernel32.dll"), "LoadLibraryA");
@@ -85,13 +87,13 @@ void rva008821d0LoaderPatch(void)
 	{
 		rva00882140PatchAllModules("kernel32.dll", "LoadLibraryA",
 			(void *)d_00881fb0);
-		g_0130E984 =
+		g_Va0130E984 =
 			(RvaLoadLibraryW821D0)rva00882140PatchAllModules(
 				"kernel32.dll", "LoadLibraryW", (void *)d_00881fd0);
-		g_0130E980 =
+		g_Va0130E980 =
 			(RvaLoadLibraryExA821D0)rva00882140PatchAllModules(
 				"kernel32.dll", "LoadLibraryExA", (void *)d_00881ff0);
-		g_0130E97C =
+		g_Va0130E97C =
 			(RvaLoadLibraryExW821D0)rva00882140PatchAllModules(
 				"kernel32.dll", "LoadLibraryExW", (void *)d_00882020);
 	}
@@ -110,5 +112,5 @@ void rva008821d0LoaderPatch(void)
 	rva00882140PatchAllModules("msvcr71.dll", "_wcsdup", (void *)d_00881e60);
 	rva00882140PatchAllModules("msvcr71.dll", "_mbsdup", (void *)d_00881ea0);
 
-	g_0130E990 = 0;
+	g_Va0130E990 = 0;
 }

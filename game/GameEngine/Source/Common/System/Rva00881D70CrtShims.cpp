@@ -11,7 +11,7 @@
 
 extern "C" void *( *__cdecl __gameMemAllocPtr )( unsigned int size, int flags );
 extern "C" void ( *__cdecl __gameMemFreePtr )( void *ptr, int flags );
-extern "C" void *Rva01357214Onexitbegin;
+extern "C" void *__onexitbegin;
 extern "C" unsigned int (__cdecl *g_rva0130E9B0)(void *);
 extern "C" void *( *__cdecl g_rva0130E9A0 )( void *ptr, unsigned int size, int flags );
 extern "C" void *( __stdcall *g_rva0130E988LoadLibraryA )( const char *name );
@@ -21,14 +21,15 @@ extern void rva008821d0LoaderPatch( void );
 typedef void *( __stdcall *RvaLoadLibraryExA00881FF0 )( const char *, void *, unsigned long );
 typedef void *( __stdcall *RvaLoadLibraryExW00882020 )( const unsigned short *, void *, unsigned long );
 
-extern void *( __stdcall *g_0130E984 )( const unsigned short *name );
-extern RvaLoadLibraryExA00881FF0 g_0130E980;
-extern RvaLoadLibraryExW00882020 g_0130E97C;
+extern "C" void *( __stdcall *g_Va0130E984 )( const unsigned short *name );
+extern "C" RvaLoadLibraryExA00881FF0 g_Va0130E980;
+extern "C" RvaLoadLibraryExW00882020 g_Va0130E97C;
+extern "C" __declspec(dllimport) unsigned char *__cdecl _mbsdup( const unsigned char *src );
 
 // ?d_00881d20@@YAXPAX@Z
 void d_00881d20( void *ptr )
 {
-	if ( ptr != 0 && ptr != Rva01357214Onexitbegin )
+	if ( ptr != 0 && ptr != __onexitbegin )
 		__gameMemFreePtr( ptr, 0 );
 }
 
@@ -44,6 +45,24 @@ void *d_00881d90( unsigned int size )
 {
 	return __gameMemAllocPtr( size, 0 );
 }
+
+// ?d_00881db0@@YAIPAX@Z
+// _msize replacement installed by the matched loader: tail jump through the
+// pool size slot at VA 0x0130E9B0 (retail 6 bytes, int3 pad to 0x00881DC0).
+unsigned int d_00881db0( void *ptr )
+{
+	return g_rva0130E9B0( ptr );
+}
+
+
+// ?d_00881ea0@@YAPAEPBE@Z
+// _mbsdup replacement installed by the matched loader: tail jump through the
+// msvcr71 _mbsdup import (retail 6 bytes, int3 pad to 0x00881EB0).
+unsigned char *d_00881ea0( const unsigned char *src )
+{
+	return _mbsdup( src );
+}
+
 
 // ?d_00881ed0@@YAXPAX@Z
 void d_00881ed0( void *ptr )
@@ -107,7 +126,7 @@ void * __stdcall d_00881fb0( const char *name )
 // ?d_00881fd0@@YGPAXPBG@Z
 void * __stdcall d_00881fd0( const unsigned short *name )
 {
-	void *mod = g_0130E984( name );
+	void *mod = g_Va0130E984( name );
 	void *saved = mod;
 	rva008821d0LoaderPatch();
 	return saved;
@@ -116,7 +135,7 @@ void * __stdcall d_00881fd0( const unsigned short *name )
 // ?d_00881ff0@@YGPAXPBDPAXK@Z
 void * __stdcall d_00881ff0( const char *a, void *b, unsigned long c )
 {
-	void *mod = g_0130E980( a, b, c );
+	void *mod = g_Va0130E980( a, b, c );
 	void *saved = mod;
 	rva008821d0LoaderPatch();
 	return saved;
@@ -125,7 +144,7 @@ void * __stdcall d_00881ff0( const char *a, void *b, unsigned long c )
 // ?d_00882020@@YGPAXPBGPAXK@Z
 void * __stdcall d_00882020( const unsigned short *a, void *b, unsigned long c )
 {
-	void *mod = g_0130E97C( a, b, c );
+	void *mod = g_Va0130E97C( a, b, c );
 	void *saved = mod;
 	rva008821d0LoaderPatch();
 	return saved;
@@ -149,6 +168,6 @@ void *rva00881DD0(void *ptr, size_t size)
 // Genuine debug block type is ignored; pool allocation type is always zero.
 void rva00881D40(void *ptr, int block_type)
 {
-    if (ptr != 0 && ptr != Rva01357214Onexitbegin)
+    if (ptr != 0 && ptr != __onexitbegin)
         __gameMemFreePtr(ptr, 0);
 }
