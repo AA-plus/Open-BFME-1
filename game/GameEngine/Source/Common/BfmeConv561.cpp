@@ -2,11 +2,16 @@
 
 #include <vector>
 
-class BfmeGlobalBZF
+class Rva003BDC50
 {
 public:
-	void bfmeTwoBZF();
-	void bfmeThreeBZF(int value);
+	void run();
+};
+
+class Rva003BFAB0
+{
+public:
+	void run(bool value);
 };
 
 struct BfmePlayerArmyStringHeader
@@ -99,6 +104,6 @@ void BfmeSubBZF::bfmeOneBZF()
 void BfmeThingBZF::bfmeGoBZF()
 {
 	m_bfmeSub.bfmeOneBZF();
-	reinterpret_cast<BfmeGlobalBZF *>(Glo012F1028)->bfmeTwoBZF();
-	reinterpret_cast<BfmeGlobalBZF *>(Glo012F1028)->bfmeThreeBZF(0);
+	reinterpret_cast<Rva003BDC50 *>(Glo012F1028)->run();
+	reinterpret_cast<Rva003BFAB0 *>(Glo012F1028)->run(false);
 }
