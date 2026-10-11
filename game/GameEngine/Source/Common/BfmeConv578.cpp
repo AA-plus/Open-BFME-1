@@ -3,10 +3,32 @@
 class WindowManager
 {
 public:
-	void _bfme_removeNamedAptGadget(const AsciiString &name);
 };
 
 extern WindowManager *g_rva012F19E8WindowManager;
+
+class Rva0046B2A0
+{
+public:
+	void invoke();
+};
+
+typedef void (WindowManager::*WindowManagerStringMember)(const AsciiString *);
+
+union WindowManagerStringCast
+{
+	void (Rva0046B2A0::*b2a0Member)();
+	WindowManagerStringMember member;
+};
+
+// The recorded thunk takes its manager in ECX and forwards the string pointer.
+static __forceinline void callWindowManagerInvoke(
+	WindowManager *manager, void (Rva0046B2A0::*function)(), AsciiString *name)
+{
+	WindowManagerStringCast cast;
+	cast.b2a0Member = function;
+	(manager->*cast.member)(name);
+}
 
 class BfmeThingCDA
 {
@@ -72,7 +94,7 @@ void BfmeThingCDA::bfmeStepCDA()
 		{
 			{
 				AsciiString name("CommandUI/Portrait");
-				g_rva012F19E8WindowManager->_bfme_removeNamedAptGadget(name);
+				callWindowManagerInvoke(g_rva012F19E8WindowManager, &Rva0046B2A0::invoke, &name);
 			}
 			m_bfmePortrait = 0;
 		}
@@ -81,7 +103,7 @@ void BfmeThingCDA::bfmeStepCDA()
 		for (int index = 0; index < 6; ++index)
 		{
 			bfmeGoVHH((char)index, (BfmeLayoutVHH *)&name);
-			g_rva012F19E8WindowManager->_bfme_removeNamedAptGadget(name);
+			callWindowManagerInvoke(g_rva012F19E8WindowManager, &Rva0046B2A0::invoke, &name);
 		}
 	}
 
