@@ -32,19 +32,19 @@ extern "C" {
 	void Rva007FEBD0(void *lock);
 	void Rva007FECB0(void *lock);
 	void Rva00817640(void *ref);
-	int Rva00817B30(unsigned int tick);
+	int CommUdpProcess(unsigned int tick);
 }
 
-extern char g_Rva0130AF38Lock[4];
-extern int g_Rva0130AD08Count;
+char g_Rva0130AF38Lock[4] = { 0 };
+int g_Rva0130AD08Count = 0;
 
-int Rva007FE780Printf(const char *format, ...);
+extern "C" int Rva007FE780(const char *format, ...);
 
 // Always fails: it logs "CommUDPResolve: Resolve functionality not supported by
 // CommUDP" and returns the error.
 int CommUDPResolve(void *ref, const char *addr, char *buffer, int length, char divider)
 {
-	Rva007FE780Printf("CommUDPResolve: Resolve functionality not supported by CommUDP\n");
+	Rva007FE780("CommUDPResolve: Resolve functionality not supported by CommUDP\n");
 	return -1;
 }
 
@@ -65,7 +65,7 @@ int CommUDPWrite(void *ref, void *packet)
 			*(int *)((char *)ref + 0xB4) = 0;
 		}
 	} else {
-		Rva007FE780Printf("CommUDPWrite: SocketSendto returned %d\n", result);
+		Rva007FE780("CommUDPWrite: SocketSendto returned %d\n", result);
 		*(int *)((char *)ref + 0xD4) = result;
 		result = -1;
 	}
@@ -105,7 +105,7 @@ int CommUDPConnect(void *ref, const char *addr, int bind, int peer)
 		++iListenPort;
 	}
 	Rva00818FF0(ref, addr);
-	Rva007FE780Printf("CommUdpConnect: addr=%08x, bind=%d, peer=%d connident=0x%08x\n",
+	Rva007FE780("CommUdpConnect: addr=%08x, bind=%d, peer=%d connident=0x%08x\n",
 	                   uAddr, iListenPort, iConnPort, *(int *)((char *)ref + 0x94));
 	socket = Rva007FD2D0(2, 2, 0);
 	if (socket == 0) {
@@ -115,11 +115,11 @@ int CommUDPConnect(void *ref, const char *addr, int bind, int peer)
 	bindaddr[3] = (unsigned char)iListenPort;
 	result = Rva007FD510(socket, bindaddr, 0x10);
 	if (result < 0) {
-		Rva007FE780Printf("CommUDPConnect: bind to %d failed with %d\n", iListenPort, result);
+		Rva007FE780("CommUDPConnect: bind to %d failed with %d\n", iListenPort, result);
 		bindaddr[2] = 0;
 		bindaddr[3] = 0;
 		result = Rva007FD510(socket, bindaddr, 0x10);
-		Rva007FE780Printf("CommUDPConnect: bind to 0 with result %d\n", result);
+		Rva007FE780("CommUDPConnect: bind to 0 with result %d\n", result);
 	}
 	if (result < 0) {
 		Rva007FD3F0(socket);
@@ -137,7 +137,7 @@ int CommUDPConnect(void *ref, const char *addr, int bind, int peer)
 }
 
 extern "C" {
-	int CommUdpProcess();
+	int CommUdpProcess(unsigned int tick);
 	void CommUdpSetup(void *ref, void *packet, void *from);
 	int CommUdpPoke(void *ref);
 	int CommUdpListen(void *ref, const char *text);
@@ -149,7 +149,7 @@ extern "C" {
 // The CommUDP tick. Logs "CommUdpProcess: got RAW_PACKET_INIT", closes the
 // connection on timeout, and handles poke packets -- including retargeting the
 // peer when one arrives from an address other than the expected one.
-__declspec(naked) int CommUdpProcess()
+__declspec(naked) int CommUdpProcess(unsigned int tick)
 {
 	__asm {
 		push ebp
@@ -1167,7 +1167,7 @@ void CommUdpSetup(void *ref, void *packet, void *from)
 	}
 
 		if (*(int *)((char *)packet + 0x0C) != *(int *)((char *)ref + 0x94)) {
-			Rva007FE780Printf("commudp: warning - connident mismatch\n");
+			Rva007FE780("commudp: warning - connident mismatch\n");
 			if (*(int *)((char *)packet + 8) == 1) {
 				*(int *)((char *)ref + 0x90) = 5;
 			}
@@ -1175,7 +1175,7 @@ void CommUdpSetup(void *ref, void *packet, void *from)
 			*(unsigned int *)((char *)ref + 0xDC) = Rva007FEA00() - 1000;
 			if (*(int *)((char *)packet + 8) == 1) {
 				Rva00818500(ref, from);
-				Rva007FE780Printf("CommUdpSetup: sending CONN in response to INIT\n");
+				Rva007FE780("CommUdpSetup: sending CONN in response to INIT\n");
 				*(int *)((char *)packet + 8) = 2;
 				((int (__cdecl *)(void *, void *))CommUDPWrite)(ref, packet);
 			} else if (*(int *)((char *)packet + 8) == 2) {
@@ -1194,7 +1194,7 @@ void CommUdpSetup(void *ref, void *packet, void *from)
 int CommUdpPoke(void *ref)
 {
 	char packet[0x228];
-	Rva007FE780Printf("CommUdpPoke: sending poke packet\n");
+	Rva007FE780("CommUdpPoke: sending poke packet\n");
 	*(int *)&packet[0] = 0;
 	*(int *)&packet[8] = 5;
 	*(int *)&packet[12] = *(int *)((char *)ref + 0x94);
@@ -1228,13 +1228,13 @@ int CommUdpListen(void *ref, const char *text)
 	}
 	result = Rva00819090(ref, socket, bindaddr);
 	Rva00818FF0(ref, text);
-	Rva007FE780Printf("CommUdpListen: err=%d, bind=%d, connident=0x%08x\n",
+	Rva007FE780("CommUdpListen: err=%d, bind=%d, connident=0x%08x\n",
 	                   result, iListenPort, *(int *)((char *)ref + 0x94));
 	if (result == 0 && poke != 0) {
 		if (iConnPort == 0) {
 			iConnPort = iListenPort + 1;
 		}
-		Rva007FE780Printf("CommUdpListen: poke=%08x:%d\n", poke, iConnPort);
+		Rva007FE780("CommUdpListen: poke=%08x:%d\n", poke, iConnPort);
 		*(unsigned short *)((char *)ref + 0x80) = 2;
 		*(unsigned short *)((char *)ref + 0x82) = 0;
 		*(unsigned int *)((char *)ref + 0x84) = 0;
@@ -1268,7 +1268,7 @@ int CommUDPSend(void *ref, const void *buffer, int length, int flags)
 		return 0;
 	}
 	if (length > *(int *)((char *)ref + 0xB8) - 0x10) {
-		Rva007FE780Printf("CommUDP: Oversized packet send (%d bytes)\n", length);
+		Rva007FE780("CommUDP: Oversized packet send (%d bytes)\n", length);
 		return -6;
 	}
 	if (length == 0) {
@@ -1303,7 +1303,7 @@ int CommUDPSend(void *ref, const void *buffer, int length, int flags)
 		Rva00817640(ref);
 		if (g_Rva0130AD08Count != 0) {
 			tick = Rva007FEA00();
-			while (Rva00817B30(tick) > 0) {
+			while (CommUdpProcess(tick) > 0) {
 			}
 			g_Rva0130AD08Count = 0;
 		}
