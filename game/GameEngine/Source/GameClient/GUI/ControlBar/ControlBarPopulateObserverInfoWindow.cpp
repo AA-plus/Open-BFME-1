@@ -88,10 +88,6 @@ class Player
 {
 public:
     Int countObjects(KindOfMaskType setMask, KindOfMaskType clearMask);
-    ScoreKeeper *getScoreKeeper(void)
-    {
-        return (ScoreKeeper *)((char *)this + 0x348);
-    }
     UnicodeString getPlayerDisplayName(void);
     Color getPlayerColor(void) const
     {
@@ -102,6 +98,13 @@ public:
         return *(const PlayerTemplate *const *)((const char *)this + 4);
     }
 };
+
+// Retail populateObserverInfoWindow+280 adds 0x348 to the Player pointer.
+// Keep this access local to the partial Player view, as in verified onCapture.
+static __forceinline ScoreKeeper *getScoreKeeper(Player *player)
+{
+    return reinterpret_cast<ScoreKeeper *>(reinterpret_cast<char *>(player) + 0x348);
+}
 
 class GameWindow
 {
@@ -127,7 +130,8 @@ struct BfmeControlBarObserverView
     Player *m_observerLookAtPlayer;
 };
 
-inline Color GameMakeColor(Int red, Int green, Int blue, Int alpha)
+// Retail observer+345 pushes the folded value 0xFF000000.
+static __forceinline Color GameMakeColor(Int red, Int green, Int blue, Int alpha)
 {
     return ((Color)(red & 0xff) << 0) |
            ((Color)(green & 0xff) << 8) |
@@ -197,10 +201,10 @@ void ControlBar::populateObserverInfoWindow(void)
     uString.format(L"%d", numBuildings);
     GadgetStaticTextSetText(staticTextNumberOfBuildings, uString);
 
-    uString.format(L"%d", self->m_observerLookAtPlayer->getScoreKeeper()->getTotalUnitsDestroyed());
+    uString.format(L"%d", getScoreKeeper(self->m_observerLookAtPlayer)->getTotalUnitsDestroyed());
     GadgetStaticTextSetText(staticTextNumberOfUnitsKilled, uString);
 
-    uString.format(L"%d", self->m_observerLookAtPlayer->getScoreKeeper()->getTotalUnitsLost());
+    uString.format(L"%d", getScoreKeeper(self->m_observerLookAtPlayer)->getTotalUnitsLost());
     GadgetStaticTextSetText(staticTextNumberOfUnitsLost, uString);
 
     GadgetStaticTextSetText(staticTextPlayerName, self->m_observerLookAtPlayer->getPlayerDisplayName());

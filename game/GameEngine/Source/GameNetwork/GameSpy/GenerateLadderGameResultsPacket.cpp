@@ -96,7 +96,13 @@ class ScoreKeeper{public:
  int getTotalMoneyEarned()const{return earnings;}
 
 };
-class Player {public:char prefix[4];PlayerTemplate*playerTemplate;char gap[0x340];ScoreKeeper keeper;ScoreKeeper*getScoreKeeper(){return &keeper;}const PlayerTemplate*getPlayerTemplate()const{return playerTemplate;}};
+class Player {public:char prefix[4];PlayerTemplate*playerTemplate;char gap[0x340];ScoreKeeper keeper;const PlayerTemplate*getPlayerTemplate()const{return playerTemplate;}};
+// Retail generateLadderGameResultsPacket+2DC adds 0x348 to the Player pointer.
+// This accessor stays local to this partial Player view.
+static __forceinline ScoreKeeper *getScoreKeeper(Player *player)
+{
+ return reinterpret_cast<ScoreKeeper *>(reinterpret_cast<char *>(player) + 0x348);
+}
 enum NameKeyType {NAMEKEY_INVALID=0};
 class NameKeyGenerator {public:NameKeyType nameToKey(const char*);};
 class PlayerList {public:Player*findPlayerWithNameKey(NameKeyType);};
@@ -157,7 +163,7 @@ AsciiString GameSpyStagingRoom::generateLadderGameResultsPacket()
   playerName=TheGameInfo->getSlot(i)->internalName;
   if(p[i]){
    GameSpyGameSlot*slot=&slots[i];
-   ScoreKeeper*keeper=p[i]->getScoreKeeper();
+   ScoreKeeper*keeper=getScoreKeeper(p[i]);
    AsciiString playerName=((Rva00505D10StringOwner*)slot)->value();
    int gsPlayerID=slot->profileID;
    PSPlayerStats stats=TheGameSpyPSMessageQueue->findPlayerStatsByID(gsPlayerID);
