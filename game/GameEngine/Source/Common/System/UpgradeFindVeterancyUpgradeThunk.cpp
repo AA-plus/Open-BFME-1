@@ -31,7 +31,7 @@ extern const char *TheVeterancyNames[];
 __declspec(noinline) static AsciiString getVetUpgradeName(VeterancyLevel v) {
     AsciiString tmp;
     tmp = "Upgrade_Veterancy_";
-    tmp.concat(TheVeterancyNames[v]);
+    tmp.StringBase<char>::concat(TheVeterancyNames[v]);
     return tmp;
 }
 
