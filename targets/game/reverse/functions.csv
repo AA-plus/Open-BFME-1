@@ -36538,7 +36538,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_009a9980@@YAXXZ,,0x009A9980,155,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009a9a20@@YAXXZ,,0x009A9A20,98,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009aa4f0@@YAXXZ,,0x009AA4F0,606,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00daa4f0
-?d_009ab9d0@@YAXXZ,,0x009AB9D0,1509,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00dab9d0
 ?d_009acf90@@YAXXZ,,0x009ACF90,1976,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009adaa0@@YAXXZ,,0x009ADAA0,727,game/gen_asm/d_009a5b80.asm,matched,gen-dump;ghidra=FUN_00dadaa0
 ?d_009add80@@YAXXZ,,0x009ADD80,2324,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
@@ -36552,8 +36551,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_009b3f40@@YAXXZ,,0x009B3F40,555,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009b4170@@YAXXZ,,0x009B4170,539,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009b4390@@YAXXZ,,0x009B4390,610,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00db4390
-?d_009b46e0@@YAXXZ,,0x009B46E0,94,game/gen_asm/d_009af200.asm,matched,gen-dump;ghidra=FUN_00db46e0
-?d_009b4a10@@YAXXZ,,0x009B4A10,1661,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00db4a10
 ?d_009b5420@@YAXXZ,,0x009B5420,272,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0;ghidra=FUN_00db5420
 ?d_009b5530@@YAXXZ,,0x009B5530,768,game/gen_asm/d_009af200.asm,matched,gen-dump;ghidra=FUN_00db5530
 ?d_009b58f0@@YAXXZ,,0x009B58F0,511,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_00db58f0
@@ -171981,3 +171978,9 @@ _Rva009B0730,,0x009B0730,1583,game/GameEngine/Source/Common/BfmeVp6LoopFilter.cp
 ?Rva009B65F0Update@@YAXPAEE@Z,,0x009B65F0,331,game/GameEngine/Source/Common/Rva009B65F0Update.cpp,matched,Complete caller 009ABFF9 establishes two cdecl words; probability fields and table column induction; evidence=targets/game/reverse/identity_evidence/009b65f0-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
 ?Rva009B6080InsertSorted@@YAXPAURva009B6080Record@@HPAH@Z,,0x009B6080,88,game/GameEngine/Source/Common/Rva009B6080InsertSorted.cpp,matched,Static C++ recreates decoded ESI and EDX private argument convention; two complete returns; evidence=targets/game/reverse/identity_evidence/009b6080-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
 ?Record_DX8_Polys_And_Vertices@Debug_Statistics@@YAXHHABVShaderClass@@@Z,,0x009373A0,91,game/Libraries/Source/WWVegas/WW3D2/statistics.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/009373a0-statistics-signature.md;Global ShaderClass signature proven by statistics.h and matched DX8Wrapper Draw; existing namespace view reads the same shader bits;model=gpt-6.1-sol;host=fleet
+?Rva009B46E0ReadBits@@YAIPAUVp6RawBits@@H@Z,,0x009B46E0,94,game/GameEngine/Source/Common/Rva009B4A10HuffTokens.cpp,matched,Open BFME 2 HuffTokens.cpp donor at game.dat 0x001C4FE0; decoded private EAX state ECX count ABI; needed by assigned parent;model=gpt-6.1-sol;host=fleet
+?Rva009B4A10@@YAEPAEPAFH@Z,,0x009B4A10,1661,game/GameEngine/Source/Common/Rva009B4A10HuffTokens.cpp,matched,Open BFME 2 HuffTokens.cpp donor at game.dat 0x001C5310; address identity; decoded cdecl arguments and AL result;model=gpt-6.1-sol;host=fleet
+?d_009ab9d0@@YAEPAXPAFHPAE2@Z,,0x009AB9D0,1509,game/GameEngine/Source/Common/Rva009AB9D0ReadTokens.cpp,matched,Open BFME 2 ReadTokens.cpp donor at game.dat 0x001BC3D0; decoded five argument cdecl byte result; bank name retained; independent layout and ABI evidence;model=gpt-6.1-sol;host=fleet
+?Rva009B4900@@YAIPAURva009B4900Reader@@PBTRva009B4900Prefix@@PBURva009B4900Node@@@Z,,0x009B4900,269,game/GameEngine/Source/Common/Rva009B4900ExtractToken.cpp,matched,Open BFME 2 Rva001C5200ExtractTokenN.cpp donor at game.dat 0x001C5200; complete INT3-delimited extent 009B4900..009B4A0D; bank identity retained; decoded private EAX prefix EDX reader EBX tree ABI;model=gpt-6.1-sol;host=fleet
+?Rva009B4770SkipBits@@YAXPAUVp6RawBits@@H@Z,,0x009B4770,60,game/GameEngine/Source/Common/Rva009B4770SkipBits.cpp,matched,Open BFME 2 Rva001C5070SkipBits.cpp donor at game.dat 0x001C5070; complete INT3-delimited extent 009B4770..009B47AC; decoded private EAX state ECX count ABI;model=gpt-6.1-sol;host=fleet
+?Rva009B4740PeekBits@@YAIPAUVp6RawBits@@I@Z,,0x009B4740,47,game/GameEngine/Source/Common/Rva009B4740PeekBits.cpp,matched,Open BFME 2 Rva001C5040PeekBits.cpp donor at game.dat 0x001C5040; complete INT3-delimited extent 009B4740..009B476F; decoded private EAX state ESI count ABI;model=gpt-6.1-sol;host=fleet
