@@ -1,5 +1,5 @@
 // ?d_008b0ee0@@YAXXZ
-// partial score=0.3182 date=2026-10-03
+// partial score=0.3264 date=2026-10-11
 // cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 // RVA 008B0EE0. Address-qualified property dispatch; retail extent includes two switch tables.
 struct Rva00899560Value;
@@ -8,12 +8,12 @@ struct Rva00899560Pool {
     Rva00899560Value **m_items;
     template <class T> __forceinline void addPooled(T *v) {
         int &count = m_count;
-        if (count >= m_capacity) {
+        if (count < m_capacity) {
+            m_items[count] = (Rva00899560Value *)v;
+            ++count;
+        } else {
             v->m_flags &= 0xBFFFFFFF;
-            return;
         }
-        m_items[count] = (Rva00899560Value *)v;
-        ++count;
     }
 };
 extern Rva00899560Pool *g_rva8CD130IdleHook;
@@ -682,7 +682,7 @@ Rva00899560Value *rva008B0EE0(Rva008B0EE0Owner *owner, const BfmeStrVKI &key) {
 }
 
 extern "C" void *bfmeVft1029A[];
-BfmeA1029::BfmeA1029(int value) {
+inline BfmeA1029::BfmeA1029(int value) {
     bfmeBase1029(9, 8);
     callback = value;
     vtable = bfmeVft1029A;
