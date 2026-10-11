@@ -39,25 +39,7 @@ public:
 };
 #undef BFME_INGAME_UI_SLOT
 
-template <typename T> class StringBase
-{
-	friend class AsciiString;
-
-private:
-	StringBase( const T *text );
-	StringBase( const StringBase<T> &other );
-	~StringBase();
-
-	void *m_data;
-};
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString( const char *text ) : StringBase<char>( text ) {}
-	~AsciiString() {}
-};
+#include "ascii_string.h"
 
 #define BFME_WINDOW_MANAGER_SLOT(n) virtual void slot##n();
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameClient/GameWindowManager.h
@@ -85,7 +67,7 @@ void HideDiplomacy( void );
 void HideInGameChat( void );
 // ControlBar::hidePurchaseScience at 0x00598F30, reached this-less through
 // ILT 0x0003576F where the ZH twin called HideQuitMenu.
-void _bfme_hidePurchaseScience( void );
+void j_0003576f( void );
 void HideSaveLoadMenu( void );
 
 // upstream: reference ShowDisconnectWindow loads Menus/DisconnectScreen.wnd;
@@ -98,7 +80,7 @@ void ShowDisconnectWindow( void )
 	{
 		HideDiplomacy();
 		HideInGameChat();
-		_bfme_hidePurchaseScience();
+		j_0003576f();
 		HideSaveLoadMenu();
 		TheInGameUI->setQuitMenuVisible( true );
 		disconnectMenuLayout = TheWindowManager->winCreateLayout(
