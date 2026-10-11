@@ -41,18 +41,24 @@ also counts names referenced only from a COMDAT copy link.exe discards.
   python3 tools/link_check.py --publish                   # write targets/game/reverse/link_queue.csv
   python3 tools/link_check.py next [--no-claim]           # serve + claim the top open queue row
   python3 tools/link_check.py near [--max K] [--shared] [--all]  # files that link once calls use the row names
+  python3 tools/link_check.py near --packet game/path/File.cpp   # one near file's repair packet
 
 THE QUEUE. The daily census publishes --next's ranking as link_queue.csv (no
 index needed to read it), and `next` serves its best row that is not claimed,
-not landed since the census (a Claim-Lease trailer for its key) and whose
-files have not changed since the census. Names in a family (FAMILIES) have one
-owner each and are served only with `next --family F`.
+not landed since the census (a Claim-Lease trailer for its key) and that still
+has a file neither changed since the census nor linked at a later one (the
+tracked link_status.csv, linked_since). Names in a family (FAMILIES) have one
+owner each and are served only with `next --family F`. `near` drops the files
+a later census saw link and those a re_attempts.log verdict blocked at the
+current census (re_log adds census= to link-lane verdicts), and gives each
+other file a serve/skip/escalate verdict from its packet.
 """
 import argparse
 import collections
 import csv
 import hashlib
 import json
+import os
 import pickle
 import re
 import subprocess
@@ -199,6 +205,38 @@ def load_index():
             "  `link_check.py next` needs neither: it reads targets/game/reverse/link_queue.csv")
     with INDEX.open("rb") as handle:
         return pickle.load(handle)
+
+
+RECEIPTS = "evaluated"  # beside INDEX: one receipt per (row, source) of a checked file (re_log.EVALUATED)
+
+
+def receipt_name(rva, name, source):
+    """A receipt's file: its RVA, then its row's own identity (name and
+    source), so rows of two sources at one RVA never share one."""
+    return f"0x{rva:08x}-{hashlib.sha1(f'{name}{chr(0)}{source}'.encode('utf-8')).hexdigest()[:16]}.json"
+
+
+def note_evaluated(rows, census):
+    """Record, per ledger row of a file just judged, the census of the index
+    that judged it -- read from the loaded index itself, never from a file's
+    metadata -- so a re_log verdict on that row carries the census it was
+    judged against and the file it was judged in (re_log.evaluated_census).
+    Keyed by RVA, row name and source: 385 RVAs have rows in several sources
+    (GPT-6.1-Sol, round 3). A re-check of the same file replaces its receipt."""
+    rows = list(rows)
+    if not census or not rows:
+        return
+    folder = INDEX.parent / RECEIPTS
+    try:
+        folder.mkdir(parents=True, exist_ok=True)
+        for row in rows:
+            note = {"census": census, "name": row["name"], "source": row["source"]}
+            path = folder / receipt_name(int(row["target_rva"], 16), row["name"], row["source"])
+            temp = path.with_name(f"{path.name}.{os.getpid()}.tmp")
+            temp.write_text(json.dumps(note), encoding="utf-8")
+            temp.replace(path)
+    except (OSError, ValueError):
+        pass  # bookkeeping: a verdict without a census is served again, never hidden
 
 
 def duplicate(name, position, exclusive, own, index):
@@ -799,12 +837,48 @@ def family_of(name):
                  if pattern.search(name) and not (family == "stlport" and PLAIN.match(name))), "")
 
 
-def queue_rows(index):
+def same_commit(a, b):
+    """Two commit spellings, full or abbreviated (7+ hex digits), name one commit."""
+    width = min(len(a or ""), len(b or ""))
+    return width >= 7 and a[:width].lower() == b[:width].lower()
+
+
+def _is_ancestor(old, new):
+    """True when `old` is `new` or an ancestor of it; None when git cannot say."""
+    code = subprocess.run(["git", "merge-base", "--is-ancestor", old, new], cwd=ROOT,
+                          capture_output=True).returncode
+    return {0: True, 1: False}.get(code)
+
+
+def linked_since(census):
+    """(sources, status census, note): the files the tracked link_status.csv
+    says link, when its census is `census` or a later one. The local index
+    and the published queue are only as fresh as their census; the daily
+    census rewrites link_status.csv, and measured 2026-10-10 150 of 371 `near`
+    files from the 10-09 index already linked at 10-10. A status older than
+    `census`, or a census git cannot order, filters nothing (and says why)."""
+    history = link_census.read_history()
+    status = history[-1]["commit"] if history else ""
+    if not status or not link_census.STATUS.exists():
+        return frozenset(), "", "no tracked link census to freshen it"
+    if census and not same_commit(census, status):
+        newer = _is_ancestor(census, status)
+        if newer is None:
+            return frozenset(), status, f"git cannot order census {census} against link_status.csv's {status}"
+        if not newer:
+            return frozenset(), status, f"link_status.csv measured {status}, not after census {census}"
+    with link_census.STATUS.open(newline="", encoding="utf-8") as handle:
+        linked = frozenset(row["source"] for row in csv.DictReader(handle) if row["linked"] == "yes")
+    return linked, status, ""
+
+
+def queue_rows(index, linked=frozenset()):
     """The one linking queue: every blocker name that is some unlinked file's
-    ONLY blocker, ranked by the bytes those files would link."""
+    ONLY blocker, ranked by the bytes those files would link. `linked`
+    (linked_since) are files a later census saw link."""
     gain, files = collections.Counter(), collections.defaultdict(list)
     for source, entry in index["blockers"].items():
-        if entry["linked"]:
+        if entry["linked"] or source in linked:
             continue
         names = (set(entry["unresolved"]) | set(entry["duplicates"]) | set(entry["losers"])
                  | set(entry.get("wrong_selected", ())) | set(entry.get("alias_target", ()))
@@ -829,9 +903,10 @@ def queue_rows(index):
 
 def next_names(index, limit):
     """Print the head of the queue (queue_rows)."""
-    rows = queue_rows(index)
+    linked, status, note = linked_since(index["meta"].get("commit", ""))
+    rows = queue_rows(index, linked)
     print(f"blocker names that are some file's only blocker (census {index['meta'].get('date', '?')} at "
-          f"{index['meta'].get('commit', '?')}):")
+          f"{index['meta'].get('commit', '?')}; {_freshness(linked, status, note)}):")
     print(f"  {'bytes':>9} {'files':>5}  kind        name")
     for row in rows[:limit]:
         family = f"  [family {row['family']}]" if row["family"] else ""
@@ -839,9 +914,13 @@ def next_names(index, limit):
     print(f"  {len(rows):,} names in all, {sum(row['bytes_unlocked'] for row in rows):,} bytes")
 
 
+def _freshness(linked, status, note):
+    return note or f"files linked at census {status} dropped"
+
+
 def publish(index, path=QUEUE, limit=QUEUE_LIMIT):
     """Write the queue's top `limit` rows as the tracked CSV every host serves from."""
-    rows = queue_rows(index)[:limit]
+    rows = queue_rows(index, linked_since(index["meta"].get("commit", ""))[0])[:limit]
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, QUEUE_FIELDS, lineterminator="\n")
@@ -889,6 +968,7 @@ def serve(argv):
     changed = set(_git("diff", "--name-only", census, tip, check=True).split())
     landed = {int(key, 16) for key, _ in claims.LEASE_TRAILER.findall(
         _git("log", "--format=%B", "--grep=^Claim-Lease:", f"{census}..{tip}", check=True))}
+    linked, status, note = linked_since(census)
     held = claims.active()
     who = claims.owner()
     if args.family:
@@ -907,12 +987,18 @@ def serve(argv):
     shown = 0
     for row in rows:
         key, files = claim_key(row["name"]), row["files"].split(";")
+        # A file another census saw link, or one changed since this census,
+        # is no longer the census's evidence; the row stands for the rest.
+        # Skipping a row for ANY changed file lost row 1 (115 files) on 10-10.
+        still = [source for source in files if source not in linked and source not in changed]
         if row["family"] != (args.family or ""):
             skipped[f"family {row['family']}" if row["family"] else "not in family"] += 1
         elif key in landed:
             skipped["landed since the census"] += 1
-        elif changed.intersection(files):
-            skipped["file changed since the census"] += 1
+        elif all(source in linked for source in files):
+            skipped[f"linked at census {status}"] += 1
+        elif not still:
+            skipped["every file linked or changed since the census"] += 1
         elif not args.family and key in held:
             skipped["claimed"] += 1
         else:
@@ -927,9 +1013,12 @@ def serve(argv):
                     skipped["claimed"] += 1
                     continue
                 lease = got.leases[key]
-            print(f"link queue #{row['rank']} (census {census}): {row['name']}\n"
-                  f"  {row['kind']}; unlocks {int(row['bytes_unlocked']):,} B in {len(files)} file(s)\n"
-                  f"  fix: {row['hint']}\n  files: {' '.join(files[:8])}{' ...' if len(files) > 8 else ''}")
+            gone = (f"; {len(files) - len(still)} other(s) linked or changed since the census"
+                    if len(still) < len(files) else "")
+            print(f"link queue #{row['rank']} (census {census}; {_freshness(linked, status, note)}): {row['name']}\n"
+                  f"  {row['kind']}; unlocked {int(row['bytes_unlocked']):,} B in {len(files)} file(s) at the census\n"
+                  f"  fix: {row['hint']}\n  files: {len(still)} open{gone}: "
+                  f"{' '.join(still[:8])}{' ...' if len(still) > 8 else ''}")
             if lease:
                 print(f"  claimed 0x{key:08X}. Commit-message trailer:  Claim-Lease: 0x{key:08X}={lease}\n"
                       f"  after the push: python3 tools/claims.py release --landed <sha>")
@@ -942,20 +1031,60 @@ def serve(argv):
 
 
 NEAR_BLOCKING = ("duplicates", "losers", "wrong_selected", "alias_target", "alias_unknown")
+GUARDED = "a real name would be lost or doubled"
+LINKED_LATER = "linked at a later census"
+BLOCKED_NOW = "blocked at this census (re_attempts.log)"
 
 
-def near_rows(index, judge, most=None, under="", every=False, skipped=None):
+def row_verdict(records, row, source, shared=frozenset()):
+    """The latest re_attempts.log verdict about this ledger row in this file,
+    or None: the later of the one judged here (re_log census-source=) and
+    one naming no file -- the latter only when no other source has a row of
+    that name at that RVA. A verdict judged in another file is not this
+    file's; unsure is none (fail open). `records` is
+    re_log.latest_link_records()."""
+    rva, name = int(row["target_rva"], 16), row["name"]
+    found = [records.get((rva, name, source))]
+    if (rva, name) not in shared:
+        found.append(records.get((rva, name, "")))
+    found = [entry for entry in found if entry]
+    return max(found, key=lambda entry: entry[0])[1] if found else None
+
+
+def blocked_files(callers, records, census, shared=frozenset()):
+    """{source: why} for the files a caller row of which has, as its latest
+    verdict about that row in that file (row_verdict), a deferral or dead end
+    recorded at `census` (re_log census=): the same evidence would block it
+    again. A verdict from an earlier census is stale and blocks nothing.
+    `callers` is {source: ledger rows}, `records` re_log.latest_link_records(),
+    `shared` the (rva, name) pairs of several sources."""
+    import re_log
+    stops = re_log.DEFERRED_STATUSES | re_log.DEAD_END_STATUSES
+    found = {}
+    for source, rows in callers.items():
+        for row in rows:
+            fields = row_verdict(records, row, source, shared)
+            if fields and fields[3] in stops and same_commit(re_log.census_of(fields[4]), census):
+                found[source] = f"{fields[3]} {fields[1]} at census {census}"
+                break
+    return found
+
+
+def near_rows(index, judge, most=None, under="", every=False, skipped=None, linked=frozenset(), blocked=None):
     """Unlinked files whose every blocker is an unresolved call name a
     respelling fixes: the name is pinned, and the ledger row at its pinned
     address (alias_guard.Judge.respell) is a C++ definition that passes the
     alias check. A file relying on an alias nothing can judge (alias_unknown)
     is not near. A respelling that would put a second real name on a body,
     or turn a real call name into another tree's placeholder
-    (alias_guard.two_real_names), skips its file unless `every`; `skipped`
-    (a Counter) counts the skips.
+    (alias_guard.two_real_names), skips its file unless `every`; so does a
+    file a later census saw link (`linked`, linked_since) or one blocked at
+    this census (`blocked`, blocked_files). `skipped` (a Counter) counts the
+    skips.
     Largest first: [{source, bytes, fixes: [(name, row name, note)]}]."""
     rows = []
     skipped = collections.Counter() if skipped is None else skipped
+    blocked = blocked or {}
     for source, entry in index["blockers"].items():
         if entry["linked"] or not source.startswith(under) or entry["addresses"]:
             continue
@@ -972,12 +1101,174 @@ def near_rows(index, judge, most=None, under="", every=False, skipped=None):
             guarded = guarded or bool(guard)
             fixes.append((name, target, "; ".join(filter(None, (guard, note)))))
         else:
-            if guarded and not every:
-                skipped["a real name would be lost or doubled"] += 1
-                continue
-            rows.append({"source": source, "bytes": index["bytes"].get(source, 0), "fixes": fixes})
+            if source in linked:
+                skipped[LINKED_LATER] += 1
+            elif source in blocked:
+                skipped[BLOCKED_NOW] += 1
+            elif guarded and not every:
+                skipped[GUARDED] += 1
+            else:
+                rows.append({"source": source, "bytes": index["bytes"].get(source, 0), "fixes": fixes})
     rows.sort(key=lambda row: (-row["bytes"], row["source"]))
     return rows
+
+
+GENERATED = (("game/gen_small/", "gen_small"), ("game/gen_asm/", "gen_asm"))
+CONVENTIONS = {"A": "cdecl", "E": "thiscall", "G": "stdcall", "I": "fastcall"}
+STATIC_OR_FREE = frozenset("CDKLSTYZ")  # no `this` cv letter before the convention
+MEMBER = frozenset("ABEFIJMNQRUV")       # a cv letter, then the convention
+# G H O P W X are adjustor thunks: an encoded adjustment precedes the cv letter
+# (?f@C@@W3AEXXZ is a thiscall thunk, not cdecl; GPT-6.1-Sol, review round 1).
+
+
+def convention(name):
+    """The calling convention a link name spells: a C name by its decoration,
+    a C++ name by the letter after its scope. '' for data, a thunk, or a name
+    whose scope is a template (its first `@@` may close a template argument)."""
+    if not name.startswith("?"):
+        return ("stdcall" if re.fullmatch(r"_\w+@\d+", name) else
+                "fastcall" if re.fullmatch(r"@\w+@\d+", name) else "cdecl")
+    import name_regression
+    shape = name_regression.declaration_shape(name)
+    if shape is not None:   # the full reader, template scopes too: its letter, or '' for data
+        return CONVENTIONS.get(shape[3], "") if len(shape) == 6 else ""
+    at = name.find("@@")
+    if at < 0 or "?$" in name[:at]:
+        return ""
+    lead = name[at + 2:at + 3]
+    if lead in STATIC_OR_FREE:
+        letter = at + 3
+    elif lead in MEMBER:
+        letter = at + 4
+    else:
+        return ""      # data, a thunk, or a special name
+    return CONVENTIONS.get(name[letter:letter + 1], "")
+
+
+def row_kind(row):
+    """authored, gen_small, gen_asm or gen-alias: how far the row is from real source."""
+    if row is None:
+        return "no row"
+    if re.search(r"(?:^|[;\s])gen-alias(?:[;\s=]|$)", row.get("notes") or ""):
+        return "gen-alias"
+    return next((kind for prefix, kind in GENERATED if row["source"].startswith(prefix)), "authored")
+
+
+def packet_context(census, changed):
+    """What every packet reads once: matched ledger rows by source and RVA,
+    the latest re_attempts.log verdicts, the census the verdicts are judged
+    against, and the files changed since the index's census."""
+    import re_log
+    by_source, by_rva = collections.defaultdict(list), collections.defaultdict(list)
+    sources = collections.defaultdict(set)
+    for row in link_census.ledger():
+        by_source[row["source"]].append(row)
+        by_rva[int(row["target_rva"], 16)].append(row)
+        sources[int(row["target_rva"], 16), row["name"]].add(row["source"])
+    shared = frozenset(key for key, found in sources.items() if len(found) > 1)
+    return {"by_source": by_source, "by_rva": by_rva, "latest": re_log.latest_link_records(), "census": census,
+            "changed": changed, "refused": set(), "shared": shared}
+
+
+def preflight(rows, ctx):
+    """Load name_regression's verdict on every respelling `rows` need, once."""
+    import name_regression
+    pairs = {pair for row in rows for call, target, _ in row["fixes"]
+             for pair in name_regression.symbol_pairs(call, target) or ()}
+    ctx["refused"] = name_regression.refused_respellings(pairs)
+
+
+def packet(row, judge, ctx):
+    """The repair packet for one near file: its caller rows, each respelling
+    with the row it targets (address, size, source, kind), the conventions
+    both names spell, the name_regression preflight, the caller rows' prior
+    verdicts (current or stale against the census), and a verdict:
+    skip (another lane's or the next census's), escalate (a respelling is not
+    enough or a hook would refuse it) or serve."""
+    import build
+    import name_regression
+    import re_log
+    source, skip, escalate, fixes = row["source"], [], [], []
+    if source in ctx["changed"]:
+        skip.append("changed since the index's census: the next census re-judges it")
+    for call, target, note in row["fixes"]:
+        address = judge.pinned(call)
+        places = [] if address is None else list(dict.fromkeys((address, judge.normal(address))))
+        owners = [r for at in places for r in ctx["by_rva"].get(at, ()) if not r["name"].startswith("?j_")]
+        owner = next((r for r in owners if build.ledger_object_symbol(r) == target), owners[0] if owners else None)
+        kind, family = row_kind(owner), family_of(call) or family_of(target)
+        spelled = convention(call), convention(target)
+        pairs = name_regression.symbol_pairs(call, target)
+        refused = sorted(p for p in pairs or () if p in ctx["refused"])
+        fixes.append({"call": call, "target": target, "note": note, "row": owner, "kind": kind, "family": family,
+                      "conventions": spelled, "refused": refused, "paired": pairs is not None})
+        shapes = name_regression.declaration_shape(call), name_regression.declaration_shape(target)
+        if pairs is None and None in (name_regression.mangled_identifiers(call),
+                                      name_regression.mangled_identifiers(target)):
+            escalate.append("a name the preflight cannot read: name_regression decides at commit")
+        elif pairs is None or (None not in shapes and shapes[0] != shapes[1]):
+            # not a rename: another operator or member kind, return, or parameter list
+            # (bfmeDeleteVMP(void*, unsigned) called as operator delete(void*); GPT-6.1-Sol, round 2)
+            escalate.append("the call and the row differ in shape (scope, kind, return or parameters): "
+                            "a declaration change, not a respelling")
+        if family:
+            skip.append(f"family {family}: its owner serves it (next --family {family})")
+        if kind != "authored":
+            escalate.append(f"the row at the pin is {kind}: recover its source first")
+        if all(spelled) and spelled[0] != spelled[1]:
+            escalate.append(f"{spelled[0]} call to a {spelled[1]} row: a declaration change, not a respelling")
+        if refused:
+            escalate.append("name_regression refuses " + ", ".join(f"{a} -> {b}" for a, b in refused))
+        if "tools/one_identity.py first" in note:
+            escalate.append("two names, one body: tools/one_identity.py first")
+        if "a C name called as a C++ row" in note:
+            escalate.append("a C name called as a C++ row: prove which name is right")
+    stops = re_log.DEFERRED_STATUSES | re_log.DEAD_END_STATUSES
+    callers = sorted(ctx["by_source"].get(source, ()), key=lambda r: int(r["target_rva"], 16))
+    prior = []
+    for caller in callers:
+        fields = row_verdict(ctx["latest"], caller, source, ctx.get("shared", ()))
+        if fields and fields[3] in stops:
+            tagged = re_log.census_of(fields[4])
+            when = ("current" if same_commit(tagged, ctx["census"]) else
+                    f"stale: census {tagged}" if tagged else "no census")
+            prior.append({"rva": fields[1], "status": fields[3], "when": when, "evidence": fields[4]})
+    reasons = list(dict.fromkeys(skip or escalate))
+    return {**row, "verdict": "skip" if skip else "escalate" if escalate else "serve", "reasons": reasons,
+            "callers": callers, "packet_fixes": fixes, "prior": prior}
+
+
+def print_packet(item, census):
+    source = item["source"]
+    print(f"FILE {source} ({item['bytes']:,} B, {len(item['fixes'])} blocker(s), census {census})")
+    print(f"  verdict: {item['verdict']}" + (f" ({'; '.join(item['reasons'])})" if item["reasons"] else ""))
+    for caller in item["callers"]:
+        print(f"  caller  {caller['name']} {caller['target_rva']} {caller['target_size']} B")
+    for fix in item["packet_fixes"]:
+        owner = fix["row"]
+        where = (f"{owner['target_rva']} {owner['target_size']} B {fix['kind']} {owner['source']}"
+                 if owner else "no matched row")
+        print(f"  call    {fix['call']}\n    ->    {fix['target']}\n          row {where}; convention "
+              f"{fix['conventions'][0] or '?'} -> {fix['conventions'][1] or '?'}"
+              + (f"; family {fix['family']}" if fix["family"] else "")
+              + (f"\n          name_regression refuses {fix['refused']}" if fix["refused"] else "")
+              + (f"\n          [{fix['note']}]" if fix["note"] else ""))
+    for verdict in item["prior"]:
+        print(f"  prior   {verdict['status']} {verdict['rva']} ({verdict['when']}): {verdict['evidence'][:160]}")
+    first = item["callers"][0] if item["callers"] else None
+    print(f"  before  python3 tools/link_check.py {source}\n"
+          f"  edit    declare each row's function and call it by the row name (never /alternatename)\n"
+          f"  after   ./build.sh {source}   (every row still matches)\n"
+          f"          python3 tools/link_check.py {source}   (LINKS, LINKED 0 -> {item['bytes']:,})")
+    if first:
+        print(f"  blocked {record_command(first, census)}")
+
+
+def record_command(caller, census):
+    """The re_log command that blocks this file at `census` (the index near served it from)."""
+    tag = f" census={census} census-source={caller['source']}" if census else ""
+    return (f"python3 tools/re_log.py record '{caller['name']}' {caller['target_rva']} {caller['target_size']} "
+            f"blocked \"link_check near: <what stopped it> blocker=<family>/<detail>{tag} t=<min> model=<model>\"")
 
 
 def near(argv):
@@ -985,7 +1276,10 @@ def near(argv):
     the ledger's row names (the call-by-row-name lane), with each respelling.
     Every respelling comes from this tree's symbols.csv and functions.csv:
     the row at the call name's pinned address. Declare that row's function
-    and call it; never alias it (/alternatename) unless an ABI shape forces it."""
+    and call it; never alias it (/alternatename) unless an ABI shape forces it.
+    Files a later census saw link, and files blocked at this census, are
+    dropped; the rest get a verdict (packet()) and only `serve` is listed
+    unless --verdict says otherwise. --packet FILE prints one file's packet."""
     ap = argparse.ArgumentParser(prog="link_check.py near", description=near.__doc__)
     ap.add_argument("--max", type=int, default=0, help="only files with at most this many blockers")
     ap.add_argument("--under", default="", help="only sources under this path prefix")
@@ -995,6 +1289,9 @@ def near(argv):
     ap.add_argument("--all", action="store_true",
                     help="also serve files whose respelling puts two real names on one body or turns a real call "
                          "name into another tree's placeholder (run tools/one_identity.py first)")
+    ap.add_argument("--verdict", choices=("serve", "skip", "escalate", "any"), default="serve",
+                    help="list files with this packet verdict (default serve)")
+    ap.add_argument("--packet", metavar="FILE", help="print the full repair packet for one near file")
     args = ap.parse_args(argv)
     index = load_index()
     census = index["meta"].get("commit", "")
@@ -1002,26 +1299,51 @@ def near(argv):
     if index.get("alias_schema", 0) < ALIAS_SCHEMA:
         print("link_check near: this census index predates alias_unknown, so a file relying on an alias nothing "
               "can judge may be listed; the next census fixes that", file=sys.stderr)
+    linked, status, note = linked_since(census)
+    # A verdict stands while near serves from the index it was judged against
+    # (re_log tags the census link_check loaded): the same evidence again.
+    ctx = packet_context(census, changed)
     skipped = collections.Counter()
-    rows = near_rows(index, alias_judge(), args.max, args.under, args.all, skipped)
+    judge = alias_judge()
+    blocked = blocked_files(ctx["by_source"], ctx["latest"], census, ctx["shared"])
+    rows = near_rows(index, judge, args.max, args.under, args.all or bool(args.packet), skipped, linked, blocked)
+    preflight(rows, ctx)
+    items = [packet(row, judge, ctx) for row in rows]
+    if args.packet:
+        found = [item for item in items if item["source"] == args.packet]
+        if not found:
+            why = (f"linked at census {status}" if args.packet in linked else
+                   f"blocked: {blocked[args.packet]} (re_attempts.log)" if args.packet in blocked else
+                   "not every blocker is a call a respelling fixes")
+            print(f"link_check near: {args.packet} is not a near file at census {census or '?'}: {why}")
+            return 1
+        note_evaluated(found[0]["callers"], census)
+        print_packet(found[0], census)
+        return 0
+    tally = collections.Counter(item["verdict"] for item in items)
+    hints = {GUARDED: ": run tools/one_identity.py first (--all lists them)"}
     print(f"files every blocker of which a call respelling fixes (census {index['meta'].get('date', '?')} at "
-          f"{census or '?'}): {len(rows):,} files, {sum(r['bytes'] for r in rows):,} bytes"
-          + "".join(f"; {n:,} skipped: {why}: run tools/one_identity.py first (--all lists them)"
-                    for why, n in skipped.items()))
+          f"{census or '?'}; {_freshness(linked, status, note)}): {len(items):,} files, "
+          f"{sum(r['bytes'] for r in items):,} bytes; "
+          + ", ".join(f"{tally[v]:,} {v}" for v in ("serve", "skip", "escalate"))
+          + "".join(f"; {n:,} skipped: {why}{hints.get(why, '')}" for why, n in skipped.items()))
+    shown = [item for item in items if args.verdict in ("any", item["verdict"])]
     if args.shared:
         gain, files = collections.Counter(), collections.Counter()
-        for row in rows:
+        for row in shown:
             for fix in row["fixes"]:
                 gain[fix[:2]] += row["bytes"] / len(row["fixes"])
                 files[fix[:2]] += 1
         for (name, target), value in gain.most_common(args.limit):
             print(f"  {int(value):>8,} {files[name, target]:>4} files  {name}\n      -> {target}")
         return 0
-    for row in rows[:args.limit]:
-        stale = "  (changed since the census: recheck)" if row["source"] in changed else ""
-        print(f"  {row['bytes']:>7,}  {row['source']}{stale}")
-        for name, target, note in row["fixes"]:
+    for item in shown[:args.limit]:
+        why = f" ({'; '.join(item['reasons'])})" if item["reasons"] else ""
+        print(f"  {item['bytes']:>7,}  {item['source']}  [{item['verdict']}{why}]")
+        for name, target, note in item["fixes"]:
             print(f"      {name}\n        -> {target}{f'  [{note}]' if note else ''}")
+    if shown:
+        print("  full packet: python3 tools/link_check.py near --packet <file>")
     return 0
 
 
@@ -1051,7 +1373,11 @@ def main(argv=None):
     if not args.paths:
         return 0
     require_common_index(index)
-    truth = link_census.RetailTruth(link_census.ledger())
+    ledger = link_census.ledger()
+    truth = link_census.RetailTruth(ledger)
+    rows_of = collections.defaultdict(list)
+    for row in ledger or ():
+        rows_of[row["source"]].append(row)
     resolved = list({obj.resolve(): (source, obj) for source, obj in
                      (resolve(path, index) for path in args.paths)}.values())  # a file named twice counts once
     outside = sorted(source or obj.name for source, obj in resolved if obj.name not in index["objects"])
@@ -1073,6 +1399,7 @@ def main(argv=None):
             clean.append(False)
             continue
         clean.append(report(source, obj, result, index, now.get(source, 0)))
+        note_evaluated(rows_of.get(source, ()), index["meta"].get("commit", ""))
         entry = index["blockers"].get(source or "", {})
         before += index["bytes"].get(source, 0) if entry.get("linked") else 0
         after += now.get(source, 0) if clean[-1] else 0

@@ -1282,3 +1282,100 @@ def test_pinned_owner_respelled_to_its_address_name_passes(tmp_path):
 
 def test_pinned_owner_respelled_to_another_address_name_fails(tmp_path):
     assert ('CustomPreferenceMapShim', 'Rva00080610Tree') in _pref_case(tmp_path, 'Rva00080610Tree')
+
+
+def test_symbol_pairs_pair_method_with_method_and_owner_with_owner():
+    assert N.symbol_pairs('?release@CodecState@@QAEXXZ', '?release@BfmeThingJT@@QAEXXZ') == [
+        ('CodecState', 'BfmeThingJT')]
+    assert N.symbol_pairs('??1BfmeErasedValue_00627200@@QAE@XZ', '??1QueuedDownload@@QAE@XZ') == [
+        ('BfmeErasedValue_00627200', 'QueuedDownload')]
+    assert N.symbol_pairs('_releaseState', '?release@@YAXXZ') == [('releaseState', 'release')]
+    assert N.symbol_pairs('?f@A@@QAEXXZ', '?f@A@@QAEXH@Z') == []
+    # an operator's owner and an argument's type are renames too (GPT-6.1-Sol, review round 1)
+    assert N.symbol_pairs('??RCodecState@@QBE_NH@Z', '??RBfmeThingJT@@QBE_NH@Z') == [('CodecState', 'BfmeThingJT')]
+    assert N.symbol_pairs('?releaseCodecState@@YAXPAPAUCodecState@@@Z',
+                          '?releaseCodecState@@YAXPAPAUBfmeThingJT@@@Z') == [('CodecState', 'BfmeThingJT')]
+    # names that do not line up, or that the reader cannot parse, get no pairs at all
+    assert N.symbol_pairs('?run@Display@@QAEXPBVImage@@H@Z', '?run@Bfme5Host@@QAEXHH@Z') is None
+    assert N.symbol_pairs('?f@C@@W3AEXXZ', '?f@D@@W3AEXXZ') is None
+
+
+def test_declaration_shape_abstracts_names_and_resolves_parameter_back_references():
+    shape = N.declaration_shape
+    assert shape('?release@CodecState@@QAEXXZ') == shape('?release@BfmeThingJT@@QAEXXZ') == (
+        'named', '::', 'member', 'E', 'X', ('X',))
+    assert shape('??RCodecState@@QBE_NH@Z') == shape('??RBfmeThingJT@@QAE_NH@Z')   # `this` const-ness aside
+    # (Foo*, Foo*) spells its second parameter as a back-reference; (Bar*, Baz*) cannot
+    assert shape('?f@@YAXPAVFoo@@0@Z') == shape('?f@@YAXPAVBar@@PAVBaz@@@Z') == (
+        'named', '', 'free', 'A', 'X', ('PAC', 'PAC'))
+    # another form, kind, return or parameter list is another declaration
+    assert shape('?bfmeDeleteVMP@@YAXPAXI@Z') == ('named', '', 'free', 'A', 'X', ('PAX', 'I'))
+    assert shape('??3Gen007F0170@@SAXPAX@Z') == ('operator 3', '', 'static', 'A', 'X', ('PAX',))
+    assert shape('?bfmeCallDQF@BfmeSubDQF@@QAEXPAVBfmeOtherDQF@@@Z') != shape(
+        '?Get_Texture@ParticleBufferClass@@QBE?AVTextureHandleClass@1@XZ')
+    assert shape('??0Foo@@QAE@ABV0@@Z') == ('operator 0', '', 'member', 'E', '@', ('ABC',))
+    assert shape('?f@@YAXHZZ') == ('named', '', 'free', 'A', 'X', ('H', '...'))
+    assert shape('?TheGlobalData@@3PAVGlobalData@@A') == ('named', '', 'data3', 'PAC')
+    assert shape('_memcpy') is None and shape('?f@C@@W3AEXXZ') is None
+
+
+def test_name_back_references_keep_template_arguments():
+    """Compiled by MSVC: Box<int>::f(Box<int>*) and Crate<float>::g(Crate<float>*).
+    The parameter's class is a name back-reference to the scope's template
+    instance; resolving it keeps <int> against <float> (GPT-6.1-Sol, round 3)."""
+    box, crate = '?f@?$Box@H@@QAEXPAU1@@Z', '?g@?$Crate@M@@QAEXPAU1@@Z'
+    assert N.declaration_shape(box) == ('named', '::<H>', 'member', 'E', 'X', ('PAC<H>',))
+    assert N.declaration_shape(crate) == ('named', '::<M>', 'member', 'E', 'X', ('PAC<M>',))
+    assert N.mangled_identifiers(box) == (['f', 'Box'], ['Box'])
+    # the symbol's own template name is not numbered; the scope's names are (MSVC, as LLVM reads it)
+    assert N.mangled_identifiers(
+        '??$_M_append_dispatch@PAG@?$basic_string@GV?$char_traits@G@_STL@@V?$allocator@G@2@@_STL@@'
+        'AAEAAV01@PAG0ABU__false_type@1@@Z')[1][-4:] == ['basic_string', '_STL', '__false_type', '_STL']
+    assert N.mangled_identifiers('?f@A@@QAEXPAV2@@Z') is None              # a back-reference past the table
+
+
+def test_shape_keeps_each_scope_slot_and_the_convention():
+    """GPT-6.1-Sol, round 4: B<int>::A::f() is not D::C<int>::g(), and a
+    thiscall Box<int>::f(int) is not a cdecl Crate<int>::g(int)."""
+    assert N.declaration_shape('?f@A@?$B@H@@QAEXXZ') != N.declaration_shape('?g@?$C@H@D@@QAEXXZ')
+    assert N.declaration_shape('?f@?$Box@H@@QAEXH@Z') != N.declaration_shape('?g@?$Crate@H@@QAAXH@Z')
+    assert N.declaration_shape('?f@A@?$B@H@@QAEXXZ') == N.declaration_shape('?g@C@?$D@H@@QAEXXZ')
+
+
+def test_mangled_identifiers_reads_scope_then_type_names():
+    assert N.mangled_identifiers('?queueFileForDownload@DownloadManager@@QAEXVAsciiString@@00000_N@Z') == (
+        ['queueFileForDownload', 'DownloadManager'], ['AsciiString'])
+    assert N.mangled_identifiers('?find@Rva009CA040Owner@@QBE?AURva009CA040Result@@ABVAsciiString@@@Z') == (
+        ['find', 'Rva009CA040Owner'], ['Rva009CA040Result', 'AsciiString'])
+    assert N.mangled_identifiers('??0Foo@@QAE@ABV0@@Z') == (['Foo'], ['Foo'])     # a back-reference repeats Foo
+    assert N.mangled_identifiers('??_GFoo@@UAEPAXI@Z') == (['Foo'], [])
+    assert N.mangled_identifiers('??2@YAPAXI@Z') == ([], [])
+    assert N.mangled_identifiers('?TheGlobalData@@3PAVGlobalData@@A') == (['TheGlobalData'], ['GlobalData'])
+    assert N.mangled_identifiers('?set@ScreenZoomFilter@@UAEHW4FilterModes@@@Z') == (
+        ['set', 'ScreenZoomFilter'], ['FilterModes'])
+    assert N.mangled_identifiers('?compareNoCase@?$StringBase@D@@QBEHABV1@@Z') == (
+        ['compareNoCase', 'StringBase'], ['StringBase'])
+    assert N.mangled_identifiers('?f@?$pair@$$CBVAsciiString@@H@_STL@@QAEXXZ') == (
+        ['f', 'pair', '_STL'], ['AsciiString'])
+    assert N.mangled_identifiers('_memcpy') == (['memcpy'], [])
+    for unread in ('?f@C@@W3AEXXZ',                        # an adjustor thunk
+                   '?f@@YAXP6AXH@Z@Z',                      # a function pointer argument
+                   '??_7Foo@@6B@',                          # a vftable
+                   '?f@?A0x12345678@@YAXXZ'):               # an anonymous namespace
+        assert N.mangled_identifiers(unread) is None, unread
+
+
+def test_refused_respellings_is_check_on_a_rename_pair(tmp_path):
+    # an upgrade never reaches git; a downgrade is refused unless check() would accept it
+    assert N.refused_respellings([('BfmeErasedValue_00627200', 'QueuedDownload')], root=tmp_path / 'absent') == set()
+    git(tmp_path, 'init', '-q')
+    git(tmp_path, 'config', 'user.name', 'Fixture')
+    git(tmp_path, 'config', 'user.email', 'fixture@example.invalid')
+    put(tmp_path, 'targets/game/reverse/symbols.csv', 'name,address,notes\n?destroy@Shim@@QAEXXZ,0x00753450,pin\n')
+    put(tmp_path, 'targets/game/reverse/functions.csv',
+        '?j_00753450@@YAXXZ,,0x00753450,5,game/gen_small/thunks_037.cpp,matched,gen-thunk\n')
+    commit(tmp_path)
+    # the pinned stand-in respelled to the ILT row at its own address: accepted, as by check()
+    assert N.refused_respellings([('destroy', 'j_00753450')], root=tmp_path) == set()
+    assert N.refused_respellings([('destroy', 'j_00753454'), ('CodecState', 'BfmeThingJT')], root=tmp_path) == {
+        ('destroy', 'j_00753454'), ('CodecState', 'BfmeThingJT')}

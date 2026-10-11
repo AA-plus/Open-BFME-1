@@ -162,6 +162,31 @@ def latest_records(path=None):
     return latest
 
 
+def latest_link_records(path=None):
+    """{(rva, symbol, census-source): (line index, fields)}: the latest live
+    five-field verdict per row and per file it was judged in ('' when it names
+    none), so verdicts on rows of two sources at one RVA stand side by side
+    (link_check.row_verdict; GPT-6.1-Sol, round 4). A void retracts its
+    (symbol, rva) in every file, as in latest_records."""
+    records = {}
+    path = path or RE_ATTEMPTS
+    if not path.exists():
+        return {}
+    for index, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines()):
+        fields = line.split("\t")
+        if len(fields) < 5:
+            continue
+        symbol, status, rva = _parse(fields)
+        if rva is None:
+            continue
+        if status == VOID_STATUS:
+            for key in [key for key in records if key[:2] == (rva, symbol)]:
+                del records[key]
+        elif status in VERDICT_STATUSES:
+            records[rva, symbol, census_source_of(fields[4])] = index, fields
+    return records
+
+
 def _load():
     global _BY_BOUNDARY, _LATEST, _ATTEMPTS
     if _BY_BOUNDARY is not None:
@@ -597,7 +622,7 @@ def _record(argv):
             f"nothing (5.1% vs 7.5% landing). Bank the body you are about to "
             f"revert, or record `blocked` with your evidence instead.")
     # before _bank: a refused row must not leave a stash behind
-    evidence = _require_tags(status, evidence)
+    evidence = _census_tag(status, rva_text, symbol, _require_tags(status, evidence))
     if stash_text is not None:
         if status != STASH_STATUS:
             raise SystemExit(
@@ -645,6 +670,73 @@ def _require_tags(status, evidence):
             f"families: {', '.join(blockers.NAMES)}. (A `blocked` quick look with t<=10 "
             f"and no bank may omit it.)")
     return evidence
+
+
+EVALUATED = ROOT / "build/link_census/evaluated"   # link_check.note_evaluated: a receipt per (row, source) judged
+CENSUS_TAG = re.compile(r"(?:^|\s)census=([0-9A-Fa-f]{7,40})(?![0-9A-Za-z])")
+CENSUS_SOURCE = re.compile(r"(?:^|\s)census-source=(\S+)")
+ANY_CENSUS = re.compile(r"(?:^|\s)census=")
+# A verdict judged against the link census: the tools and measures only the
+# link lane writes. `LINKED`/`LINKS` are link_check's own words, so case counts.
+LINK_LANE = re.compile(r"(?i:link_check|link_status|link_census|link_queue|wrong_selected|alias_target|"
+                       r"alias_unknown|respell)|\bLINK(?:ED|S)\b")
+
+
+def evaluated_census(rva_text, symbol):
+    """(census, source): the census link_check last judged the row `symbol`
+    at this RVA against in this checkout, and the file it judged it in -- a
+    receipt the check itself wrote -- or ('', '') when there is none or the
+    row was judged in more than one file (ambiguous, so no tag). Never the
+    newest census, nor a checkout-wide "last index loaded": an attempt is
+    evidence about the index and file that judged it (GPT-6.1-Sol, rounds 1-3)."""
+    found = []
+    try:
+        receipts = sorted(EVALUATED.glob(f"0x{int(rva_text, 16):08x}-*.json"))
+    except OSError:
+        return "", ""
+    for path in receipts:
+        try:
+            note = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if isinstance(note, dict) and note.get("name") == symbol:
+            found.append(note)
+    if len(found) != 1:
+        return "", ""
+    commit, source = str(found[0].get("census") or ""), str(found[0].get("source") or "")
+    if not re.fullmatch(r"[0-9A-Fa-f]{7,40}", commit) or not re.fullmatch(r"\S+", source):
+        return "", ""
+    return commit.lower(), source
+
+
+def census_of(evidence):
+    """The census= commit a verdict names (lower case), or ''."""
+    found = CENSUS_TAG.search(evidence)
+    return found.group(1).lower() if found else ""
+
+
+def census_source_of(evidence):
+    """The census-source= file a verdict was judged in, or ''."""
+    found = CENSUS_SOURCE.search(evidence)
+    return found.group(1) if found else ""
+
+
+def _census_tag(status, rva_text, symbol, evidence):
+    """A link-lane deferral or dead end names the census it was judged against.
+
+    Measured 2026-10-10: link-lane verdicts cited "census14 wrong_selected"
+    with no commit, so after a provider change nothing could tell a stale one
+    from a current one; 73 RVAs were attempted more than once and 0x009CA040
+    was blocked twice for the same reason. `link_check.py near` skips a file
+    whose caller row is blocked at its index's census and serves it again
+    once the index is newer. The census and file are the ones link_check
+    last judged this row in (evaluated_census); a resolution needs none, and
+    an explicit census= (near's packet prints one) is kept as written."""
+    if (status not in DEFERRED_STATUSES | DEAD_END_STATUSES or ANY_CENSUS.search(evidence)
+            or not LINK_LANE.search(evidence)):
+        return evidence
+    commit, source = evaluated_census(rva_text, symbol)
+    return f"{evidence} census={commit} census-source={source}" if commit else evidence
 
 
 if __name__ == "__main__":

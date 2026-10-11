@@ -1,4 +1,5 @@
 """link_check: the per-file LINKED preview agrees with link.exe's rules."""
+import collections
 import copy
 import sys
 from unittest.mock import patch
@@ -115,6 +116,7 @@ def test_publish_and_serve_skip_changed_landed_and_family_rows(tmp_path, monkeyp
                 for name in ("changed", "landed", "open", "??1AsciiString@@QAE@XZ")}
     sizes = {"changed.cpp": 400, "landed.cpp": 300, "??1AsciiString@@QAE@XZ.cpp": 250, "open.cpp": 100}
     queue = tmp_path / "q.csv"
+    monkeypatch.setattr(C, "linked_since", lambda census: (frozenset(), "", "no tracked link census"))
     C.publish(index(blockers=blockers, sizes=sizes), queue)
     monkeypatch.setattr(claims, "_fetch_master", lambda: "tip")
     monkeypatch.setattr(C, "_git", lambda *a, **k: "changed.cpp\n" if a[0] == "diff"
@@ -123,7 +125,8 @@ def test_publish_and_serve_skip_changed_landed_and_family_rows(tmp_path, monkeyp
     monkeypatch.setattr(claims, "active", lambda: {})
     assert C.main(["next", "--no-claim", "--queue", str(queue)]) == 0
     out = capsys.readouterr().out
-    assert "link queue #4 (census c): open" in out and "1 family strings" in out
+    assert "link queue #4 (census c; no tracked link census): open" in out and "1 family strings" in out
+    assert "1 every file linked or changed since the census" in out
     assert C.main(["next", "--no-claim", "--family", "strings", "--queue", str(queue)]) == 0
     assert "??1AsciiString@@QAE@XZ" in capsys.readouterr().out
 
@@ -357,3 +360,338 @@ def test_mapping_subclass_preserves_original_access_pattern(tmp_path, monkeypatc
     result, facts, calls = observe(C, obj, index, truth)
     reference, original_facts, _ = observe(C, obj, index, copy.deepcopy(truth), force_full_context=True)
     assert result == reference and facts == original_facts and calls == 1
+
+
+def _status(tmp_path, monkeypatch, status_commit, linked):
+    """A tracked link_status.csv measured at `status_commit` with `linked` files linked."""
+    import link_census
+    path = tmp_path / "link_status.csv"
+    path.write_text("source,linked\n" + "".join(f"{s},{'yes' if s in linked else 'no'}\n"
+                                                for s in ("a.cpp", "b.cpp", "c.cpp")), encoding="utf-8")
+    monkeypatch.setattr(link_census, "STATUS", path)
+    monkeypatch.setattr(link_census, "read_history", lambda: [{"commit": status_commit}] if status_commit else [])
+
+
+def test_linked_since_trusts_only_a_status_at_or_after_the_census(tmp_path, monkeypatch):
+    _status(tmp_path, monkeypatch, "bbbbbbbbbb", {"a.cpp"})
+    order = {("aaaaaaaaaa", "bbbbbbbbbb"): True, ("cccccccccc", "bbbbbbbbbb"): False}
+    monkeypatch.setattr(C, "_is_ancestor", lambda old, new: order.get((old, new)))
+    assert C.linked_since("bbbbbbbbbbbbbbbb")[0] == {"a.cpp"}            # the same census, abbreviated
+    assert C.linked_since("aaaaaaaaaa") == ({"a.cpp"}, "bbbbbbbbbb", "")   # a later census
+    linked, status, note = C.linked_since("cccccccccc")                   # an older one
+    assert linked == frozenset() and "not after census cccccccccc" in note
+    linked, _, note = C.linked_since("dddddddddd")                        # one git cannot order
+    assert linked == frozenset() and "cannot order" in note
+    _status(tmp_path, monkeypatch, "", set())
+    assert C.linked_since("aaaaaaaaaa")[0] == frozenset()
+
+
+def test_queue_and_serve_drop_files_a_later_census_saw_link(tmp_path, monkeypatch, capsys):
+    import claims
+    blockers = {s: {"object": "a.obj", "linked": False, "unresolved": [name], "duplicates": [], "losers": [],
+                    "addresses": 0}
+                for s, name in (("a.cpp", "gone"), ("b.cpp", "shared"), ("c.cpp", "shared"))}
+    sizes = {"a.cpp": 900, "b.cpp": 300, "c.cpp": 200}
+    queue = tmp_path / "q.csv"
+    monkeypatch.setattr(C, "linked_since", lambda census: (frozenset(), "", "no tracked link census"))
+    C.publish(index(blockers=blockers, sizes=sizes), queue)        # the census's own queue: both rows
+    monkeypatch.setattr(C, "linked_since", lambda census: (frozenset({"a.cpp"}), "later", ""))
+    assert [r["name"] for r in C.queue_rows(index(blockers=blockers, sizes=sizes), {"a.cpp"})] == ["shared"]
+    monkeypatch.setattr(claims, "_fetch_master", lambda: "tip")
+    monkeypatch.setattr(C, "_git", lambda *a, **k: "b.cpp\n" if a[0] == "diff" else "")
+    monkeypatch.setattr(claims, "owner", lambda: "me")
+    monkeypatch.setattr(claims, "active", lambda: {})
+    assert C.main(["next", "--no-claim", "--queue", str(queue)]) == 0
+    out = capsys.readouterr().out
+    # a.cpp linked at a later census; b.cpp changed, but c.cpp still stands on the census's evidence
+    assert "#2 (census c; files linked at census later dropped): shared" in out
+    assert "files: 1 open; 1 other(s) linked or changed since the census: c.cpp" in out
+    assert "1 linked at census later" in out
+    monkeypatch.setattr(C, "_git", lambda *a, **k: "b.cpp\nc.cpp\n" if a[0] == "diff" else "")
+    assert C.main(["next", "--no-claim", "--queue", str(queue)]) == 1
+    assert "every file linked or changed since the census" in capsys.readouterr().out
+
+
+def _near_index():
+    blank = {"duplicates": [], "losers": [], "wrong_selected": [], "alias_target": [], "addresses": 0,
+             "linked": False}
+    return {"blockers": {s: {**blank, "unresolved": ["?d_00000500@@YAXXZ"]}
+                         for s in ("game/T/a.cpp", "game/T/b.cpp", "game/T/c.cpp")},
+            "bytes": {"game/T/a.cpp": 30, "game/T/b.cpp": 20, "game/T/c.cpp": 10}}
+
+
+class _Judge:
+    def __init__(self, target="?one@@YAXXZ", note="", address=0x500):
+        self.target, self.note, self.address = target, note, address
+
+    def respell(self, name, caller=None):
+        return self.target, self.note, ""
+
+    def pinned(self, name):
+        return self.address
+
+    def normal(self, address):
+        return address
+
+
+def test_near_drops_files_linked_later_or_blocked_at_this_census():
+    skipped = collections.Counter()
+    rows = C.near_rows(_near_index(), _Judge(), skipped=skipped, linked={"game/T/a.cpp"},
+                       blocked={"game/T/b.cpp": "blocked 0x00000700 at census c"})
+    assert [r["source"] for r in rows] == ["game/T/c.cpp"]
+    assert skipped == {C.LINKED_LATER: 1, C.BLOCKED_NOW: 1}
+
+
+def _records(*verdicts):
+    """re_log.latest_link_records() of these verdict rows, in log order."""
+    import re_log
+    return {(int(fields[1], 16), fields[0], re_log.census_source_of(fields[4])): (index, list(fields))
+            for index, fields in enumerate(verdicts)}
+
+
+def test_a_blocked_verdict_stands_only_at_its_own_census():
+    import re_log
+    callers = {"game/T/b.cpp": [_row("?b@@YAXXZ", 0x700, "game/T/b.cpp")],
+               "game/T/c.cpp": [_row("?c@@YAXXZ", 0x800, "game/T/c.cpp")],
+               "game/T/d.cpp": [_row("?d@@YAXXZ", 0x900, "game/T/d.cpp")]}
+    latest = _records(["?b@@YAXXZ", "0x00000700", "9", "blocked", "link_check t=2 census=5f10bce6ba"],
+                      ["?c@@YAXXZ", "0x00000800", "9", "blocked", "link_check t=2 census=7d308168db"],
+                      ["?d@@YAXXZ", "0x00000900", "9", "landed", "link_check LINKS census=5f10bce6ba"])
+    assert set(C.blocked_files(callers, latest, "5f10bce6ba0123")) == {"game/T/b.cpp"}
+    assert set(C.blocked_files(callers, latest, "7d308168db")) == {"game/T/c.cpp"}
+    assert C.blocked_files(callers, latest, "") == {}
+    assert "blocked" in re_log.DEFERRED_STATUSES
+
+
+def test_a_blocked_verdict_blocks_only_the_row_and_file_it_was_judged_in():
+    """385 RVAs carry rows of several sources (0x0013A450: W3DBufferManager.cpp
+    and wwmemlog.cpp); a verdict on one never suppresses the other (GPT-6.1-Sol, round 3)."""
+    w3d, log = "game/W/W3DBufferManager.cpp", "game/L/wwmemlog.cpp"
+    callers = {w3d: [_row("?alloc@W3DBufferManager@@QAEXXZ", 0x13A450, w3d)],
+               log: [_row("?alloc@WWMemLog@@QAEXXZ", 0x13A450, log)]}
+    blocked = ["?alloc@W3DBufferManager@@QAEXXZ", "0x0013A450", "9", "blocked",
+               f"link_check t=2 census=5f10bce6ba census-source={w3d}"]
+    assert set(C.blocked_files(callers, _records(blocked), "5f10bce6ba")) == {w3d}
+    # a verdict judged in a file the row has since left blocks neither
+    moved = blocked[:4] + ["link_check t=2 census=5f10bce6ba census-source=game/W/Old.cpp"]
+    assert C.blocked_files(callers, _records(moved), "5f10bce6ba") == {}
+    # a later resolution naming no file releases it
+    landed = blocked[:3] + ["landed", "link_check LINKS 0 -> 9"]
+    assert C.blocked_files(callers, _records(blocked, landed), "5f10bce6ba") == {}
+    # one name at one RVA in two sources: a verdict naming no file is unsure, so it blocks nothing
+    twins = {source: [_row("?alloc@Shared@@QAEXXZ", 0x13A450, source)] for source in callers}
+    unnamed = ["?alloc@Shared@@QAEXXZ", "0x0013A450", "9", "blocked", "link_check t=2 census=5f10bce6ba"]
+    assert C.blocked_files(twins, _records(unnamed), "5f10bce6ba", shared={(0x13A450, "?alloc@Shared@@QAEXXZ")}) == {}
+    assert len(C.blocked_files(twins, _records(unnamed), "5f10bce6ba")) == 2   # the same pair, not shared
+    # GPT-6.1-Sol, round 4: blocks judged in two files at one RVA both stand
+    one = unnamed[:4] + [f"link_check t=2 census=5f10bce6ba census-source={w3d}"]
+    two = unnamed[:4] + [f"link_check t=2 census=5f10bce6ba census-source={log}"]
+    shared = {(0x13A450, "?alloc@Shared@@QAEXXZ")}
+    assert set(C.blocked_files(twins, _records(one, two), "5f10bce6ba", shared)) == {w3d, log}
+
+
+def test_latest_link_records_keeps_each_file_s_verdict_and_voids_the_row(tmp_path):
+    import re_log
+    log = tmp_path / "re_attempts.log"
+    log.write_text("\r\n".join([
+        "?a@@YAXXZ\t0x00000700\t9\tblocked\tlink_check census=5f10bce6ba census-source=game/A.cpp",
+        "?a@@YAXXZ\t0x00000700\t9\tblocked\tlink_check census=5f10bce6ba census-source=game/B.cpp",
+        "?a@@YAXXZ\t0x00000700\t9\tnote\tan annotation never votes"]) + "\r\n", encoding="utf-8")
+    records = re_log.latest_link_records(log)
+    assert set(records) == {(0x700, "?a@@YAXXZ", "game/A.cpp"), (0x700, "?a@@YAXXZ", "game/B.cpp")}
+    with log.open("a", encoding="utf-8", newline="") as handle:
+        handle.write("?a@@YAXXZ\t0x00000700\t9\tvoid\tboth rows were typed wrong\r\n")
+    assert re_log.latest_link_records(log) == {}
+
+
+def test_convention_reads_the_letter_after_the_scope():
+    assert C.convention("??1QueuedDownload@@QAE@XZ") == "thiscall"
+    assert C.convention("?getFoo@Bar@@QBEHXZ") == "thiscall"
+    assert C.convention("?update@Module@@UAEXXZ") == "thiscall"
+    assert C.convention("?parse@Store@@SAXPAVINI@@@Z") == "cdecl"     # static member
+    assert C.convention("?releaseCodecState@@YAXPAPAUCodecState@@@Z") == "cdecl"
+    assert C.convention("?Init@@YGXXZ") == "stdcall"
+    assert C.convention("?f@C@@QAIXXZ") == "fastcall"
+    assert C.convention("_memcpy") == "cdecl" and C.convention("_Sleep@4") == "stdcall"
+    # a template scope is read by name_regression's full reader (GPT-6.1-Sol, round 5)
+    assert C.convention("??A?$hash_map@VAsciiString@@H@_STL@@QAEAAHABVAsciiString@@@Z") == "thiscall"
+    assert C.convention("?f@?$Box@H@@QAEXH@Z") == "thiscall" and C.convention("?g@?$Crate@H@@QAAXH@Z") == "cdecl"
+    assert C.convention("?TheGlobalData@@3PAVGlobalData@@A") == ""                              # data
+    # adjustor thunks encode an adjustment before the cv letter: unknown, never a wrong guess
+    assert C.convention("?f@C@@W3AEXXZ") == "" and C.convention("?f@C@@W3AGXXZ") == ""
+    assert C.convention("?f@C@@G7AEXXZ") == "" and C.convention("?f@C@@O3AEXXZ") == ""
+
+
+def _ctx(rows_at, changed=(), refused=(), latest=None, census="5f10bce6ba"):
+    by_rva, by_source = collections.defaultdict(list), collections.defaultdict(list)
+    for row in rows_at:
+        by_rva[int(row["target_rva"], 16)].append(row)
+        by_source[row["source"]].append(row)
+    return {"by_rva": by_rva, "by_source": by_source, "latest": latest or {}, "census": census,
+            "changed": set(changed), "refused": set(refused)}
+
+
+def _row(name, rva, source, notes=""):
+    return {"name": name, "target_rva": f"0x{rva:08X}", "target_size": "128", "source": source, "notes": notes}
+
+
+def test_packet_serves_a_plain_respelling_and_says_why_it_will_not_serve_the_rest():
+    caller = _row("?queue@DownloadManager@@QAEXXZ", 0x627810, "game/D/Q.cpp")
+    target = _row("??1QueuedDownload@@QAE@XZ", 0x500, "game/D/DownloadManager.cpp")
+    near = {"source": "game/D/Q.cpp", "bytes": 334,
+            "fixes": [("??1BfmeErasedValue_00627200@@QAE@XZ", "??1QueuedDownload@@QAE@XZ", "")]}
+    judge = _Judge("??1QueuedDownload@@QAE@XZ")
+    item = C.packet(near, judge, _ctx([caller, target]))
+    assert item["verdict"] == "serve" and item["reasons"] == []
+    assert item["callers"] == [caller] and item["packet_fixes"][0]["row"] == target
+    assert item["packet_fixes"][0]["kind"] == "authored"
+    assert item["packet_fixes"][0]["conventions"] == ("thiscall", "thiscall")
+    # changed since the census, or in a family: another lane's (skip)
+    assert C.packet(near, judge, _ctx([caller, target], changed={"game/D/Q.cpp"}))["verdict"] == "skip"
+    family = {**near, "fixes": [("?d_00000500@@YAXXZ", "??1AsciiString@@QAE@XZ", "")]}
+    item = C.packet(family, _Judge("??1AsciiString@@QAE@XZ"), _ctx([caller, target]))
+    assert item["verdict"] == "skip" and "family strings" in item["reasons"][0]
+    # a generated row, a convention change, a refused rename: more than a respelling (escalate)
+    generated = _row("??1QueuedDownload@@QAE@XZ", 0x500, "game/gen_small/thunks_001.cpp")
+    item = C.packet(near, judge, _ctx([caller, generated]))
+    assert item["verdict"] == "escalate" and "gen_small" in item["reasons"][0]
+    alias = _row("??1QueuedDownload@@QAE@XZ", 0x500, "game/D/DownloadManager.cpp",
+                 "gen-alias;object-symbol=??1QueuedDownload@@QAE@XZ")
+    assert "gen-alias" in C.packet(near, judge, _ctx([caller, alias]))["reasons"][0]
+    cdecl = {**near, "fixes": [("?f@@YAXXZ", "??1QueuedDownload@@QAE@XZ", "")]}
+    assert any("cdecl call to a thiscall row" in r for r in C.packet(cdecl, judge, _ctx([caller, target]))["reasons"])
+    # a rename the hook refuses, whether the owner, an operator's owner or an argument type carries it
+    for call, target in (("?release@CodecState@@QAEXXZ", "?release@BfmeThingJT@@QAEXXZ"),
+                         ("??RCodecState@@QBE_NH@Z", "??RBfmeThingJT@@QBE_NH@Z"),
+                         ("?releaseCodecState@@YAXPAPAUCodecState@@@Z", "?releaseCodecState@@YAXPAPAUBfmeThingJT@@@Z")):
+        item = C.packet({**near, "fixes": [(call, target, "")]}, _Judge(target),
+                        _ctx([caller, _row(target, 0x500, "game/D/D.cpp")], refused={("CodecState", "BfmeThingJT")}))
+        assert item["verdict"] == "escalate", call
+        assert "name_regression refuses CodecState -> BfmeThingJT" in item["reasons"], call
+    # a call of another shape (here one class argument fewer) is a declaration change, not a respelling
+    item = C.packet({**near, "fixes": [("?run@Display@@QAEXPBVImage@@H@Z", "?run@Bfme5Host@@QAEXHH@Z", "")]},
+                    _Judge("?run@Bfme5Host@@QAEXHH@Z"), _ctx([caller, _row("?run@Bfme5Host@@QAEXHH@Z", 0x500, "D.cpp")]))
+    assert item["verdict"] == "escalate" and "differ in shape" in item["reasons"][0]
+    # same identifier counts, another declaration (GPT-6.1-Sol, round 2): a free function called
+    # as a class's operator delete with one argument fewer, and a void(Class*) called as Class()
+    for call, target in (("?bfmeDeleteVMP@@YAXPAXI@Z", "??3Gen007F0170@@SAXPAX@Z"),
+                         ("?f@?$Box@H@@QAEXPAU1@@Z", "?g@?$Crate@M@@QAEXPAU1@@Z"),     # <int> against <float>, round 3
+                         ("?bfmeCallDQF@BfmeSubDQF@@QAEXPAVBfmeOtherDQF@@@Z",
+                          "?Get_Texture@ParticleBufferClass@@QBE?AVTextureHandleClass@1@XZ")):
+        item = C.packet({**near, "fixes": [(call, target, "")]}, _Judge(target),
+                        _ctx([caller, _row(target, 0x500, "D.cpp")]))
+        assert item["verdict"] == "escalate" and any("differ in shape" in r for r in item["reasons"]), call
+    # and a name the reader cannot parse (a function-pointer argument) is left to the hook
+    pointer = "?run@Host@@QAEXP6AXXZ@Z"
+    item = C.packet({**near, "fixes": [("?run@Shim@@QAEXP6AXXZ@Z", pointer, "")]}, _Judge(pointer),
+                    _ctx([caller, _row(pointer, 0x500, "D.cpp")]))
+    assert item["verdict"] == "escalate" and "cannot read" in item["reasons"][0]
+
+
+def test_packet_marks_prior_verdicts_current_or_stale():
+    caller = _row("?queue@DownloadManager@@QAEXXZ", 0x627810, "game/D/Q.cpp")
+    target = _row("??1QueuedDownload@@QAE@XZ", 0x500, "game/D/DownloadManager.cpp")
+    near = {"source": "game/D/Q.cpp", "bytes": 334,
+            "fixes": [("??1BfmeErasedValue_00627200@@QAE@XZ", "??1QueuedDownload@@QAE@XZ", "")]}
+    verdict = [caller["name"], "0x00627810", "334", "blocked", "link_check t=3 census=7d308168db"]
+    item = C.packet(near, _Judge("??1QueuedDownload@@QAE@XZ"), _ctx([caller, target], latest=_records(verdict)))
+    assert item["prior"][0]["when"] == "stale: census 7d308168db" and item["verdict"] == "serve"
+    verdict[4] = "link_check t=3"
+    assert C.packet(near, _Judge(), _ctx([caller, target], latest=_records(verdict)))["prior"][0]["when"] == "no census"
+
+
+def test_near_lists_served_files_and_prints_a_packet(monkeypatch, capsys, tmp_path):
+    ix = {**_near_index(), "meta": {"date": "d", "commit": "5f10bce6ba"}, "alias_schema": C.ALIAS_SCHEMA}
+    monkeypatch.setattr(C, "INDEX", tmp_path / "link_census" / "link_index.pkl")   # its receipts land here
+    rows = [_row("?a@@YAXXZ", 0x600, "game/T/a.cpp"), _row("?b@@YAXXZ", 0x700, "game/T/b.cpp"),
+            _row("?c@@YAXXZ", 0x800, "game/T/c.cpp"), _row("?one@@YAXXZ", 0x500, "game/T/one.cpp")]
+    monkeypatch.setattr(C, "load_index", lambda: ix)
+    monkeypatch.setattr(C, "_git", lambda *a, **k: "game/T/c.cpp\n")
+    monkeypatch.setattr(C, "linked_since", lambda census: (frozenset({"game/T/a.cpp"}), census, ""))
+    monkeypatch.setattr(C, "alias_judge", lambda: _Judge())
+    monkeypatch.setattr(C.link_census, "ledger", lambda: rows)
+    import name_regression
+    import re_log
+    monkeypatch.setattr(re_log, "latest_link_records", lambda path=None: {})
+    monkeypatch.setattr(name_regression, "refused_respellings", lambda pairs, root=None, ref="HEAD": set())
+    assert C.main(["near"]) == 0
+    out = capsys.readouterr().out
+    assert "2 files, 30 bytes; 1 serve, 1 skip, 0 escalate; 1 skipped: linked at a later census" in out
+    assert "game/T/b.cpp  [serve]" in out and "game/T/c.cpp" not in out.split("\n", 1)[1]
+    assert C.main(["near", "--verdict", "skip"]) == 0
+    assert "game/T/c.cpp  [skip (changed since the index's census" in capsys.readouterr().out
+    assert C.main(["near", "--packet", "game/T/b.cpp"]) == 0
+    out = capsys.readouterr().out
+    assert "verdict: serve" in out and "caller  ?b@@YAXXZ 0x00000700 128 B" in out
+    assert "row 0x00000500 128 B authored game/T/one.cpp; convention cdecl -> cdecl" in out
+    assert "python3 tools/re_log.py record '?b@@YAXXZ' 0x00000700 128 blocked" in out
+    assert "census=5f10bce6ba" in out
+    receipt = tmp_path / "link_census" / C.RECEIPTS / C.receipt_name(0x700, "?b@@YAXXZ", "game/T/b.cpp")
+    assert receipt.exists()                                                         # the packet judged it
+    assert C.main(["near", "--packet", "game/T/a.cpp"]) == 1
+    assert "game/T/a.cpp is not a near file at census 5f10bce6ba: linked at census 5f10bce6ba" in (
+        capsys.readouterr().out)
+    monkeypatch.setattr(re_log, "latest_link_records", lambda path=None: _records(
+        ["?b@@YAXXZ", "0x00000700", "128", "blocked", "link_check t=2 census=5f10bce6ba"]))
+    assert C.main(["near", "--packet", "game/T/b.cpp"]) == 1
+    assert "blocked: blocked 0x00000700 at census 5f10bce6ba" in capsys.readouterr().out
+    # a verdict judged against an older index blocks nothing once near serves from a newer one,
+    # even when link_status.csv is newer still (GPT-6.1-Sol, review round 1)
+    monkeypatch.setattr(re_log, "latest_link_records", lambda path=None: _records(
+        ["?b@@YAXXZ", "0x00000700", "128", "blocked", "link_check t=2 census=7d308168db"]))
+    monkeypatch.setattr(C, "linked_since", lambda census: (frozenset({"game/T/a.cpp"}), "9999999999", ""))
+    assert C.main(["near", "--packet", "game/T/b.cpp"]) == 0
+    assert "prior   blocked 0x00000700 (stale: census 7d308168db)" in capsys.readouterr().out
+
+
+def test_a_check_leaves_per_row_receipts_re_log_tags_from(tmp_path, monkeypatch):
+    """The census comes from the index that judged the row's file, per row:
+    a later check of another file at another census does not retag it."""
+    import re_log
+    monkeypatch.setattr(C, "INDEX", tmp_path / "link_census" / "link_index.pkl")
+    monkeypatch.setattr(re_log, "EVALUATED", tmp_path / "link_census" / C.RECEIPTS)
+    b = ("7d308168db", "game/T/b.cpp")
+    C.note_evaluated([_row("?b@@YAXXZ", 0x700, "game/T/b.cpp"), _row("?b2@@YAXXZ", 0x704, "game/T/b.cpp")],
+                     "7d308168db")
+    C.note_evaluated([_row("?c@@YAXXZ", 0x800, "game/T/c.cpp")], "5f10bce6ba")
+    assert re_log.evaluated_census("0x00000700", "?b@@YAXXZ") == re_log.evaluated_census("0x704", "?b2@@YAXXZ") == b
+    assert re_log.evaluated_census("0x00000800", "?c@@YAXXZ") == ("5f10bce6ba", "game/T/c.cpp")
+    assert re_log.evaluated_census("0x00000900", "?d@@YAXXZ") == ("", "")     # never judged here: no tag
+    assert re_log.evaluated_census("0x00000700", "?other@@YAXXZ") == ("", "")  # another row at that RVA
+    # another source's row at the same RVA has its own receipt and never retags this one
+    C.note_evaluated([_row("?x@@YAXXZ", 0x700, "game/T/x.cpp")], "5f10bce6ba")
+    assert re_log.evaluated_census("0x00000700", "?b@@YAXXZ") == b
+    C.note_evaluated([_row("?b@@YAXXZ", 0x700, "game/T/b.cpp")], "5f10bce6ba")   # re-judged
+    assert re_log.evaluated_census("0x00000700", "?b@@YAXXZ") == ("5f10bce6ba", "game/T/b.cpp")
+    # the same row judged in a second file (rehomed, or a twin): unsure, so no tag
+    C.note_evaluated([_row("?b@@YAXXZ", 0x700, "game/T/moved.cpp")], "5f10bce6ba")
+    assert re_log.evaluated_census("0x00000700", "?b@@YAXXZ") == ("", "")
+    C.note_evaluated([_row("?d@@YAXXZ", 0x900, "game/T/d.cpp")], "")             # no census: no receipt
+    assert re_log.evaluated_census("0x00000900", "?d@@YAXXZ") == ("", "")
+
+
+def test_the_printed_record_command_records_a_census_bound_block(tmp_path, monkeypatch):
+    """Filled in as printed, the packet's command passes re_log's tag rules and
+    carries the census near served from, whatever words its evidence uses."""
+    import shlex
+    import re_log
+    log = tmp_path / "re_attempts.log"
+    log.write_text("", encoding="utf-8")
+    monkeypatch.setattr(re_log, "RE_ATTEMPTS", log)
+    monkeypatch.setattr(re_log, "EVALUATED", tmp_path / "absent.json")
+    monkeypatch.delenv("BFME_RUN_ID", raising=False)
+    re_log._reset()
+    try:
+        command = C.record_command(_row("?b@@YAXXZ", 0x700, "game/T/b.cpp"), "7d308168db")
+        filled = (command.replace("<what stopped it>", "ABI mismatch").replace("<family>/<detail>", "identity/abi")
+                  .replace("<min>", "20").replace("<model>", "test-model"))
+        argv = shlex.split(filled)
+        assert argv[:4] == ["python3", "tools/re_log.py", "record", "?b@@YAXXZ"]
+        re_log._record(argv[3:])
+        fields = log.read_text(encoding="utf-8").splitlines()[-1].split("\t")
+        assert fields[3] == "blocked" and re_log.census_of(fields[4]) == "7d308168db"
+        assert re_log.census_source_of(fields[4]) == "game/T/b.cpp"
+        assert C.blocked_files({"game/T/b.cpp": [_row("?b@@YAXXZ", 0x700, "game/T/b.cpp")]}, re_log.latest_link_records(log),
+                               "7d308168db") == {"game/T/b.cpp": "blocked 0x00000700 at census 7d308168db"}
+    finally:
+        re_log._reset()

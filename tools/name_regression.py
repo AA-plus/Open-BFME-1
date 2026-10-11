@@ -828,6 +828,278 @@ def digest(text):
     return hashlib.sha256(text.encode()).hexdigest()
 
 
+def _without_respellings(candidates, root, old, new):
+    """`candidates` less the ILT, pin and address respellings check() accepts."""
+    if any(ILT_TOKEN.match(f.new_name) for f in candidates):
+        recorded, ilt = _ilt_respellings(root, old, new)
+        candidates = [f for f in candidates if not _is_ilt_respelling(f, recorded, ilt)]
+    if candidates:
+        recorded = _recorded_components(root, old)
+        if any(f.old_name in recorded for f in candidates):
+            names, targets = _ledger_rows_by_rva(root, new)
+            candidates = [f for f in candidates
+                          if not _is_pin_respelling(f, recorded, names, targets)]
+    if any(ADDRESS_TAIL.match(f.old_name) for f in candidates):
+        ledger = _ledger_names_by_rva(root, new)
+        candidates = [f for f in candidates if not _is_address_respelling(f, ledger)]
+    return candidates
+
+
+class _Unread(Exception):
+    """A decorated name in a shape _NameReader does not parse."""
+
+
+_SIMPLE_NAME = re.compile(r'[A-Za-z_][A-Za-z0-9_]*@')
+_PRIMITIVE_TYPES = frozenset('CDEFGHIJKMNOXZ')
+
+
+class _NameReader:
+    """Reads an MSVC decorated name: the identifiers of its scope, the class,
+    struct, union and enum names its types and template arguments spell, and
+    its declaration shape -- operator or named, member/static/free, return
+    and parameter types with every name abstracted (`C`, template arguments
+    kept) and back-references resolved. Raises _Unread on anything else:
+    function and member pointers, arrays, thunks, nested and special names.
+
+    Name back-references follow MSVC's numbering as LLVM's demangler reads
+    it: the first ten distinct names, a template instantiation counted as one
+    name and its arguments read with names of their own; the symbol's own
+    name counts unless it is a template (GPT-6.1-Sol, round 3: Box<int>::f
+    (Box<int>*) and Crate<float>::g(Crate<float>*) must not read alike)."""
+
+    def __init__(self, text):
+        self.s, self.i, self.scope, self.types = text, 0, [], []
+        self.names = []            # back-reference table: (key, identifier, shape)
+
+    def peek(self, n=0):
+        at = self.i + n
+        return self.s[at] if at < len(self.s) else '\0'
+
+    def take(self):
+        char = self.peek()
+        if char == '\0':
+            raise _Unread
+        self.i += 1
+        return char
+
+    def memorize(self, key, identifier, shape):
+        if len(self.names) < 10 and all(key != known for known, _, _ in self.names):
+            self.names.append((key, identifier, shape))
+
+    def simple(self, into, memorize=True):
+        found = _SIMPLE_NAME.match(self.s, self.i)
+        if not found:
+            raise _Unread
+        name = found.group(0)[:-1]
+        into.append(name)
+        self.i = found.end()
+        if memorize:
+            self.memorize(name, name, '')
+        return name
+
+    def fragment(self, into, memorize_template=True):
+        """One scope component; its shape is a template's argument shapes."""
+        if self.peek().isdigit():
+            at = int(self.take())
+            if at >= len(self.names):
+                raise _Unread
+            _, name, shape = self.names[at]
+            into.append(name)
+            return shape
+        if self.s.startswith('?$', self.i):
+            start, outer, self.names = self.i, self.names, []
+            self.i += 2
+            name = self.simple(into)
+            shape = '<' + self.template_arguments() + '>'
+            self.names = outer
+            if memorize_template:
+                self.memorize(self.s[start:self.i], name, shape)
+            return shape
+        if self.peek() == '?':
+            raise _Unread
+        self.simple(into)
+        return ''
+
+    def qualified(self, into, first=None):
+        shape = [first] if first is not None else []
+        while self.peek() != '@':
+            shape.append(self.fragment(into))
+        self.take()
+        # every component keeps its slot: B<int>::A is not D::C<int> (GPT-6.1-Sol, round 4)
+        return '::'.join(shape)
+
+    def template_arguments(self):
+        shapes = []
+        while self.peek() != '@':
+            if self.s.startswith('$0', self.i):
+                self.i += 2
+                shapes.append('$0' + self.number())
+            elif self.s.startswith('$$C', self.i):       # a cv-qualified type argument
+                self.i += 3
+                shapes.append('$$C' + self.cv() + self.type())
+            elif self.peek() == '$':
+                raise _Unread
+            else:
+                shapes.append(self.type())
+        self.take()
+        return ','.join(shapes)
+
+    def number(self):
+        start = self.i
+        if self.peek() == '?':
+            self.i += 1
+        if self.peek().isdigit():
+            self.i += 1
+            return self.s[start:self.i]
+        while self.peek() in 'ABCDEFGHIJKLMNOP':
+            self.i += 1
+        if self.take() != '@':
+            raise _Unread
+        return self.s[start:self.i]
+
+    def cv(self):
+        char = self.take()
+        if char not in 'ABCD':
+            raise _Unread
+        return char
+
+    def type(self):
+        char = self.take()
+        if char in _PRIMITIVE_TYPES or char.isdigit():
+            return char
+        if char == '_':
+            return '_' + self.take()
+        if char == '?':
+            return '?' + self.cv() + self.type()
+        if char in 'PQRSAB':
+            if self.peek() in '68':
+                raise _Unread
+            return char + self.cv() + self.type()
+        if char in 'VUT':
+            return 'C' + self.qualified(self.types)
+        if char == 'W' and self.peek().isdigit():
+            self.i += 1
+            return 'W' + self.qualified(self.types)
+        raise _Unread
+
+    def parameters(self):
+        """Parameter shapes, a back-reference replaced by the parameter it
+        repeats (MSVC numbers the parameters whose encoding is longer than
+        one letter), so `(Foo*, Foo*)` and `(Bar*, Baz*)` read alike."""
+        if self.peek() == 'X':
+            self.i += 1
+            return ('X',)
+        shapes, table = [], []
+        while self.peek() not in '@Z\0':
+            start = self.i
+            shape = self.type()
+            if len(shape) == 1 and shape.isdigit():
+                if int(shape) >= len(table):
+                    raise _Unread
+                shape = table[int(shape)]
+            elif self.i - start > 1 and len(table) < 10:
+                table.append(shape)
+            shapes.append(shape)
+        if self.peek() == 'Z':
+            shapes.append('...')
+        return tuple(shapes)
+
+    def encoding(self):
+        lead = self.take()
+        if lead in '01234':
+            return ('data' + lead, self.type())
+        if lead in 'ABEFIJMNQRUV':
+            kind = 'member'
+            self.cv()                                   # `this` const-ness: not a call's shape
+        elif lead in 'CDKLST':
+            kind = 'static'
+        elif lead in 'YZ':
+            kind = 'free'
+        else:
+            raise _Unread
+        convention = self.take()                        # read here, where a template scope has ended
+        if self.peek() == '@':
+            self.i += 1
+            returns = '@'                               # a constructor or destructor
+        else:
+            returns = self.type()
+        return (kind, convention, returns, self.parameters())
+
+    def read(self):
+        """(scope, types, shape)."""
+        if self.s.startswith('??') and not self.s.startswith('??$'):
+            width = 1 if self.peek(2) != '_' else 2 if self.peek(3) != '_' else 3
+            form, self.i = 'operator ' + self.s[2:2 + width], 2 + width
+            scope = self.qualified(self.scope)
+        else:
+            form, self.i = 'named', 1
+            # the symbol's own name: a simple name is memorized, a template is not
+            scope = self.qualified(self.scope, self.fragment(self.scope, memorize_template=False))
+        return self.scope, self.types, (form, scope) + self.encoding()
+
+
+def _read_name(symbol):
+    if not symbol.startswith('?'):
+        return None
+    try:
+        return _NameReader(symbol).read()
+    except _Unread:
+        return None
+
+
+def mangled_identifiers(symbol):
+    """(scope, types): the identifiers a decorated name spells -- its scope
+    innermost first (a method, then its owners; an operator, constructor or
+    destructor has only owners), then the class/struct/union/enum names of
+    its types and template arguments in order. A C name is its bare name.
+    None when the name is in a shape _NameReader does not parse."""
+    if not symbol.startswith('?'):
+        bare = _bare(symbol)
+        return ([bare], []) if bare else None
+    found = _read_name(symbol)
+    return None if found is None else found[:2]
+
+
+def declaration_shape(symbol):
+    """What a call must declare to call `symbol`, with every name abstracted:
+    (operator code or 'named', scope template shapes, member/static/free or
+    dataN, calling convention letter, return type, parameter types). Two
+    names of one shape differ only in their names.
+    None for a C name or a decorated name _NameReader does not parse."""
+    found = _read_name(symbol)
+    return None if found is None else found[2]
+
+
+def symbol_pairs(old, new):
+    """The (old, new) identifiers a source renames to respell a call from the
+    decorated or C name `old` to `new`, scope with scope and type with type
+    (`??RCodecState@@QBE_NH@Z` -> `??RBfmeThingJT@@...` renames CodecState
+    to BfmeThingJT). None when either name cannot be read or the two do not
+    line up (another number of scope or type names): no preflight then."""
+    left, right = mangled_identifiers(old), mangled_identifiers(new)
+    if left is None or right is None:
+        return None
+    pairs = set()
+    for a, b in zip(left, right):
+        if len(a) != len(b):
+            return None
+        pairs.update((x, y) for x, y in zip(a, b) if x != y)
+    return sorted(pairs)
+
+
+def refused_respellings(pairs, root=None, ref='HEAD'):
+    """The (old, new) identifier pairs check() refuses as descriptive-to-
+    placeholder when a source renames old to new and the ledger stays at
+    `ref`: downgrade(), less the ILT, pin and address respellings. A preflight
+    for link_check.py near; the hook still runs, and name_corrections.json
+    (exact files and digests) is not consulted."""
+    candidates = [Finding('', '', a, b, '', '') for a, b in sorted(set(pairs)) if downgrade(a, b)]
+    if not candidates:
+        return set()
+    root = root or ROOT
+    return {(f.old_name, f.new_name) for f in _without_respellings(candidates, root, ref, ref)}
+
+
 def check(root, old, new):
     raw = read(root, new, CORRECTIONS)
     corrections = json.loads(raw) if raw else []
@@ -867,19 +1139,7 @@ def check(root, old, new):
                 found = [(x, y) for x, y in found if x not in earlier and x in carried]
         candidates.extend(Finding(a, b, x, y, digest(before), digest(after)) for x, y in found)
     candidates.extend(ledger_symbol_regressions(root, old, new))
-    if any(ILT_TOKEN.match(f.new_name) for f in candidates):
-        recorded, ilt = _ilt_respellings(root, old, new)
-        candidates = [f for f in candidates if not _is_ilt_respelling(f, recorded, ilt)]
-    if candidates:
-        recorded = _recorded_components(root, old)
-        if any(f.old_name in recorded for f in candidates):
-            names, targets = _ledger_rows_by_rva(root, new)
-            candidates = [f for f in candidates
-                          if not _is_pin_respelling(f, recorded, names, targets)]
-    if any(ADDRESS_TAIL.match(f.old_name) for f in candidates):
-        ledger = _ledger_names_by_rva(root, new)
-        candidates = [f for f in candidates if not _is_address_respelling(f, ledger)]
-    for finding in candidates:
+    for finding in _without_respellings(candidates, root, old, new):
         allowed = False
         for entry in corrections:
             if not isinstance(entry, dict):
