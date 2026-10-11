@@ -18,42 +18,7 @@
 
 typedef int Int;
 
-template <class Type>
-class StringBase
-{
-public:
-	void set(const char *s, int len);
-
-private:
-	StringBase(const StringBase &that);
-	~StringBase();
-	friend class AsciiString;
-};
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString
-{
-public:
-	AsciiString() { m_text = 0; }
-
-	AsciiString(const AsciiString &that)
-	{
-		((StringBase<char> *)this)->StringBase<char>::StringBase(*(const StringBase<char> *)&that);
-	}
-
-	~AsciiString()
-	{
-		((StringBase<char> *)this)->~StringBase();
-	}
-
-	void set(const char *s, int len)
-	{
-		((StringBase<char> *)this)->set(s, len);
-	}
-
-private:
-	void *m_text;
-};
+#include "../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/SkirmishBattleHonors.h
 // getWins is the landed body at 0x0009C650; BFME takes the side name where
@@ -70,16 +35,16 @@ Int SkirmishBattleHonors::rva0009c6f0() const
 {
 	AsciiString name;
 
-	name.set("Gondor", 6);
+	name.StringBase<char>::set("Gondor", 6);
 	Int gondor = getWins(name);
 
-	name.set("Rohan", 5);
+	name.StringBase<char>::set("Rohan", 5);
 	Int subtotal = getWins(name);
 
-	name.set("Isengard", 8);
+	name.StringBase<char>::set("Isengard", 8);
 	subtotal += getWins(name);
 	Int total = subtotal + gondor;
 
-	name.set("Mordor", 6);
+	name.StringBase<char>::set("Mordor", 6);
 	return total + getWins(name);
 }
