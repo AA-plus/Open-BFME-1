@@ -14959,7 +14959,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Get_Allocated_Length@StringClass@@ABEHXZ,,0x009DB830,18,game/Libraries/Source/WWVegas/WWLib/wwstring.cpp,matched,
 ?Get_Allocated_Length@WideStringClass@@ABEHXZ,,0x009E7230,18,game/Libraries/Source/WWVegas/WWLib/widestring.cpp,matched,
 ?Get_Allocator@FastAllocatorGeneral@@SAPAV1@XZ,,0x00B02830,92,game/Libraries/Source/WWVegas/WWLib/FastAllocator.cpp,matched,
-?Get_Alpha_Test@ShaderClass@@QBE?AW4AlphaTestType@1@XZ,,0x0090F290,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
 ?Get_Ambient@LightClass@@QBEXPAVVector3@@@Z,,0x006C54F0,37,game/Libraries/Source/WWVegas/WW3D2/lightenvironment.cpp,matched,exact after camera shim (RenderObjClass +0x34)
 ?Get_Ambient_Color_Source@VertexMaterialClass@@QAE?AW4ColorSourceType@1@XZ,,0x009211F0,24,game/Libraries/Source/WWVegas/WW3D2/vertmaterial.cpp,matched,Re-anchored from 0x00921210 which reads this+0x14 = EmissiveColorSource once the bogus _bfme_vmat_v0 pad is out of vertmaterial.h; this body reads this+0x10 = AmbientColorSource
 ?Get_Anim@HAnimManagerClass@@QAEPAVHAnimClass@@PBD@Z,,0x007B9B00,34,game/Libraries/Source/WWVegas/WW3D2/hanimmgr.cpp,matched,
@@ -15076,7 +15075,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Get_Deformed_Vertices@BfmeShadowMesh@@QAEXPAVVector3@@@Z,,0x0092C390,67,game/GameEngineDevice/Source/W3DDevice/GameClient/Shadow/BfmeVolumetricShadowBufferEntryUpdate.cpp,matched,conditional HTree argument; container at +0x84 gives Get_HTree vslot 0xE4 else 0; helper receiver m_model at +0xC8; helper pin Rva00925860::method;model=space-bunny-free
 ?Get_Deformed_Vertices@MeshClass@@QAEXPAVVector3@@0@Z,,0x0092C350,53,game/Libraries/Source/WWVegas/WW3D2/mesh.cpp,matched,identity-correction=reverse/identity_evidence/0x0092c350-mesh-wrapper.md;retail wrapper and declared callee identify MeshClass
 ?Get_Depth_Compare@ShaderClass@@QBE?AW4DepthCompareType@1@XZ,,0x00910D10,6,game/Libraries/Source/WWVegas/WW3D2/shader.cpp,matched,gen-alias;object-symbol=?Get_Depth_Compare@ShaderClass@@QBE?AW4DepthCompareType@1@XZ;C++ alias
-?Get_Depth_Mask@ShaderClass@@QBE?AW4DepthMaskType@1@XZ,,0x00910D20,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
 ?Get_Description@ShaderClass@@QBEABVStringClass@@AAV2@@Z,,0x00911BE0,1056,game/Libraries/Source/WWVegas/WW3D2/shader.cpp,matched,Extent repaired from 17 to 1056; contiguous switch body through ret at 0x00911F52 and referenced jump tables through 0x00912000. Retail string at VA 0x0113A99C proves BFME gradient case 6.;model=gpt-6-astra
 ?Get_Description@SurfaceClass@@QAEXAAUSurfaceDescription@1@@Z,,0x008FC5C0,155,game/Libraries/Source/WWVegas/WW3D2/surfaceclass.cpp,matched,BFME D3D9 SurfaceClass descriptor path; upstream body plus retail one-pointer resource layout null guard and shared DX8 error stream
 ?Get_Device_Resolution@DX8Wrapper@@KAXAAH00AA_N@Z,,0x00902170,48,game/Libraries/Source/WWVegas/WW3D2/dxwrapper.cpp,matched,
@@ -15085,7 +15083,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Get_Diffuse_Color_Source@VertexMaterialClass@@QAE?AW4ColorSourceType@1@XZ,,0x00921230,24,game/Libraries/Source/WWVegas/WW3D2/vertmaterial.cpp,matched,Third accessor of the run at 0x009211F0/0x00921210/0x00921230; reads this+0x18 = DiffuseColorSource. Unclaimed until the pad came out because the shifted layout put the other two names on the wrong two bodies
 ?Get_Double@INIClass@@QBENPBD0N@Z,,0x009E3B40,131,game/Libraries/Source/WWVegas/WWLib/ini.cpp,matched,model=sonic
 ?Get_Draw_Call_Count@MeshClass@@QBEHXZ,,0x0092D470,62,game/Libraries/Source/WWVegas/WW3D2/mesh.cpp,matched,exact-ambiguous COMDAT pinned by string anchor
-?Get_Dst_Blend_Func@ShaderClass@@QBE?AW4DstBlendFuncType@1@XZ,,0x0090F2A0,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
 ?Get_Element@?$ShareBufferClass@VShaderClass@@@@QAEAAVShaderClass@@H@Z,,0x00929040,13,game/Libraries/Source/WWVegas/WW3D2/meshmatdesc.cpp,matched,
 ?Get_Element@?$ShareBufferClass@VVector4@@@@QAEAAVVector4@@H@Z,,0x00984490,15,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,
 ?Get_Element@MatBufferClass@@QAEPAVVertexMaterialClass@@H@Z,,0x00739780,35,game/Libraries/Source/WWVegas/WW3D2/meshmatdesc.cpp,matched,ICF alias of existing matched body
@@ -15347,7 +15344,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Get_Post_Increment_Value@SegmentedLineClass@@UBEMXZ,,0x009508D0,71,game/Libraries/Source/WWVegas/WW3D2/segline.cpp,matched,exact-ambiguous COMDAT pinned by string anchor
 ?Get_PowerVR_Device@DX8Caps@@CA?AW4DeviceTypePowerVR@1@I@Z,,0x001B4040,13,game/Libraries/Source/WWVegas/WW3D2/dx8caps.cpp,matched,
 ?Get_Preset@VertexMaterialClass@@SAPAV1@W4PresetType@1@@Z,,0x009212C0,22,game/Libraries/Source/WWVegas/WW3D2/vertmaterial.cpp,matched,
-?Get_Primary_Gradient@ShaderClass@@QBE?AW4PriGradientType@1@XZ,,0x00910D70,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
 ?Get_Processor_Manufacturer_Name@CPUDetectClass@@,,0x00A5EAED,228,game/Libraries/Source/WWVegas/WWLib/CPUDetectGetProcessorManufacturerNameThunk.cpp,matched,Open-BFME5 exact C++ __emit thunk converted from MASM dump;object-symbol=_bfme_CPUDetectGetProcessorManufacturerName_A5EAED
 ?Get_Processor_Manufacturer_Name@CPUDetectClass@@SAPBDXZ,,0x009DDDE0,13,game/Libraries/Source/WWVegas/WWLib/cpudetect.cpp,matched,
 ?Get_Projection_Matrix@CameraClass@@QAEABVMatrix4@@XZ,,0x00932540,16,game/Libraries/Source/WWVegas/WW3D2/camera.cpp,matched,
@@ -15376,7 +15372,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Get_Scene@RenderObjClass@@UAEPAVSceneClass@@XZ,,0x00920180,20,game/Libraries/Source/WWVegas/WW3D2/rendobj.cpp,matched,
 ?Get_Scene_ID@SceneClass@@UBEHXZ,,0x006CF680,3,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DScene.cpp,matched,icf-owner=?Get_Sort_Level@RenderObjClass@@UBEHXZ
 ?Get_Screen_Size@RenderObjClass@@UAEMAAVCameraClass@@@Z,,0x00920580,268,game/Libraries/Source/WWVegas/WW3D2/rendobj.cpp,matched,drift-voted candidate; unblocked by ctor shrink
-?Get_Secondary_Gradient@ShaderClass@@QBE?AW4SecGradientType@1@XZ,,0x00910D80,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
 ?Get_Shader@DX8TextureCategoryClass@@QAE?AVShaderClass@@XZ,,0x009454D0,12,game/Libraries/Source/WWVegas/WW3D2/dx8renderer.cpp,matched,
 ?Get_Shader@LineGroupClass@@QAE?AVShaderClass@@XZ,,0x0098ED00,12,game/Libraries/Source/WWVegas/WW3D2/linegrp.cpp,matched,MASM converted to clean C++
 ?Get_Shader@MeshMatDescClass@@QBE?AVShaderClass@@HH@Z,,0x00929990,50,game/Libraries/Source/WWVegas/WW3D2/meshmatdesc.cpp,matched,
@@ -15405,7 +15400,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Get_Specular@LightClass@@QBEXPAVVector3@@@Z,,0x00903820,37,game/Libraries/Source/WWVegas/WW3D2/light.cpp,matched,
 ?Get_Spot_Angle_Cos@LightClass@@QBEMXZ,,0x0094A960,7,game/Libraries/Source/WWVegas/WW3D2/lightenvironment.cpp,matched,icf-elimination unique unclaimed member of COMDAT shape set
 ?Get_Spot_Direction@LightClass@@QBEXAAVVector3@@@Z,,0x00903870,33,game/Libraries/Source/WWVegas/WW3D2/lightenvironment.cpp,matched,exact after camera shim (RenderObjClass +0x34)
-?Get_Src_Blend_Func@ShaderClass@@QBE?AW4SrcBlendFuncType@1@XZ,,0x00910D90,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
 ?Get_Start_Velocity@ParticleEmitterClass@@QBE?AVVector3@@XZ,,0x0097E370,51,game/Libraries/Source/WWVegas/WW3D2/part_emt.cpp,matched,
 ?Get_String@INIClass@@QBEABVStringClass@@AAV2@PBD11@Z,,0x009E3E10,92,game/Libraries/Source/WWVegas/WWLib/ini.cpp,matched,
 ?Get_String@INIClass@@QBEHPBD00PADH@Z,,0x009E3DA0,112,game/Libraries/Source/WWVegas/WWLib/ini.cpp,matched,
@@ -15439,7 +15433,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Get_Texture_Tile_Factor@ParticleBufferClass@@QBEMXZ,,0x00988EE0,21,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,
 ?Get_Texture_Tile_Factor@ParticleEmitterClass@@QBEMXZ,,0x0097E4D0,11,game/Libraries/Source/WWVegas/WW3D2/part_emt.cpp,matched,
 ?Get_Texture_Tile_Factor@SegmentedLineClass@@QAEMXZ,,0x0094FBF0,7,game/Libraries/Source/WWVegas/WW3D2/segline.cpp,matched,
-?Get_Texturing@ShaderClass@@QBE?AW4TexturingType@1@XZ,,0x00910DB0,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
 ?Get_Total_Allocated_Indices@IndexBufferClass@@SAIXZ,,0x0091CD10,6,game/Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.cpp,matched,
 ?Get_Total_Allocated_Memory@IndexBufferClass@@SAIXZ,,0x0091CD20,6,game/Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.cpp,matched,
 ?Get_Total_Allocated_Memory@VertexBufferClass@@SAIXZ,,0x0091D9B0,6,game/Libraries/Source/WWVegas/WW3D2/dx8vertexbuffer.cpp,matched,
@@ -23362,27 +23355,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?W3DPowerDrawA@@YAXPAVGameWindow@@PAVWinInstanceData@@@Z,,0x0079AEC0,1853,game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DPowerDrawAThunk.cpp,matched,Open-BFME5 exact C++ emits;object-symbol=_bfme_W3DPowerDrawA_79AEC0
 ?W3DRadarResetLock@@YAXXZ,,0x00903090,134,game/Libraries/Source/WWVegas/WW3D2/W3DRadarResetLock.cpp,matched,caller-backed W3D device reset lock identity; canonical Win32 imports
 ?W3DRightHUDDraw@@YAXPAVGameWindow@@PAVWinInstanceData@@@Z,,0x00799F20,62,game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DControlBar.cpp,matched,de-lift: real C++ replacing naked emit; m_draw callback ptr at +0x1e8 with embedded draw-delegate fallback vtable slot 1 at +0x218
-?W3d_Shader_Get_Alpha_Test@@YAHPBUW3dShaderStruct@@@Z,,0x00978750,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Get_Depth_Compare@@YAHPBUW3dShaderStruct@@@Z,,0x005375B0,8,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,gen-alias;object-symbol=?W3d_Shader_Get_Depth_Compare@@YAHPBUW3dShaderStruct@@@Z;C++ alias
-?W3d_Shader_Get_Depth_Mask@@YAHPBUW3dShaderStruct@@@Z,,0x009786D0,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Get_Dest_Blend_Func@@YAHPBUW3dShaderStruct@@@Z,,0x009786E0,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Get_Detail_Alpha_Func@@YAHPBUW3dShaderStruct@@@Z,,0x00978740,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Get_Detail_Color_Func@@YAHPBUW3dShaderStruct@@@Z,,0x00978730,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Get_Pri_Gradient@@YAHPBUW3dShaderStruct@@@Z,,0x009786F0,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Get_Sec_Gradient@@YAHPBUW3dShaderStruct@@@Z,,0x00978700,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Get_Src_Blend_Func@@YAHPBUW3dShaderStruct@@@Z,,0x00978710,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Get_Texturing@@YAHPBUW3dShaderStruct@@@Z,,0x00978720,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Reset@@YAXPAUW3dShaderStruct@@@Z,,0x009785E0,57,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Set_Alpha_Test@@YAXPAUW3dShaderStruct@@H@Z,,0x00978690,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Set_Depth_Compare@@YAXPAUW3dShaderStruct@@H@Z,,0x00978620,11,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Set_Depth_Mask@@YAXPAUW3dShaderStruct@@H@Z,,0x00978630,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Set_Dest_Blend_Func@@YAXPAUW3dShaderStruct@@H@Z,,0x00978640,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Set_Post_Detail_Alpha_Func@@YAXPAUW3dShaderStruct@@H@Z,,0x009786B0,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Set_Post_Detail_Color_Func@@YAXPAUW3dShaderStruct@@H@Z,,0x009786A0,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Set_Pri_Gradient@@YAXPAUW3dShaderStruct@@H@Z,,0x00978650,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Set_Sec_Gradient@@YAXPAUW3dShaderStruct@@H@Z,,0x00978660,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Set_Src_Blend_Func@@YAXPAUW3dShaderStruct@@H@Z,,0x00978670,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
-?W3d_Shader_Set_Texturing@@YAXPAUW3dShaderStruct@@H@Z,,0x00978680,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,
 ?WCodeToHRESULT@_com_error@@SAJG@Z,,0x00AFE260,26,inputs/vendor/comsupp/comsupp.lib,matched,vendored=msvc71-comsupp;member=Release\invkerr.obj
 ?WGetPointRep@?$GXTri3Mesh@G$00$0PPPP@@@ABEGG@Z,,0x00A08002,18,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\createmesh.obj
 ?WGetPointRep@?$GXTri3Mesh@I$0A@$0?0@@ABEII@Z,,0x00A0807F,16,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\createmesh.obj
@@ -48828,7 +48800,6 @@ _piIsCallbackFinishedCompareCallback,,0x0085E1F0,15,game/GameEngine/Source/GameN
 ?dup_00975010@@YAXXZ,,0x00975010,12,game/Libraries/Source/WWVegas/WW3D2/TextureHandleDestructor.cpp,matched,gen-alias;object-symbol=??1BfmeHandleCX@@QAE@XZ;C++ alias: null-guarded tail jump to TextureClass::Release_Ref 0x009EB7A0 (not NetCommandMsg::detach)
 ?dup_00975020@@YAXXZ,,0x00975020,47,game/Libraries/Source/WWVegas/WW3D2/SegLineRendererSetTexture.cpp,matched,gen-alias;object-symbol=?Set_Texture@SegLineRendererClass@@QAEXPAVTextureClass@@@Z;C++ alias
 ?dup_00977780@@YAXXZ,,0x00977780,24,game/Libraries/Source/WWVegas/WW3D2/motchan.cpp,matched,gen-alias;object-symbol=??1MotionChannelClass@@QAE@XZ;C++ alias
-?dup_009786c0@@YAXXZ,,0x009786C0,8,game/Libraries/Source/WWVegas/WW3D2/w3d_util.cpp,matched,gen-alias;object-symbol=?W3d_Shader_Get_Depth_Compare@@YAHPBUW3dShaderStruct@@@Z;C++ alias
 ?dup_00978920@@YAXXZ,,0x00978920,3,game/Libraries/Source/WWVegas/WW3D2/hlod.cpp,matched,gen-alias;object-symbol=?Get_Bone_Index@ProxyRecordClass@@QAEHXZ;C++ alias
 ?dup_00978da0@@YAXXZ,,0x00978DA0,7,game/GameEngine/Source/Common/RTS/Player.cpp,matched,gen-alias;object-symbol=?getPlayerColor@Player@@QBEHXZ;C++ alias
 ?dup_009790c0@@YAXXZ,,0x009790C0,39,game/Libraries/Source/WWVegas/WW3D2/pointgr.cpp,matched,zh-landmulti exact-multi ZH twin (rel32-all-resolve);object-symbol=?Clear@?$VectorClass@E@@UAEXXZ
@@ -171990,3 +171961,32 @@ uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.c
 ??1BfmeAptScreenMapTransfer@@MAE@XZ,,0x00510310,7,game/GameEngine/Source/GameClient/GUI/BfmeAptScreenMapTransferDestructor.cpp,matched,model=claude-opus-5-5;host=GreatFaram
 ??1Rva0002B8C8TailBase@@UAE@XZ,,0x00113E60,7,game/GameEngine/Source/GameClient/Drawable/Behavior/Rva0002B8C8TailBaseDestructor.cpp,matched,model=claude-opus-5-5;host=GreatFaram
 ??1AIFollowPathState@@UAE@XZ,,0x00185630,5,game/GameEngine/Source/GameLogic/AI/AIFollowPathStateDestructors.cpp,matched,model=claude-opus-5-5;host=GreatFaram
+?Get_Alpha_Test@ShaderClass@@QBE?AW4AlphaTestType@1@XZ,,0x0090F290,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?Get_Depth_Mask@ShaderClass@@QBE?AW4DepthMaskType@1@XZ,,0x00910D20,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?Get_Dst_Blend_Func@ShaderClass@@QBE?AW4DstBlendFuncType@1@XZ,,0x0090F2A0,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?Get_Primary_Gradient@ShaderClass@@QBE?AW4PriGradientType@1@XZ,,0x00910D70,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?Get_Secondary_Gradient@ShaderClass@@QBE?AW4SecGradientType@1@XZ,,0x00910D80,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?Get_Src_Blend_Func@ShaderClass@@QBE?AW4SrcBlendFuncType@1@XZ,,0x00910D90,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?Get_Texturing@ShaderClass@@QBE?AW4TexturingType@1@XZ,,0x00910DB0,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Get_Alpha_Test@@YAHPBUW3dShaderStruct@@@Z,,0x00978750,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Get_Depth_Compare@@YAHPBUW3dShaderStruct@@@Z,,0x005375B0,8,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,gen-alias;object-symbol=?W3d_Shader_Get_Depth_Compare@@YAHPBUW3dShaderStruct@@@Z;C++ alias; re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Get_Depth_Mask@@YAHPBUW3dShaderStruct@@@Z,,0x009786D0,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Get_Dest_Blend_Func@@YAHPBUW3dShaderStruct@@@Z,,0x009786E0,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Get_Detail_Alpha_Func@@YAHPBUW3dShaderStruct@@@Z,,0x00978740,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Get_Detail_Color_Func@@YAHPBUW3dShaderStruct@@@Z,,0x00978730,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Get_Pri_Gradient@@YAHPBUW3dShaderStruct@@@Z,,0x009786F0,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Get_Sec_Gradient@@YAHPBUW3dShaderStruct@@@Z,,0x00978700,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Get_Src_Blend_Func@@YAHPBUW3dShaderStruct@@@Z,,0x00978710,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Get_Texturing@@YAHPBUW3dShaderStruct@@@Z,,0x00978720,9,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Reset@@YAXPAUW3dShaderStruct@@@Z,,0x009785E0,57,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Set_Alpha_Test@@YAXPAUW3dShaderStruct@@H@Z,,0x00978690,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Set_Depth_Compare@@YAXPAUW3dShaderStruct@@H@Z,,0x00978620,11,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Set_Depth_Mask@@YAXPAUW3dShaderStruct@@H@Z,,0x00978630,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Set_Dest_Blend_Func@@YAXPAUW3dShaderStruct@@H@Z,,0x00978640,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Set_Post_Detail_Alpha_Func@@YAXPAUW3dShaderStruct@@H@Z,,0x009786B0,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Set_Post_Detail_Color_Func@@YAXPAUW3dShaderStruct@@H@Z,,0x009786A0,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Set_Pri_Gradient@@YAXPAUW3dShaderStruct@@H@Z,,0x00978650,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Set_Sec_Gradient@@YAXPAUW3dShaderStruct@@H@Z,,0x00978660,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Set_Src_Blend_Func@@YAXPAUW3dShaderStruct@@H@Z,,0x00978670,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?W3d_Shader_Set_Texturing@@YAXPAUW3dShaderStruct@@H@Z,,0x00978680,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+?dup_009786c0@@YAXXZ,,0x009786C0,8,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,gen-alias;object-symbol=?W3d_Shader_Get_Depth_Compare@@YAHPBUW3dShaderStruct@@@Z;C++ alias; re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
