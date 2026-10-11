@@ -24,7 +24,8 @@ public:
 	~UnicodeString() {}
 };
 
-extern const unsigned short g_Rva01088AF4EmptyWideString[];
+// Retail VA 0x01088AF4: an empty wide literal (two zero bytes).
+extern const unsigned short g_Rva01088AF4EmptyWideString[1] = {0};
 
 class GameWindow;
 GameWindow *MessageBoxOk(UnicodeString title, UnicodeString body,
