@@ -2,8 +2,9 @@
 // Open-BFME5: WeaponTemplate::parseScatterTarget, retail 0x001EA7F0 size 110.
 // Focused TU: Weapon.cpp keeps the ZH layout (scatter vector after the
 // scalars). BFME stores m_scatterTargets at +0x34. The 8-byte Coord2D
-// construct and reallocating insert are the already-landed pair at
-// 0x001E21F0 / 0x001E9020, reached through their ILTs. The overflow
+// construct and reallocating insert are at 0x001E21F0 / 0x001E9020,
+// reached through their ILTs. The construction helper's identity still needs
+// recovery; overflow calls use the existing width-proven ledger types. The overflow
 // dispatch tag is aliased onto the instance argument, the same stack-slot
 // trick the member push_back family uses on its value parameter.
 
@@ -15,6 +16,10 @@ struct LinearTarget
 	float y;
 	unsigned int t;
 };
+
+// Existing overflow-provider types; retail proves their payload widths.
+struct Rva001E9020Element { unsigned char m_data[8]; };
+struct Gen_t_001ea7a0_p12cd { int a[3]; };
 
 class INI
 {
@@ -47,6 +52,7 @@ public:
 	Type *_M_finish;
 	Type *_M_end_of_storage;
 
+protected:
 	void _M_insert_overflow(Type *position, const Type &value,
 		const __false_type &, unsigned int fillLength, bool atEnd);
 };
@@ -86,7 +92,10 @@ void WeaponTemplate::parseScatterTarget(INI *ini, void *instance, void *store, c
 	}
 	else
 	{
-		items._M_insert_overflow(items._M_finish, target,
+		reinterpret_cast<_STL::public_vector<Rva001E9020Element,
+			_STL::allocator<Rva001E9020Element> > *>(&items)->_M_insert_overflow(
+			reinterpret_cast<Rva001E9020Element *>(items._M_finish),
+			reinterpret_cast<const Rva001E9020Element &>(target),
 			reinterpret_cast<const _STL::__false_type &>(instance), 1, true);
 	}
 }
@@ -110,7 +119,10 @@ void WeaponTemplate::parseLinearTarget(INI *ini, void *instance, void *store, co
 	}
 	else
 	{
-		items._M_insert_overflow(items._M_finish, rec,
+		reinterpret_cast<_STL::public_vector<Gen_t_001ea7a0_p12cd,
+			_STL::allocator<Gen_t_001ea7a0_p12cd> > *>(&items)->_M_insert_overflow(
+			reinterpret_cast<Gen_t_001ea7a0_p12cd *>(items._M_finish),
+			reinterpret_cast<const Gen_t_001ea7a0_p12cd &>(rec),
 			reinterpret_cast<const _STL::__false_type &>(instance), 1, true);
 	}
 }
