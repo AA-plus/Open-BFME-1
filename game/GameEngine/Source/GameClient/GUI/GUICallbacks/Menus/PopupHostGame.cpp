@@ -510,3 +510,28 @@ void createGame( void )
 
 	TheGameSpyPeerMessageQueue->addRequest(req);
 }
+
+//-----------------------------------------------------------------------------
+// Rva004D4080 accesses a dword at +0x04 of its receiver and returns it in
+// EAX: four bytes, carved boundary (rel32-call/jmp start, ret+int3 end) at
+// 0x004D4080. It sits between the matched wchar_t char_traits copy at
+// 0x004D4030 and the basic_string<wchar_t> size alias at 0x004D4090, but no
+// caller names it, so the class keeps an address-derived name rather than
+// claiming a retail identity the image does not support.
+//-----------------------------------------------------------------------------
+class Rva004D4080
+{
+public:
+	void *m_rva00;
+	unsigned m_rva04;
+
+	unsigned Rva004D4080Get(void) const;
+};
+
+// Out of class so the definition keeps external linkage and the body survives: an
+// in-class inline with no caller is discarded, which is why the first attempt
+// emitted nothing for this symbol.
+unsigned Rva004D4080::Rva004D4080Get(void) const
+{
+	return m_rva04;
+}
