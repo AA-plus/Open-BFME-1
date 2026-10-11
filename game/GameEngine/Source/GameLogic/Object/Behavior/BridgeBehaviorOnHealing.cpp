@@ -267,7 +267,7 @@ public:
 class Pathfinder
 {
 public:
-	void friend_changeBridgeState(PathfindLayerEnum layer, bool open);
+	void changeBridgeState(PathfindLayerEnum layer, bool open);
 };
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AI.h
@@ -432,7 +432,7 @@ void BridgeBehavior::removeScaffolding()
 	{
 		Bridge *bridge = TheTerrainLogic->findBridgeAt(object->getPosition());
 		if (bridge)
-			TheAI->pathfinder()->friend_changeBridgeState(bridge->getLayer(), true);
+			TheAI->pathfinder()->changeBridgeState(bridge->getLayer(), true);
 	}
 }
 
