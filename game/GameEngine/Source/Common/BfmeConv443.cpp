@@ -37,10 +37,10 @@ public:
 	void *unidentified_001BFE20() const;
 };
 
-class BfmeObjE10
+class Gen001C9AC0
 {
 public:
-	void actionB(int action);
+	void handle(int player);
 };
 
 struct Gen_t_0021c9d0_p12cd
@@ -157,7 +157,7 @@ void BfmeSubBDB::bfmeDoBDB(void *what, int flag)
 	Object *object = (Object *)what;
 	ObjectStatusMaskType mask(ObjectStatusMaskType::kInit, 36);
 	object->setStatus(mask, false);
-	((BfmeObjE10 *)object)->actionB(9);
+	reinterpret_cast<Gen001C9AC0 *>(object)->handle(9);
 
 	void *module = *(void **)((char *)object + 0x1fc);
 	if (module)
