@@ -17,4 +17,25 @@ struct Rva0076B430Payload
 bool operator==(const Rva0076B430Payload &, const Rva0076B430Payload &);
 bool operator<(const Rva0076B430Payload &, const Rva0076B430Payload &);
 
-template class _STL::list<Rva0076B430Payload>;
+// ILT 0x00028524 reaches this authored placement construction at 0x00764FA0.
+// Its provider proves the same 36-byte payload and a cdecl two-pointer ABI.
+class Open2Rec764FA0;
+void Open2Construct764FA0(Open2Rec764FA0 *, const Open2Rec764FA0 &);
+
+namespace _STL
+{
+template <> __forceinline void _Construct<Rva0076B430Payload, Rva0076B430Payload>(
+	Rva0076B430Payload *place, const Rva0076B430Payload &value)
+{
+	Open2Construct764FA0((Open2Rec764FA0 *)place,
+		(const Open2Rec764FA0 &)value);
+}
+}
+
+// Emit the ledger-owned range dispatch, without unrelated list members.
+template void _STL::list<Rva0076B430Payload>::_M_insert_dispatch<
+	_STL::list<Rva0076B430Payload>::const_iterator>(
+	_STL::list<Rva0076B430Payload>::iterator,
+	_STL::list<Rva0076B430Payload>::const_iterator,
+	_STL::list<Rva0076B430Payload>::const_iterator,
+	const _STL::__false_type &);
