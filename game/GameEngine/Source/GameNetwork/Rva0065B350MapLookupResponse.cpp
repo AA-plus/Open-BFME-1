@@ -43,7 +43,6 @@ public:
     _STL::map<void *, void *> values;
     int handle(void *, int, const char *, int, int);
     int method0065B100(void *, int, const char *, int, int);
-    int handleLadderRankResponse(void *, int, const char *, int, int);
     int handleXKResponse(void *, int, const char *, int, int);
 };
 int Rva0065B350::handle(void *key, int status, const char *text, int, int)
@@ -85,7 +84,7 @@ int bfmeLadderRankHttpComplete(int key, int status, char *text, __int64 timestam
 {
     if (!context)
         return 1;
-    return static_cast<Rva0065B350 *>(context)->handleLadderRankResponse(
+    return static_cast<Rva0065B350 *>(context)->method0065B100(
         reinterpret_cast<void *>(key), status, text,
         reinterpret_cast<const int *>(&timestamp)[0], reinterpret_cast<const int *>(&timestamp)[1]);
 }
