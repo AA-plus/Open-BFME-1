@@ -2,13 +2,17 @@
 class GameWindow
 {
 public:
-	void winHide(bool hide);
+	int winHide(bool hide);
+};
+
+struct BfmeQuickMatchHideOptionsGadgetsBody
+{
+	void hide(bool doIt);
 };
 
 struct Rva505C80WindowVisibilityThunk
 {
 	void updateVisibility();
-	void setState(bool enabled);
 
 	unsigned char unused000[0x264];
 	GameWindow *finalWindow;
@@ -22,13 +26,12 @@ struct Rva505C80WindowVisibilityThunk
 	GameWindow *thirdWindow;
 };
 
-// ?updateVisibility@Rva505C80WindowVisibilityThunk@@ absent-from-retail
 void Rva505C80WindowVisibilityThunk::updateVisibility()
 {
 	firstWindow->winHide(true);
 	secondWindow->winHide(true);
 	thirdWindow->winHide(true);
 	fourthWindow->winHide(true);
-	setState(false);
+	((BfmeQuickMatchHideOptionsGadgetsBody *)this)->hide(false);
 	finalWindow->winHide(false);
 }
