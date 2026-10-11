@@ -9958,7 +9958,6 @@ name,va
 ?g_bfmeDefaultVTM@@3VBfmeStrVTM@@A,0x01336E50
 ?g_bfmeDefaultYC@@3VBfmeRoomYC@@A,0x01336E50
 ?g_bfmeDefaultYF@@3VBfmeRoomYF@@A,0x01336E50
-?g_bfmeDeltaAAW@@3MB,0x012F8230
 ?g_bfmeDepthVHM@@3HC,0x01340588
 ?g_bfmeDescABB@@3QAXA,0x011E0004
 ?g_bfmeDescriptor3C0600@@3HA,0x012BA450

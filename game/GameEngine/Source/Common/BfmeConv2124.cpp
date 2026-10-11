@@ -1,16 +1,17 @@
-class Rva005A00B0Transition
+// cl: /DNDEBUG /DWIN32 /MD /EHsc /Iinputs/reference/shims/fullfade /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
+// stlport
+#include "PreRTS.h"
+#include "GameClient/GameWindowTransitions.h"
+
+class Rva00609850
 {
 public:
-	bool bfmeReadyAAW();
+	void go();
 };
 
-// Retail 0x012F3330 is EA's GameWindowTransitionsHandler *TheTransitionHandler;
-// Rva005A00B0Transition is this TU's view of the object, so the use casts.
-class GameWindowTransitionsHandler;
-
-extern GameWindowTransitionsHandler *TheTransitionHandler;
-
-extern const float g_bfmeDeltaAAW;
+// Retail loads a writable four-byte timer delta at VA 0x012F8230.
+// Both x87 operands at +0x1F and +0x5D prove its width; retail .data is zero.
+float g_Va012F8230 = 0.0f;
 extern const float g_rva01075350;
 extern float g_bfmeDefaultBU;
 
@@ -39,7 +40,6 @@ public:
 	virtual void bfmeExpireAAW();
 
 	void bfmeUpdateAAW();
-	void bfmeTickAAW();
 
 	int m_bfme04AAW;
 	unsigned char m_bfmeGapAAW[0x144 - 8];
@@ -48,16 +48,17 @@ public:
 
 void BfmeHostAAW::bfmeUpdateAAW()
 {
-	bfmeTickAAW();
+	// ILT 0x0004ACC8 jumps to the authored 13-byte member at 0x00609850.
+	reinterpret_cast<Rva00609850 *>(this)->go();
 
 	switch (m_bfme04AAW)
 	{
 		case 2:
 		{
 			if (m_bfme144AAW <= g_bfmeDefaultBU)
-				m_bfme144AAW = g_bfmeDeltaAAW + m_bfme144AAW;
+				m_bfme144AAW = g_Va012F8230 + m_bfme144AAW;
 
-			if (m_bfme144AAW > g_bfmeDefaultBU && ((Rva005A00B0Transition *)TheTransitionHandler)->bfmeReadyAAW())
+			if (m_bfme144AAW > g_bfmeDefaultBU && TheTransitionHandler->isFinished())
 			{
 				bfmeFadeAAW(1, 1);
 				m_bfme144AAW = 0;
@@ -70,7 +71,7 @@ void BfmeHostAAW::bfmeUpdateAAW()
 
 		case 3:
 		{
-			float f = m_bfme144AAW - g_bfmeDeltaAAW;
+			float f = m_bfme144AAW - g_Va012F8230;
 
 			m_bfme144AAW = f;
 
