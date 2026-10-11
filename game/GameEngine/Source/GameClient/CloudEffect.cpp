@@ -76,6 +76,65 @@ struct CloudEffect
 	static const FieldParse m_fieldParseTable[];
 };
 
+// Complete retail FieldParse table at VA010F0690, including its zero terminator.
+extern const char g_Va010F0ACC[] = "CloudTexture";
+extern const char g_Va010F0AB8[] = "DarkCloudTexture";
+extern const char g_Va010F0AA8[] = "AlphaTexture";
+extern const char g_Va010F0A94[] = "PropagateSpeed";
+extern const char g_Va01075378[] = "Angle";
+extern const char g_Va010F0A80[] = "DissipateTexture";
+extern const char g_Va010F0A68[] = "DissipateStartLevel";
+extern const char g_Va010F0A54[] = "DissipateSpeed";
+extern const char g_Va010F0A40[] = "DarkeningFactor";
+extern const char g_Va010F0A30[] = "DarkeningRate";
+extern const char g_Va010F0A1C[] = "LighteningRate";
+extern const char g_Va010F0A08[] = "CloudScrollSpeed";
+extern const char g_Va010F09F0[] = "DissipateRateScale";
+extern const char g_Va010F09DC[] = "LightningShadows";
+extern const char g_Va010F09B8[] = "JitterLightningLightPosition";
+extern const char g_Va010F0994[] = "JitterLightningLightIntensity";
+extern const char g_Va010F0980[] = "LightningChance";
+extern const char g_Va010F0964[] = "LightningShadowColor";
+extern const char g_Va010F0944[] = "LightningShadowIntensity";
+extern const char g_Va010F092C[] = "LightningDuration";
+extern const char g_Va010F0914[] = "LightningFrequency";
+extern const char g_Va010F08FC[] = "LightningIntensity";
+extern const char g_Va010F08E0[] = "LightningLightPosition1";
+extern const char g_Va010F08C4[] = "LightningLightPosition2";
+extern const char g_Va010F08A8[] = "LightningLightPosition3";
+extern const char g_Va010F0898[] = "LightningFX";
+
+const FieldParse CloudEffect::m_fieldParseTable[] =
+{
+	{ g_Va010F0ACC, INI::parseAsciiString, 0, 0x00 },
+	{ g_Va010F0AB8, INI::parseAsciiString, 0, 0x04 },
+	{ g_Va010F0AA8, INI::parseAsciiString, 0, 0x08 },
+	{ g_Va010F0A94, INI::parseReal, 0, 0x0C },
+	{ g_Va01075378, INI::parseInt, 0, 0x10 },
+	{ g_Va010F0A80, INI::parseAsciiString, 0, 0x14 },
+	{ g_Va010F0A68, INI::parseReal, 0, 0x18 },
+	{ g_Va010F0A54, INI::parseReal, 0, 0x1C },
+	{ g_Va010F0A40, INI::parseRGBColor, 0, 0x20 },
+	{ g_Va010F0A30, INI::parseInt, 0, 0x2C },
+	{ g_Va010F0A1C, INI::parseInt, 0, 0x30 },
+	{ g_Va010F0A08, INI::parseReal, 0, 0x34 },
+	{ g_Va010F09F0, INI::parseReal, 0, 0x38 },
+	{ g_Va010F09DC, INI::parseBool, 0, 0x3C },
+	{ g_Va010F09B8, INI::parseBool, 0, 0x3D },
+	{ g_Va010F0994, INI::parseBool, 0, 0x3E },
+	{ g_Va010F0980, INI::parseReal, 0, 0x40 },
+	{ g_Va010F0964, INI::parseRGBColor, 0, 0x44 },
+	{ g_Va010F0944, INI::parseReal, 0, 0x50 },
+	{ g_Va010F092C, INI::parseGameClientRandomVariable, 0, 0x54 },
+	{ g_Va010F0914, INI::parseReal, 0, 0x60 },
+	{ g_Va010F08FC, INI::parseGameClientRandomVariable, 0, 0x64 },
+	{ g_Va010F08E0, INI::parseCoord2D, 0, 0x70 },
+	{ g_Va010F08C4, INI::parseCoord2D, 0, 0x78 },
+	{ g_Va010F08A8, INI::parseCoord2D, 0, 0x80 },
+	{ g_Va010F0898, INI::parseAsciiString, 0, 0x88 },
+	{ 0, 0, 0, 0 }
+};
+
 class CloudEffectSystem
 {
 public:
