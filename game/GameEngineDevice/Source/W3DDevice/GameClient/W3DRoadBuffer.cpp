@@ -3571,3 +3571,23 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 #endif
 	m_curRoadType = 0;
 }
+
+// BFME-2 donor2a0f7acb06 W3DRoadSegmentUpdateLighting.cpp.
+// BFME-1 24-byte vertex stride and map+2FF4 border+10 are retail facts.
+// Read border independently for each coordinate, preserving ftol query lifetime.
+class BfmeA1087 {public: int getStaticDiffuse(int,int);};
+extern BfmeA1087 *g_bfmeA1087;
+static const char *rva007040D0Map()
+{
+    return *(const char **)((const char *)g_bfmeA1087 + 0x2ff4);
+}
+void RoadSegment::updateSegLighting(void)
+{
+    for(int i=0;i<m_numVertex;++i) {
+        float vx=m_vb[i].x;
+        float vy=m_vb[i].y;
+        int x=(int)(vx/MAP_XY_FACTOR+0.5)+*(const int*)(rva007040D0Map()+0x10);
+        int y=(int)(vy/MAP_XY_FACTOR+0.5)+*(const int*)(rva007040D0Map()+0x10);
+        m_vb[i].diffuse=(255<<24)|g_bfmeA1087->getStaticDiffuse(x,y);
+    }
+}
