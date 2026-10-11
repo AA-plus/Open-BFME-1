@@ -417,38 +417,9 @@ SuperweaponInfo::~SuperweaponInfo()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-// byte-exact reconstruction: game/GameEngine/Source/GameClient/SuperweaponInfoSetFont.cpp
-// ?setFont@SuperweaponInfo@@QAEXABVAsciiString@@H_N@Z present-unmatched
-void SuperweaponInfo::setFont(const AsciiString& superweaponNormalFont, Int superweaponNormalPointSize, Bool superweaponNormalBold)
-{
-	m_nameDisplayString->setFont( TheFontLibrary->getFont( superweaponNormalFont, 
-		TheGlobalLanguageData->adjustFontSize(superweaponNormalPointSize), superweaponNormalBold ) );
-	m_timeDisplayString->setFont( TheFontLibrary->getFont( superweaponNormalFont, 
-		TheGlobalLanguageData->adjustFontSize(superweaponNormalPointSize), superweaponNormalBold ) );
-}
+// SuperweaponInfo::setFont, drawName and drawTime are defined by the
+// retail-matched provider in SuperweaponInfo.cpp.
 
-// ------------------------------------------------------------------------------------------------
-// byte-exact reconstruction: game/GameEngine/Source/GameClient/SuperweaponInfoDrawName.cpp
-// ?drawName@SuperweaponInfo@@QAEXHHHH@Z present-unmatched
-void SuperweaponInfo::drawName(Int x, Int y, Color color, Color dropColor)
-{
-	if (color == 0)
-		color = m_color;
- 	m_nameDisplayString->draw(x - m_nameDisplayString->getWidth(), y, color, dropColor);
-}
-
-// ------------------------------------------------------------------------------------------------
-// byte-exact reconstruction: game/GameEngine/Source/GameClient/SuperweaponInfoDrawTime.cpp
-// ?drawTime@SuperweaponInfo@@QAEXHHHH@Z present-unmatched
-void SuperweaponInfo::drawTime(Int x, Int y, Color color, Color dropColor)
-{
-	if (color == 0)
-		color = m_color;
- 	m_timeDisplayString->draw(x, y, color, dropColor);
-}
-
-// ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
 // ?getHeight@SuperweaponInfo@@QBEMXZ present-unmatched
 Real SuperweaponInfo::getHeight() const
 {
