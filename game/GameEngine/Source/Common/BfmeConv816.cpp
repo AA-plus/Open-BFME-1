@@ -1,36 +1,28 @@
 // cl: /Igame/Libraries/Source/WWVegas/WW3D2 /DNDEBUG /DWIN32 /D_WINDOWS /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
 #include "dx8wrapper.h"
 
-void __cdecl bfmeFreeELA(void *p);
+#include <new.h>
+
+class Bfme5OwnerLink;
+class Bfme5OwnerList
+{
+public:
+	void bfmeClear(void);
+	Bfme5OwnerLink *m_bfmeNode;
+};
 
 struct BfmeThingELAa
 {
 	void bfmeGoELAa();
-	void bfmeClearELAa();
 	void *m_bfmeP;
 };
 
 void BfmeThingELAa::bfmeGoELAa()
 {
-	bfmeClearELAa();
+	reinterpret_cast<Bfme5OwnerList *>(this)->bfmeClear();
 	void *p = m_bfmeP;
 	if (p)
-		bfmeFreeELA(p);
-}
-
-struct BfmeThingELAb
-{
-	void bfmeGoELAb();
-	void bfmeClearELAa();
-	void *m_bfmeP;
-};
-
-void BfmeThingELAb::bfmeGoELAb()
-{
-	bfmeClearELAa();
-	void *p = m_bfmeP;
-	if (p)
-		bfmeFreeELA(p);
+		::operator delete(p);
 }
 
 class BfmeObjELB
@@ -48,9 +40,19 @@ void __stdcall bfmeGoELB(int unused)
 		o->bfmeTailELB(1);
 }
 
+struct BfmeThingDYA
+{
+	void bfmeGoDYA(void *a);
+	unsigned char m_bfmeHead[0x20];
+	unsigned char m_bfmeFlags;
+	unsigned char m_bfmePadA[3];
+	int m_bfmeX;
+	void *m_bfmeA;
+	int m_bfmeT;
+};
+
 struct BfmeSubELC
 {
-	void bfmeTailELC(int n);
 	unsigned char m_bfmeHead[0x20];
 	unsigned char m_bfmeFlags;
 };
@@ -66,10 +68,10 @@ void BfmeThingELC::bfmeGoELC(int unused)
 {
 	BfmeSubELC *s = m_bfmeS;
 	if (s->m_bfmeFlags & 1)
-		s->bfmeTailELC(0x1f4);
+		reinterpret_cast<BfmeThingDYA *>(s)->bfmeGoDYA(
+			reinterpret_cast<void *>(0x1f4));
 }
 
-void __cdecl bfmeFreeELD(void *p);
 
 struct BfmeThingELDa
 {
@@ -82,7 +84,7 @@ void BfmeThingELDa::bfmeGoELDa(void *a)
 	void *old = m_bfmeP;
 	if (a != old)
 	{
-		bfmeFreeELD(old);
+		::operator delete(old);
 		m_bfmeP = a;
 	}
 }
@@ -98,12 +100,14 @@ void BfmeThingELDb::bfmeGoELDb(void *a)
 	void *old = m_bfmeP;
 	if (a != old)
 	{
-		bfmeFreeELD(old);
+		::operator delete(old);
 		m_bfmeP = a;
 	}
 }
 
-void __cdecl bfmeCallELE(void *p, void *a);
+class GameWindow;
+class LANGameInfo;
+void LANDisplayGameList(GameWindow *gameListbox, LANGameInfo *gameList);
 
 struct BfmeThingELE
 {
@@ -117,7 +121,8 @@ struct BfmeThingELE
 void BfmeThingELE::bfmeGoELE(void *a)
 {
 	if (m_bfmeFlag)
-		bfmeCallELE(m_bfmeP, a);
+		LANDisplayGameList(static_cast<GameWindow *>(m_bfmeP),
+			static_cast<LANGameInfo *>(a));
 }
 
 struct BfmeThingELF
@@ -135,10 +140,11 @@ void BfmeThingELF::bfmeGoELF(void *a)
 		fn(m_bfmeCtx, a);
 }
 
-class BfmeSubELGa
+class BfmeSubELGa;
+class Rva006DF050
 {
 public:
-	void bfmeTailELGa(void *a);
+	void eraseKey(int key);
 };
 
 struct BfmeThingELGa
@@ -152,7 +158,8 @@ void BfmeThingELGa::bfmeGoELGa(void *a)
 {
 	BfmeSubELGa *s = m_bfmeS;
 	if (s && a)
-		s->bfmeTailELGa(a);
+		reinterpret_cast<Rva006DF050 *>(s)->eraseKey(
+			reinterpret_cast<int>(a));
 }
 
 class BfmeSubELGb
