@@ -131,9 +131,8 @@ public:
 
 	virtual Int getAiFreeToExit(Object *obj) const;		///< vtable +0x170
 
-	const Locomotor *getCurLocomotor(void) const { return m_curLocomotor; }
+	const Locomotor *getCurLocomotor(void) const;
 
-private:
 	unsigned char m_unreconstructed_04[0x1CC - 4];
 	Locomotor *m_curLocomotor;							///< retail this+0x1CC
 };
@@ -146,14 +145,26 @@ public:
 	Int getLayer(void) const;							///< ILT thunk at 0x0003A391
 
 	const Coord3D *getPosition(void) const { return &m_position; }
-	const AIUpdateInterface *getAIUpdateInterface(void) const { return m_ai; }
+	const AIUpdateInterface *getAIUpdateInterface(void) const;
 
-private:
 	unsigned char m_unreconstructed_00[0x38];
 	Coord3D m_position;									///< retail this+0x38
 	unsigned char m_unreconstructed_44[0x204 - 0x44];
 	AIUpdateInterface *m_ai;							///< retail this+0x204
 };
+
+// The retained Object/AIUpdate headers describe the Zero Hour layouts.
+// These fields are the BFME offsets proved by this caller; local helpers
+// avoid publishing incompatible external copies of the inline accessors.
+static __forceinline const AIUpdateInterface *containedObjectAI(const Object *object)
+{
+	return object->m_ai;
+}
+
+static __forceinline const Locomotor *containedCurrentLocomotor(const AIUpdateInterface *ai)
+{
+	return ai->m_curLocomotor;
+}
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AIPathfind.h
 class Pathfinder
@@ -201,7 +212,7 @@ Bool TransportContain::isSpecificRiderFreeToExit(Object* specificObject)
 
 	// this is present solely for some transports to override, so that they can land before
 	// allowing people to exit...
-	const AIUpdateInterface* ai = me->getAIUpdateInterface();
+	const AIUpdateInterface* ai = containedObjectAI(me);
 	if (ai && ai->getAiFreeToExit(specificObject) != FREE_TO_EXIT)
 		return false;
 
@@ -210,10 +221,10 @@ Bool TransportContain::isSpecificRiderFreeToExit(Object* specificObject)
 		return true;
 
 	const Coord3D *myPosition = me->getPosition();
-	if (!specificObject->getAIUpdateInterface())
+	if (!containedObjectAI(specificObject))
 		return false;
 
-	const Locomotor *hisLocomotor = specificObject->getAIUpdateInterface()->getCurLocomotor();
+	const Locomotor *hisLocomotor = containedCurrentLocomotor(containedObjectAI(specificObject));
 	if( hisLocomotor == 0 )
 		return false;
 
