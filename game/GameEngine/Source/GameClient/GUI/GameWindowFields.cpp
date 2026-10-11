@@ -4,7 +4,7 @@
 // readable body of ?winSetHiliteImage@GameWindow@@QAEHHPBVImage@@@Z: game/GameEngine/Source/GameClient/GUI/GameWindow.cpp
 //
 // Native GameWindow.cpp owns the unused accessor copies removed from this TU.
-// Retain the three accessors that emit verified retail alias twins.
+// Their existing retail alias twins use the same native matched getter emitter.
 // GameWindow field accessors, byte-matched against the reconstructed BFME
 // GameWindow layout (inputs/reference/shims/gamewindow/GameClient/GameWindow.h). These
 // are the retail bodies the incremental-link thunks jump to; each is a single
@@ -20,11 +20,7 @@
 #include "GameClient/Gadget.h"          // GWS_COMBO_BOX
 #include "GameClient/GadgetComboBox.h"  // GadgetComboBoxSet*TextColors
 
-// ?winGetInstanceData@GameWindow@@QAEPAVWinInstanceData@@XZ
-WinInstanceData *GameWindow::winGetInstanceData( void )
-{
-	return &m_instData;
-}
+
 
 // winGetUserData is emitted by the retail-owned GameWindow.cpp.
 
@@ -49,11 +45,6 @@ WinInstanceData *GameWindow::winGetInstanceData( void )
 
 
 
-// ?winGetParent@GameWindow@@QAEPAV1@XZ
-GameWindow *GameWindow::winGetParent( void )
-{
-	return m_parent;
-}
 
 
 
@@ -61,11 +52,8 @@ GameWindow *GameWindow::winGetParent( void )
 
 
 
-// ?winGetLayout@GameWindow@@QAEPAVWindowLayout@@XZ
-WindowLayout *GameWindow::winGetLayout( void )
-{
-	return m_layout;
-}
+
+
 
 
 
@@ -216,7 +204,7 @@ Int GameWindow::winSetPosition( Int x, Int y )
 Int GameWindow::winBringToTop( void )
 {
 	GameWindow *current;
-	GameWindow *parent = winGetParent();
+	GameWindow *parent = m_parent;
 
 	if( parent )
 	{

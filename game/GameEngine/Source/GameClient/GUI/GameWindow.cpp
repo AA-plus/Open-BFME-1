@@ -1736,24 +1736,7 @@ void GameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 /** Set an enabled image into the draw data for the enabled state */
 //=============================================================================
 // byte-exact reconstruction: game/GameEngine/Source/GameClient/GUI/GameWindowFields.cpp
-// ?winSetEnabledImage@GameWindow@@QAEHHPBVImage@@@Z present-unmatched
-Int GameWindow::winSetEnabledImage( Int index, const Image *image )
-{
-
-	// sanity
-	if( index < 0 || index >= MAX_DRAW_DATA )
-	{
-
-		DEBUG_LOG(( "set enabled image, index out of range '%d'\n", index ));
-		assert( 0 );
-		return WIN_ERR_INVALID_PARAMETER;
-
-	}  // end if
-
-	m_instData.m_enabledDrawData[ index ].image = image;
-	return WIN_ERR_OK;
-
-}  // end winSetEnabledImage
+// winSetEnabledImage is owned by the matched BFME-layout GameWindowFields.cpp body.
 
 // GameWindow::winSetEnabledColor =============================================
 /** set color for enabled state at index */
@@ -1763,26 +1746,9 @@ Int GameWindow::winSetEnabledImage( Int index, const Image *image )
 // store below is four bytes -- one WinDrawData member -- early. That is how
 // four of these nine came to claim the NEXT setter's retail body. The BFME
 // -layout owners are GameWindowFields.cpp (image/color) and
-// GameWindowBorderColorSetters.cpp (borderColor); these stay for readability.
+// GameWindowBorderColorSetters.cpp (borderColor); obsolete copies are removed.
 // byte-exact reconstruction: game/GameEngine/Source/GameClient/GUI/GameWindowFields.cpp
-// ?winSetEnabledColor@GameWindow@@QAEHHH@Z present-unmatched
-Int GameWindow::winSetEnabledColor( Int index, Color color )
-{
-
-	// sanity
-	if( index < 0 || index >= MAX_DRAW_DATA )
-	{
-
-		DEBUG_LOG(( "set enabled color, index out of range '%d'\n", index ));
-		assert( 0 );
-		return WIN_ERR_INVALID_PARAMETER;
-
-	}  // end if
-
-	m_instData.m_enabledDrawData[ index ].color = color;
-	return WIN_ERR_OK;
-
-}  // end winSetEnabledColor
+// winSetEnabledColor is owned by the matched BFME-layout GameWindowFields.cpp body.
 
 // BFME winSetEnabledBorderColor is provided by GameWindowBorderColorSetters.cpp.
 // The Zero Hour layout here uses the wrong draw-data displacement.
@@ -1792,47 +1758,13 @@ Int GameWindow::winSetEnabledColor( Int index, Color color )
 /** Set an disabled image into the draw data for the disabled state */
 //=============================================================================
 // byte-exact reconstruction: game/GameEngine/Source/GameClient/GUI/GameWindowFields.cpp
-// ?winSetDisabledImage@GameWindow@@QAEHHPBVImage@@@Z present-unmatched
-Int GameWindow::winSetDisabledImage( Int index, const Image *image )
-{
-
-	// sanity
-	if( index < 0 || index >= MAX_DRAW_DATA )
-	{
-
-		DEBUG_LOG(( "set disabled image, index out of range '%d'\n", index ));
-		assert( 0 );
-		return WIN_ERR_INVALID_PARAMETER;
-
-	}  // end if
-
-	m_instData.m_disabledDrawData[ index ].image = image;
-	return WIN_ERR_OK;
-
-}  // end winSetDisabledImage
+// winSetDisabledImage is owned by the matched BFME-layout GameWindowFields.cpp body.
 
 // GameWindow::winSetDisabledColor ============================================
 /** set color for disabled state at index */
 //=============================================================================
 // byte-exact reconstruction: game/GameEngine/Source/GameClient/GUI/GameWindowFields.cpp
-// ?winSetDisabledColor@GameWindow@@QAEHHH@Z present-unmatched
-Int GameWindow::winSetDisabledColor( Int index, Color color )
-{
-
-	// sanity
-	if( index < 0 || index >= MAX_DRAW_DATA )
-	{
-
-		DEBUG_LOG(( "set disabled color, index out of range '%d'\n", index ));
-		assert( 0 );
-		return WIN_ERR_INVALID_PARAMETER;
-
-	}  // end if
-
-	m_instData.m_disabledDrawData[ index ].color = color;
-	return WIN_ERR_OK;
-
-}  // end winSetDisabledColor
+// winSetDisabledColor is owned by the matched BFME-layout GameWindowFields.cpp body.
 
 // BFME winSetDisabledBorderColor is provided by GameWindowBorderColorSetters.cpp.
 // The Zero Hour layout here uses the wrong draw-data displacement.
@@ -1842,47 +1774,13 @@ Int GameWindow::winSetDisabledColor( Int index, Color color )
 /** Set an hilite image into the draw data for the hilite state */
 //=============================================================================
 // byte-exact reconstruction: game/GameEngine/Source/GameClient/GUI/GameWindowFields.cpp
-// ?winSetHiliteImage@GameWindow@@QAEHHPBVImage@@@Z present-unmatched
-Int GameWindow::winSetHiliteImage( Int index, const Image *image )
-{
-
-	// sanity
-	if( index < 0 || index >= MAX_DRAW_DATA )
-	{
-
-		DEBUG_LOG(( "set hilite image, index out of range '%d'\n", index ));
-		assert( 0 );
-		return WIN_ERR_INVALID_PARAMETER;
-
-	}  // end if
-
-	m_instData.m_hiliteDrawData[ index ].image = image;
-	return WIN_ERR_OK;
-
-}  // end winSetHiliteImage
+// winSetHiliteImage is owned by the matched BFME-layout GameWindowFields.cpp body.
 
 // GameWindow::winSetHiliteColor ==============================================
 /** set color for hilite state at index */
 //=============================================================================
 // byte-exact reconstruction: game/GameEngine/Source/GameClient/GUI/GameWindowFields.cpp
-// ?winSetHiliteColor@GameWindow@@QAEHHH@Z present-unmatched
-Int GameWindow::winSetHiliteColor( Int index, Color color )
-{
-
-	// sanity
-	if( index < 0 || index >= MAX_DRAW_DATA )
-	{
-
-		DEBUG_LOG(( "set hilite color, index out of range '%d'\n", index ));
-		assert( 0 );
-		return WIN_ERR_INVALID_PARAMETER;
-
-	}  // end if
-
-	m_instData.m_hiliteDrawData[ index ].color = color;
-	return WIN_ERR_OK;
-
-}  // end winSetHiliteColor
+// winSetHiliteColor is owned by the matched BFME-layout GameWindowFields.cpp body.
 
 // BFME winSetHiliteBorderColor is provided by GameWindowBorderColorSetters.cpp.
 // The Zero Hour layout here uses the wrong draw-data displacement.
