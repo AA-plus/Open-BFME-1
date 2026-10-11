@@ -252,7 +252,8 @@ class GameWindowManager;
 extern GameWindowManager *TheWindowManager;
 
 extern FadeView *FadeTacticalView;
-extern BfmeGlobal_012f076c *TheBfmeGlobal_012f076c;
+// ScriptEngine.cpp owns the native singleton at VA012F076C.
+extern ScriptEngine *TheScriptEngine;
 extern GameLogic *TheGameLogic;
 class PlayerList;
 extern PlayerList *ThePlayerList;
@@ -329,8 +330,8 @@ void ClientUpdate004329D0::update() {
         }
     }
     bool freezeTime = (((Dispatch004329D0 *)FadeTacticalView)->vd4() && !((Dispatch004329D0 *)FadeTacticalView)->v74())
-        || ((ScriptEngine *)TheBfmeGlobal_012f076c)->debugFrozen()
-        || ((Rva00336EF0ByteField *)TheBfmeGlobal_012f076c)->get()
+        || ((ScriptEngine *)TheScriptEngine)->debugFrozen()
+        || ((Rva00336EF0ByteField *)TheScriptEngine)->get()
         || ((BfmeGameLogicPause *)TheGameLogic)->isGamePaused();
     int localPlayerIndex = reinterpret_cast<Players005999B0 *>(ThePlayerList) ? ((PlayerList004329D0 *)reinterpret_cast<Players005999B0 *>(ThePlayerList))->getLocal()->getIndex() : 0;
     freezeTime = freezeTime || (g_012B5348 == m_at000C);

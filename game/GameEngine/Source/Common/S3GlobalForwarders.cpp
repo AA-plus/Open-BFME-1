@@ -57,7 +57,9 @@ public:
 	void bfmeCall_0004aa98(void);					// retail 0x0004AA98
 };
 
-extern BfmeGlobal_012f076c *TheBfmeGlobal_012f076c;				// 0x012F076C
+// ScriptEngine.cpp owns the native singleton at VA012F076C.
+class ScriptEngine;
+extern ScriptEngine *TheScriptEngine;				// 0x012F076C
 
 class BfmeGlobal_012f0898
 {
@@ -164,7 +166,7 @@ void Gen_002ed8c0(void)
 // ?Gen_002ed950@@YAXXZ
 void Gen_002ed950(void)
 {
-	TheBfmeGlobal_012f076c->bfmeCall_00028ce0();
+	reinterpret_cast<BfmeGlobal_012f076c *>(TheScriptEngine)->bfmeCall_00028ce0();
 }
 
 // ?Gen_002eec60@@YAXXZ
@@ -176,7 +178,7 @@ void Gen_002eec60(void)
 // ?Gen_002eff20@@YAXXZ
 void Gen_002eff20(void)
 {
-	TheBfmeGlobal_012f076c->bfmeCall_0004aa98();
+	reinterpret_cast<BfmeGlobal_012f076c *>(TheScriptEngine)->bfmeCall_0004aa98();
 }
 
 // ?Gen_002f05d0@@YAXXZ
