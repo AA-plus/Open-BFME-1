@@ -30,10 +30,10 @@ public:
 	const ThingTemplate *getTemplate(void) const;			// ILT 0x000084B8
 };
 
-class BFMESelectionStatusBits
+class Rva000D3F10
 {
 public:
-	Bool test(UnsignedInt index) const;				// ILT 0x0003AB20
+	int test(UnsignedInt index);				// ILT 0x0003AB20
 };
 
 // The condition-change notifier is Object's own member: the call goes through
@@ -144,7 +144,7 @@ Int AIUpdateInterface::rva0027bf60(void)
 			}
 			if (!outside) {
 				BfmeObjAS *parent = obj->bfmeParentAS(0);
-				if (parent && reinterpret_cast<const BFMESelectionStatusBits*>(parent)->test(0x25)) {
+				if (parent && static_cast<unsigned char>(reinterpret_cast<Rva000D3F10*>(parent)->test(0x25))) {
 					AIUpdateInterface *ai = (AIUpdateInterface*)parent->m_bfmeAi;
 					if (ai && ai->rva002774c0() > reinterpret_cast<const Thing*>(parent)->getTemplate()->getRange())
 						outside = true;
