@@ -91,11 +91,17 @@ public:
 	}
 };
 
+// ILT 0x0003F3E1 reaches this existing char-returning body at 0x00465B90.
+class BfmeHostESP
+{
+public:
+	char bfmeClearESP(unsigned int index);
+};
+
 class BfmeW1183
 {
 public:
 	bool bfmeClose1183(unsigned int i);
-	void bfmeHide1183(unsigned int i);
 	char m_bfmePad0[0x58];
 	BfmeList1183 m_bfme58;
 	char m_bfmePad1[0x4c];
@@ -115,7 +121,7 @@ bool BfmeW1183::bfmeClose1183(unsigned int i)
 		return false;
 
 	if (s->m_bfme10 & 2)
-		bfmeHide1183(i);
+		reinterpret_cast<BfmeHostESP *>(this)->bfmeClearESP(i);
 
 	m_bfme58.bfmeRemove1183(s);
 	s->m_bfme00.bfmeFree1183();

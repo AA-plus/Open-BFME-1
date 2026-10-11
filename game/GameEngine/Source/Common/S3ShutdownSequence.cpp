@@ -12,10 +12,10 @@
 // a plain delete, whose null test and slot 0 call with an argument of 1 are
 // generated rather than written.
 
-class Glo00EF19E8
+class BfmeW1183
 {
 public:
-	void h0046B2B0(int handle);					// ILT 0x00033857
+	bool bfmeClose1183(unsigned int handle);		// ILT 0x00033857 -> 0x0046B2B0
 };
 
 class BfmeReleaseSink
@@ -47,7 +47,7 @@ extern int g_guiFxWindowHandle;						// 0x012B7430
 // Retail 0x012F19E8 is the game-wide manager pointer EA defines as
 // `WindowManager *g_rva012F19E8WindowManager` in
 // game/GameEngine/Source/GameClient/GUI/WindowManager.cpp. This TU only needs
-// the handle release through it, so the pointee stays the local Glo00EF19E8
+// the handle release through it, so the pointee stays the local BfmeW1183
 // view and the access is cast at the use.
 class WindowManager;
 
@@ -66,7 +66,7 @@ void Gen_00510b50(void)
 
 	if (g_guiFxWindowHandle != -1)
 	{
-		((Glo00EF19E8 *)g_rva012F19E8WindowManager)->h0046B2B0(g_guiFxWindowHandle);
+		((BfmeW1183 *)g_rva012F19E8WindowManager)->bfmeClose1183(g_guiFxWindowHandle);
 
 		g_guiFxWindowHandle = -1;
 	}
