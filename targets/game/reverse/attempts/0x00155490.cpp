@@ -1,5 +1,5 @@
 // ?groupScatter@AIGroup@@QAEXW4CommandSourceType@@@Z
-// partial score=0.92 date=2026-09-24
+// partial score=0.8703 date=2026-10-11
 // cl: /DNDEBUG /MD /EHsc
 // Open-BFME: the AIGroup orders that walk the member list and forward one
 // command to each member's own AICommandInterface.
@@ -610,11 +610,11 @@ void AIGroup::groupScatter(::CommandSourceType cmdSource)
 	if (m_dirty)
 		recompute();
 
+	union { Coord2D min; Coord3D dest; } phase;
 	Coord3D center;
 	{
-		Coord2D min;
 		Coord2D max;
-		getMinMaxAndCenter(&min, &max, &center);
+		getMinMaxAndCenter(&phase.min, &max, &center);
 	}
 
 	SimpleObjectIterator *iter = new SimpleObjectIterator;
@@ -644,7 +644,6 @@ void AIGroup::groupScatter(::CommandSourceType cmdSource)
 
 	for (Object *theUnit = iter->first(); theUnit; theUnit = iter->next())
 	{
-		Coord3D dest;
 		Coord3D unitPos;
 		unitPos.x = theUnit->getPosX();
 		unitPos.y = theUnit->getPosY();
@@ -652,13 +651,13 @@ void AIGroup::groupScatter(::CommandSourceType cmdSource)
 		unitPos.z = theUnit->getPosZ();
 		BfmeGroupAI *ai = theUnit->getAI();
 		Coord2D delta;
-		dest = unitPos;
+		phase.dest = unitPos;
 		delta.x = unitPos.x - center.x;
 		delta.y = unitPos.y - center.y;
 		delta.normalize();
-		dest.x += delta.x * 4 * theUnit->getBoundingCircleRadius();
-		dest.y += delta.y * 4 * theUnit->getBoundingCircleRadius();
-		ai->m_bfmeCommands.aiMoveToPosition(&dest, cmdSource);
+		phase.dest.x += delta.x * 4 * theUnit->getBoundingCircleRadius();
+		phase.dest.y += delta.y * 4 * theUnit->getBoundingCircleRadius();
+		ai->m_bfmeCommands.aiMoveToPosition(&phase.dest, cmdSource);
 	}
 }
 
