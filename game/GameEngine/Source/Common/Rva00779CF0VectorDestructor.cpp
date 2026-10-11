@@ -21,4 +21,5 @@ struct Rva00779CF0Element
 typedef char Rva00779CF0ElementSize[
 	(sizeof(Rva00779CF0Element) == 0x14) ? 1 : -1];
 
-template class _STL::vector<Rva00779CF0Element>;
+// Emit the owned destructor without unrelated element copying and growth.
+template _STL::vector<Rva00779CF0Element>::~vector();
