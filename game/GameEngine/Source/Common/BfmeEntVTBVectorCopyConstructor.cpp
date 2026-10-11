@@ -15,7 +15,7 @@ class BfmeEntVTB
 {
 public:
 
-	virtual void bfmeSlot0VTB();
+	virtual ~BfmeEntVTB() {}
 	int m_bfme04;
 	int m_bfme08;
 	AsciiString m_bfme0c;
