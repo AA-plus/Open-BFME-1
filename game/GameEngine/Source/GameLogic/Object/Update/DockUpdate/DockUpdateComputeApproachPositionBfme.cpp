@@ -23,8 +23,10 @@ class Vector3 {public:
  }
 };
 __forceinline Vector3 operator*(const Vector3&a,float k){return Vector3(a.X*k,a.Y*k,a.Z*k);}
-class Object {public:
+class Thing {public:
  void convertBonePosToWorldPos(const Coord3D*,const Matrix3D*,Coord3D*,Matrix3D*)const;
+};
+class Object : public Thing {public:
  bool isUsingAirborneLocomotor()const;
  char pad[0x38];
  Coord3D position;
