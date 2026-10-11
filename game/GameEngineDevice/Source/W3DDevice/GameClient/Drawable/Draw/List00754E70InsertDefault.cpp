@@ -62,6 +62,7 @@ class List00754E70
 {
 public:
 	Iter00754E70 insertDefault(Iter00754E70 position);
+	void rva00755000();
 private:
 	_STL::list<_STL::vector<Object *> > m_values;
 };
@@ -73,4 +74,11 @@ Iter00754E70 List00754E70::insertDefault(Iter00754E70 position)
 	RvaIterator where((_STL::_List_node<Value> *)position.node);
 	RvaIterator created = m_values.insert(where, Value());
 	return Iter00754E70((Node00754E70 *)created._M_node);
+}
+
+// ?rva00755000@List00754E70@@QAEXXZ
+// Open BFME 2 Code/Libraries/Source/WWVegas/WWLib/stlport_list_int_o1.cpp.
+void List00754E70::rva00755000()
+{
+    insertDefault(Iter00754E70((Node00754E70 *)m_values.end()._M_node));
 }

@@ -36160,7 +36160,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_00752b80@@YAXXZ,,0x00752B80,465,game/gen_asm/d_00745b10.asm,matched,gen-dump;ghidra=FUN_00b52b80
 ?d_00754970@@YAXXZ,,0x00754970,119,game/gen_asm/d_00753460.asm,matched,gen-dump;ghidra=FUN_00b54970
 ?d_00754c60@@YAXXZ,,0x00754C60,121,game/gen_asm/d_00753460.asm,matched,gen-dump;ghidra=FUN_00b54c60
-?d_00755000@@YAXXZ,,0x00755000,20,game/gen_asm/d_00724a20.asm,matched,gen-dump;carved start=rel32-call/jmp end=ret+int3 refs=1
 ?d_00755a70@@YAXXZ,,0x00755A70,416,game/gen_asm/d_006e2ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=jmp+int3 callers=1;ghidra=FUN_00b55a70
 ?d_00755f70@@YAXXZ,,0x00755F70,2572,game/gen_asm/d_006e2ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00b55f70
 ?d_0075be60@@YAXXZ,,0x0075BE60,143,game/gen_asm/d_00753460.asm,matched,gen-dump;ghidra=FUN_00b5be60
@@ -36288,7 +36287,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_0083d930@@YAXXZ,,0x0083D930,122,game/gen_asm/d_00838560.asm,matched,gen-dump;ghidra=FUN_00c3d930
 ?d_0083f1c0@@YAXXZ,,0x0083F1C0,132,game/gen_asm/d_00838560.asm,matched,gen-dump;ghidra=FUN_00c3f1c0
 ?d_0083f9b0@@YAXXZ,,0x0083F9B0,195,game/gen_asm/d_00838560.asm,matched,gen-dump;ghidra=FUN_00c3f9b0
-?d_00849e20@@YAXXZ,,0x00849E20,61,game/gen_asm/d_008462b0.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_00853cb0@@YAXXZ,,0x00853CB0,345,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_00c53cb0
 ?d_00853e3a@@YAXXZ,,0x00853E3A,36,game/gen_asm/d_00849530.asm,matched,gen-dump;ghidra=Catch@00c53e3a
 ?d_00853e5e@@YAXXZ,,0x00853E5E,17,game/gen_asm/d_00849530.asm,matched,gen-dump;ghidra=Catch@00c53e5e
@@ -36303,7 +36301,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_0087f590@@YAXXZ,,0x0087F590,1066,game/gen_asm/d_0087af30.asm,matched,gen-dump;ghidra=FUN_00c7f590
 ?d_00880020@@YAXXZ,,0x00880020,168,game/gen_asm/d_0087af30.asm,matched,gen-dump;ghidra=FUN_00c80020
 ?d_00880780@@YAXXZ,,0x00880780,468,game/gen_asm/d_0087af30.asm,matched,gen-dump;ghidra=FUN_00c80780
-?d_00880af0@@YAXXZ,,0x00880AF0,296,game/gen_asm/d_0087af30.asm,matched,gen-dump;ghidra=FUN_00c80af0
 ?d_00881ca0@@YAPAXII@Z,,0x00881CA0,52,game/GameEngine/Source/Common/System/Rva00881CA0.cpp,matched,
 ?d_00881ce0@@YAPAXII@Z,,0x00881CE0,52,game/GameEngine/Source/Common/System/Rva00881CA0.cpp,matched,
 ?d_00881d20@@YAXPAX@Z,,0x00881D20,29,game/GameEngine/Source/Common/System/Rva00881D70CrtShims.cpp,matched,guarded free forwarder; skips null and CRT onexitbegin sentinel 0x01357214; stack twin 0x00881CE0/0x00881D90 family;model=muse-spark-1.3-contributor
@@ -36418,7 +36415,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_008b2f50@@YAXXZ,,0x008B2F50,2396,game/gen_asm/d_0084de40.asm,matched,gen-dump;switch-carved start=int3-aligned end=switch-table+int3 refs=0
 ?d_008b64e0@@YAXXZ,,0x008B64E0,65,game/GameEngine/Source/Common/LeapYearPredicateThunk.cpp,matched,object-symbol=?isLeapYear@@YG_NH@Z;Open-BFME5 clean C++ Gregorian leap-year predicate
 ?d_008b65e0@@YAXXZ,,0x008B65E0,207,game/gen_asm/d_008af650.asm,matched,gen-dump;ghidra=FUN_00cb65e0
-?d_008b66b0@@YAXXZ,,0x008B66B0,450,game/gen_asm/d_008af650.asm,matched,gen-dump;ghidra=FUN_00cb66b0
 ?d_008b8e70@@YAXXZ,,0x008B8E70,267,game/gen_asm/d_00882630.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00cb8e70
 ?d_008b9080@@YAXXZ,,0x008B9080,107,game/gen_asm/d_008a5160.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_008b9930@@YAXXZ,,0x008B9930,124,game/gen_asm/d_008a5160.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
@@ -171984,3 +171980,7 @@ _Rva009B0730,,0x009B0730,1583,game/GameEngine/Source/Common/BfmeVp6LoopFilter.cp
 ?Rva009A86F0Initialize@@YAHPAURva009A86F0Context@@@Z,,0x009A86F0,396,game/GameEngine/Source/Common/Rva009A86F0Initialize.cpp,matched,Open BFME 2 donor AllocateFragmentInfo.cpp at game.dat 0x001B9140; complete 396-byte INT3 extent and one-pointer cdecl EAX result; decoded raw buffer cleanup; evidence=targets/game/reverse/identity_evidence/0x009a86f0-donor-port.md;model=gpt-6.1-sol;host=fleet
 ?Rva009A9980@@YAXPBEHIIPAEHII@Z,,0x009A9980,155,game/GameEngine/Source/Common/Rva009A9980Scale1D.cpp,matched,Open BFME 2 donor Scale1D.cpp at game.dat 0x001BA3C0; complete leaf extent and matched Scale2D eight-dword cdecl ABI; evidence=targets/game/reverse/identity_evidence/0x009a9980-donor-port.md;model=gpt-6.1-sol;host=fleet
 ?Rva009A9A20@@YAXPBEHIIPAEHII@Z,,0x009A9A20,98,game/GameEngine/Source/Common/Rva009A9980Scale1D.cpp,matched,Open BFME 2 donor Scale1D.cpp at game.dat 0x001BA460; complete leaf extent and matched Scale2D eight-dword cdecl ABI; evidence=targets/game/reverse/identity_evidence/0x009a9a20-donor-port.md;model=gpt-6.1-sol;host=fleet
+?rva008B66B0@Rva008B6880@@QAEHHHH@Z,,0x008B66B0,450,game/Libraries/Source/EA/Apt/Rva008B66B0Weekday.cpp,matched,Open BFME 2 AptDateGetDayOfWeek.cpp donor; opaque matched-caller identity; canonical ignored-receiver leap call; evidence=targets/game/reverse/identity_evidence/008b66b0-bfme2-calendar.md;model=gpt-6.1-sol;host=fleet
+?rva00880AF0@BfmeBoxF0@@QBE_NPBV1@@Z,,0x00880AF0,296,game/GameEngine/Source/Common/BfmeBoxContains.cpp,matched,Open BFME 2 Rva006C0630Cluster.cpp donor; existing box layout and opaque matched-caller identity; evidence=targets/game/reverse/identity_evidence/00880af0-bfme2-box.md;model=gpt-6.1-sol;host=fleet
+?rva00849E20DecodeFlags@@YAII@Z,,0x00849E20,61,game/Libraries/Source/STLport/Rva00849E20DecodeFlags.cpp,matched,Open BFME 2 stlport_filebuf_open.cpp donor; opaque bank identity retained; valid CRT access modes only; evidence=targets/game/reverse/identity_evidence/00849e20-bfme2-flags.md;model=gpt-6.1-sol;host=fleet
+?rva00755000@List00754E70@@QAEXXZ,,0x00755000,20,game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/List00754E70InsertDefault.cpp,matched,Open BFME 2 stlport_list_int_o1.cpp wrapper donor; int type refuted by complete BFME 1 value helpers; opaque address identity; evidence=targets/game/reverse/identity_evidence/00755000-bfme2-wrapper.md;model=gpt-6.1-sol;host=fleet

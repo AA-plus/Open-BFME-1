@@ -90985,3 +90985,7 @@ _printf,0x009F7244,route=MSVCR71.dll!printf; IAT 0x01359464; CRT printf import j
 ?d_009b4390@@YAXXZ,0x009B4390,Address-only compatibility for withdrawn dump; Rva009B4390CodecCall int cdecl variadic body; landed Rva009AABB0CodecDispatch and Rva009AAC80CodecGrid still call this name; evidence=targets/game/reverse/identity_evidence/0x009b4390-donor-port.md
 ?d_009a9980@@YAXXZ,0x009A9980,Address-only compatibility for withdrawn dump; Rva009A9980 eight-dword cdecl sampler; landed Rva009A9AD0Scale2D still calls this name; evidence=targets/game/reverse/identity_evidence/0x009a9980-donor-port.md
 ?d_009a9a20@@YAXXZ,0x009A9A20,Address-only compatibility for withdrawn dump; Rva009A9A20 eight-dword cdecl sampler; landed Rva009A9AD0Scale2D still calls this name; evidence=targets/game/reverse/identity_evidence/0x009a9a20-donor-port.md
+?d_008b66b0@@YAXXZ,0x008B66B0,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_008af650.asm
+?d_00880af0@@YAXXZ,0x00880AF0,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_0087af30.asm
+?d_00849e20@@YAXXZ,0x00849E20,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_008462b0.asm
+?d_00755000@@YAXXZ,0x00755000,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_00724a20.asm
