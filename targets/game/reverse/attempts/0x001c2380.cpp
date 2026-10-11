@@ -1,6 +1,6 @@
 // ?rva001c2380Distance@Object@@QBEMPBUCoord3D@@PBV1@0@Z
-// partial score=0.4347 date=2026-10-08
-// cl: /O2 /Ob2 /G6 /FAsc /Fabuild/worker-001c2380/16-retail-minimum-order.cod /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWDebug
+// partial score=0.9821 date=2026-10-11
+// cl: /O2 /Ob2 /G6 /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWDebug
 
 #include "../../../../game/Libraries/Source/WWVegas/WWMath/matrix3d.h"
 
@@ -88,15 +88,17 @@ Real Object::rva001c2380Distance(const Coord3D *position,
 		center.z = position->z;
 		piece->transformCenter(&center, m_orientation);
 
-		Real deltaX = otherPosition->x - center.x;
-		Real deltaY = otherPosition->y - center.y;
-		Direction2 direction = {deltaX, deltaY};
+		Vector3 delta;
+		delta.X = otherPosition->x - center.x;
+		delta.Y = otherPosition->y - center.y;
+		delta.Z = 0.0f;
+		Vector3 direction(delta);
 		Real projectedX = (Real)fabs(Vector3::Dot_Product(
 			m_transform.Get_X_Vector(),
-			Vector3(deltaX, deltaY, BfmeZeroRange)));
+			delta));
 		Real projectedY = (Real)fabs(Vector3::Dot_Product(
 			m_transform.Get_Y_Vector(),
-			Vector3(deltaX, deltaY, BfmeZeroRange)));
+			delta));
 
 		if (projectedX < piece->m_majorRadius &&
 			projectedY < piece->m_minorRadius)
@@ -110,33 +112,30 @@ Real Object::rva001c2380Distance(const Coord3D *position,
 		}
 		else if (projectedY < piece->m_minorRadius)
 		{
-			distanceSquared = projectedX * projectedX;
 			radius = piece->m_majorRadius;
+			distanceSquared = projectedX * projectedX;
 		}
 		else
 		{
-			Real directionLengthSquared = deltaX * deltaX + deltaY * deltaY;
+			Real directionLengthSquared = delta.Length2();
 			if (directionLengthSquared != BfmeZeroRange)
 			{
 				Real inverseDistance = WWMath::Inv_Sqrt(directionLengthSquared);
-				direction.x *= inverseDistance;
-				direction.y *= inverseDistance;
+				direction *= inverseDistance;
 			}
 
-			Vector3 majorAxis = m_transform.Get_X_Vector();
 			Real majorRadius = piece->m_majorRadius;
-			majorAxis = majorAxis * majorRadius;
-			Vector3 minorAxis = m_transform.Get_Y_Vector();
+			Vector3 majorAxis = m_transform.Get_X_Vector() * majorRadius;
 			Real minorRadius = piece->m_minorRadius;
-			minorAxis = minorAxis * minorRadius;
+			Vector3 minorAxis = m_transform.Get_Y_Vector() * minorRadius;
 			Real majorProjection =
 				(Real)fabs(Vector3::Dot_Product(majorAxis,
-					Vector3(direction.x, direction.y, BfmeZeroRange)));
+					direction));
 			Real minorProjection =
 				(Real)fabs(Vector3::Dot_Product(minorAxis,
-					Vector3(direction.x, direction.y, BfmeZeroRange)));
+					direction));
 			radius = majorProjection + minorProjection;
-			distanceSquared = deltaX * deltaX + deltaY * deltaY;
+			distanceSquared = delta.X * delta.X + delta.Y * delta.Y;
 		}
 
 		Real distance = (Real)sqrt(distanceSquared);
@@ -153,7 +152,7 @@ Real Object::rva001c2380Distance(const Coord3D *position,
 		}
 	}
 
-	if (closestDistance <= BfmeZeroRange)
-		return BfmeZeroRange;
+	if (closestDistance <= 0.0f)
+		return 0.0f;
 	return closestDistance * closestDistance;
 }
