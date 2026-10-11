@@ -200,13 +200,15 @@ void BfmeSubAccept_0002C41C::bfmeAccept(BfmeSeedTarget *target)
 		m_bfmeField = reinterpret_cast<BfmeAcceptManager *>(TheAudio)->bfmeRegister(this, item);
 }
 
-void bfmeHandOver_0000240A(BfmeSeedTarget *target, void *item);		// ILT 0x0000240A
-class Xfer; class MidVirtualSlot90Receiver; Xfer &Rva0010C3C0(MidVirtualSlot90Receiver *receiver, void *value);		// ILT 0x0000C9B4
+class MidVirtualSlot90Receiver;
+
+void Rva0010C2E0(MidVirtualSlot90Receiver *target, void *item);		// ILT 0x0000240A
+class Xfer; Xfer &Rva0010C3C0(MidVirtualSlot90Receiver *receiver, void *value);		// ILT 0x0000C9B4
 void bfmeHandOver_0000FFE2(BfmeSeedTarget *target, void *item);		// ILT 0x0000FFE2
-void bfmeHandOver_0002A450(BfmeSeedTarget *target, void *item);		// ILT 0x0002A450
+void Rva0010C3A0(MidVirtualSlot90Receiver *target, void *item);		// ILT 0x0002A450
 void bfmeHandOver_000353C8(BfmeSeedTarget *target, void *item);		// ILT 0x000353C8
 void bfmeHandOver_0003EE32(BfmeSeedTarget *target, void *item);		// ILT 0x0003EE32
-void bfmeHandOver_0004420B(BfmeSeedTarget *target, void *item);		// ILT 0x0004420B
+void Rva0010C420(MidVirtualSlot90Receiver *target, void *item);		// ILT 0x0004420B
 
 class Gen_0016BC50
 {
@@ -714,7 +716,7 @@ void Gen_001F61B0::bfmeSeed(BfmeSeedTarget *target)
 	if ( !target->bfmeSkip() )
 	{
 		(void)&Rva0010C3C0((MidVirtualSlot90Receiver *)target, &m_bfmeItem0);
-		bfmeHandOver_0002A450(target, &m_bfmeItem1);
+		Rva0010C3A0((MidVirtualSlot90Receiver *)target, &m_bfmeItem1);
 	}
 }
 
@@ -763,7 +765,7 @@ void Gen_00251BC0::bfmeSeed(BfmeSeedTarget *target)
 		for (int row = 0; row < 4; ++row)
 		{
 			for (int column = 0; column < 12; ++column)
-				bfmeHandOver_0000240A(target, &m_bfmeFields[row * 12 + column]);
+				Rva0010C2E0((MidVirtualSlot90Receiver *)target, &m_bfmeFields[row * 12 + column]);
 		}
 	}
 }
@@ -894,7 +896,7 @@ void Gen_002A1280::bfmeSeed(BfmeSeedTarget *target)
 	target->bfmeSeed(&pair);
 	bfmeAccept(target);
 
-	bfmeHandOver_0004420B(target, &m_bfmeItem1);
+	Rva0010C420((MidVirtualSlot90Receiver *)target, &m_bfmeItem1);
 	(void)&Rva0010C3C0((MidVirtualSlot90Receiver *)target, &m_bfmeItem2);
 	target->bfmeTakeAt78(&m_bfmeItem3);
 	target->bfmeTakeAt78(&m_bfmeItem4);
@@ -1140,7 +1142,7 @@ void Gen_00603240::bfmeSeed(BfmeSeedTarget *target)
 
 	if ( !target->bfmeSkip() )
 	{
-		bfmeHandOver_0000240A(target, &m_bfmeItem0);
+		Rva0010C2E0((MidVirtualSlot90Receiver *)target, &m_bfmeItem0);
 		target->bfmeTakeAt74(&m_bfmeItem1);
 	}
 }
