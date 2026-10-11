@@ -1,12 +1,7 @@
 // ?init@Rva0040B5A0@@QAEXXZ
-// cl: /O2 /Ob0
+// cl: /O2 /Ob0 /Igame/Libraries/Source/WWVegas/WWLib
 
-class AsciiString
-{
-public:
-	void set(const AsciiString &other);
-	char m_data[4];
-};
+#include "ascii_string.h"
 
 struct Triple
 {
@@ -95,12 +90,12 @@ public:
 
 void Rva0040B5A0::init()
 {
-	m_08.set(*reinterpret_cast<const AsciiString *>(&g_rva0040b7d0_dst));
-	m_0C.set(g_s0C);
-	m_10.set(g_s10);
+	m_08.StringBase<char>::set(*reinterpret_cast<const AsciiString *>(&g_rva0040b7d0_dst));
+	m_0C.StringBase<char>::set(g_s0C);
+	m_10.StringBase<char>::set(g_s10);
 	m_14 = g_msToSec * g_f14;
 	m_18 = (float)g_i18 * g_01075954;
-	m_20.set(g_s20);
+	m_20.StringBase<char>::set(g_s20);
 	m_24 = g_i24;
 	m_28 = (float)(g_f28 * g_dScale);
 	m_2C = g_t2C;
@@ -122,7 +117,7 @@ void Rva0040B5A0::init()
 	m_90 = g_i90;
 	m_94 = g_i94;
 	m_98 = g_i98;
-	m_9C.set(g_s9C);
+	m_9C.StringBase<char>::set(g_s9C);
 	m_40 = (Cos(m_18) * g_012F11CC) * g_010F0ADC;
 	m_44 = (Sin(m_18) * g_012F11CC) * g_01076C24;
 }
