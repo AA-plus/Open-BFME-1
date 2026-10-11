@@ -189,7 +189,7 @@ public:
     ~LoadGameFadeHolder() {}
     LoadGameFadeWrapper *m_ptr;
 };
-void postTimedOp(LoadGameFadeHolder,void *);
+bool postTimedOp(LoadGameFadeHolder,void *);
 extern unsigned fadeQueueKey;
 void j_00048b03();
 void j_00049977();
@@ -262,7 +262,9 @@ extern GameEngine *TheGameEngine;
 extern GhostObjectManager *TheGhostObjectManager;
 class AnimationSoundModuleManager;
 extern AnimationSoundModuleManager *TheAnimationSoundModuleManager;
-extern Rva001A8820TerrainVisual *TheTerrainVisual;
+// TerrainVisual.cpp owns the native singleton at VA012F7014.
+class TerrainVisual;
+extern TerrainVisual *TheTerrainVisual;
 extern ParticleSystemManager *TheParticleSystemManager;
 extern Rva0048EC80Manager *Rva0048EC80TheManager;
 class WindowManager;	///< retail pointee at 0x012F19E8 (defined in GUI/WindowManager.cpp)
