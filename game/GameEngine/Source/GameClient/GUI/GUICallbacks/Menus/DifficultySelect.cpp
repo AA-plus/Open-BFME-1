@@ -1,4 +1,4 @@
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/zhcanonascii /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
 // stlport
 #define Matrix4x4 Matrix4  // BFME renamed it
 /*
@@ -66,23 +66,6 @@
 
 #include "GameLogic/ScriptEngine.h"
 
-class BFMERetailAsciiString
-{
-public:
-	BFMERetailAsciiString( const char *string );
-	~BFMERetailAsciiString() { releaseBuffer(); }
-
-	const char *str() const
-	{
-		static const char nullCharacter = 0;
-		return m_data ? m_data + 8 : &nullCharacter;
-	}
-
-private:
-	void releaseBuffer();
-	char *m_data;
-};
-
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -145,7 +128,7 @@ static void SetDifficultyRadioButton( void )
 
 void DifficultySelectInit( WindowLayout *layout, void *userData )
 { 
-	BFMERetailAsciiString parentName( "DifficultySelect.wnd:DifficultySelectParent" );
+	AsciiString parentName( "DifficultySelect.wnd:DifficultySelectParent" );
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName.str() );
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
    
@@ -154,17 +137,17 @@ void DifficultySelectInit( WindowLayout *layout, void *userData )
 	buttonCancelID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:ButtonCancel" );
 	buttonCancel = TheWindowManager->winGetWindowFromId( parent, buttonCancelID );
 	{
-		BFMERetailAsciiString name( "DifficultySelect.wnd:RadioButtonEasy" );
+		AsciiString name( "DifficultySelect.wnd:RadioButtonEasy" );
 		radioButtonEasyAIID = TheNameKeyGenerator->nameToKey( name.str() );
 	}
 	radioButtonEasyAI = TheWindowManager->winGetWindowFromId( parent, radioButtonEasyAIID );			
 	{
-		BFMERetailAsciiString name( "DifficultySelect.wnd:RadioButtonMedium" );
+		AsciiString name( "DifficultySelect.wnd:RadioButtonMedium" );
 		radioButtonMediumAIID = TheNameKeyGenerator->nameToKey( name.str() );
 	}
 	radioButtonMediumAI = TheWindowManager->winGetWindowFromId( parent, radioButtonMediumAIID );
 	{
-		BFMERetailAsciiString name( "DifficultySelect.wnd:RadioButtonHard" );
+		AsciiString name( "DifficultySelect.wnd:RadioButtonHard" );
 		radioButtonHardAIID = TheNameKeyGenerator->nameToKey( name.str() );
 	}
 	radioButtonHardAI = TheWindowManager->winGetWindowFromId( parent, radioButtonHardAIID );			
