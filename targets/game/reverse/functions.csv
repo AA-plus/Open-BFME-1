@@ -36365,8 +36365,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_00894ff0@@YAXXZ,,0x00894FF0,32,game/gen_asm/d_00891ca0.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret-tail refs=0
 ?d_00895510@@YAXXZ,,0x00895510,308,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c95510
 ?d_00895790@@YAXXZ,,0x00895790,287,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c95790
-?d_00895a00@@YAXXZ,,0x00895A00,274,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c95a00
-?d_00895b20@@YAXXZ,,0x00895B20,294,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c95b20
 ?d_00895d30@@YAXXZ,,0x00895D30,462,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c95d30
 ?d_008961e0@@YAXXZ,,0x008961E0,316,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c961e0
 ?d_00896390@@YAXXZ,,0x00896390,214,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c96390
@@ -171984,3 +171982,5 @@ uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.c
 ?Rva009B5420@@YAXPAXIIEPAH@Z,,0x009B5420,272,game/GameEngine/Source/Common/Rva009B5420.cpp,matched,Open BFME 2 donor FindNearestandNextNearest.cpp at game.dat 0x001C5D20; opaque five-argument cdecl identity; evidence=targets/game/reverse/identity_evidence/009b5420-donor-port.md;model=gpt-6.1-sol;host=fleet
 ?winProcessMouseEvent@GameWindowManager@@UAE?AW4WinInputReturnCode@@W4GameWindowMessage@@PAUICoord2D@@PAX@Z,,0x0047E630,1569,game/GameEngine/Source/GameClient/GUI/GameWindowManagerMouseEvent.cpp,matched,Open BFME 2 GameWindowManagerMouseEvent.cpp donor at game.dat 0x002C1FD5; identity evidence targets/game/reverse/identity_evidence/0047e630-bfme2-donor.md; retail vtable 010F8B60 slot41 via ILT 00001136; switch tables included;model=gpt-6.1-sol;host=fleet
 ?method@Rva002DBD20@@UAE_NPAVRva002DBD20Weapon@@PAVObject@@@Z,,0x002DBD20,399,game/GameEngine/Source/GameLogic/Object/WeaponEffects/Rva002DBD20DamageQuery.cpp,matched,Complete ret8 virtual Boolean ABI and six-word input copy; opaque owner retained; identity_evidence/002dbd20-damage-query.md; native getContain accessor restores exact saved-register lifetimes;model=gpt-6.1-sol;host=fleet
+?method@Rva00895B20@@QAE_NVRva00895B20Ref@@@Z,,0x00895B20,294,game/Libraries/Source/Apt/Rva00895B20Dependencies.cpp,matched,Open BFME 2 donor Rva006D0C60.cpp; opaque identity and owning ABI evidence identity_evidence/00895b20-bfme2-dependencies.md;model=gpt-6.1-sol;host=fleet
+?rva00895A00@Rva00893030Manager@@QAE?AVRefHandle008958D0@@PAVBfmeStrVKI@@@Z,,0x00895A00,274,game/Libraries/Source/Apt/Rva00895A00CreateHandle.cpp,matched,Open BFME 2 donor Bfme5ThirtyFour.cpp; visible noinline lookup; owning ABI and unwind evidence identity_evidence/00895a00-bfme2-handle-builder.md;model=gpt-6.1-sol;host=fleet
