@@ -224,29 +224,7 @@ void SkirmishPreferences::setSlotList(void)
 	setAsciiString("SlotList", GameInfoToAsciiString(TheSkirmishGameInfo));
 }
 
-// ?getUserName@SkirmishPreferences@@ present-unmatched
-UnicodeString SkirmishPreferences::getUserName(void)
-{
-	UnicodeString ret;
-	SkirmishPreferences::const_iterator it = find("UserName");
-	if (it == end())
-	{
-		IPEnumeration IPs;
-		ret.translate(IPs.getMachineName());
-		return ret;
-	}
-
-	ret = QuotedPrintableToUnicodeString(it->second);
-	ret.trim();
-	if (ret.isEmpty())
-	{
-		IPEnumeration IPs;
-		ret.translate(IPs.getMachineName());
-		return ret;
-	}
-	
-	return ret;
-}
+// BFME getUserName is emitted by SkirmishPreferences_getUserName.cpp.
 
 // The retail color getter is emitted by SkirmishPreferences_getPreferredColor.cpp.
 
