@@ -86,6 +86,13 @@ public:
 	void setReverb(Rva0069A6F0Playing **pp);
 };
 
+struct Rva006A1C60Wrapper;
+class Rva006A1C60
+{
+public:
+	void body(Rva006A1C60Wrapper *wrapper, Bool *result);
+};
+
 class Rva006AE150Argument;
 class Rva006AE150Owner
 {
@@ -101,9 +108,6 @@ class Rva006B3F90Owner : public Rva006AE150Owner
 {
 public:
 	void initFilters3D(Rva006B3F90Wrapper *wrapper, const Coord3D *position);
-
-	// 0x006A1C60: thiscall, ret 8; stores 0 or 1 through its second argument.
-	void rva006A1C60(Rva006B3F90Wrapper *wrapper, Bool *result);
 
 private:
 	Rva006B3F90Settings *m_settings;
@@ -172,7 +176,7 @@ void Rva006B3F90Owner::initFilters3D(
 
 	{
 		Bool result;
-		rva006A1C60(wrapper, &result);
+		((Rva006A1C60 *)this)->body((Rva006A1C60Wrapper *)wrapper, &result);
 	}
 	((Rva0069A6F0Owner *)this)->setReverb((Rva0069A6F0Playing **)wrapper);
 }
