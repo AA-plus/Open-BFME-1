@@ -69,9 +69,9 @@ void GameInfo::setMap(AsciiString mapName) {
     if (mapData) {
       m_mapMask = 1;
       AsciiString path = mapName;
-      path.removeLastChar();
-      path.removeLastChar();
-      path.removeLastChar();
+      path.StringBase<char>::removeLastChar();
+      path.StringBase<char>::removeLastChar();
+      path.StringBase<char>::removeLastChar();
       path.concat("tga");
       File *fp = TheFileSystem->openFile(path.str());
       if (fp) {
@@ -83,7 +83,7 @@ void GameInfo::setMap(AsciiString mapName) {
       AsciiString newMapName;
       if (mapName.getLength() > 0) {
         AsciiString token;
-        mapName.nextToken(&token, "\\/");
+        mapName.StringBase<char>::nextToken(&token, "\\/");
         // add all the tokens except the last one.
         // that way we don't add the filename, just the
         // directory name, we can do this since the filename
@@ -94,7 +94,7 @@ void GameInfo::setMap(AsciiString mapName) {
             newMapName.concat('/');
           }
           newMapName.concat(token);
-          mapName.nextToken(&token, "\\/");
+          mapName.StringBase<char>::nextToken(&token, "\\/");
         }
       }
       newMapName.concat("/map.ini");
