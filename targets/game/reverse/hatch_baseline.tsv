@@ -617,15 +617,9 @@ address_global	game/GameEngine/Source/Common/S3SetupStubs.cpp	g_Va0130A56C	2	all
 address_global	game/GameEngine/Source/Common/S3SetupStubs.cpp	g_Va0130A578	2	allow=a5f620df62296ac3b9a20e8025feaeedcc813fe8
 address_global	game/GameEngine/Source/Common/SizedDeleteDestructors.cpp	g_Va01337830	2
 address_global	game/GameEngine/Source/Common/SmallGaps/Rva0018EEF0ScaleTriples.cpp	g_Rva00EEF418	2
-address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3E40Init.cpp	g_Rva009B3E40Arr0	2
-address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3E40Init.cpp	g_Rva009B3E40Arr1	2
-address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3E40Init.cpp	g_Rva009B3E40Arr2	2
-address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3E40Init.cpp	g_Rva009B3E40Arr3	2
+address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3E40Init.cpp	g_Rva009B3E40Arr0	5	allow=97c03feecb9f2856d7990cafd9716a97f9063813
 address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3E40Init.cpp	g_Rva009B3E40Blocks	6
 address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3EC0Init.cpp	g_Rva009B3E40Arr0	2
-address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3EC0Init.cpp	g_Rva009B3E40Arr1	2
-address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3EC0Init.cpp	g_Rva009B3E40Arr2	2
-address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3EC0Init.cpp	g_Rva009B3E40Arr3	2
 address_global	game/GameEngine/Source/Common/SmallGaps/Rva009B3EC0Init.cpp	g_Rva009B3EC0Blocks	6
 address_global	game/GameEngine/Source/Common/SmallGaps/releasePair.cpp	g_Va01337AC0	4	allow=ca63fe2960465acf9f4090c2e987f89ed44ad5a4
 address_global	game/GameEngine/Source/Common/SmallGaps/releasePair.cpp	g_Va01337AC4	4	allow=ca63fe2960465acf9f4090c2e987f89ed44ad5a4
