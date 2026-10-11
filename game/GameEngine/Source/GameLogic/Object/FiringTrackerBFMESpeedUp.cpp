@@ -81,7 +81,7 @@ public:
 	};
 };
 
-void pickAndPlayUnitVoiceResponse( const DrawableList *list,
+bool pickAndPlayUnitVoiceResponse( const DrawableList *list,
 	GameMessage::Type messageType, PickAndPlayInfo *info );
 
 enum WeaponBonusCondition

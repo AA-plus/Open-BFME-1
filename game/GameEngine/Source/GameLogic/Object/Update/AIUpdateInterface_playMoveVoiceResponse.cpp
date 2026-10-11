@@ -62,7 +62,7 @@ public:
 	};
 };
 
-void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type messageType,
+bool pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type messageType,
 	PickAndPlayInfo *info );
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Module/AIUpdate.h
