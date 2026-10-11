@@ -140,13 +140,18 @@ public:
 	OBJCLASS *cur(void) const { return m_cur; }
 };
 
-class AIGroup
+class AIGroup;
+
+// Native two-word thiscall entries reached through ILTs 12350 and 2CB2E.
+struct Rva00155890Owner
+{
+	void notifyMembers(int waypoint, int commandSource);
+};
+
+class Rva00155A10Owner
 {
 public:
-	void groupFollowWaypointPathAsTeamClearFormation(const Waypoint *way,
-		CommandSourceType commandSource);
-	void groupFollowWaypointPath(const Waypoint *way,
-		CommandSourceType commandSource);
+	void rva00155A10Walk(void *waypoint, void *commandSource);
 };
 
 class Team
@@ -332,8 +337,9 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(
 		aiPlayer->checkBridges(firstUnit, way);
 
 	if (asTeam)
-		theGroup->groupFollowWaypointPathAsTeamClearFormation(way,
-			CMD_FROM_SCRIPT);
+		reinterpret_cast<Rva00155A10Owner *>(theGroup)->rva00155A10Walk(
+			(void *)way, (void *)CMD_FROM_SCRIPT);
 	else
-		theGroup->groupFollowWaypointPath(way, CMD_FROM_SCRIPT);
+		reinterpret_cast<Rva00155890Owner *>(theGroup)->notifyMembers(
+			(int)way, (int)CMD_FROM_SCRIPT);
 }
