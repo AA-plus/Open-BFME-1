@@ -29,33 +29,32 @@ typedef bool Bool;
 #define TRUE true
 #define FALSE false
 
-class Gen_01306F18
-{
-public:
-	Bool ReAcquireResources( void );
-};
-
 class Gen_01307178
 {
 public:
 	Bool ReAcquireResources( void );
 };
 
-class Gen_01306DF0
+
+// The two calls below are spelled by the matched ledger rows their ILT
+// entries jump to: 0x007AE890 W3DProjectedShadowManager::ReAcquireResources
+// and 0x007B9810 W3DShadowHelperManager::ReAcquireResources.
+class W3DProjectedShadowManager
 {
 public:
 	Bool ReAcquireResources( void );
 };
-
-
-class W3DProjectedShadowManager;
 extern W3DProjectedShadowManager *TheW3DProjectedShadowManager;
 
 // 0x01307178 is W3DShadow.cpp's TheW3DShadowHelperManager, so the global is
 // spelled by its defining name here.  No header declares the class, so only a
 // forward declaration is needed: the body this TU calls is still ledger-named
 // Gen_01307178 (the 0x0000F9B6 thunk to 0x007C1180), and that view is kept.
-class W3DShadowHelperManager;
+class W3DShadowHelperManager
+{
+public:
+	Bool ReAcquireResources( void );
+};
 extern W3DShadowHelperManager *TheW3DShadowHelperManager;
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include/W3DDevice/GameClient/W3DShadow.h
@@ -70,13 +69,13 @@ Bool W3DShadowManager::ReAcquireResources( void )
 {
 	Bool ok = TRUE;
 
-	if (((Gen_01306F18 *&)TheW3DVolumetricShadowManager) && !((Gen_01306F18 *&)TheW3DVolumetricShadowManager)->ReAcquireResources())
+	if (((W3DShadowHelperManager *&)TheW3DVolumetricShadowManager) && !((W3DShadowHelperManager *&)TheW3DVolumetricShadowManager)->ReAcquireResources())
 		ok = FALSE;
 
 	if ((Gen_01307178 *)TheW3DShadowHelperManager && !((Gen_01307178 *)TheW3DShadowHelperManager)->ReAcquireResources())
 		ok = FALSE;
 
-	if (TheW3DProjectedShadowManager && !reinterpret_cast<Gen_01306DF0 *>(TheW3DProjectedShadowManager)->ReAcquireResources())
+	if (TheW3DProjectedShadowManager && !TheW3DProjectedShadowManager->ReAcquireResources())
 		ok = FALSE;
 
 	return ok;
