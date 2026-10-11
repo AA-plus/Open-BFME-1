@@ -226,21 +226,8 @@ void AsciiString::trim()
 // at 0x00887DA0 (229 bytes).
 
 // -----------------------------------------------------
-// ?removeLastChar@AsciiString@@ present-unmatched
-void AsciiString::removeLastChar()
-{
-	validate();
-	if (m_data)
-	{
-		int len = strlen(peek());
-		if (len > 0)
-		{
-			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
-			peek()[len - 1] = 0;
-		}
-	}
-	validate();
-}
+// Retail StringBase<char>::removeLastChar is owned by StringBaseCaseOps.cpp
+// at 0x00887F80 (224 bytes).
 
 // -----------------------------------------------------
 // The exported by-value formatter is defined in WWLib/AsciiStringNative.cpp.

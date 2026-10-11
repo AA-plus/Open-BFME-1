@@ -31,8 +31,10 @@ protected:
 
 	Header *m_data;
 
-public:
+private:
 	StringBase(const StringBase<T> &src);
+
+public:
 	bool endsWithNoCase(const T *p, Int len) const;
 	void removeLastChar();
 	int compare(const T *p) const;
@@ -63,17 +65,18 @@ void findHighFileNumber(AsciiString filename, void *userData)
 	if (filename.isEmpty())
 		return;
 
-	if (filename.endsWithNoCase(SAVE_GAME_EXTENSION) == false)
+	if (reinterpret_cast<const StringBase<char> *>(&filename)->endsWithNoCase(
+		SAVE_GAME_EXTENSION, SAVE_GAME_EXTENSION ? (Int)strlen(SAVE_GAME_EXTENSION) : 0) == false)
 		return;
 
 	AsciiString nameOnly = filename;
 	for (Int count = 0; count < strlen(SAVE_GAME_EXTENSION); count++)
-		nameOnly.removeLastChar();
+		reinterpret_cast<StringBase<char> *>(&nameOnly)->removeLastChar();
 
 	Int fileNumber;
 	fileNumber = atoi(nameOnly.str());
 
-	if (fileNumber == 0 && nameOnly.compare(ZERO_NAME_ONLY) != 0)
+	if (fileNumber == 0 && reinterpret_cast<const StringBase<char> *>(&nameOnly)->compare(ZERO_NAME_ONLY) != 0)
 		return;
 
 	Int *highFileNumber = (Int *)userData;
