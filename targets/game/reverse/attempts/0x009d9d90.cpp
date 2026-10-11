@@ -1,11 +1,22 @@
 // ?_bfme_dumpXferStream@@YA_NPAVFile@@0@Z
-// partial score=0.55 date=2026-09-02
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /O2 /EHsc /Iinputs/reference/shims/ini /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
-// stlport
-// BFME-only diagnostic reader for the EALA RTS1/RTS2 tagged transfer stream.
+// partial score=0.4384 date=2026-10-11
+// cl: /DNDEBUG /MD /O2 /Ob1 /EHsc /D_STLP_USE_STATIC_LIB
 
-#include "PreRTS.h"
-#include "Common/AsciiString.h"
+typedef bool Bool;
+typedef int Int;
+typedef unsigned int UnsignedInt;
+typedef float Real;
+typedef __int64 Int64;
+typedef signed char Byte;
+typedef unsigned char UnsignedByte;
+typedef short Short;
+typedef unsigned short UnsignedShort;
+#define TRUE true
+#define FALSE false
+#include "../../../../game/Libraries/Source/WWVegas/WWLib/ascii_string.h"
+#include "../../../../game/Libraries/Source/WWVegas/WWLib/unicode_string.h"
+// stlport
+#include <string>
 #include <vector>
 #include <stdarg.h>
 #include <stdio.h>
@@ -22,23 +33,37 @@ public:
 	virtual Int seek(Int bytes, Int mode);
 };
 
-static void taggedPrint(File *output, const char *format, ...)
+typedef File Rva009D9D90FileView;
+
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException();
+	char *text;
+	int tagValue;
+};
+inline UnicodeString::UnicodeString() : m_text(0) {}
+inline UnicodeString::~UnicodeString() { reinterpret_cast<StringBase<unsigned short> *>(this)->clear(); }
+
+static __declspec(noinline) void taggedPrint(File *output, const char *format, ...)
 {
 	char buffer[1024];
 	va_list args;
 	va_start(args, format);
 	_vsnprintf(buffer, sizeof(buffer), format, args);
 	va_end(args);
-	output->write(buffer, strlen(buffer));
+	reinterpret_cast<Rva009D9D90FileView *>(output)->write(buffer, strlen(buffer));
 }
 
-static void taggedIndent(File *output, Int depth)
+static __declspec(noinline) void taggedIndent(File *output, Int depth)
 {
 	while (depth-- != 0)
-		output->write("  ", 2);
+		reinterpret_cast<Rva009D9D90FileView *>(output)->write("\t", 1);
 }
 
-static Int taggedDepth(const std::vector<AsciiString> &blocks)
+static inline Int taggedDepth(const std::vector<std::string> &blocks)
 {
 	return blocks.size();
 }
@@ -50,235 +75,357 @@ Bool _bfme_dumpXferStream(File *input, File *output)
 	UnsignedInt options;
 	UnsignedInt flags;
 
-	if (input->read(&magic, 4) != 4)
+	if (reinterpret_cast<Rva009D9D90FileView *>(input)->read(&magic, 4) != 4)
 		return FALSE;
-	if (input->read(&streamVersion, 4) != 4)
+	if (reinterpret_cast<Rva009D9D90FileView *>(input)->read(&streamVersion, 4) != 4)
 		return FALSE;
 	if (magic != 'EALA' || (streamVersion != 'RTS1' && streamVersion != 'RTS2'))
 		return FALSE;
 	options = 0;
 	if (streamVersion != 'RTS1')
-		input->read(&options, 4);
-	if (input->read(&flags, 4) != 4 || (flags & 1) == 0)
+		reinterpret_cast<Rva009D9D90FileView *>(input)->read(&options, 4);
+	if (reinterpret_cast<Rva009D9D90FileView *>(input)->read(&flags, 4) != 4 || (flags & 1) == 0)
 		return FALSE;
 
-	std::vector<AsciiString> blocks;
-	std::vector<AsciiString> names;
+	std::vector<std::string> blocks;
+	std::vector<std::string> names;
 	UnsignedInt type;
 	Bool afterBlock = FALSE;
 
-	if (input->read(&type, 4) != 4)
-		return FALSE;
-
-	do
+	while (reinterpret_cast<Rva009D9D90FileView *>(input)->read(&type, 4) == 4)
 	{
+		if (type == 'END') return TRUE;
 		switch (type)
 		{
-			case 'c3d':
-			{
-				Real v[3]; input->read(v, 12);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "x:%1.6f,y:%1.6f,z:%1.6f (HexX:%08x,HexY:%08x,HexZ:%08x) [coord3d]\n",
-					v[0], v[1], v[2], *(UnsignedInt *)&v[0], *(UnsignedInt *)&v[1], *(UnsignedInt *)&v[2]);
-				break;
-			}
 			case 'c2d':
 			{
-				Real v[2]; input->read(v, 8);
+				Real v[2]; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1], 4);
 				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
 				taggedPrint(output, "x:%1.6f,y:%1.6f (0xX:%08x,0xY:%08x) [coord2d]\n",
 					v[0], v[1], *(UnsignedInt *)&v[0], *(UnsignedInt *)&v[1]);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'c3d':
+			{
+				Real v[3]; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[2], 4);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "x:%1.6f,y:%1.6f,z:%1.6f (HexX:%08x,HexY:%08x,HexZ:%08x) [coord3d]\n",
+					v[0], v[1], v[2], *(UnsignedInt *)&v[0], *(UnsignedInt *)&v[1], *(UnsignedInt *)&v[2]);
+				afterBlock = FALSE;
 				break;
 			}
 			case 'i64':
 			{
-				Int64 v; input->read(&v, 8);
+				Int64 v; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 8);
 				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
 				taggedPrint(output, "%I64i=0x%I64x [int64]\n", v, v);
+				afterBlock = FALSE;
 				break;
 			}
 			case 'int':
 			{
-				Int v; input->read(&v, 4);
+				Int v; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 4);
 				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
 				taggedPrint(output, "%i=0x%x [int]\n", v, v);
+				afterBlock = FALSE;
 				break;
 			}
 			case 'r2d':
 			{
-				Real v[4]; input->read(v, 16);
+				Real v[4]; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[2], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[3], 4);
 				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
 				taggedPrint(output, "x:%1.6f,y:%1.6f to x:%1.6f,y:%1.6f (0xX:%08x,0xY:%08x to 0xX:%08x,0xY:%08x) [region2d]\n",
 					v[0],v[1],v[2],v[3],*(UnsignedInt *)&v[0],*(UnsignedInt *)&v[1],*(UnsignedInt *)&v[2],*(UnsignedInt *)&v[3]);
+				afterBlock = FALSE;
 				break;
 			}
 			case 'r3d':
 			{
-				Real v[6]; input->read(v, 24);
+				Real v[6]; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[2], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[3], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[4], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[5], 4);
 				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
 				taggedPrint(output, "x:%1.6f,y:%1.6f,z:%1.6f to x:%1.6f,y:%1.6f,z:%1.6f (0xX:%08x,0xY:%08x,0xZ:%08x to 0xX:%08x,0xY:%08x,0xZ:%08x) [region3d]\n",
 					v[0],v[1],v[2],v[3],v[4],v[5],*(UnsignedInt *)&v[0],*(UnsignedInt *)&v[1],*(UnsignedInt *)&v[2],*(UnsignedInt *)&v[3],*(UnsignedInt *)&v[4],*(UnsignedInt *)&v[5]);
-				break;
-			}
-			case 'rgb':
-			{
-				Real v[3]; input->read(v, 12);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "r:%1.3f,g:%1.3f,b:%1.3f (0xR:%08x,0xG:%08x,0xB:%08x) [rgb]\n",
-					v[0],v[1],v[2],*(UnsignedInt *)&v[0],*(UnsignedInt *)&v[1],*(UnsignedInt *)&v[2]);
-				break;
-			}
-			case 'rgbr':
-			{
-				Real v[4]; input->read(v, 16);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "r:%1.3f,g:%1.3f,b:%1.3f,a:%1.3f (0xR:%08x,0xG:%08x,0xB:%08x,0xA:%08x) [rgba]\n",
-					v[0],v[1],v[2],v[3],*(UnsignedInt *)&v[0],*(UnsignedInt *)&v[1],*(UnsignedInt *)&v[2],*(UnsignedInt *)&v[3]);
-				break;
-			}
-			case 'rgbi':
-			{
-				UnsignedInt v[4]; input->read(v, 16);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "r:%i,g:%i,b:%i,a:%i [irgba]\n",v[0],v[1],v[2],v[3]);
-				break;
-			}
-			case 'rnge':
-			{
-				Real v[2]; input->read(v, 8);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "%1.6f to %1.6f (0x:%08x to 0x:%08x) [range]\n",
-					v[0],v[1],*(UnsignedInt *)&v[0],*(UnsignedInt *)&v[1]);
-				break;
-			}
-			case 'real':
-			{
-				Real v; input->read(&v, 4);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "%1.6f (0x%08x) [float]\n",v,*(UnsignedInt *)&v);
-				break;
-			}
-			case 'byte':
-			{
-				Byte v; input->read(&v, 1);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "%i=0x%x [byte]\n",(Int)v,(Int)v);
-				break;
-			}
-			case 'ubyt':
-			{
-				UnsignedByte v; input->read(&v, 1);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "%i=0x%x [ubyte]\n",(UnsignedInt)v,(UnsignedInt)v);
-				break;
-			}
-			case 'bool':
-			{
-				Bool v; input->read(&v, 1);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "%i [bool]\n",(Int)(UnsignedByte)v);
-				break;
-			}
-			case 'shrt':
-			{
-				Short v; input->read(&v, 2);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "%i=0x%x [short]\n",(Int)v,(Int)v);
-				break;
-			}
-			case 'usht':
-			{
-				UnsignedShort v; input->read(&v, 2);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "%i=0x%x [ushort]\n",(UnsignedInt)v,(UnsignedInt)v);
-				break;
-			}
-			case 'uint':
-			{
-				UnsignedInt v; input->read(&v, 4);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "%u=0x%x [uint]\n",v,v);
-				break;
-			}
-			case 'enu1': case 'enu2': case 'enu3': case 'enu4':
-			{
-				UnsignedInt v = 0; input->read(&v, type - 'enu1' + 1);
-				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "%i [enum]\n",v);
-				break;
-			}
-			case 'vers':
-			{
-				UnsignedByte v; input->read(&v, 1);
-				taggedIndent(output, taggedDepth(blocks));
-				taggedPrint(output, "version: %i\n",(UnsignedInt)v);
-				break;
-			}
-			case 'astr':
-			case 'ustr':
-			{
-				UnsignedInt len = 0; input->read(&len, 1);
-				if (len == 0xff) input->read(&len, 4);
-				char buffer[256];
-				if (type == 'astr') {
-					input->read(buffer, len); buffer[len] = 0;
-					taggedPrint(output, "'%s' [ascii]\n",buffer);
-				} else {
-					input->read(buffer, len * 2); ((WideChar *)buffer)[len] = 0;
-					taggedPrint(output, "'%S' [unicode]\n",buffer);
-				}
+				afterBlock = FALSE;
 				break;
 			}
 			case 'raw':
 			{
-				UnsignedInt len; input->read(&len, 4);
-				Byte buffer[16];
-				for (UnsignedInt at = 0; at < len; at += 16) {
-					UnsignedInt count = len - at < 16 ? len - at : 16;
-					input->read(buffer, count);
+				if (afterBlock) { taggedPrint(output,"\n"); afterBlock = FALSE; }
+				UnsignedInt len; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&len,4);
+				if (len == 0) {
 					taggedIndent(output, taggedDepth(blocks));
-					taggedPrint(output, "%4d:  ",at);
-					for (UnsignedInt i = 0; i < 16; ++i)
-						i < count ? taggedPrint(output," %02x",buffer[i]) : taggedPrint(output,"   ");
-					taggedPrint(output,"       ");
-					for (i = 0; i < count; ++i) taggedPrint(output,"%c",buffer[i] > 0x20 ? buffer[i] : '.');
+					taggedPrint(output,"--- 0 raw bytes\n");
+					break;
+				}
+				Byte buffer[16];
+				UnsignedInt limit = 16;
+				for (UnsignedInt at = 0; at < len; at += 16, limit += 16) {
+					UnsignedInt count = limit <= len ? 16 : len - at;
+					reinterpret_cast<Rva009D9D90FileView *>(input)->read(buffer,count);
+					taggedIndent(output, taggedDepth(blocks));
+					taggedPrint(output,"%04x",at);
+					for (UnsignedInt i=0; i<16; ++i) {
+						if ((i & 7) == 0) taggedPrint(output," ");
+						if (at+i < len) taggedPrint(output," %02x",(UnsignedByte)buffer[i]);
+						else taggedPrint(output,"   ");
+					}
+					taggedPrint(output,"  ");
+					for (i=0; i<16; ++i) {
+						if (at+i >= len) break;
+						taggedPrint(output,"%c",(UnsignedByte)buffer[i] > 0x20 ? (UnsignedByte)buffer[i] : '.');
+					}
 					taggedPrint(output,"\n");
 				}
 				break;
 			}
-			case 'BLOK': case 'DSCR': case 'EBLK':
+			case 'rgb':
 			{
-				UnsignedByte len; input->read(&len,1);
+				Real v[3]; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[2], 4);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "r:%1.3f,g:%1.3f,b:%1.3f (0xR:%08x,0xG:%08x,0xB:%08x) [rgb]\n",
+					v[0],v[1],v[2],*(UnsignedInt *)&v[0],*(UnsignedInt *)&v[1],*(UnsignedInt *)&v[2]);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'ver':
+			{
+				UnsignedByte v; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 1);
+				taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "version: %i\n",(UnsignedInt)v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'BLOK': case 'DSCR':
+			{
+				UnsignedByte len;
+				if (reinterpret_cast<Rva009D9D90FileView *>(input)->read(&len,1) != 1) { throw XferException(1,0); }
 				char name[256];
-				if (len == 0xff) {
-					UnsignedInt index; input->read(&index,4);
-					strcpy(name,names[index].str());
+				if (len == 0) name[0] = 0;
+				else if (len == 0xff) {
+					UnsignedInt index;
+					if (reinterpret_cast<Rva009D9D90FileView *>(input)->read(&index,4) != 4) { throw XferException(1,0); }
+					if (index >= names.size()) { throw XferException(0,0); }
+					strcpy(name,names[index].c_str());
 				} else {
-					input->read(name,len); name[len]=0;
-					names.push_back(AsciiString(name));
+					if (reinterpret_cast<Rva009D9D90FileView *>(input)->read(name,len) != len) { throw XferException(1,0); }
+					name[len] = 0;
+					std::string value(name);
+					names.push_back(value);
 				}
-				if (type == 'BLOK') input->seek(4,1);
-				if (type == 'EBLK') {
-					taggedIndent(output, taggedDepth(blocks)-1);
-					taggedPrint(output,"</%s>\n",blocks.back().str());
-					blocks.pop_back();
-				} else if (type == 'BLOK') {
-					taggedIndent(output, taggedDepth(blocks)); taggedPrint(output,"<%s>\n",name);
-					blocks.push_back(AsciiString(name));
+				if (type == 'BLOK') reinterpret_cast<Rva009D9D90FileView *>(input)->seek(4,1);
+				if (type == 'BLOK' || !afterBlock) taggedIndent(output,taggedDepth(blocks));
+				if (type == 'BLOK') {
+					taggedPrint(output,"<%s>\n",name);
+					std::string value(name);
+					blocks.push_back(value);
 				} else {
-					taggedIndent(output, taggedDepth(blocks)); taggedPrint(output,"%s: ",name);
+					taggedPrint(output,"%s: ",name);
 					afterBlock = TRUE;
 				}
 				break;
 			}
-			case 'END':
+			case 'EBLK':
+			{
+				if (blocks.empty()) { throw XferException(0,0); }
+				taggedIndent(output,taggedDepth(blocks)-1);
+				taggedPrint(output,"</%s>\n",blocks.back().c_str());
+				blocks.pop_back();
 				break;
+			}
+			case 'astr':
+			{
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				UnsignedInt len = 0; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&len, 1);
+				if (len == 0xff) reinterpret_cast<Rva009D9D90FileView *>(input)->read(&len, 4);
+				AsciiString buffer;
+				if (len != 0) {
+					reinterpret_cast<Rva009D9D90FileView *>(input)->read(buffer.getBufferForRead(len), len);
+					buffer.getBufferForRead(len)[len] = 0;
+				}
+				taggedPrint(output, "'%s' [ascii]\n", buffer.str());
+				afterBlock = FALSE;
+				break;
+			}
+			case 'bool':
+			{
+				Bool v; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 1);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%i [bool]\n",(Int)(UnsignedByte)v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'byte':
+			{
+				Byte v; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 1);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%i=0x%x [byte]\n",(Int)v,(Int)v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'enu1':
+			{
+				UnsignedInt v = 0; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 1);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%i [enum]\n", v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'enu2':
+			{
+				UnsignedInt v = 0; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 2);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%i [enum]\n", v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'enu3':
+			{
+				UnsignedInt v = 0; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 3);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%i [enum]\n", v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'enu4':
+			{
+				UnsignedInt v = 0; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 4);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%i [enum]\n", v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'ic2d':
+			{
+				Int v[2];
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1],4);
+				if (!afterBlock) taggedIndent(output,taggedDepth(blocks));
+				taggedPrint(output,"x:%i,y:%i [icoord2d]\n",v[0],v[1]);
+				afterBlock=FALSE;
+				break;
+			}
+			case 'ic3d':
+			{
+				Int v[3];
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[2],4);
+				if (!afterBlock) taggedIndent(output,taggedDepth(blocks));
+				taggedPrint(output,"x:%i,y:%i,z:%i [icoord3d]\n",v[0],v[1],v[2]);
+				afterBlock=FALSE;
+				break;
+			}
+			case 'ir2d':
+			{
+				Int v[4];
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[2],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[3],4);
+				if (!afterBlock) taggedIndent(output,taggedDepth(blocks));
+				taggedPrint(output,"x:%i,y:%i to x:%i,y:%i [iregion2d]\n",v[0],v[1],v[2],v[3]);
+				afterBlock=FALSE;
+				break;
+			}
+			case 'ir3d':
+			{
+				Int v[6];
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[2],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[3],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[4],4);
+				reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[5],4);
+				if (!afterBlock) taggedIndent(output,taggedDepth(blocks));
+				taggedPrint(output,"x:%i,y:%i,z:%i to x:%i,y:%i,z:%i [iregion3d]\n",v[0],v[1],v[2],v[3],v[4],v[5]);
+				afterBlock=FALSE;
+				break;
+			}
+			case 'real':
+			{
+				Real v; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 4);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%1.6f (0x%08x) [float]\n",v,*(UnsignedInt *)&v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'rgbi':
+			{
+				Int v[4]; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0],4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1],4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[2],4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[3],4);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "r:%i,g:%i,b:%i,a:%i [irgba]\n",v[0],v[1],v[2],v[3]);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'rgbr':
+			{
+				Real v[4]; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[2], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[3], 4);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "r:%1.3f,g:%1.3f,b:%1.3f,a:%1.3f (0xR:%08x,0xG:%08x,0xB:%08x,0xA:%08x) [rgba]\n",
+					v[0],v[1],v[2],v[3],*(UnsignedInt *)&v[0],*(UnsignedInt *)&v[1],*(UnsignedInt *)&v[2],*(UnsignedInt *)&v[3]);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'rnge':
+			{
+				Real v[2]; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[0], 4); reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v[1], 4);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%1.6f to %1.6f (0x:%08x to 0x:%08x) [range]\n",
+					v[0],v[1],*(UnsignedInt *)&v[0],*(UnsignedInt *)&v[1]);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'shrt':
+			{
+				Short v; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 2);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%i=0x%x [short]\n",(Int)v,(Int)v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'ubyt':
+			{
+				UnsignedByte v; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 1);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%i=0x%x [ubyte]\n",(UnsignedInt)v,(UnsignedInt)v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'uint':
+			{
+				UnsignedInt v; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 4);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%u=0x%x [uint]\n",v,v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'usht':
+			{
+				UnsignedShort v; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&v, 2);
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				taggedPrint(output, "%i=0x%x [ushort]\n",(UnsignedInt)v,(UnsignedInt)v);
+				afterBlock = FALSE;
+				break;
+			}
+			case 'ustr':
+			{
+				if (!afterBlock) taggedIndent(output, taggedDepth(blocks));
+				UnsignedInt len = 0; reinterpret_cast<Rva009D9D90FileView *>(input)->read(&len, 1);
+				if (len == 0xff) reinterpret_cast<Rva009D9D90FileView *>(input)->read(&len, 4);
+				UnicodeString buffer;
+				if (len != 0) {
+					reinterpret_cast<Rva009D9D90FileView *>(input)->read(reinterpret_cast<StringBase<unsigned short> *>(&buffer)->getBufferForRead(len), len * 2);
+					reinterpret_cast<StringBase<unsigned short> *>(&buffer)->getBufferForRead(len)[len] = 0;
+				}
+				taggedPrint(output, "'%S' [unicode]\n", buffer.str());
+				afterBlock = FALSE;
+				break;
+			}
 			default:
-				return FALSE;
+				{ throw XferException(0,"Unknown data type ID 0x%08x",type); }
 		}
-		afterBlock = FALSE;
 	}
-	while (type != 'END' && input->read(&type,4) == 4);
 
-	return TRUE;
+	throw XferException(1,0);
 }
