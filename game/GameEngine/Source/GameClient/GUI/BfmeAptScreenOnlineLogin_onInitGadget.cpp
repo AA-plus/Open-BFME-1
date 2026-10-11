@@ -94,11 +94,13 @@ struct BfmeOnlineLoginContext
 	void *m_window;
 };
 
-class WindowManager
+class WindowManager;
+
+// ILT 0x00015235 reaches the existing eight-DWORD ledger body at 0x004675F0.
+class BfmeLevelAN
 {
 public:
-	void add(void *window, const char *name, int type, void *value,
-		int unused0, int unused1, int unused2, int unused3);
+	char *bfmeBuildAN(unsigned int, int, int, int, int, int, int, int);
 };
 
 extern WindowManager *g_rva012F19E8WindowManager;	///< retail [0x012F19E8]
@@ -189,7 +191,8 @@ void BfmeAptScreenOnlineLogin::_bfme_onInitGadget(
 		if (m_pendingButtonState == 1 && m_fieldMask == 0x10f)
 			m_pendingButtonState = 0;
 		void *window2 = m_context->m_window;
-		g_rva012F19E8WindowManager->add(window2, "CallChild", 1,
-			(void *)"EnableButtonDeleteNickname", 0, 0, 0, 0);
+		((BfmeLevelAN *)g_rva012F19E8WindowManager)->bfmeBuildAN(
+			(unsigned int)window2, (int)"CallChild", 1,
+			(int)"EnableButtonDeleteNickname", 0, 0, 0, 0);
 	}
 }
