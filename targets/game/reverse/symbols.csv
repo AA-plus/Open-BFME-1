@@ -90999,3 +90999,7 @@ _printf,0x009F7244,route=MSVCR71.dll!printf; IAT 0x01359464; CRT printf import j
 ?d_009b4170@@YAXXZ,0x009B4170,address-only compatibility for retired dump; complete leaf extent verified; evidence=targets/game/reverse/identity_evidence/009b4170-noref-abi.md
 ?method@Rva0073AD70@@QAEXXZ,0x0073AD70,address-only ABI from complete 277-byte receiver body and caller 0x0073AED0; identity_evidence/0073aed0-bfme2-donor.md
 ?d_0073aed0@@YAXXZ,0x0073AED0,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_006f60e0.asm
+?update@Transport@@QAE_NXZ,0x00001EC4,route=0x00684420; LAN update decoded call and complete callee ABI; evidence=targets/game/reverse/identity_evidence/006870f0-finishing-ilt.md
+?removeGame@LANAPI@@IAEXPAVLANGameInfo@@@Z,0x0001BBD0,route=0x00685180; LAN update decoded call and complete callee ABI; evidence=targets/game/reverse/identity_evidence/006870f0-finishing-ilt.md
+??1LANGameInfo@@QAE@XZ,0x00007BA3,route=0x00686CD0; LAN update decoded call and complete callee ABI; evidence=targets/game/reverse/identity_evidence/006870f0-finishing-ilt.md
+?getPlayerName@LANGameInfo@@QAE?AVUnicodeString@@H@Z,0x000328FD,route=0x004C8800; LAN update decoded call and complete callee ABI; evidence=targets/game/reverse/identity_evidence/006870f0-finishing-ilt.md

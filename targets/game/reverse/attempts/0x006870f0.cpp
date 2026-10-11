@@ -1,19 +1,22 @@
-// ?update@LANAPI@@
-// partial score=0.999 date=2026-09-28
+// ?step@Rva006870F0State@@QAEXXZ
+// partial score=0.9996 date=2026-10-11
 // cl: /DNDEBUG /MD /EHsc /Iinputs/reference/shims/stringbaseunicode /Iinputs/reference/shims/campaignmanagerascii /Igame/Libraries/Source/WWVegas/WWLib
 // GAP SEAT bank, retail RVA 006870F0, proven full extent 2436 bytes.
-// Compile symbol: ?step@Rva006870F0State@@QAEXXZ (the ledger still has the old lift).
+// Compile symbol: ?step@Rva006870F0State@@QAEXXZ (the retired lift has no active row).
 // Old extent 2030 cuts mov ecx,esp at 006878DD. Code ends at ret 00687A25;
 // alignment 00687A26, nineteen switch pointers 00687A28..00687A74, then int3.
 // Probe: exactly one non-relocation byte differs, at +0x7A3: SIB operands of
 // lea ecx,[edi+eax+0x88] are reversed. Table relocation bytes are masked.
-// THIS IS NOT VERIFIED CODE: opaque callee declarations below still need to
-// be mapped to independently witnessed existing contracts before add_match.
-// No pins were added for this attempt. Evidence: build/astra_seat/lan.callees.txt.
+// The opaque leave-handler declaration remains unresolved. Other direct calls
+// use canonical declarations or typed routes through recorded ILT symbols.
+// Binding evidence: targets/game/reverse/identity_evidence/006870f0-finishing-ilt.md.
 // Critical levers: packet union with natural double alignment (not declspec
 // align), inline StringBase::str bodies, game lastHeard inline accessor,
 // and host-drop type8 versus player-drop type6. All are witnessed in retail.
 #include <wchar.h>
+#include "string_base.h"
+template<> inline const char *StringBase<char>::str() const { return m_data ? m_data->data : ""; }
+template<> inline const wchar_t *StringBase<wchar_t>::str() const { return m_data ? m_data->data : L""; }
 #include "Common/AsciiString.h"
 #include "Common/UnicodeString.h"
 #include <wchar.h>
@@ -26,25 +29,37 @@ struct RvaLANAddress { unsigned ip; unsigned short port; RvaLANAddress():ip(0),p
 struct RvaLANIncoming { char data[0x400]; unsigned length; unsigned ip; unsigned short port; char gap40A[4]; };
 #pragma pack(pop)
 struct RvaLANPacket { union { double alignment; struct { int type; wchar_t name[13]; char rest[0x1e0-30]; }; }; };
-class RvaLANTransport {
+class Transport {
 public:
  bool update();
  char prefix[0x20704];
  RvaLANIncoming incoming[128];
 };
+typedef Transport RvaLANTransport;
 struct RvaLANPlayer { UnicodeString name, login, host; unsigned lastHeard; RvaLANPlayer *next; unsigned ip; };
-class RvaLANSlot {
+class GameSlot {
 public:
  bool isHuman() const;
- char prefix[0x30];
+ void *m_vptr;
+ int m_state;
+ bool m_isAccepted, m_hasMap, m_isMuted;
+ char prefix[0x30-0x0b];
  RvaLANAddress address;
- char gap38[0x2c];
+ char gap38[0x44-0x38];
+};
+class RvaLANSlot : public GameSlot {
+public:
+ RvaLANPlayer m_user;
+ char m_userTail[4];
+ AsciiString m_serial;
  unsigned lastHeard;
  unsigned getLastHeard() { return isHuman()?lastHeard:0; }
 };
-class RvaLANGame {
+class LANGameInfo;
+typedef LANGameInfo RvaLANGame;
+class LANGameInfo {
 public:
- ~RvaLANGame();
+ ~LANGameInfo();
  UnicodeString getPlayerName(int);
  char prefix[0xd];
  bool inProgress;
@@ -55,6 +70,7 @@ public:
  RvaLANGame *next;
  unsigned lastHeard;
 };
+typedef LANGameInfo RvaLANGame;
 class RvaLANGameText {
 public:
  virtual void slot00();
@@ -70,6 +86,24 @@ public:
  virtual UnicodeString fetch(const char *, bool = false);
 };
 extern RvaLANGameText *TheGameText;
+class LANAPI { friend class Rva006870F0State; protected: void removeGame(LANGameInfo *); };
+void j_00011aa9();
+void j_0004233e();
+void j_00046001();
+void j_00028ba5();
+void j_00006a87();
+void j_00032be1();
+void j_0003fdcd();
+void j_0003eb44();
+void j_0004b529();
+void j_0001cc7e();
+void j_0004b22c();
+void j_0003b2e1();
+void j_0001529e();
+void j_0001b03b();
+void j_0001786e();
+void j_00045593();
+void j_00046817();
 class Rva006870F0State
 {
 public:
@@ -147,24 +181,110 @@ public:
  RvaLANTransport *m_transport;
  unsigned m_broadcastAddr, m_lastUpdate;
  void step();
- void removeGame(RvaLANGame *);
- void call0068AEF0(RvaLANPacket *, const RvaLANAddress *);
- void call0068C110(RvaLANPacket *, const RvaLANAddress *);
- void call0068B1E0(RvaLANPacket *, const RvaLANAddress *);
- void call0068B380(RvaLANPacket *, const RvaLANAddress *);
- void call0068C400(RvaLANPacket *, const RvaLANAddress *);
- void call0068CF00(RvaLANPacket *, const RvaLANAddress *);
- void call0068B4C0(RvaLANPacket *, const RvaLANAddress *);
- void call0068AC20(RvaLANPacket *, const RvaLANAddress *);
- void call0068AC80(RvaLANPacket *, const RvaLANAddress *);
- void call0068B540(RvaLANPacket *, const RvaLANAddress *);
- void call0068B6A0(RvaLANPacket *, const RvaLANAddress *);
- void call0068ACF0(RvaLANPacket *, const RvaLANAddress *);
- void call0068BFA0(RvaLANPacket *, const RvaLANAddress *);
- void call0068AD80(RvaLANPacket *, const RvaLANAddress *);
- void call0068B890(RvaLANPacket *, const RvaLANAddress *);
- void call0068B920(RvaLANPacket *, const RvaLANAddress *);
- void call0068ADE0(RvaLANPacket *, const RvaLANAddress *);
+ // ?removeGame@Rva006870F0State@@QAEXPAVLANGameInfo@@@Z absent-from-retail
+ void removeGame(RvaLANGame *game) { reinterpret_cast<LANAPI *>(this)->removeGame(game); }
+ // ?call0068AEF0@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068AEF0(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_00011aa9 };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068C110@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068C110(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_0004233e };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068B1E0@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068B1E0(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_00046001 };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068B380@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068B380(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_00028ba5 };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068C400@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068C400(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_00006a87 };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068CF00@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068CF00(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_00032be1 };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068B4C0@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068B4C0(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_0003fdcd };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068AC20@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068AC20(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_0003eb44 };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068AC80@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068AC80(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_0004b529 };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068B540@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068B540(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_0001cc7e };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068B6A0@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068B6A0(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_0004b22c };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068ACF0@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068ACF0(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_0003b2e1 };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068BFA0@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068BFA0(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_0001529e };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068AD80@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068AD80(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_0001b03b };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068B890@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068B890(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_0001786e };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068B920@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068B920(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_00045593 };
+  (this->*route.member)(msg, sender);
+ }
+ // ?call0068ADE0@Rva006870F0State@@QAEXPAURvaLANPacket@@PBURvaLANAddress@@@Z absent-from-retail
+ void call0068ADE0(RvaLANPacket *msg, const RvaLANAddress *sender) {
+  union { void (*raw)(); void (Rva006870F0State::*member)(RvaLANPacket *, const RvaLANAddress *); }
+   route = { j_00046817 };
+  (this->*route.member)(msg, sender);
+ }
  void call0068BAC0(RvaLANPacket *, const RvaLANAddress *, bool);
  void removePlayer(RvaLANPlayer *player) {
   if (m_lobbyPlayers == player) m_lobbyPlayers = m_lobbyPlayers->next;
@@ -175,8 +295,6 @@ public:
   }
  }
 };
-template<> inline const char *StringBase<char>::str() const { return m_data ? m_data->data : ""; }
-template<> inline const wchar_t *StringBase<wchar_t>::str() const { return m_data ? m_data->data : L""; }
 void Rva006870F0State::step()
 {
  if (LANbuttonPushed) return;
