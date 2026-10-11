@@ -7,14 +7,7 @@
 // available headers, so the callable owner below deliberately stays
 // address-derived while retaining the proven class/layout relationship.
 
-#include "string_base.h"
-
-class AsciiString : private StringBase<char>
-{
-public:
-    AsciiString(const char *text) : StringBase<char>(text) {}
-    ~AsciiString() { releaseBuffer(); }
-};
+#include "ascii_string.h"
 
 class Rva0025FBF0LayoutString
 {
