@@ -225,11 +225,9 @@ void MeshModelClass::Replace_Texture(TextureClass* texture,TextureClass* new_tex
 	// BFME: DX8 FVF-category path stubbed.
 }
 
-// ?MeshModelClass::Replace_VertexMaterial present-unmatched
-void MeshModelClass::Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMaterialClass* new_vmat)
-{
-	// BFME: DX8 FVF-category path stubbed.
-}
+// Replace_VertexMaterial is supplied by MeshModelReplaceTexture.cpp.
+// Its complete retail body at RVA 0x0094F450 updates material arrays and
+// renderer categories; the empty donor stub here was a competing definition.
 
 // ?MeshModelClass::Peek_FVF_Category_Container present-unmatched
 DX8FVFCategoryContainer* MeshModelClass::Peek_FVF_Category_Container()
