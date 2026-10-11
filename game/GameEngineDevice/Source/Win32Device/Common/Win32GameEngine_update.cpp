@@ -82,16 +82,16 @@ extern LANAPI *TheLAN;
 // Rva00367E30Logic is this TU's view of that pointee.
 class GameLogic;
 extern GameLogic *TheGameLogic;
-extern void *Rva0048CD50WindowHandle;
-extern DWORD TheMessageTime;
+extern void *ApplicationHWnd;
+DWORD TheMessageTime = 0;
 
 void Win32GameEngine::update(void)
 {
 	j_000021df();
 
-	if (Rva0048CD50WindowHandle && ::IsIconic(Rva0048CD50WindowHandle))
+	if (ApplicationHWnd && ::IsIconic(ApplicationHWnd))
 	{
-		while (Rva0048CD50WindowHandle && ::IsIconic(Rva0048CD50WindowHandle))
+		while (ApplicationHWnd && ::IsIconic(ApplicationHWnd))
 		{
 			::Sleep(5);
 			serviceWindowsOS();
