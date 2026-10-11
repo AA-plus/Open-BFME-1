@@ -4798,7 +4798,7 @@ name,address,notes
 ??1BfmeBaseP@@UAE@XZ,0x009A1A40,Open-BFME5 the primary base destructor the vector-member destructor at 0x00378650 calls
 ??1BfmeBaseSJ@@QAE@XZ,0x00030652,pin base dtor for BfmeConv2015
 ??1BfmeBaseT@@UAE@XZ,0x009A1A40,Open-BFME5 the base destructor the destructor at 0x004B1670 chains to
-??1BfmeBaseTerm1137A@@UAE@XZ,0x0045B060,pin BfmeA1137 destructor base-class delegate call target
+??1SnowManager@@UAE@XZ,0x0045B060,pin BfmeA1137 destructor base-class delegate call target;ilt-verified=class-GED-dtor(efp=3.41e-04)
 ??1BfmeBaseVW@@QAE@XZ,0x004902A0,Open-BFME5 the list-unhooking base destructor the owner unwind funclet runs
 ??1BfmeBaseVX@@UAE@XZ,0x00490FF0,Open-BFME5 slot 0 of the base table 0x010F9AD8
 ??1BfmeBaseX@@UAE@XZ,0x009A1A40,Open-BFME5 the base destructor the body vector destructor at 0x00490100 chains to
