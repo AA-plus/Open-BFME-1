@@ -175,11 +175,17 @@ public:
 	void *m_fieldAt1F4;
 };
 
+// Existing ledger owner reached through ILT 0x0001C46D (RVA 0x00396B00).
+class U4Sink0060D3B0
+{
+public:
+	void push(bool showScoreScreen, bool unknown);
+};
+
 class BfmeGameLogicPause
 {
 public:
 	void setGamePaused( Bool paused, Int pauseMode, Bool affectInput );
-	void clearGameData( Bool showScoreScreen, Bool unknown );
 	Bool isGamePaused();
 };
 
@@ -593,7 +599,7 @@ static void doLoadGame( void )
 	//
 	if (((BfmePopupSaveGameState *)TheGameState)->loadGame( *selectedGameInfo ) != SC_OK)
 	{
-		((BfmeGameLogicPause *)TheGameLogic)->clearGameData( FALSE, TRUE );
+		((U4Sink0060D3B0 *)TheGameLogic)->push( FALSE, TRUE );
 		((BfmeGameEngineReset *)TheGameEngine)->reset();
 		TheShell->showShell(TRUE);
 	}
