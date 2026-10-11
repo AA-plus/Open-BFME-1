@@ -702,6 +702,7 @@ address_global	game/GameEngine/Source/Common/VirtualCallForwarders.cpp	g_Va012F7
 address_global	game/GameEngine/Source/Common/VirtualCallForwarders.cpp	g_Va01336E5C	4
 address_global	game/GameEngine/Source/Common/WatchdogReport.cpp	g_Rva00F36E5C	3
 address_global	game/GameEngine/Source/GameClient/Display.cpp	g_Rva00F36E5C	3
+address_global	game/GameEngine/Source/GameClient/Display.cpp	g_Va012F1290	2	allow=70b4e57e8d2ffcdc9e97ded1a8c4834ace792cbc
 address_global	game/GameEngine/Source/GameClient/DrawableRegionRenderA.cpp	g_Va012F13B8	5	allow=3831097ae989655c5b36b9a177c7eb0c61530dad
 address_global	game/GameEngine/Source/GameClient/DrawableRegionRenderA.cpp	g_Va012F13BC	3	allow=3831097ae989655c5b36b9a177c7eb0c61530dad
 address_global	game/GameEngine/Source/GameClient/DrawableRegionRenderA.cpp	g_Va012F13C0	3	allow=3831097ae989655c5b36b9a177c7eb0c61530dad

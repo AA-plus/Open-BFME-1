@@ -120,12 +120,12 @@ public:
 };
 
 extern __int64 Counter0040F780;
-extern volatile __int64 g_012F1290;
+volatile __int64 g_Va012F1290 = 0;
 extern double Interval0040F780;
 extern void j_0004ab1f();
 
 #define g_bfmeClock Counter0040F780
-#define g_bfmeClockResult g_012F1290
+#define g_bfmeClockResult g_Va012F1290
 static const double g_bfmeClockScale = 1.0 / 30.0;
 static const double g_bfmeClockFactor = 1000.0;
 #define g_bfmeClockSeconds Interval0040F780
