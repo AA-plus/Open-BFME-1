@@ -215,6 +215,12 @@ public:
 	bool accepts(BfmeRvaA760Object *obj, Int arg);
 };
 
+// Existing matched filter wrapper at RVA003A04A0; preserve the storage view above.
+struct Rva2225E0Filter
+{
+	bool accepts(Object *object, Player *player);
+};
+
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/GlobalData.h
 class GlobalData
 {
@@ -283,7 +289,7 @@ void ScoreKeeper::addObjectBuilt(Object *o, Int amount)
 		m_totalBuildingsBuilt += amount;
 		addToCount = true;
 	}
-	else if (TheWritableGlobalData->m_unitScoreFilter.accepts((BfmeRvaA760Object *)o, 0))
+	else if (reinterpret_cast<Rva2225E0Filter *>(&TheWritableGlobalData->m_unitScoreFilter)->accepts(o, 0))
 	{
 		m_totalUnitsBuilt += amount;
 		addToCount = true;
@@ -358,7 +364,7 @@ void ScoreKeeper::addObjectDestroyed(const Object *o)
 		++keeper->m_totalBuildingsDestroyed[playerIdx];
 		addToCount = true;
 	}
-	else if (TheWritableGlobalData->m_unitScoreFilter.accepts((BfmeRvaA760Object *)object, 0))
+	else if (reinterpret_cast<Rva2225E0Filter *>(&TheWritableGlobalData->m_unitScoreFilter)->accepts(const_cast<Object *>(object), 0))
 	{
 		++keeper->m_totalUnitsDestroyed[playerIdx];
 		addToCount = true;
@@ -403,7 +409,7 @@ void ScoreKeeper::addObjectBuilt(Object *o)
 	// mask lives at 0x012ED7E4 (addObjectBuilt(Object*,Int) / removeObjectBuilt).
 	else if (o->getTemplate()->isKindOfMulti(scoringBuildingDestroyMask, noneKindOfMask()))
 		++m_totalBuildingsLost;
-	else if (TheWritableGlobalData->m_unitScoreFilter.accepts((BfmeRvaA760Object *)o, 0))
+	else if (reinterpret_cast<Rva2225E0Filter *>(&TheWritableGlobalData->m_unitScoreFilter)->accepts(o, 0))
 		++m_totalUnitsLost;
 	else
 		return;

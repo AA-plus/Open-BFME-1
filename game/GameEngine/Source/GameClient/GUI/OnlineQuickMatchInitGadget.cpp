@@ -9,7 +9,7 @@
 // retail string table.  The callback stores each supplied window in the
 // embedded gadget state and refreshes the screen's window-manager layout.
 
-class GameWindow { public: void winGetSize(int *, int *); };
+class GameWindow { public: int winGetSize(int *, int *); };
 
 extern "C" int __cdecl strcmp(const char *left, const char *right);
 
