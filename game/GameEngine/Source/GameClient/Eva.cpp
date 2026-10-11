@@ -422,13 +422,7 @@ const EvaCheckInfo *Eva::getEvaCheckInfo(AsciiString name)
 }
 
 //-------------------------------------------------------------------------------------------------
-// ?setShouldPlay@Eva@@ present-unmatched
-void Eva::setShouldPlay(EvaMessage messageToPlay)
-{
-	m_shouldPlay[messageToPlay] = TRUE;
-  
-  // DEBUG_LOG( ( "Eva message %s play requested\n", messageToName( messageToPlay).str() ) );
-}
+// Retail setter is owned by EvaSetShouldPlay.cpp.
 
 //-------------------------------------------------------------------------------------------------
 // BFME's Eva is not the reference's here. Retail keeps one 24-byte per-message
