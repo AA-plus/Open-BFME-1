@@ -10,21 +10,14 @@ private:
 	unsigned char m_pad[8];
 };
 
-// The out-of-line base destructor this hierarchy tail-calls is the anonymous
-// retail body at 0x00113E60, whose one ledger identity is
-// ?m@Gen_00113e60@@QAEXXZ (game/gen_small/fun_000.cpp).
-class Gen_00113e60
-{
-public:
-	void m();
-};
-
+// The out-of-line base destructor this hierarchy calls is
+// ??1Rva0002B8C8TailBase@@UAE@XZ at retail 0x00113E60.
 class StreakDrawBase
 {
 public:
 	virtual ~StreakDrawBase()
 	{
-		((Gen_00113e60 *)this)->m();
+		((Rva0002B8C8TailBase *)this)->Rva0002B8C8TailBase::~Rva0002B8C8TailBase();
 	}
 
 private:

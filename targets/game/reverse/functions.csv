@@ -121425,7 +121425,6 @@ _piAddListingGamesCallback,,0x0085E420,233,game/GameEngine/Source/GameNetwork/Ga
 ?m@Gen_00113b90@@QAEIXZ,,0x00113B90,6,game/gen_small/fun_000.cpp,matched,gen-shim;skeleton=ret-imm;ghidra=FUN_00513b90
 ?m@Gen_00113c20@@QAEXXZ,,0x00113C20,7,game/gen_small/fun_000.cpp,matched,gen-shim;skeleton=store-imm-0;ghidra=FUN_00513c20
 ?m@Gen_00113d40@@QAEXXZ,,0x00113D40,7,game/gen_small/fun_000.cpp,matched,gen-shim;skeleton=store-imm-0;ghidra=FUN_00513d40
-?m@Gen_00113e60@@QAEXXZ,,0x00113E60,7,game/gen_small/fun_000.cpp,matched,gen-shim;skeleton=store-imm-0;ghidra=FUN_00513e60
 ?m@Gen_00115f10@@QAE_NXZ,,0x00115F10,3,game/gen_small/fun_000.cpp,matched,gen-shim;skeleton=ret-true;ghidra=FUN_00515f10
 ?m@Gen_00119ed0@@QAEHXZ,,0x00119ED0,3,game/gen_small/fun_000.cpp,matched,gen-shim;skeleton=ret-zero;ghidra=FUN_00519ed0
 ?m@Gen_00119f00@@QAEHXZ,,0x00119F00,3,game/gen_small/fun_000.cpp,matched,gen-shim;skeleton=ret-zero;ghidra=FUN_00519f00
@@ -122029,7 +122028,6 @@ _piAddListingGamesCallback,,0x0085E420,233,game/GameEngine/Source/GameNetwork/Ga
 ?m@Gen_0050f5a0@@QAEXXZ,,0x0050F5A0,7,game/gen_small/fun_003.cpp,matched,gen-shim;skeleton=store-imm-0;ghidra=FUN_0090f5a0
 ?m@Gen_0050f5e0@@QAEXXZ,,0x0050F5E0,7,game/gen_small/fun_003.cpp,matched,gen-shim;skeleton=store-imm-0;ghidra=FUN_0090f5e0
 ?m@Gen_0050f620@@QAEXXZ,,0x0050F620,7,game/gen_small/fun_003.cpp,matched,gen-shim;skeleton=store-imm-0;ghidra=FUN_0090f620
-?m@Gen_00510310@@QAEXXZ,,0x00510310,7,game/gen_small/fun_003.cpp,matched,gen-shim;skeleton=store-imm-0;ghidra=FUN_00910310
 ?m@Gen_00511ac0@@QAEXXZ,,0x00511AC0,7,game/gen_small/fun_003.cpp,matched,gen-shim;skeleton=store-imm-0;ghidra=FUN_00911ac0
 ?m@Gen_00511b00@@QAEXXZ,,0x00511B00,7,game/gen_small/fun_003.cpp,matched,gen-shim;skeleton=store-imm-0;ghidra=FUN_00911b00
 ?m@Gen_00511b40@@QAEXXZ,,0x00511B40,7,game/gen_small/fun_003.cpp,matched,gen-shim;skeleton=store-imm-0;ghidra=FUN_00911b40
@@ -171990,3 +171988,5 @@ uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.c
 ?Rva003ACD80@@YAPAURva003ACD80Record@@PAU1@00ABUrandom_access_iterator_tag@_STL@@PAH@Z,,0x003ACD80,353,game/GameEngine/Source/Common/Rva003ACD80Copy.cpp,matched,Opaque forward record copy; complete caller ABI and independent payload proof; native counted loop; evidence=targets/game/reverse/identity_evidence/003acd80-forward-copy.md;model=gpt-6.1-sol;host=fleet
 ?d_00881db0@@YAIPAX@Z,,0x00881DB0,6,game/GameEngine/Source/Common/System/Rva00881D70CrtShims.cpp,matched,model=claude-opus-5-5;host=GreatFaram
 ?d_00881ea0@@YAPAEPBE@Z,,0x00881EA0,6,game/GameEngine/Source/Common/System/Rva00881D70CrtShims.cpp,matched,model=claude-opus-5-5;host=GreatFaram
+??1BfmeAptScreenMapTransfer@@MAE@XZ,,0x00510310,7,game/GameEngine/Source/GameClient/GUI/BfmeAptScreenMapTransferDestructor.cpp,matched,model=claude-opus-5-5;host=GreatFaram
+??1Rva0002B8C8TailBase@@UAE@XZ,,0x00113E60,7,game/GameEngine/Source/GameClient/Drawable/Behavior/Rva0002B8C8TailBaseDestructor.cpp,matched,model=claude-opus-5-5;host=GreatFaram
