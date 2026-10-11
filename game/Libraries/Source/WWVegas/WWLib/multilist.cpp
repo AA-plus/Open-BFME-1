@@ -10,13 +10,15 @@
 // Retail lock-bearing allocation is emitted by ObjectPoolAllocateObjectMemory.cpp.
 // Do not instantiate the unlocked upstream template copy in this TU.
 template<> MultiListNodeClass *ObjectPoolClass<MultiListNodeClass,256>::Allocate_Object_Memory(void);
+// The paired free operation also uses retail's lock-bearing provider.
+template<> void ObjectPoolClass<MultiListNodeClass,256>::Free_Object_Memory(MultiListNodeClass *);
 
 DEFINE_AUTO_POOL(MultiListNodeClass, 256);
 
 
 // Retail complete/deleting destructors: MultiListObjectDeletingDestructor.cpp.
 
-GenericMultiListClass::~GenericMultiListClass(void)
+__declspec(noinline) GenericMultiListClass::~GenericMultiListClass(void)
 {
 	assert(Is_Empty());
 }
