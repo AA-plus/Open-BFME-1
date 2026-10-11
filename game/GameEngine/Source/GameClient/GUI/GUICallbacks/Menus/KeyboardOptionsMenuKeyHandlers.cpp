@@ -3,57 +3,25 @@
 #define Matrix4x4 Matrix4
 #define __PLACEMENT_VEC_NEW_INLINE
 
-#include "string_base.h"
-
 #define UNICODESTRING_H
-class AsciiString;
+#include "unicode_string.h"
 
-class UnicodeString
+// Retail inlines character access and calls the StringBase comparison directly.
+template<> inline unsigned short StringBase<unsigned short>::getCharAt(int index) const
 {
-public:
-	static UnicodeString TheEmptyString;
-
-	UnicodeString() { m_data = 0; }
-	UnicodeString( const UnicodeString &that )
-	{
-		((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase( *(const StringBase<unsigned short> *)&that );
-	}
-	explicit UnicodeString( const unsigned short *str )
-	{
-		((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase( str );
-	}
-	~UnicodeString();
-
-	UnicodeString &operator=( const UnicodeString &that )
-	{
-		((StringBase<unsigned short> *)this)->set( *(const StringBase<unsigned short> *)&that );
-		return *this;
-	}
-
-	int getLength() const { return ((const StringBase<unsigned short> *)this)->getLength(); }
-	unsigned short getCharAt( int index ) const
-	{
-		return m_data ? ((const unsigned short *)((const char *)m_data + 8))[index] : 0;
-	}
-	const unsigned short *str() const { return ((const StringBase<unsigned short> *)this)->str(); }
-	void set( const UnicodeString &that ) { ((StringBase<unsigned short> *)this)->set( *(const StringBase<unsigned short> *)&that ); }
-	void concat( const UnicodeString &that )
-	{
-		const int length = that.m_data ? *(const unsigned short *)((const char *)that.m_data + 4) : 0;
-		static const unsigned short empty[1] = { 0 };
-		const unsigned short *text = that.m_data ? (const unsigned short *)((const char *)that.m_data + 8) : empty;
-		((StringBase<unsigned short> *)this)->concat( text, length );
-	}
-	int compare( const UnicodeString &that ) const { return ((const StringBase<unsigned short> *)this)->compare( *(const StringBase<unsigned short> *)&that ); }
-	int compareNoCase( const UnicodeString &that ) const { return ((const StringBase<unsigned short> *)this)->compareNoCase( *(const StringBase<unsigned short> *)&that ); }
-
-private:
-	unsigned short *m_data;
-};
-
-inline bool operator==( const UnicodeString &a, const UnicodeString &b )
+    return m_data ? m_data->data[index] : 0;
+}
+inline UnicodeString::UnicodeString() { m_text = 0; }
+inline UnicodeString::UnicodeString(const UnicodeString &that)
 {
-	return a.compare( b ) == 0;
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(
+        *(const StringBase<unsigned short> *)&that);
+}
+
+inline bool operator==(const UnicodeString &a, const UnicodeString &b)
+{
+    return ((const StringBase<unsigned short> &)a).compare(
+        (const StringBase<unsigned short> &)b) == 0;
 }
 
 #include "PreRTS.h"
@@ -96,7 +64,7 @@ void setKeyDown( UnicodeString mod, Bool b );
 
 void doKeyUp( EntryData *e, UnicodeString mod )
 {
-	char c = e->text->getText().getCharAt( e->text->getTextLength() - 1 );
+	char c = ((const StringBase<unsigned short> &)e->text->getText()).getCharAt( e->text->getTextLength() - 1 );
 	if( c == '+' )
 	{
 		if( altDown && ctrlDown && shiftDown )
@@ -196,7 +164,7 @@ void doKeyDown( EntryData *e, UnicodeString mod )
 	}
 	else
 	{
-		char c = e->text->getText().getCharAt( e->text->getTextLength() - 1 );
+		char c = ((const StringBase<unsigned short> &)e->text->getText()).getCharAt( e->text->getTextLength() - 1 );
 		if( c != '+' && absolute )
 		{
 			e->text->setText( mod );
