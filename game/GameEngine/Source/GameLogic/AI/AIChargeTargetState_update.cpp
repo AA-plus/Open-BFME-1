@@ -9,8 +9,6 @@
 typedef bool Bool;
 typedef float Real;
 
-extern const Real g_010977F0;
-
 enum StateReturnType
 {
 	STATE_CONTINUE = 0,
@@ -188,10 +186,12 @@ private:
 };
 
 
-class BFMESelectionStatusBits
+// ILT 0003AB20 reaches this ledger-owned bit test at RVA 000D3F10.
+// The native result is int; retail's callers consume its low byte.
+class Rva000D3F10
 {
 public:
-	Bool test(unsigned int bit) const;
+	int test(unsigned int bit);
 };
 
 
@@ -283,7 +283,7 @@ StateReturnType AIChargeTargetState::update()
 	{
 		if (victim && rva0016F4A0())
 		{
-			if (!((BFMESelectionStatusBits *)source)->test(0x7c))
+			if (!(unsigned char)((Rva000D3F10 *)source)->test(0x7c))
 			{
 				BFME_THE_AI->pathfinder()->removeGoal003E3D20(source);
 
@@ -304,7 +304,7 @@ StateReturnType AIChargeTargetState::update()
 		{
 			if (victim && rva0016FD30Call())
 			{
-				if (!((BFMESelectionStatusBits *)source)->test(0x7c) &&
+				if (!(unsigned char)((Rva000D3F10 *)source)->test(0x7c) &&
 					weapon->bfmeComputeStatus(0) == READY_TO_FIRE)
 				{
 					rva0016F4F0(source, victim, ai);
@@ -352,7 +352,9 @@ Bool AIChargeTargetState::rva0016FD30()
 		range * range)
 	{
 		Real angleThreshold = weapon->m_template->m_aimDelta;
-		if (angleThreshold < g_010977F0)
+		// Retail VA 010977F0 holds 29 5C 0F 3D, the same 0.035f
+		// constant assigned on this branch.
+		if (angleThreshold < 0.035f)
 			angleThreshold = 0.035f;
 
 		if (((Thing *)source)->bfmeRelativeAngleTo(victimPosition) <
