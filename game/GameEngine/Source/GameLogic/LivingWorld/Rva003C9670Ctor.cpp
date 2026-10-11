@@ -50,10 +50,10 @@ struct Gen_p8pod
 	int m_value[2];
 };
 
-class Gen_000231DC
+class Gen_003C55F0
 {
 public:
-    Gen_000231DC(void); // retail ILT 0x000231DC
+    Gen_003C55F0(void); // retail ILT 0x000231DC -> existing body 0x003C55F0
 
 private:
     char m_body[0x2c];
@@ -86,7 +86,7 @@ private:
 	std::vector<Gen_p8pod> m_armyPlacementPos; // +0x20
 	AsciiString m_string2C; // +0x2c
 	std::vector<Gen_p4pod *> m_vector30; // +0x30: the 0xF4-byte objects parser 0x003C9980 appends
-    Gen_000231DC *m_effectMap; // +0x3c
+    Gen_003C55F0 *m_effectMap; // +0x3c
     RegionObjectTree m_regionObjects; // +0x40
 	int m_regionPopupDefaultColor; // +0x4c
 	int m_regionPopupOverColor; // +0x50
@@ -107,5 +107,5 @@ Rva003C9670::Rva003C9670(const AsciiString &name) :
 
     self->m_regionObject.clear();
     m_vector30.clear();
-    self->m_effectMap = new Gen_000231DC();
+    self->m_effectMap = new Gen_003C55F0();
 }
