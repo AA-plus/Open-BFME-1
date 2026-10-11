@@ -44,9 +44,8 @@ public:
 // ?Rva00251670@@YAXPAVGen00850920@@@Z in MidTableRegisterForwarders.cpp), so
 // the linked name of the value this factory hands initFromINIMultiProc is the
 // address-identified thunk ?j_0000a00b@@YAXXZ (matched row in
-// game/gen_small/gthunks_010.cpp). No retail body carries a free-function
-// ReflectDamageFieldParse, so nothing may be declared under that name here.
-extern "C" void __cdecl __identifier("ReflectDamageFieldParse")();
+// game/gen_small/gthunks_010.cpp). Name this exact row for the callback.
+void __cdecl j_0000a00b();
 
 class ReflectDamage
 {
@@ -60,6 +59,6 @@ ModuleData *ReflectDamage::friend_newModuleData(INI *ini)
 	ReflectDamageModuleData *data = new ReflectDamageModuleData;
 	if (ini)
 		ini->initFromINIMultiProc(data,
-			reinterpret_cast<void (__cdecl *)(MultiIniFieldParse &)>(&__identifier("ReflectDamageFieldParse")));
+			reinterpret_cast<void (__cdecl *)(MultiIniFieldParse &)>(&j_0000a00b));
 	return (ModuleData *)data;
 }
