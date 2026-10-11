@@ -1,9 +1,8 @@
 // ?Thread_Function@PeerThreadClass@@UAEXXZ
-// partial score=1.0 date=2026-10-08
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /DBFME_STLP_NODE_ALLOC /Iinputs/reference/shims/stlp_nodealloc /Iinputs/reference/shims/stringbaseascii /Iinputs/reference/shims/nat /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 // GPL-3.0-or-later, adapted from EA Zero Hour PeerThread.cpp.
-// Retail witnesses and measured limitations: build/unclaimed_map/astra_J/IDENTITY.md.
+// Evidence: targets/game/reverse/identity_evidence/0064fb90-thread-function.md.
 #define Matrix4x4 Matrix4
 #define THREAD_H
 class ThreadClass {
@@ -40,12 +39,6 @@ extern "C" {
 #include "Common/UserPreferences.h"
 #include "GameNetwork/IPEnumeration.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
-// This TU stays on the reference header's inline GameInfo::getMap, which the
-// GameInfo.h shims now only declare (BFME's one body is MpGameSetup.cpp,
-// 0x00098E70). Nothing here calls it, so no COMDAT is emitted; without the
-// definition MSVC swaps edx/ecx in the heartbeat-interval add in
-// Thread_Function (`add edx,ecx; cmp eax,edx`, +0x1468).
-inline AsciiString GameInfo::getMap( void ) const { return m_mapName; }
 #include "mutex.h"
 #define __PEERTHREAD_H__
 enum SerialAuthResult
@@ -152,14 +145,8 @@ public:
 			Int numPlayers;
 			Int maxPlayers;
 			Int numObservers;
-			// BFME's PeerRequest is four bytes larger than the reference's, and
-			// the extra dword is somewhere at or after the union: retail puts
-			// `id` at +0x34 and the UTM union at +0xE4, both exactly where the
-			// reference's layout puts them. gameOptions is the union's largest
-			// member at 172 bytes, so one more Int here is what moves sizeof
-			// from 0x190 to the 0x194 retail's callers reserve. Nothing landed
-			// against this header reads gameOptions, so which field BFME
-			// actually added is still open -- only the size is pinned.
+			// Retail copies this final payload word to m_unknownBC when setting game options.
+			// Its meaning is unknown; the union remains an opaque copied payload.
 			Int bfmeExtraGameOption;
 		} gameOptions;
 
@@ -438,10 +425,14 @@ public:
  virtual void Thread_Function();
 private:
  void doQuickMatch(PEER);
+ // ?Rva00646240@PeerThreadClass@@AAEXXZ absent-from-retail: inline forwarding view.
  void Rva00646240() { reinterpret_cast<BfmeThingAVA *>(this)->bfmeGoAVA(); }
+ // ?Rva00646290@PeerThreadClass@@AAEPAU_SBServer@@H@Z absent-from-retail: inline forwarding view.
  _SBServer* Rva00646290(Int id) { return (_SBServer *)reinterpret_cast<Rva00646290Owner *>(this)->lookup00646290(id); }
+ // ?Rva00649E90@PeerThreadClass@@AAEXPAX@Z absent-from-retail: inline forwarding view.
  void Rva00649E90(PEER peer) { reinterpret_cast<BfmeOwnerFP *>(this)->bfmeStopFP(peer); }
  void Rva00643BC0(PEER);
+ // ?Rva00649DB0@PeerThreadClass@@AAEXPAX@Z absent-from-retail: inline forwarding view.
  void Rva00649DB0(PEER peer) { reinterpret_cast<BfmeSessionAJ *>(this)->bfmeStartAJ(peer); }
  void Rva00643C10(PEER);
  static char s_valueBuffers[8][20];
@@ -509,9 +500,6 @@ private:
 typedef char RequestSize[sizeof(PeerRequest)==0x194?1:-1];
 typedef char ResponseSize[sizeof(PeerResponse)==0x330?1:-1];
 typedef char ThreadSize[sizeof(PeerThreadClass)==0x3ec?1:-1];
-char PeerThreadClass::s_valueBuffers[8][20];
-const char* PeerThreadClass::s_keys[6]={"b_locale","b_wins","b_losses","b_points","b_side","b_pre"};
-const char* PeerThreadClass::s_values[6]={s_valueBuffers[0],s_valueBuffers[1],s_valueBuffers[2],s_valueBuffers[3],s_valueBuffers[4],s_valueBuffers[5]};
 extern int isThreadHosting;
 static unsigned s_lastStateChangedHeartbeat;
 static bool s_wantStateChangedHeartbeat;
@@ -758,9 +746,20 @@ class Rva012F7194Slots { public:
 class GameSpyInfoInterface;
 extern GameSpyInfoInterface *TheGameSpyInfo;
 
+// ?Thread_Function@PeerThreadClass@@UAEXXZ
 void PeerThreadClass::Thread_Function()
 {
 	try {
+	/*********
+	First step, set our game authentication info
+	We could do:
+		strcpy(gcd_gamename,"ccgenzh");
+		strcpy(gcd_secret_key,"D6s9k3");
+	or
+		strcpy(gcd_gamename,"ccgeneralsb");
+		strcpy(gcd_secret_key,"whatever the key is");
+	...but this is more secure:
+	**********/
 	char gameName[12];
  char secretKey[7];
  gameName[0]='l';gameName[1]='o';gameName[2]='t';gameName[3]='r';
@@ -1104,6 +1103,18 @@ void PeerThreadClass::Thread_Function()
 					s_wantStateChangedHeartbeat = TRUE;
 
 					
+
+					/*
+					peerStateChanged( peer );
+
+#ifdef DEBUG_LOGGING
+					static UnsignedInt prev = 0;
+					UnsignedInt now = timeGetTime();
+					UnsignedInt diff = now - prev;
+					prev = now;
+#endif
+					STATECHANGED_LOG(("peerStateChanged() at time %d (difference of %d ms)\n", now, diff));
+					*/
 
 					peerUTMRoom( peer, StagingRoom, "SL/", incomingRequest.options.c_str(), PEERFalse ); // send the full string to people in the room
 				}
