@@ -167,3 +167,32 @@ char *Rva00220B90Owner::valueAt10() const
 {
     return *(char **)this + 16;
 }
+
+// The five bodies below are a contiguous run of one cdecl identity stub, each
+// five bytes with a rel32 call/jmp target proving the start and a decoded ret
+// proving the end. No caller names any of them, so each keeps its address.
+
+int Rva00220DD0Identity(int value)
+{
+    return value;
+}
+
+int Rva00220DE0Identity(int value)
+{
+    return value;
+}
+
+int Rva00220E00Identity(int value)
+{
+    return value;
+}
+
+int Rva00220E10Identity(int value)
+{
+    return value;
+}
+
+int Rva00220E20Identity(int value)
+{
+    return value;
+}
