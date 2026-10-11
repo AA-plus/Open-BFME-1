@@ -271,56 +271,8 @@ void AsciiString::format_va(const char* format, va_list args)
 }
 
 // -----------------------------------------------------
-// ?startsWith@AsciiString@@ present-unmatched
-Bool AsciiString::startsWith(const char* p) const
-{
-	if (*p == 0)
-		return true;	// everything starts with the empty string
-
-	int lenThis = getLength();
-	int lenThat = strlen(p);
-	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
-
-	return strncmp(peek(), p, lenThat) == 0;
-}
-
-// -----------------------------------------------------
-// ?startsWithNoCase@AsciiString@@ present-unmatched
-Bool AsciiString::startsWithNoCase(const char* p) const
-{
-	if (*p == 0)
-		return true;	// everything starts with the empty string
-
-	int lenThis = getLength();
-	int lenThat = strlen(p);
-	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
-
-	return strnicmp(peek(), p, lenThat) == 0;
-}
-
-// -----------------------------------------------------
-// ?endsWithNoCase@AsciiString@@ present-unmatched
-Bool AsciiString::endsWithNoCase(const char* p) const
-{
-	if (*p == 0)
-		return true;	// everything ends with the empty string
-
-	int lenThis = getLength();
-	int lenThat = strlen(p);
-	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
-
-	return strnicmp(peek() + lenThis - lenThat, p, lenThat) == 0;
-}
-
-//-----------------------------------------------------------------------------
-// ?isNone@AsciiString@@ present-unmatched
-Bool AsciiString::isNone() const
-{
-	return m_data && stricmp(peek(), "None") == 0;
-}
+// Native prefix, suffix and None predicates are owned by StringBase.cpp.
+// The old ZH wrappers used a different buffer contract and CRT comparisons.
 
 //-----------------------------------------------------------------------------
 // BFME tokenization and its private helpers are owned by
