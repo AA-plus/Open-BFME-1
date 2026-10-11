@@ -68,10 +68,11 @@ public:
 
 class GenItem;
 
-class Gen00049A2B
+// ILT 0x00049A2B reaches the existing token parser at 0x001EB180.
+class Rva001EB180BitFlagsParser
 {
 public:
-	Bool handle(GenItem *item, Bool *foundNormal, Bool *foundAddOrSub);
+	Bool parseToken(const char *token, Bool *foundNormal, Bool *foundAddOrSub);
 };
 
 class Gen000140D8
@@ -110,7 +111,7 @@ void BitFlags<17>::parse(INI *ini, AsciiString *description)
 			description->concat(token);
 		}
 
-		if (!((Gen00049A2B *)this)->handle((GenItem *)token, &foundNormal, &foundAddOrSub))
+		if (!((Rva001EB180BitFlagsParser *)this)->parseToken(token, &foundNormal, &foundAddOrSub))
 			break;
 	}
 }
