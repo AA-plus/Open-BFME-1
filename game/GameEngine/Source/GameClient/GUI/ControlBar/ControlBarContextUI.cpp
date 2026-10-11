@@ -100,7 +100,6 @@ const Image *_bfme_getSelectedPortraitImage(const ThingTemplatePortraitShim *por
 class CommandButton
 {
 public:
-	void Rva0049B240();
 
 	Int getCommandType() const
 	{
@@ -111,6 +110,13 @@ public:
 	{
 		return *(const unsigned char *)((const char *)this + 0x14d) != 0;
 	}
+};
+
+// ILT 0x3E3FB reaches the ledger-owned pointer walk at 0x0049B240.
+class Rva0049B240Owner
+{
+public:
+	void Rva0049B240();
 };
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameClient/ControlBar.h
@@ -870,7 +876,7 @@ void ControlBar::commandSetButtonWalk( const AsciiString &name )
 	{
 		const CommandButton *btn = set->getCommandButton( i );
 		if ( btn )
-			( (CommandButton *)btn )->Rva0049B240();
+			( (Rva0049B240Owner *)btn )->Rva0049B240();
 	}
 }
 
