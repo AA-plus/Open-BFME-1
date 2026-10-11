@@ -29,6 +29,10 @@ fail() {
 
 refs="$(cat || true)"
 remote_name="${1:-origin}"
+# The repository this push writes to: git passes its URL, which a remote whose
+# push URL differs from its fetch URL would otherwise misdirect (Open-BFME-2 port review).
+window_remote="${2:-${1:-origin}}"
+pushes_master=0
 
 # A cooperative publish window (tools/publish_window.py): while a landing
 # publisher holds refs/landing/window, pushes to master wait. Checked before
@@ -36,8 +40,8 @@ remote_name="${1:-origin}"
 window_check() {
     [ "${_remote_ref:-}" = refs/heads/master ] || return 0
     [ -f tools/publish_window.py ] || return 0
-    python3 tools/publish_window.py check --remote "$remote_name" \
-        || fail "publish window (see above)"
+    python3 tools/publish_window.py check --remote "$window_remote" \
+        || fail "publish window (see above): push with python3 tools/publish_window.py push"
 }
 
 ZERO=0000000000000000000000000000000000000000
@@ -54,6 +58,7 @@ while read -r _local_ref local_sha _remote_ref remote_sha; do
         fail "this fleet run lost its claim ($(head -1 "$BFME_RUN_DIR/claim_lost")); nothing from it may be pushed"
     fi
     [ "$local_sha" = "$ZERO" ] && continue   # deleting a remote ref
+    if [ "${_remote_ref:-}" = refs/heads/master ]; then pushes_master=1; fi
     # The build below reads the working-tree ledgers: they must be the pushed commit's.
     python3 tools/ledger_guard.py --commit "$local_sha" || fail "working-tree ledgers differ from $local_sha (see above)"
     # The pushed tree's spelling: a ledger, baseline or hook tracked under another case
@@ -402,3 +407,9 @@ PY
 done <<< "$refs"
 # Publisher rollout (tools/publisher_hook.py; mode in targets/game/reverse/publisher_mode): shadow submits the landed range as a unit in the background and never fails the push; enforce queues it and refuses (exit 3).
 [ ! -f tools/publisher_hook.py ] || [ -n "${CHECKER_DIGEST:-}" ] || python3 tools/publisher_hook.py pre-push "${1:-origin}" <<< "$refs" || [ $? != 3 ] || exit 1
+# The window's last word, after every ref's gates and the publisher: a window a rival
+# opened during a later ref's gates is honoured too (GPT-6.1-Sol, Open-BFME-2 port review).
+if [ "$pushes_master" -eq 1 ]; then
+    _remote_ref=refs/heads/master
+    window_check
+fi

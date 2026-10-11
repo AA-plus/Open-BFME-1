@@ -32,9 +32,11 @@ and open a new window for whatever remains.
   python3 tools/publish_window.py open [--minutes 10] [--purpose TEXT]   # prints the token
   python3 tools/publish_window.py close TOKEN | --force   # --force is logged
   python3 tools/publish_window.py check        # exit 1 while someone else holds it
+  python3 tools/publish_window.py push [--purpose TEXT]   # open, rebase, git push (hooks run), close
 """
 import argparse
 import json
+import math
 import os
 import re
 import socket
@@ -123,12 +125,28 @@ def read(remote="origin", root=None):
 NONCE = re.compile(r"[0-9a-f]{32}")
 
 
-def valid(info):
-    """The metadata shape open_window() writes: an object with a hex nonce
-    and numeric expiry."""
-    return (isinstance(info, dict) and isinstance(info.get("nonce"), str)
-            and bool(NONCE.fullmatch(info["nonce"]))
-            and isinstance(info.get("expires"), (int, float)))
+def _stamp(value):
+    if not isinstance(value, (int, float)) or isinstance(value, bool):
+        return False
+    try:
+        return math.isfinite(value)
+    except OverflowError:          # a JSON integer past any float (10**400): corrupt, not a crash
+        return False
+
+
+def valid(info, now=None):
+    """The metadata shape open_window() writes: a hex nonce, and finite opening
+    and expiry times, the opening not in the future and the expiry within the
+    hold cap of it. Anything else is unknown metadata, which blocks for at most
+    one lease (read): a valid nonce with no opening, or an expiry a year out,
+    held master past the cap (GPT-6.1-Sol, Open-BFME-2 port review 2026-10-11)."""
+    now = time.time() if now is None else now
+    if not (isinstance(info, dict) and isinstance(info.get("nonce"), str)
+            and NONCE.fullmatch(info["nonce"])):
+        return False
+    opened, expires = info.get("opened"), info.get("expires")
+    return (_stamp(opened) and _stamp(expires) and opened <= now + FUTURE_SKEW
+            and expires <= opened + MAX_HOLD_MINUTES * 60 + FUTURE_SKEW)
 
 
 def hold_deadline(info):
@@ -247,15 +265,223 @@ def check(remote="origin", root=None):
                    f"({info.get('purpose', '')}), {left:.0f} min left; retry after it closes")
 
 
+RENEW_RETRY_SECONDS = 30   # after a renewal push that failed while the window was still ours
+
+
+def _renew_until(nonce, stop, lost, remote, root):
+    """Renew our window every third of a lease until `stop`. A renewal that
+    fails while the window is still ours and live is retried soon (a transport
+    hiccup); confirmed loss -- another nonce, no window, or the hold cap --
+    sets `lost` and ends renewal (GPT-6.1-Sol, port review 2026-10-11)."""
+    every = LEASE_MINUTES * 60 / 3
+    wait = every
+    while not stop.wait(wait):
+        try:
+            if renew_window(nonce, LEASE_MINUTES, remote=remote, root=root) is not None:
+                wait = every
+                continue
+            _, info = read(remote, root)
+        except RuntimeError:
+            wait = RENEW_RETRY_SECONDS
+            continue
+        if (info or {}).get("nonce") == nonce and live(info):
+            wait = RENEW_RETRY_SECONDS
+            continue
+        lost.set()
+        return
+
+
+def _wait_seconds(remote, root):
+    """Seconds until a held window ends (lease or hold cap), within 30 s..5 min."""
+    try:
+        _, info = read(remote, root)
+    except RuntimeError:
+        return 60
+    until = min((info or {}).get("expires", 0), hold_deadline(info) or float("inf"))
+    return min(max(until - time.time() + 5, 30), 300)
+
+
+def _close_confirmed(nonce, remote, root, attempts=5):
+    """Close our window and confirm it is gone, or that a VALID window with
+    another nonce replaced it (as landing_service does); unreadable metadata
+    confirms nothing. True when confirmed, else it names the commands."""
+    for attempt in range(attempts):
+        try:
+            if close_window(nonce, remote=remote, root=root):
+                return True
+            token, info = read(remote, root)
+            if not token or (valid(info) and info.get("nonce") != nonce):
+                return True
+        except RuntimeError:
+            pass
+        time.sleep(min(2 ** attempt, 10))
+    print(f"publish_window: the publish window this push opened is still open; it lapses within "
+          f"{LEASE_MINUTES} min, or close it now: python3 tools/publish_window.py close {nonce} --remote {remote} "
+          f"(if its metadata is unreadable: close --force --remote {remote})", file=sys.stderr)
+    return False
+
+
+def _destination(remote, root):
+    """The one repository the configured remote `remote` names for both reading
+    and pushing (`git remote get-url` expands insteadOf and pushInsteadOf), or
+    None for a URL given directly, a remote whose fetch and push URLs differ, or
+    one that pushes to several: the window, the race check and the push must
+    all see the same repository (GPT-6.1-Sol, port review rounds 1-2)."""
+    fetch = _git("remote", "get-url", remote, root=root)
+    if fetch.returncode:
+        return None                          # not a configured remote
+    pushes = [url.strip() for url in
+              _git("remote", "get-url", "--all", "--push", remote, root=root).stdout.splitlines() if url.strip()]
+    return remote if pushes == [fetch.stdout.strip()] else None
+
+
+def _stop_tree(process):
+    """End a push and everything its hooks started, and reap it: the window
+    must not close while a push it protected can still land (an interrupted
+    publisher left git and its hook running; GPT-6.1-Sol, port review round 2)."""
+    if process.poll() is not None:
+        return
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"], capture_output=True)
+    else:
+        import signal
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+            process.wait(timeout=30)
+        except (ProcessLookupError, subprocess.TimeoutExpired):
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+    process.wait()
+
+
+# A push git refused because the branch moved under it, never because a hook
+# refused it: only these are retried (GPT-6.1-Sol, port review 2026-10-11).
+RACE = re.compile(r"! \[rejected\].*\((?:fetch first|non-fast-forward)\)"
+                  r"|! \[remote rejected\].*\((?:incorrect old value provided|cannot lock ref[^)]*)\)"
+                  r"|PUSH RACE")
+
+
+def _rebase_in_progress(root):
+    for name in ("rebase-merge", "rebase-apply"):
+        path = _git("rev-parse", "--git-path", name, root=root).stdout.strip()
+        if path and (Path(root or ROOT) / path).exists():
+            return True
+    return False
+
+
+def push(purpose="", remote="origin", branch="master", wait_minutes=60, root=None):
+    """Publish HEAD to `branch` under the window: open it (waiting while someone
+    else holds it), rebase onto the remote branch, run the ordinary `git push`
+    (every hook runs; its window check passes on our token) while a thread
+    renews the lease, and close the window, confirmed, whatever happens. Only
+    a push git rejected because the branch moved under it is retried; a hook's
+    refusal is returned as is. 9: the rebase needs a person (nothing pushed);
+    8: refused before anything ran (a rebase already in progress, or `remote`
+    is not one configured repository for both fetch and push). An
+    interruption ends the push and its hooks, and leaves the window to lapse
+    (the remote may still apply what it already received).
+
+    Best effort by design, as the window itself: a gate that outlasts the
+    MAX_HOLD_MINUTES cap finishes without the window, where another push may
+    win the race and this one retries -- the cap is what keeps a stuck holder
+    from blocking master. The window never decides what is verified: every
+    hook runs on every push either way.
+
+    Open-BFME-2 measured why (2026-10-11): a push whose gate judges every
+    source takes 10+ minutes while master takes a push every few minutes,
+    so such a push lost its race again and again; GitGut's took an hour."""
+    import threading
+    cwd = Path(root or ROOT)
+    if _rebase_in_progress(root):
+        print("publish_window: a rebase is in progress here; finish or abort it first (nothing done)",
+              file=sys.stderr)
+        return 8
+    if _destination(remote, root) is None:
+        print(f"publish_window: push needs a configured remote whose fetch and push URLs are one "
+              f"repository; {remote} is not (nothing done)", file=sys.stderr)
+        return 8
+    deadline = time.time() + wait_minutes * 60
+    while True:
+        try:
+            nonce = open_window(LEASE_MINUTES, purpose, remote=remote, root=root)
+        except WindowHeld as held:
+            if time.time() >= deadline:
+                print(f"publish_window: {held}; gave up after {wait_minutes:g} min", file=sys.stderr)
+                return 1
+            pause = _wait_seconds(remote, root)
+            print(f"publish_window: {held}; waiting {pause:.0f} s", file=sys.stderr, flush=True)
+            time.sleep(pause)
+            continue
+        print(f"publish_window: window open ({purpose or 'push'})", file=sys.stderr, flush=True)
+        stop, lost = threading.Event(), threading.Event()
+        renewer = threading.Thread(target=_renew_until, args=(nonce, stop, lost, remote, root), daemon=True)
+        renewer.start()
+        errors, interrupted = [], False
+        try:
+            fetched = _git("fetch", "-q", remote, branch, root=root, timeout=600)
+            if fetched.returncode:
+                print(f"publish_window: cannot fetch {remote} {branch}: {fetched.stderr.strip()}", file=sys.stderr)
+                return 1
+            base = _git("rev-parse", "FETCH_HEAD", root=root).stdout.strip()
+            rebased = _git("rebase", base, root=root, timeout=600)
+            if rebased.returncode:
+                if _rebase_in_progress(root):          # ours: none was in progress before
+                    _git("rebase", "--abort", root=root)
+                print(f"publish_window: rebasing onto {remote}/{branch} needs a person (nothing pushed):\n"
+                      f"{rebased.stdout}{rebased.stderr}", file=sys.stderr)
+                return 9
+            # Its own process group, so an interruption ends the whole push before
+            # the window closes (_stop_tree).
+            group = ({"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt"
+                     else {"start_new_session": True})
+            pushing = subprocess.Popen(["git", "push", remote, f"HEAD:refs/heads/{branch}"], cwd=cwd,
+                                       env=dict(os.environ, **{TOKEN_ENV: nonce}), stderr=subprocess.PIPE,
+                                       text=True, encoding="utf-8", errors="replace", bufsize=1, **group)
+            try:
+                for line in pushing.stderr:      # the hooks' output streams as it comes
+                    sys.stderr.write(line)
+                    errors.append(line)
+                code = pushing.wait()
+            except BaseException:
+                interrupted = True
+                _stop_tree(pushing)
+                raise
+        finally:
+            stop.set()
+            renewer.join(timeout=200)            # a renewal in flight finishes before the close
+            if interrupted:
+                # Killing the local push does not stop a receive the remote already
+                # has under way, so the outcome is unknown: leave the window to lapse
+                # instead of closing it (GPT-6.1-Sol, port review round 3).
+                print(f"publish_window: interrupted mid-push; the remote may still apply it, so the window "
+                      f"lapses by itself within {LEASE_MINUTES} min. Once {remote}/{branch} shows the outcome: "
+                      f"python3 tools/publish_window.py close {nonce} --remote {remote}", file=sys.stderr)
+            else:
+                _close_confirmed(nonce, remote, root)
+        if lost.is_set():
+            print("publish_window: the window lapsed during the push (hold cap or lost lease)", file=sys.stderr)
+        if code == 0:
+            return 0
+        if not RACE.search("".join(errors)) or time.time() >= deadline:
+            return code                        # the hook refused it: its verdict stands
+        print(f"publish_window: {remote}/{branch} moved during the push; trying again", file=sys.stderr)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("action", choices=["status", "open", "close", "check"])
+    ap.add_argument("action", choices=["status", "open", "close", "check", "push"])
     ap.add_argument("token", nargs="?")
     ap.add_argument("--minutes", type=float, default=LEASE_MINUTES)
     ap.add_argument("--purpose", default="")
     ap.add_argument("--remote", default="origin")
+    ap.add_argument("--branch", default="master", help="push: the branch to publish HEAD to")
+    ap.add_argument("--wait", type=float, default=60, help="push: minutes to keep waiting and retrying")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args(argv)
+    if args.action == "push":
+        return push(args.purpose, args.remote, args.branch, args.wait)
     if args.action == "check":
         allowed, message = check(args.remote)
         if message:
