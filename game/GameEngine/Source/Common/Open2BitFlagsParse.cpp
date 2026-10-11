@@ -51,15 +51,13 @@ public:
 	const char *getNextTokenOrNull( const char *seps = 0 );	// retail 0x008509C0
 };
 
-class GenItem;
-
 // ---------------------------------------------------------------------------
 // 0x001292C0 -- token loop over the routine at ILT 0x0003D3B1.
 
-class Open2Handler1292C0
+class Rva00128510BitFlagsParser
 {
 public:
-	Bool handle( GenItem *item, Bool *foundNormal, Bool *foundAddOrSub );
+	Bool parseToken( const char *token, Bool *foundNormal, Bool *foundAddOrSub );
 };
 
 class Open2Flags1292C0
@@ -89,7 +87,7 @@ void Open2Flags1292C0::parse( INI *ini, AsciiString *description )
 			description->concat( token );
 		}
 
-		if( !( (Open2Handler1292C0 *)this )->handle( (GenItem *)token, &foundNormal, &foundAddOrSub ) )
+		if( !( (Rva00128510BitFlagsParser *)this )->parseToken( token, &foundNormal, &foundAddOrSub ) )
 			break;
 	}
 }
@@ -97,10 +95,10 @@ void Open2Flags1292C0::parse( INI *ini, AsciiString *description )
 // ---------------------------------------------------------------------------
 // 0x00142D20 -- token loop over the routine at ILT 0x0004A7AF.
 
-class Open2Handler142D20
+class Rva00141320BitFlagsParser
 {
 public:
-	Bool handle( GenItem *item, Bool *foundNormal, Bool *foundAddOrSub );
+	Bool parseToken( const char *token, Bool *foundNormal, Bool *foundAddOrSub );
 };
 
 class Open2Flags142D20
@@ -130,7 +128,7 @@ void Open2Flags142D20::parse( INI *ini, AsciiString *description )
 			description->concat( token );
 		}
 
-		if( !( (Open2Handler142D20 *)this )->handle( (GenItem *)token, &foundNormal, &foundAddOrSub ) )
+		if( !( (Rva00141320BitFlagsParser *)this )->parseToken( token, &foundNormal, &foundAddOrSub ) )
 			break;
 	}
 }
@@ -138,10 +136,10 @@ void Open2Flags142D20::parse( INI *ini, AsciiString *description )
 // ---------------------------------------------------------------------------
 // 0x00204A80 -- token loop over the routine at ILT 0x0003D68B.
 
-class Open2Handler204A80
+class Rva00204770BitFlagsParser
 {
 public:
-	Bool handle( GenItem *item, Bool *foundNormal, Bool *foundAddOrSub );
+	Bool parseToken( const char *token, Bool *foundNormal, Bool *foundAddOrSub );
 };
 
 class Open2Flags204A80
@@ -171,7 +169,7 @@ void Open2Flags204A80::parse( INI *ini, AsciiString *description )
 			description->concat( token );
 		}
 
-		if( !( (Open2Handler204A80 *)this )->handle( (GenItem *)token, &foundNormal, &foundAddOrSub ) )
+		if( !( (Rva00204770BitFlagsParser *)this )->parseToken( token, &foundNormal, &foundAddOrSub ) )
 			break;
 	}
 }
@@ -179,10 +177,10 @@ void Open2Flags204A80::parse( INI *ini, AsciiString *description )
 // ---------------------------------------------------------------------------
 // 0x0029CE10 -- token loop over the routine at ILT 0x00006F78.
 
-class Open2Handler29CE10
+class Rva0029C7B0BitFlagsParser
 {
 public:
-	Bool handle( GenItem *item, Bool *foundNormal, Bool *foundAddOrSub );
+	Bool parseToken( const char *token, Bool *foundNormal, Bool *foundAddOrSub );
 };
 
 class Open2Flags29CE10
@@ -212,7 +210,7 @@ void Open2Flags29CE10::parse( INI *ini, AsciiString *description )
 			description->concat( token );
 		}
 
-		if( !( (Open2Handler29CE10 *)this )->handle( (GenItem *)token, &foundNormal, &foundAddOrSub ) )
+		if( !( (Rva0029C7B0BitFlagsParser *)this )->parseToken( token, &foundNormal, &foundAddOrSub ) )
 			break;
 	}
 }
@@ -220,10 +218,10 @@ void Open2Flags29CE10::parse( INI *ini, AsciiString *description )
 // ---------------------------------------------------------------------------
 // 0x00369790 -- token loop over the routine at ILT 0x0002E893.
 
-class Open2Handler369790
+class Rva00368EA0BitFlagsParser
 {
 public:
-	Bool handle( GenItem *item, Bool *foundNormal, Bool *foundAddOrSub );
+	Bool parseToken( const char *token, Bool *foundNormal, Bool *foundAddOrSub );
 };
 
 class Open2Flags369790
@@ -253,7 +251,7 @@ void Open2Flags369790::parse( INI *ini, AsciiString *description )
 			description->concat( token );
 		}
 
-		if( !( (Open2Handler369790 *)this )->handle( (GenItem *)token, &foundNormal, &foundAddOrSub ) )
+		if( !( (Rva00368EA0BitFlagsParser *)this )->parseToken( token, &foundNormal, &foundAddOrSub ) )
 			break;
 	}
 }
@@ -261,10 +259,10 @@ void Open2Flags369790::parse( INI *ini, AsciiString *description )
 // ---------------------------------------------------------------------------
 // 0x0061CC40 -- token loop over the routine at ILT 0x000341FD.
 
-class Open2Handler61CC40
+class Rva0061C870BitFlagsParser
 {
 public:
-	Bool handle( GenItem *item, Bool *foundNormal, Bool *foundAddOrSub );
+	Bool parseToken( const char *token, Bool *foundNormal, Bool *foundAddOrSub );
 };
 
 class Open2Flags61CC40
@@ -294,7 +292,7 @@ void Open2Flags61CC40::parse( INI *ini, AsciiString *description )
 			description->concat( token );
 		}
 
-		if( !( (Open2Handler61CC40 *)this )->handle( (GenItem *)token, &foundNormal, &foundAddOrSub ) )
+		if( !( (Rva0061C870BitFlagsParser *)this )->parseToken( token, &foundNormal, &foundAddOrSub ) )
 			break;
 	}
 }
