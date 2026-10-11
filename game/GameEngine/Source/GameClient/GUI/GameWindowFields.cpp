@@ -24,29 +24,13 @@ WinInstanceData *GameWindow::winGetInstanceData( void )
 	return &m_instData;
 }
 
-// ?winGetUserData@GameWindow@@QAEPAXXZ
-void *GameWindow::winGetUserData( void )
-{
-	return m_userData;
-}
+// winGetUserData is emitted by the retail-owned GameWindow.cpp.
 
-// ?winGetStatus@GameWindow@@QAEIXZ
-UnsignedInt GameWindow::winGetStatus( void )
-{
-	return m_status;
-}
+// winGetStatus is emitted by the retail-owned GameWindow.cpp.
 
-// ?winGetStyle@GameWindow@@QAEIXZ
-UnsignedInt GameWindow::winGetStyle( void )
-{
-	return m_instData.m_style;
-}
+// winGetStyle is emitted by the retail-owned GameWindow.cpp.
 
-// ?winGetWindowId@GameWindow@@QAEHXZ
-Int GameWindow::winGetWindowId( void )
-{
-	return m_instData.m_id;
-}
+// winGetWindowId is emitted by the retail-owned GameWindow.cpp.
 
 // ?winIsHidden@GameWindow@@QAE_NXZ
 Bool GameWindow::winIsHidden( void )
