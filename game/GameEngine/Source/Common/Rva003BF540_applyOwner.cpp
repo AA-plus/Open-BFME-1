@@ -31,12 +31,11 @@ inline UnicodeString &UnicodeString::operator=(const UnicodeString &other)
 }
 
 // The singleton at 0x012F706C is retail's ?g_bfmeGameCW@@3PAVBfmeGameCW@@A
-// (dir32_addresses.csv); only the member isOpen() is pinned under the local
-// view's name, so the global carries its real type and the view is applied
-// at the call.
+// (dir32_addresses.csv). Preserve the global declaration and use the native
+// campaign predicate view for the call through ILT 0x000485D1.
 class BfmeGameCW;
 
-class Glo012F706CType
+class Rva0060D480CampaignGate
 {
 public:
 	bool isOpen() const;
@@ -47,7 +46,7 @@ extern BfmeGameCW *g_bfmeGameCW;
 class Gen_00609320
 {
 public:
-	unsigned char bfmeDisabled() const;
+	int bfmeDisabled() const;
 };
 
 extern Gen_00609320 *g_bfmeStateDF;
@@ -135,11 +134,17 @@ public:
 	bool allowed();
 };
 
+// ILT 0x0000EA7F targets the native readiness scan at 0x003BD830.
+class Rva003BD830Owner
+{
+public:
+	bool anyReady() const;
+};
+
 class Rva003BF540
 {
 public:
 	void run(Rva003BF010Arg *arg);
-	bool anyReady() const;
 	void applyOwner(Gen003BD7D0Node *owner);
 };
 
@@ -148,8 +153,8 @@ void Rva003BF540::applyOwner(Gen003BD7D0Node *owner)
 	run((Rva003BF010Arg *)owner);
 
 	if (owner == 0
-		|| !reinterpret_cast<Glo012F706CType *>(g_bfmeGameCW)->isOpen() || !reinterpret_cast<Rva003BDEC0 *>(this)->allowed()
-		|| g_bfmeStateDF->bfmeDisabled() || anyReady() || TheControlBar == 0)
+		|| !reinterpret_cast<Rva0060D480CampaignGate *>(g_bfmeGameCW)->isOpen() || !reinterpret_cast<Rva003BDEC0 *>(this)->allowed()
+		|| static_cast<unsigned char>(g_bfmeStateDF->bfmeDisabled()) || reinterpret_cast<Rva003BD830Owner *>(this)->anyReady() || TheControlBar == 0)
 		return;
 
 	int id = ((Rva00367E30Logic *)TheGameLogic)->rva00383890(owner->rva003a4390());

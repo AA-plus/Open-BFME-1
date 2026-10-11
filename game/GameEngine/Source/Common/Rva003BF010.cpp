@@ -22,28 +22,33 @@ public:
 class Gen_00609320
 {
 public:
-	unsigned char bfmeDisabled() const;
+	int bfmeDisabled() const;
 };
 
 extern Gen_00609320 *g_bfmeStateDF;
 
-class Glo012F4B98Type
+// Native entries reached through ILTs 0x000371C3 and 0x00043E4B.
+class Rva00589620
 {
 public:
 	void notifyTarget();
-	void show00592D60(AsciiString *name, void (__cdecl *callback)(bool));
+};
+
+class Rva00592D60Owner
+{
+public:
+	void update(int value, int state);
 };
 
 class AptPalantir;
 extern AptPalantir *TheAptPalantir;
 
 // The singleton at 0x012F706C is retail's ?g_bfmeGameCW@@3PAVBfmeGameCW@@A
-// (dir32_addresses.csv); only the member isOpen() is pinned under the local
-// view's name, so the global carries its real type and the view is applied
-// at the call.
+// (dir32_addresses.csv). Preserve the global declaration and use the native
+// campaign predicate view for the call through ILT 0x000485D1.
 class BfmeGameCW;
 
-class Glo012F706CType
+class Rva0060D480CampaignGate
 {
 public:
 	bool isOpen() const;
@@ -65,11 +70,17 @@ public:
 	bool allowed();
 };
 
+// ILT 0x0000EA7F targets the native readiness scan at 0x003BD830.
+class Rva003BD830Owner
+{
+public:
+	bool anyReady() const;
+};
+
 class Rva003BF540
 {
 public:
 	void run(Rva003BF010Arg *arg);
-	bool anyReady() const;
 
 private:
 	char m_pad00[0x48];
@@ -82,9 +93,9 @@ private:
 
 void Rva003BF540::run(Rva003BF010Arg *arg)
 {
-	if (g_bfmeStateDF->bfmeDisabled())
+	if (static_cast<unsigned char>(g_bfmeStateDF->bfmeDisabled()))
 		return;
-	if (anyReady())
+	if (reinterpret_cast<Rva003BD830Owner *>(this)->anyReady())
 		return;
 
 	if (m_at4C)
@@ -102,7 +113,7 @@ void Rva003BF540::run(Rva003BF010Arg *arg)
 		if (--m_at48 > 0)
 			return;
 	}
-	else if (reinterpret_cast<Glo012F706CType *>(g_bfmeGameCW)->isOpen() && reinterpret_cast<Rva003BDEC0 *>(this)->allowed())
+	else if (reinterpret_cast<Rva0060D480CampaignGate *>(g_bfmeGameCW)->isOpen() && reinterpret_cast<Rva003BDEC0 *>(this)->allowed())
 	{
 		if (!arg)
 			return;
@@ -118,7 +129,7 @@ void Rva003BF540::run(Rva003BF010Arg *arg)
 		{
 			AsciiString copy(arg->m_name);
 			if (!copy.isEmpty())
-				reinterpret_cast<Glo012F4B98Type *>(TheAptPalantir)->show00592D60(&arg->m_name, 0);
+				reinterpret_cast<Rva00592D60Owner *>(TheAptPalantir)->update(reinterpret_cast<int>(&arg->m_name), 0);
 			m_at4C = 1;
 		}
 		return;
@@ -126,7 +137,7 @@ void Rva003BF540::run(Rva003BF010Arg *arg)
 	else
 		goto zero_fields;
 
-	reinterpret_cast<Glo012F4B98Type *>(TheAptPalantir)->notifyTarget();
+	reinterpret_cast<Rva00589620 *>(TheAptPalantir)->notifyTarget();
 zero_fields:
 	m_atC4 = 0;
 	m_at48 = 0;
