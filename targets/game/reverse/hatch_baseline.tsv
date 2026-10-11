@@ -509,6 +509,13 @@ address_global	game/GameEngine/Source/Common/HeaderedDeleteDestructors.cpp	g_Va0
 address_global	game/GameEngine/Source/Common/INI/INIWaterTextureList.cpp	g_Va012ED648	2	allow=865a0a3e28a7732ecf5b4e166e4645d7f3c2d829
 address_global	game/GameEngine/Source/Common/Q2ScatteredFieldConstructor.cpp	g_Rva00789720Table	2
 address_global	game/GameEngine/Source/Common/R1GuardedPointerTailCalls.cpp	g_Rva005127A0InGameChat	5
+address_global	game/GameEngine/Source/Common/R2SmallMemberOps.cpp	g_Va012F9C54	2	allow=f379a9b98d4b4882e363587f9f8773c0ca65b1e6
+address_global	game/GameEngine/Source/Common/R2SmallMemberOps.cpp	g_Va012F9C58	2	allow=f379a9b98d4b4882e363587f9f8773c0ca65b1e6
+address_global	game/GameEngine/Source/Common/R2SmallMemberOps.cpp	g_Va012F9C6C	2	allow=f379a9b98d4b4882e363587f9f8773c0ca65b1e6
+address_global	game/GameEngine/Source/Common/R2SmallMemberOps.cpp	g_Va012F9C80	2	allow=f379a9b98d4b4882e363587f9f8773c0ca65b1e6
+address_global	game/GameEngine/Source/Common/R2SmallMemberOps.cpp	g_Va012F9C9C	2	allow=f379a9b98d4b4882e363587f9f8773c0ca65b1e6
+address_global	game/GameEngine/Source/Common/R2SmallMemberOps.cpp	g_Va012F9CA0	2	allow=f379a9b98d4b4882e363587f9f8773c0ca65b1e6
+address_global	game/GameEngine/Source/Common/R2SmallMemberOps.cpp	g_Va012F9CB4	2	allow=f379a9b98d4b4882e363587f9f8773c0ca65b1e6
 address_global	game/GameEngine/Source/Common/Rva0007F560FactoryLookup.cpp	g_Rva00F36E5C	2
 address_global	game/GameEngine/Source/Common/Rva00190590AsciiArraySetter.cpp	g_Rva00EEF418	2
 address_global	game/GameEngine/Source/Common/Rva00339A80ParticleSystemSinkStart.cpp	g_bfmeVftRva0033C070TailDtor	2

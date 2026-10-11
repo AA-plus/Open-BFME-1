@@ -402,23 +402,25 @@ void Rva0079D090::run() { m_pointee->m_at00 = m_value; }
 		return 1;                                                         \
 	}
 
-extern void *R2Glob012F9CB4;
-extern void *R2Glob012F9C9C;
+// Retail loader-zero .bss cells: each publisher below writes one four-byte
+// pointer slot and one four-byte flag. Storage ownership is byte-verified.
+void *g_Va012F9CB4 = 0;
+void *g_Va012F9C9C = 0;
 extern void *R2Glob012F9CC8;
-extern void *R2Glob012F9CA0;
-extern int R2Glob012F9C6C;
-extern int R2Glob012F9C54;
-extern int R2Glob012F9C80;
-extern int R2Glob012F9C58;
+void *g_Va012F9CA0 = 0;
+int g_Va012F9C6C = 0;
+int g_Va012F9C54 = 0;
+int g_Va012F9C80 = 0;
+int g_Va012F9C58 = 0;
 extern int R2Data012BBF48;
 extern int R2Data012BBF84;
 extern int R2Data012BBF90;
 extern int R2Data012BC080;
 
-R2_PUBLISH_AND_FLAG( Rva007C3400, R2Glob012F9CB4, R2Data012BBF48, R2Glob012F9C6C )
-R2_PUBLISH_AND_FLAG( Rva007C3F80, R2Glob012F9C9C, R2Data012BBF84, R2Glob012F9C54 )
-R2_PUBLISH_AND_FLAG( Rva007C3FA0, R2Glob012F9CC8, R2Data012BBF90, R2Glob012F9C80 )
-R2_PUBLISH_AND_FLAG( Rva007CC3D0, R2Glob012F9CA0, R2Data012BC080, R2Glob012F9C58 )
+R2_PUBLISH_AND_FLAG( Rva007C3400, g_Va012F9CB4, R2Data012BBF48, g_Va012F9C6C )
+R2_PUBLISH_AND_FLAG( Rva007C3F80, g_Va012F9C9C, R2Data012BBF84, g_Va012F9C54 )
+R2_PUBLISH_AND_FLAG( Rva007C3FA0, R2Glob012F9CC8, R2Data012BBF90, g_Va012F9C80 )
+R2_PUBLISH_AND_FLAG( Rva007CC3D0, g_Va012F9CA0, R2Data012BC080, g_Va012F9C58 )
 
 // ---------------------------------------------------------------------------
 // (11) Two members that set one field and then copy the global's +0x3C into
