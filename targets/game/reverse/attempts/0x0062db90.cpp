@@ -1,7 +1,10 @@
 // ?insertGame@@YAHPAVGameWindow@@PAVGameSpyStagingRoom@@_N@Z
-// partial score=0.9973 date=2026-10-04
+// partial score=1.0 date=2026-10-11
 // BFME LobbyUtils::insertGame reconstruction, retail 0x0062DB90.
 // The local declarations preserve the BFME member offsets and string ABI.
+
+extern "C" void _ReadWriteBarrier(void);
+#pragma intrinsic(_ReadWriteBarrier)
 
 typedef int Int;
 typedef unsigned int UnsignedInt;
@@ -375,8 +378,10 @@ crc_ok:
 	Int width = 10, height = 10;
 	if (pingImages[0])
 	{
-		height = pingImages[0]->getImageHeight();
-		width = pingImages[0]->getImageWidth();
+		const Image *image = pingImages[0];
+		width = image->getImageWidth();
+		_ReadWriteBarrier();
+		height = image->getImageHeight();
 	}
 	if (ping < TheGameSpyConfig->getPingCutoffGood())
 		GadgetListBoxAddEntryImage(win, pingImages[0], index, 6, width, height);
