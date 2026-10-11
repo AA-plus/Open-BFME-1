@@ -14,8 +14,6 @@ struct FieldParse;
 extern const FieldParse g_010813F8[];
 
 #include "ascii_string.h"
-template <> inline void StringBase<char>::set(const char *text)
-{ set(text, text ? (int)strlen(text) : 0); }
 
 void j_0003c6d7();
 
@@ -147,7 +145,7 @@ void INI::parseMusicTrackDefinition(INI *ini)
 	AsciiString name;
 	AudioEventInfoRef track;
 	const char *token = ini->getNextToken();
-	name.set(token);
+	name.StringBase<char>::set(token, token ? (int)strlen(token) : 0);
 	track = TheAudio->newAudioEventInfo(name);
 
 	AudioInfoViewRva000B1B70 *const audioInfo = track.m_info;
@@ -174,7 +172,7 @@ void INI::parseDialogDefinition(INI *ini)
 	AsciiString name;
 	AudioEventInfoRef track;
 	const char *token = ini->getNextToken();
-	name.set(token);
+	name.StringBase<char>::set(token, token ? (int)strlen(token) : 0);
 	track = TheAudio->newAudioEventInfo(name);
 
 	AudioInfoViewRva000B1B70 *const audioInfo = track.m_info;
@@ -201,7 +199,7 @@ void INI::parseStreamedSoundDefinition(INI *ini)
 	AsciiString name;
 	AudioEventInfoRef track;
 	const char *token = ini->getNextToken();
-	name.set(token);
+	name.StringBase<char>::set(token, token ? (int)strlen(token) : 0);
 	track = TheAudio->newAudioEventInfo(name);
 
 	AudioInfoViewRva000B1B70 *const audioInfo = track.m_info;
@@ -228,7 +226,7 @@ void INI::parseAmbientStreamDefinition(INI *ini)
 	AsciiString name;
 	AudioEventInfoRef track;
 	const char *token = ini->getNextToken();
-	name.set(token);
+	name.StringBase<char>::set(token, token ? (int)strlen(token) : 0);
 	track = TheAudio->newAudioEventInfo(name);
 
 	AudioInfoViewRva000B1B70 *const audioInfo = track.m_info;
@@ -323,7 +321,7 @@ void INI::parseAudioEventDefinition(INI *ini)
 	AsciiString name;
 	AudioEventInfoRef track;
 	const char *token = ini->getNextToken();
-	name.set(token);
+	name.StringBase<char>::set(token, token ? (int)strlen(token) : 0);
 	track = TheAudio->newAudioEventInfo(name);
 
 	AudioInfoViewRva000B1B70 *const audioInfo = track.m_info;
