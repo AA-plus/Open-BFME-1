@@ -10,7 +10,7 @@ bool operator<(const AsciiString &left, const AsciiString &right);
 class DataChunkInput
 {
 public:
-	unsigned char bfmeReadByte();
+	char readByte();
 	int readInt();
 	AsciiString readAsciiString();
 };
@@ -54,11 +54,11 @@ void Rva00454200Cursor::advance()
 
 bool Rva00454200Element::refresh(DataChunkInput &file, DataChunkInfo *info)
 {
-	m_firstFlag = file.bfmeReadByte() ? true : false;
-	m_secondFlag = file.bfmeReadByte() ? true : false;
+	m_firstFlag = file.readByte() ? true : false;
+	m_secondFlag = file.readByte() ? true : false;
 	if (info->m_version >= 1)
 	{
-		m_thirdFlag = file.bfmeReadByte() ? true : false;
+		m_thirdFlag = file.readByte() ? true : false;
 		m_value = file.readInt();
 	}
 	else
