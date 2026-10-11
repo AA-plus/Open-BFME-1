@@ -527,6 +527,7 @@ class ControlBar
 {
 public:
 	void commandSetButtonWalk(const AsciiString &name);
+	const CommandButton *findCommandButton(const AsciiString &name);
 	void setControlCommand(GameWindow *window, const CommandButton *commandButton);
 protected:
 	void updateConstructionTextDisplay(Object *obj);
@@ -537,7 +538,6 @@ protected:
 	void updateContextOCLTimer(void);
 private:
 	CommandSet *findNonConstCommandSet(const AsciiString &name);
-	const CommandButton *findCommandButton(const AsciiString &name);
 	void setPortraitByObject(Object *obj);
 
 protected:
