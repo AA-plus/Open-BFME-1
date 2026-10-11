@@ -57,3 +57,21 @@ void HideSaveLoadMenu(void)
 
 	reinterpret_cast<Rva00465B80 *>(g_rva012F19E8WindowManager)->apply();
 }
+
+// Distinct retail twin at RVA 0x00569680; retain its address-derived identity.
+void dup_00569680(void)
+{
+	SaveLoadMenu *menu = static_cast<SaveLoadMenu *>(reinterpret_cast<void * &>(g_obj12F4B40));
+
+	if (!menu)
+		return;
+
+	if (menu->m_hidden)
+		return;
+
+	menu->m_hidden = true;
+	static_cast<SaveLoadMenu *>(reinterpret_cast<void * &>(g_obj12F4B40))->m_25c = 0;
+	((InGameUI *)TheShell)->m_menuHidden = true;
+
+	reinterpret_cast<Rva00465B80 *>(g_rva012F19E8WindowManager)->apply();
+}

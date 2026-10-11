@@ -175,6 +175,9 @@ public:
 	void *m_fieldAt1F4;
 };
 
+// Address-named retail twin reached through ILT 0x000285BF.
+void dup_00569680();
+
 // Existing ledger owner reached through ILT 0x0001C46D (RVA 0x00396B00).
 class U4Sink0060D3B0
 {
@@ -580,7 +583,7 @@ static void doLoadGame( void )
 	// when loading a game we also close the quit/esc menu for the user when in-game
 	if( TheShell->isShellActive() == FALSE )
 	{
-		destroyQuitMenu();		
+		dup_00569680();
 //		ToggleQuitMenu();
 //		TheTransitionHandler->remove("QuitNoSave");
 //		TheTransitionHandler->remove("QuitFull");
