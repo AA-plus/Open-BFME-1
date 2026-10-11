@@ -112,11 +112,8 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-VictoryConditionsInterface * createVictoryConditions( void )
-{
-	// only one created, so no MemoryPool usage
-	return NEW VictoryConditions;
-}
+// Retail's factory and concrete lifetime bodies are owned by
+// victory_conditions_create.cpp; this Zero Hour allocation uses another layout.
 
 //-------------------------------------------------------------------------------------------------
 // byte-exact reconstruction: game/GameEngine/Source/GameLogic/ScriptEngine/victory_conditions_create.cpp
