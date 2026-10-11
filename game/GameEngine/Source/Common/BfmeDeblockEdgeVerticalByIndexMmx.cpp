@@ -16,11 +16,11 @@ struct Rva009C2170Ctx
 
 extern int *g_rva01356A9C;
 
-extern const unsigned char Rva01143860Mask[8];		// retail 0x01143860 ({0xFF} x8)
-extern const unsigned short Rva01143870Round[4];	// retail 0x01143870 ({4} x4)
-extern const unsigned short Rva01143880Half[4];	// retail 0x01143880 ({1} x4)
-extern const unsigned char Rva011438A0Limit[8];	// retail 0x011438A0 ({1} x8)
-extern const unsigned char Rva011438B0Bias[8];		// retail 0x011438B0 ({0x80} x8)
+extern const unsigned char Rva01143860Mask[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};		// retail 0x01143860 ({0xFF} x8)
+extern const unsigned short Rva01143870Round[4] = {4, 4, 4, 4};	// retail 0x01143870 ({4} x4)
+extern const unsigned short Rva01143880Half[4] = {1, 1, 1, 1};	// retail 0x01143880 ({1} x4)
+extern const unsigned char Rva011438A0Limit[8] = {1, 1, 1, 1, 1, 1, 1, 1};	// retail 0x011438A0 ({1} x8)
+extern const unsigned char Rva011438B0Bias[8] = {0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80};		// retail 0x011438B0 ({0x80} x8)
 
 void __cdecl bfmeDeblockEdgeVerticalByIndexMmx(Rva009C2170Ctx *ctx, void *row, int stride)
 {
