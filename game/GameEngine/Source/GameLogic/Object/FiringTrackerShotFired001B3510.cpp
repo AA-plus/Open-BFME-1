@@ -6,6 +6,9 @@
 // to object clears the remembered coordinates. Preserve the inline zero helper
 // and direct Weapon template member: both are required by the retail shape.
 // WeaponTemplate member names/offsets below are FieldParse-witnessed.
+// Read this TU-local BFME layout directly: no game header defines Weapon or
+// WeaponTemplate, and emitting their inline accessors conflicts with the
+// reference-layout copies in FiringTracker.cpp.
 // The local position view is three floats; the canonical Coord3D header's
 // out-of-line assignment would not represent these inline retail copies.
 // cl: /O2 /Ob1 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
@@ -124,6 +127,7 @@ enum WeaponBonusCondition
 };
 
 class WeaponTemplate {
+public:
  char pad000[0xb4];
  AudioEventRTS m_fireSound;
  unsigned int m_fireSoundLoopTime;
@@ -132,24 +136,11 @@ class WeaponTemplate {
  int m_continuousFireTwoShotsNeeded;
  unsigned int m_continuousFireCoastFrames;
  unsigned int m_autoReloadWhenIdleFrames;
-public:
- unsigned int getAutoReloadWhenIdleFrames() const {return m_autoReloadWhenIdleFrames;}
- unsigned int getContinuousFireCoastFrames() const {return m_continuousFireCoastFrames;}
- int getContinuousFireOneShotsNeeded() const {return m_continuousFireOneShotsNeeded;}
- int getContinuousFireTwoShotsNeeded() const {return m_continuousFireTwoShotsNeeded;}
- unsigned int getFireSoundLoopTime() const {return m_fireSoundLoopTime;}
- const AudioEventRTS &getFireSound() const {return m_fireSound;}
 };
 class Weapon {
+public:
  char pad00[4]; const WeaponTemplate *m_template;
  const WeaponTemplate *getTemplate() const {return *(const WeaponTemplate *const*)((const char*)this+4);}
-public:
- unsigned int getAutoReloadWhenIdleFrames() const {return m_template->getAutoReloadWhenIdleFrames();}
- unsigned int getContinuousFireCoastFrames() const {return m_template->getContinuousFireCoastFrames();}
- int getContinuousFireOneShotsNeeded() const {return m_template->getContinuousFireOneShotsNeeded();}
- int getContinuousFireTwoShotsNeeded() const {return m_template->getContinuousFireTwoShotsNeeded();}
- unsigned int getFireSoundLoopTime() const {return m_template->getFireSoundLoopTime();}
- const AudioEventRTS &getFireSound() const {return m_template->getFireSound();}
  unsigned int getPossibleNextShotFrame() const {return *(const unsigned int*)((const char*)this+0x18);}
 };
 
@@ -359,11 +350,11 @@ void Rva001CD990FiringTracker::rva001B3510(
 		}
 
 		UnsignedInt autoReloadDelay =
-			weaponFired->getAutoReloadWhenIdleFrames();
+			weaponFired->m_template->m_autoReloadWhenIdleFrames;
 		if (autoReloadDelay > 0)
 			m_frameToForceReload = now + autoReloadDelay;
 
-		UnsignedInt coast = weaponFired->getContinuousFireCoastFrames();
+		UnsignedInt coast = weaponFired->m_template->m_continuousFireCoastFrames;
 		if (coast != 0)
 			m_frameToStartCooldown =
 				weaponFired->getPossibleNextShotFrame() + coast;
@@ -371,9 +362,9 @@ void Rva001CD990FiringTracker::rva001B3510(
 			m_frameToStartCooldown = 0;
 
 		Int shotsNeededOne =
-			weaponFired->getContinuousFireOneShotsNeeded();
+			weaponFired->m_template->m_continuousFireOneShotsNeeded;
 		Int shotsNeededTwo =
-			weaponFired->getContinuousFireTwoShotsNeeded();
+			weaponFired->m_template->m_continuousFireTwoShotsNeeded;
 
 		if (getObject()->testWeaponBonusCondition(
 			WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN))
@@ -394,13 +385,13 @@ void Rva001CD990FiringTracker::rva001B3510(
 			speedUp();
 		}
 
-		UnsignedInt fireSoundLoopTime = weaponFired->getFireSoundLoopTime();
+		UnsignedInt fireSoundLoopTime = weaponFired->m_template->m_fireSoundLoopTime;
 		if (fireSoundLoopTime != 0)
 		{
 			if (m_frameToStopLoopingSound == 0
 				|| !TheAudio->isCurrentlyPlaying(m_audioHandle))
 			{
-				AudioEventRTS audio = weaponFired->getFireSound();
+				AudioEventRTS audio = weaponFired->m_template->m_fireSound;
 				audio.setObjectID(getObject()->getID());
 				m_audioHandle = TheAudio->addAudioEvent(&audio);
 			}
@@ -408,7 +399,7 @@ void Rva001CD990FiringTracker::rva001B3510(
 		}
 		else
 		{
-			AudioEventRTS fireAndForgetSound = weaponFired->getFireSound();
+			AudioEventRTS fireAndForgetSound = weaponFired->m_template->m_fireSound;
 			fireAndForgetSound.setObjectID(getObject()->getID());
 			TheAudio->addAudioEvent(&fireAndForgetSound);
 			m_frameToStopLoopingSound = 0;
