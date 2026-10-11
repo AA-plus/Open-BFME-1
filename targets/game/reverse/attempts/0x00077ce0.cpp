@@ -1,6 +1,6 @@
 // ?apply@Rva00077ce0@@QAEXH@Z
-// partial score=0.5752 date=2026-10-09
-// cl: /DNDEBUG /MD /EHsc /Od /Ob0
+// partial score=0.9764 date=2026-10-11
+// cl: /DNDEBUG /MD /EHsc /Od /Ob0 /Og
 // stlport
 // Decoded 0x00077CE0; unsigned keys and copied key-pointer value.
 
@@ -27,6 +27,7 @@ class Rva00077C70Receiver
 {
 public:
     void method(int key);
+    bool flag;
 };
 class Rva00077ce0
 {
@@ -55,8 +56,11 @@ void Rva00077ce0::apply(int key)
         Map::iterator range2first = ((Map *)bfmeTreeYK())->find(reinterpret_cast<const unsigned int &>(key));
         if (range2first != ((Map *)bfmeTreeYK())->end())
         {
-            Map::value_type range2second(*range2first);
-            ModifierRecord *rec = range2second.second;
+            ModifierRecord *rec;
+            {
+                Map::value_type range2second(*range2first);
+                rec = range2second.second;
+            }
             if (rec->processed == 0)
             {
                 switch (rec->op)
@@ -69,8 +73,7 @@ void Rva00077ce0::apply(int key)
             }
             else
             {
-                bool flag = false;
-                ((Rva00077C70Receiver *)&flag)->method(key);
+                Rva00077C70Receiver().method(key);
             }
         }
     }
