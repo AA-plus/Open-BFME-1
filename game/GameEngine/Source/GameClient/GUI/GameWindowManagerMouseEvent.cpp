@@ -1,18 +1,4 @@
-// ?winProcessMouseEvent@GameWindowManager@@UAE?AW4WinInputReturnCode@@W4GameWindowMessage@@PAUICoord2D@@PAX@Z
-// partial score=0.9943 date=2026-10-03
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
-
-// GameWindowManager::winProcessMouseEvent, retail 0x0047E630, 1569 bytes
-// (the extent includes the switch's jump and index tables).
-//
-// Identity: GameWindowManager vtable slot 41 via ILT 0x00001136 (prior
-// verdicts), and the body is Zero Hour's GameWindowManager.cpp
-// winProcessMouseEvent with BFME's changes: one pass over the window list
-// that keeps the first plain and first BELOW candidate and stops at the
-// first ABOVE window, filtered on a GameWindow +0x1F4 value that must equal
-// the manager's +0x38 (m_captureFlags by the matched constructor's layout); a GWM_MOUSE_POS case for the grab window; and the
-// tooltip callback reached through two GameWindow virtuals (slot 9 tests
-// the +0x1EC callback, slot 4 runs it; retail 0x004653C0 and 0x004655B0).
 
 typedef int Int;
 typedef unsigned int UnsignedInt;
@@ -206,7 +192,7 @@ struct ModalWindow
 	GameWindow *window;
 };
 
-extern Bool sendMousePosMessages;
+Bool sendMousePosMessages = TRUE;
 
 class GameWindowManager
 {
@@ -248,9 +234,12 @@ protected:
 	UnsignedInt m_captureFlags;	// +0x38, as the matched GameWindowManager ctor places it
 };
 
+//-------------------------------------------------------------------------------------------------
+/** Process a single mouse event through the window system */
+//-------------------------------------------------------------------------------------------------
+// Open BFME 2: Code/GameEngine/Source/GameClient/GUI/GameWindowManagerMouseEvent.cpp
 // ?winProcessMouseEvent@GameWindowManager@@UAE?AW4WinInputReturnCode@@W4GameWindowMessage@@PAUICoord2D@@PAX@Z
-WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg,
-	ICoord2D *mousePos, void *data)
+WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg, ICoord2D *mousePos, void *data)
 {
 	WinInputReturnCode returnCode = WIN_INPUT_NOT_USED;
 	UnsignedInt packedMouseCoords;
@@ -259,15 +248,24 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 	Bool clearGrabWindow = FALSE;
 	Bool objectTooltip = FALSE;
 
+	// pack mouse coords into one entity for message passing
 	packedMouseCoords = SHORTTOLONG(mousePos->x, mousePos->y);
 
+	// clear tooltip ... it will be reset if necessary
 	TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
 
+	// Check for mouse capture
 	if (m_mouseCaptor)
 	{
+		// no window grabbed as of yet
 		m_grabWindow = NULL;
+		// what what window within the captured window are we in
 		window = m_mouseCaptor->winPointInChild(mousePos->x, mousePos->y);
 
+		//
+		// send buttons, drags, wheels to the windows, we don't continually
+		// send mouse positions
+		//
 		if (sendMousePosMessages == TRUE || msg != GWM_MOUSE_POS)
 		{
 			GameWindow *win = window;
@@ -278,23 +276,26 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 				{
 					if (winSendInputMsg(win, msg, packedMouseCoords, 0) == MSG_HANDLED)
 					{
+						// if used clear the event
 						returnCode = WIN_INPUT_USED;
 						break;
 					}
 
+					// if we just tested mouseCaptor don't go any higher in the chain
 					if (win == m_mouseCaptor)
 						break;
 
 					win = win->winGetParent();
-				}
-			}
+				}  // end while
+			}  // end if
 			else
 			{
+				// if used clear the event
 				if (winSendInputMsg(m_mouseCaptor, msg, packedMouseCoords, 0) == MSG_HANDLED)
 					returnCode = WIN_INPUT_USED;
-			}
-		}
-	}
+			}  // end else
+		}  // end if
+	}  // end if, mouse captor window present
 	else
 	{
 		if (m_grabWindow)
@@ -311,8 +312,10 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 					break;
 				}
 
+				// --------------------------------------------------------------------
 				case GWM_LEFT_UP:
 				{
+					//Play a beep sound if the window is disabled.
 					m_grabWindow->winPointInChild(mousePos->x, mousePos->y, FALSE, TRUE);
 
 					BitClear(m_grabWindow->m_status, WIN_STATUS_ACTIVE);
@@ -323,8 +326,9 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 
 					clearGrabWindow = TRUE;
 					break;
-				}
+				}  // end left up
 
+				// --------------------------------------------------------------------
 				case GWM_NONE:
 				case GWM_LEFT_DRAG:
 				{
@@ -334,6 +338,7 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 						Int dx = mouseDelta->x;
 						Int dy = mouseDelta->y;
 
+						// Clip window to parent
 						if (m_grabWindow->winGetParent())
 						{
 							parent = m_grabWindow->winGetParent();
@@ -349,13 +354,14 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 								dy = parent->m_size.y - m_grabWindow->m_region.hi.y;
 						}
 
+						// Move the window, but keep it completely visible within screen boundaries
 						IRegion2D newRegion;
 						ICoord2D grabSize;
 
 						m_grabWindow->winGetPosition(&newRegion.lo.x, &newRegion.lo.y);
 						m_grabWindow->winGetSize(&grabSize.x, &grabSize.y);
 
-						newRegion.lo.x += dx;
+						(newRegion.lo.x ? newRegion.lo.x : newRegion.lo.x) += dx;
 						newRegion.lo.y += dy;
 
 						if (newRegion.lo.x < 0)
@@ -363,8 +369,8 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 						if (newRegion.lo.y < 0)
 							newRegion.lo.y = 0;
 
-						*(volatile int *)&newRegion.hi.x = newRegion.lo.x + grabSize.x;
-						*(volatile int *)&newRegion.hi.y = newRegion.lo.y + grabSize.y;
+						newRegion.hi.x = grabSize.x + (newRegion.lo.x ? newRegion.lo.x : newRegion.lo.x);
+						newRegion.hi.y = grabSize.y + newRegion.lo.y;
 
 						if (newRegion.hi.x > (Int)TheDisplay->getWidth())
 							newRegion.hi.x = (Int)TheDisplay->getWidth();
@@ -375,15 +381,17 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 						newRegion.lo.y = newRegion.hi.y - grabSize.y;
 
 						m_grabWindow->winSetPosition(newRegion.lo.x, newRegion.lo.y);
-					}
+					}  // end if, draggable window
 
+					// Send mouse drag message
 					winSendInputMsg(m_grabWindow, msg, packedMouseCoords, 0);
 					break;
-				}
-			}
+				}  // end mouse event none or left drag
+			}  // end switch
 
+			// mark event handled
 			returnCode = WIN_INPUT_USED;
-		}
+		}  // end if, m_grabWindow
 		else
 		{
 			if (m_modalHead && m_modalHead->window)
@@ -395,6 +403,7 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 				GameWindow *normalWindow = NULL;
 				GameWindow *belowWindow = NULL;
 
+				// search for top-level window which contains pointer
 				for (window = m_windowList; window; window = window->m_next)
 				{
 					if (BitTest(window->m_status, WIN_STATUS_HIDDEN))
@@ -408,18 +417,21 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 						continue;
 
 					if (BitTest(window->m_status, WIN_STATUS_ABOVE))
-						break;
+						break;  // exit for
+					// end if
 
+					// check below and !hidden
 					if (BitTest(window->m_status, WIN_STATUS_BELOW))
 					{
 						if (belowWindow == NULL)
 							belowWindow = window;
 					}
+					// check !above, below and hidden
 					else if (normalWindow == NULL)
 					{
 						normalWindow = window;
 					}
-				}
+				}  // end for window
 
 				if (window == NULL)
 				{
@@ -427,7 +439,7 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 						window = normalWindow;
 					else
 						window = belowWindow;
-				}
+				}  // end if, window == NULL
 
 				if (window)
 				{
@@ -438,9 +450,10 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 						childWindow->m_instData.getTooltipTextLength())
 						toolTipWindow = childWindow;
 
+					// determine which child window the mouse is in
 					window = window->winPointInChild(mousePos->x, mousePos->y);
 				}
-			}
+			}  // end else, no modal head
 
 			if (window)
 				if (BitTest(window->m_status, WIN_STATUS_NO_INPUT))
@@ -455,9 +468,14 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 
 			if (window)
 			{
+				//
+				// only send messages for button states, wheel states, we do not
+				// continually send messages for mouse positions
+				//
 				if (sendMousePosMessages == TRUE || msg != GWM_MOUSE_POS)
 				{
 					GameWindow *tempWin = window;
+					// Give everyone a chance to do something with the clicks
 					GameWindow *oldLoneWindow = m_loneWindow;
 
 					while (winSendInputMsg(tempWin, msg, packedMouseCoords, 0) == MSG_IGNORED)
@@ -465,51 +483,87 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 						tempWin = tempWin->m_parent;
 						if (tempWin == NULL)
 							break;
-					}
+					}  // end while
 
+					// First check to see if m_loneWindow is set if so, close the window
 					if (m_loneWindow && m_loneWindow == oldLoneWindow &&
 						(msg == GWM_LEFT_UP || msg == GWM_MIDDLE_UP ||
 						 msg == GWM_RIGHT_UP || tempWin))
 					{
 						if (!m_loneWindow->winIsChild(tempWin))
 							winSetLoneWindow(NULL);
+						/*
+								ComboBoxData *cData = (ComboBoxData *)m_comboBoxOpen->winGetUserData();
+															// verify that the window that ate the message wasn't one of our own
+															if(cData->dropDownButton != tempWin &&
+																cData->editBox != tempWin &&
+																cData->listBox != tempWin &&
+																cData->listboxData->upButton != tempWin &&
+																cData->listboxData->downButton != tempWin &&
+																cData->listboxData->slider != tempWin &&
+																cData->listboxData->slider != tempWin->winGetParent())
+																	winSetOpenComboBoxWindow( NULL );*/
 					}
 
 					if (tempWin)
 					{
+						//
+						// Someone cares, if this is a left button down event
+						// it should get "grabbed"
+						/// @todo should allow for left handed mouse configs here?
+						//
 						if (msg == GWM_LEFT_DOWN)
-							m_grabWindow = tempWin;
+//						if( tempWin != windowList ) 
+//							WinActivate( tempWin );
+							m_grabWindow = tempWin;  // end if
 
+						// event is used
 						returnCode = WIN_INPUT_USED;
-					}
-				}
-			}
+					}  // end if, tempWin
+				}  // end if
+			}  // end if( window ) 
 
 			if (toolTipWindow == NULL)
 			{
 				if (isHidden(window) == FALSE)
 					toolTipWindow = window;
-			}
+			}  // end if
 
+			// if tooltips are on set them into the window
 			Bool tooltipsOn = TRUE;
 			if (tooltipsOn)
 			{
+//				if( toolTipWindow && toolTipWindow->winGetParent() && BitTest( toolTipWindow->winGetParent()->winGetInstanceData()->getStyle(), GWS_COMBO_BOX ))
+//					toolTipWindow = toolTipWindow->winGetParent();
 				if (toolTipWindow)
 				{
+					// do we have a callback to call for the tooltip
 					if (toolTipWindow->vfn09())
 						toolTipWindow->vfn04(&toolTipWindow->m_instData, packedMouseCoords);
+					// else, do we have a normal tooltip to set
 					else if (toolTipWindow->m_instData.getTooltipTextLength())
 						TheMouse->setCursorTooltip(toolTipWindow->m_instData.getTooltipText(),
 							toolTipWindow->m_instData.m_tooltipDelay);
-				}
+				}  // end if
 				else
 				{
+					//
+					// not pointing at a window... perhaps we are pointing at a valid
+					// tooltip-able object in the game world ... let's set a flag so 
+					// during the object testing we can set the tooltip, we can do
+					// whatever we like now that we know no other tooltip was set from
+					// a window
+					//
 					objectTooltip = TRUE;
-				}
-			}
-		}
-	}
+				}  // end else
+			}  // end if
+		}  // end if grabWindow not present
+	}  // end else (mouseCaptor) 
 
+	//
+	// check if new current window is different from the last
+	// but only if both windows fall within the mouseCaptor if one exists
+	//
 	if ((m_grabWindow == NULL) && (window != m_currMouseRgn))
 	{
 		if (m_mouseCaptor)
@@ -524,13 +578,14 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent(GameWindowMessage msg
 			winSendInputMsg(window, GWM_MOUSE_ENTERING, packedMouseCoords, 0);
 
 		m_currMouseRgn = window;
-	}
+	}  // end if
 
+	// clear grabWindow if necessary
 	if (clearGrabWindow == TRUE)
 	{
 		m_grabWindow = NULL;
 		clearGrabWindow = FALSE;
-	}
+	}  // end if
 
 	return returnCode;
-}
+}  // end winProcessMouseEvent

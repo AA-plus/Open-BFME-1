@@ -90991,3 +90991,4 @@ _printf,0x009F7244,route=MSVCR71.dll!printf; IAT 0x01359464; CRT printf import j
 ?d_00755000@@YAXXZ,0x00755000,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_00724a20.asm
 ?d_009b58f0@@YAXXZ,0x009B58F0,legacy address-only alias for retired dump; four-slot cdecl and byte-return callees independently decoded; evidence=targets/game/reverse/identity_evidence/009b58f0-donor-port.md
 ?d_009b5420@@YAXXZ,0x009B5420,legacy address-only alias for retired dump; five-slot cdecl with byte selector independently decoded; evidence=targets/game/reverse/identity_evidence/009b5420-donor-port.md
+?d_0047e630@@YAXXZ,0x0047E630,Address-only compatibility pin for retired dump; body now winProcessMouseEvent; no identity assertion
