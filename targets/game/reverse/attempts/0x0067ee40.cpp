@@ -1,5 +1,5 @@
 // ?ConstructNetCommandMsgFromRawData@NetPacket@@SAPAVNetCommandRef@@PAEG@Z
-// partial score=0.98 date=2026-09-28
+// partial score=0.9798 date=2026-09-28
 // cl: /DNDEBUG /MD /EHsc
 // BANKED RECONSTRUCTION: 940 vs 940 B, 19 non-reloc diffs at tail (vs 187 before).
 // PROGRESS 2026-09-28: tail perm O,N,S,D (offset, null, setRelay, detach) fixes prologue
