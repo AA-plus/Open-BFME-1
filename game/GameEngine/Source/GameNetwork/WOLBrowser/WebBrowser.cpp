@@ -79,6 +79,13 @@ public:
 #include "GameClient/GameWindow.h"
 #include "GameClient/Display.h"
 
+// Native COM identity; retail VA 0x011BC3BC is the 16-byte IUnknown IID.
+extern "C" const IID IID_IUnknown =
+{
+	0x00000000, 0x0000, 0x0000,
+	{ 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46 }
+};
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
