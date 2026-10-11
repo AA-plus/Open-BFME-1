@@ -19418,5 +19418,25 @@
   "after_sha256": "23a5dbc13a1d6fdbd1b05a90b1b8e39213bcc98a1f9e8f1f9cfb33fef2acdcff",
   "evidence": "targets/game/reverse/identity_evidence/0x002fc570-private-views.md",
   "reason": "Correct private bank view identities: target offsets and independent oracle absence/conflict documented; no EA field identity claimed."
- }
+ },
+{
+ "old_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower_doSpecialPowerAtObject_Thunk.cpp",
+ "new_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower.cpp",
+ "old_name": "CashHackSpecialPower",
+ "new_name": "Gen_000E8AF0",
+ "before_sha256": "1f6241df2d0cda7db8b0f7805cb87440c62b20419c6dd39cc8f93c34689c87c4",
+ "after_sha256": "c7eaa73a0732aeed751971615ce6acc5731359f16219865b37ee576e1a47c6c3",
+ "evidence": "targets/game/reverse/identity_evidence/00258800-cashhack-source-home-name-pairing.md",
+ "reason": "False source-home pairing: canonical CashHackSpecialPower declaration and doSpecialPowerAtObject definition remain; Gen_000E8AF0::bfmeAddCount is the separate existing E8B20 dependency called by the action."
+},
+{
+ "old_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower_doSpecialPowerAtObject_Thunk.cpp",
+ "new_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower.cpp",
+ "old_name": "doSpecialPowerAtObject",
+ "new_name": "bfmeAddCount",
+ "before_sha256": "1f6241df2d0cda7db8b0f7805cb87440c62b20419c6dd39cc8f93c34689c87c4",
+ "after_sha256": "c7eaa73a0732aeed751971615ce6acc5731359f16219865b37ee576e1a47c6c3",
+ "evidence": "targets/game/reverse/identity_evidence/00258800-cashhack-source-home-name-pairing.md",
+ "reason": "False source-home pairing: canonical CashHackSpecialPower declaration and doSpecialPowerAtObject definition remain; Gen_000E8AF0::bfmeAddCount is the separate existing E8B20 dependency called by the action."
+}
 ]
