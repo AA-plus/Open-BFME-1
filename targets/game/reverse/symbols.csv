@@ -91004,3 +91004,4 @@ _printf,0x009F7244,route=MSVCR71.dll!printf; IAT 0x01359464; CRT printf import j
 ??1LANGameInfo@@QAE@XZ,0x00007BA3,route=0x00686CD0; LAN update decoded call and complete callee ABI; evidence=targets/game/reverse/identity_evidence/006870f0-finishing-ilt.md
 ?getPlayerName@LANGameInfo@@QAE?AVUnicodeString@@H@Z,0x000328FD,route=0x004C8800; LAN update decoded call and complete callee ABI; evidence=targets/game/reverse/identity_evidence/006870f0-finishing-ilt.md
 ??0?$_String_base@DV?$allocator@D@_STL@@@_STL@@QAE@ABV?$allocator@D@1@@Z,0x002D8610,ILT confirmed exact; money_put range constructor and complete 37-byte body establish three pointers and allocator reference; evidence=targets/game/reverse/identity_evidence/008379c0-fin-bind.md
+_tg_008fa480,0x008FA480,address-derived weak inline helper copy independently decoded and byte-verified; evidence=targets/game/reverse/identity_evidence/008fad80-iterator-frame.md
