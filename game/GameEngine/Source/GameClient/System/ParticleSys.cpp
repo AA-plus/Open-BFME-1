@@ -2843,56 +2843,7 @@ void ParticleSystemManager::loadPostProcess( void )
 /** Output particle system statistics to the screen
  * @todo Implement a real console (MSB) */
 // ------------------------------------------------------------------------------------------------
-void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp )
-{
-	if (!dd)
-		return;
-
-	dd->setCursorPos( 0, 0 );
-	dd->setRightMargin( 2 );
-	
-	dd->printf( "Total Particles: %d\n", TheParticleSystemManager->getParticleCount() );
-	dd->printf( "Total Particles (On Screen): %d\n", TheParticleSystemManager->getOnScreenParticleCount());
-	dd->printf( "Total Particle Systems: %d\n", TheParticleSystemManager->getParticleSystemCount() );
-
-	ParticleSystemManager::ParticleSystemList list = TheParticleSystemManager->getAllParticleSystems();
-	ParticleSystemManager::ParticleSystemList::iterator it;
-
-	std::map<AsciiString, Int> templateMap;
-	std::map<AsciiString, Int> templateMapParticleCount;
-
-	std::map<AsciiString, Int>::iterator templateMapIt;
-	std::map<AsciiString, Int>::iterator templateMapParticleCountIt;
-
-	for ( it = list.begin(); it != list.end(); ++it )
-	{
-		AsciiString templateName = (*it)->getTemplate()->getName();
-		templateMapIt = templateMap.find(templateName);
-		if (templateMapIt == templateMap.end())
-		{
-			templateMap.insert(std::make_pair(templateName, 1));
-			templateMapParticleCount.insert(std::make_pair(templateName, (*it)->getParticleCount()));
-		}
-		else
-		{
-			++templateMapIt->second;
-
-			templateMapParticleCountIt = templateMapParticleCount.find(templateName);
-			if (templateMapParticleCountIt != templateMapParticleCount.end())
-				templateMapParticleCountIt->second += (*it)->getParticleCount();
-		}
-	}
-
-	for (templateMapIt = templateMap.begin(); templateMapIt != templateMap.end(); ++templateMapIt)
-	{
-		templateMapParticleCountIt = templateMapParticleCount.find(templateMapIt->first);
-
-		dd->printf("  %s: %d instances", templateMapIt->first.str(), templateMapIt->second);
-		if (templateMapParticleCountIt != templateMapParticleCount.end())
-			dd->printf("  (Avg per system %.2f)", INT_TO_REAL(templateMapParticleCountIt->second) / templateMapIt->second);
-		dd->printf("\n");
-	}
-}
+// Retail statistics callback is defined in ParticleSystemDebugDisplay.cpp.
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
