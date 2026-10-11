@@ -65,7 +65,7 @@ public:
 	enum { CELL_OBSTACLE = 4 };
 
 	Int getType() const { return m_packed & 7; }
-	zoneStorageType getZone() const { return m_zone; }
+	zoneStorageType getZone() const;
 
 	BfmeCellInfo *m_info;
 	Int m_ownerId;
@@ -73,6 +73,13 @@ public:
 	unsigned short m_pad0a;
 	unsigned int m_packed;
 };
+
+// The retained AIPathfind.h packs a 14-bit zone at +4. This retail caller
+// instead reads the full word at +8, so that header cannot supply this view.
+static __forceinline zoneStorageType pathfindCellZone( const PathfindCell *cell )
+{
+	return cell->m_zone;
+}
 
 class PathfindZoneManager
 {
@@ -132,12 +139,18 @@ private:
 class AIUpdateInterface
 {
 public:
-	const LocomotorSet &getLocomotorSet() const { return m_locomotorSet; }
+	const LocomotorSet &getLocomotorSet() const;
 
-private:
 	unsigned char m_pad000[ 0x1a8 ];
 	LocomotorSet m_locomotorSet;
 };
+
+// The retained AIUpdate.h describes the Zero Hour object. Keep this caller's
+// proven BFME member offset without emitting an external accessor for it.
+static __forceinline const LocomotorSet &aiLocomotorSet( const AIUpdateInterface *ai )
+{
+	return ai->m_locomotorSet;
+}
 
 struct BfmeShapeE15
 {
@@ -231,7 +244,7 @@ Bool BfmeAttackQuery::bfmeCanAttackTarget( const Object *source,
 	AIUpdateInterface *ai = source->getAIUpdateInterface();
 	if( ai == 0 && extra == 0 )
 		return false;
-	const LocomotorSet *locomotorSet = extra ? (const LocomotorSet *)extra : &ai->getLocomotorSet();
+	const LocomotorSet *locomotorSet = extra ? (const LocomotorSet *)extra : &aiLocomotorSet( ai );
 	if( ( locomotorSet->getValidSurfaces() & 0xf ) == 0 )
 		return false;
 
@@ -273,7 +286,7 @@ Bool BfmeAttackQuery::bfmeCanAttackTarget( const Object *source,
 	profile.crusher = !bool4cc;
 	profile.terrainOnly = computer;
 	profile.layer = layer444 - 1;
-	Int fromZone = m_zoneManager.getEffectiveZone( profile, sourceCell->getZone() );
+	Int fromZone = m_zoneManager.getEffectiveZone( profile, pathfindCellZone( sourceCell ) );
 
 	BfmeCellResult result;
 	result.m_query = this;
