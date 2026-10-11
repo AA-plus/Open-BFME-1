@@ -344,13 +344,8 @@ HLodDefClass::HLodDefClass(HLodClass &src_lod) :
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-// ?HLodDefClass::~HLodDefClass present-unmatched
-HLodDefClass::~HLodDefClass(void)
-{
-	Free ();
-	return ;
-}
-
+// HLodDefClass destruction is supplied by HLodDefClassDestructor.cpp.
+// Retail RVAs 0x0097D800/0x00970650 own the complete base/deleting bodies.
 
 /***********************************************************************************************
  * HLodDefClass::Free -- releases all resources being used                                     *
