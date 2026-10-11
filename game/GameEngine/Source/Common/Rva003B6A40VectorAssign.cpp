@@ -17,4 +17,8 @@ struct Rva003AC170Element
 	Rva003AC170Element &operator=(const Rva003AC170Element &other);
 };
 
-template class _STL::vector<Rva003AC170Element>;
+// Emit only the copy constructor and assignment owned by this TU.
+template _STL::vector<Rva003AC170Element>::vector(
+	const _STL::vector<Rva003AC170Element> &);
+template _STL::vector<Rva003AC170Element> &_STL::vector<Rva003AC170Element>::operator=(
+	const _STL::vector<Rva003AC170Element> &);

@@ -22,4 +22,9 @@ struct S4Poly00136170
 	virtual ~S4Poly00136170();
 };
 
-template class _STL::vector<S4Poly00136170>;
+// The assignment's temporary uses the existing destructor provider at 0x00136170.
+extern template _STL::vector<S4Poly00136170>::~vector();
+
+// Emit only the assignment owned by this translation unit.
+template _STL::vector<S4Poly00136170> &_STL::vector<S4Poly00136170>::operator=(
+	const _STL::vector<S4Poly00136170> &);
