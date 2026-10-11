@@ -55,17 +55,24 @@ public:
 	void bfmeGoATB();
 };
 
-class BfmeOneCHF
+class BfmeOneCHF;
+
+class Glo012F1024Type
 {
 public:
-	void bfmeOneCHF();
+	void step();
 };
 
-class BfmeB1003
+class Rva003BEED0
 {
 public:
-	void bfmeClear1003();
-	void bfmeFinish1003();
+	void finish();
+};
+
+class Rva003BDB80GameState
+{
+public:
+	void autoSave();
 };
 
 class Rva003BCA90
@@ -153,10 +160,10 @@ void Rva003C1A50Tick::tick()
 
 	if (m_at80)
 	{
-		TheLivingWorldView()->bfmeOneCHF();
-		((BfmeB1003 *)this)->bfmeClear1003();
+		reinterpret_cast<Glo012F1024Type *>(TheLivingWorldView())->step();
+		reinterpret_cast<Rva003BEED0 *>(this)->finish();
 	}
 
-	((BfmeB1003 *)this)->bfmeFinish1003();
+	reinterpret_cast<Rva003BDB80GameState *>(this)->autoSave();
 	TheThingATBView()->bfmeGoATB();
 }
