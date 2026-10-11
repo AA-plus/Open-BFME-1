@@ -90,6 +90,7 @@ struct Rva006A1C60Wrapper;
 class Rva006A1C60
 {
 public:
+	// 0x006A1C60: thiscall, ret 8; stores 0 or 1 through its second argument.
 	void body(Rva006A1C60Wrapper *wrapper, Bool *result);
 };
 
