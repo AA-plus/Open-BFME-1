@@ -67,7 +67,7 @@ public:
 
 class VertexMaterialClass;
 extern VertexMaterialClass *_BoxMaterial;
-extern char g_bfme911Busy;
+extern bool g_bfmeReadyXP;
 
 void bfmeGo911C(void)
 {
@@ -77,7 +77,7 @@ void bfmeGo911C(void)
 			p->bfmeRelease911C();
 		_BoxMaterial = 0;
 	}
-	g_bfme911Busy = 0;
+	g_bfmeReadyXP = false;
 }
 
 class BfmeA911D
