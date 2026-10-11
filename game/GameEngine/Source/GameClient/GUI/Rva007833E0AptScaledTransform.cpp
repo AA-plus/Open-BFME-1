@@ -10,10 +10,12 @@ struct ResolutionAccess007833E0 : DX8Wrapper { using DX8Wrapper::Get_Device_Reso
 struct Rva007845D0Transform { float m[6]; };
 extern Rva007845D0Transform g_Rva00F0692CTransform;
 extern Rva007845D0Transform g_Rva00F06914Transform;
-extern int g_Rva0130699CDimensions[4];
-extern float g_Rva012BB86CScaleX, g_Rva012BB870ScaleY;
-extern float g_Rva012BB874InverseX, g_Rva012BB878InverseY;
-extern int g_Rva012BB860TransformMode;
+int g_Va0130699C[4] = {0, 0, 0, 0};
+float g_Va012BB86C = 1.0f;
+float g_Va012BB870 = 1.0f;
+float g_Va012BB874 = 1.0f;
+float g_Va012BB878 = 1.0f;
+int g_Va012BB860 = 3;
 extern float Rva01126A68Threshold;
 void Rva00892A00Query(void **, void **);
 void setScaledTransform007833E0(const Rva007845D0Transform *transform)
@@ -27,37 +29,37 @@ void setScaledTransform007833E0(const Rva007845D0Transform *transform)
  ResolutionAccess007833E0::Get_Device_Resolution(dimensions[1],dimensions[2],dimensions[0],windowed);
  // Keeping width separately preserves the retail load scheduling.
  int width = dimensions[1];
- if ((int)dimensions[3] != g_Rva0130699CDimensions[0] ||
-     (int)dimensions[4] != g_Rva0130699CDimensions[1] ||
-     width != g_Rva0130699CDimensions[2] ||
-     dimensions[2] != g_Rva0130699CDimensions[3]) {
-  if (dimensions[3]) g_Rva012BB86CScaleX = (float)width / (int)dimensions[3];
-  else g_Rva012BB86CScaleX = 1.0f;
-  if (dimensions[4]) g_Rva012BB870ScaleY = (float)dimensions[2] / (int)dimensions[4];
-  else g_Rva012BB870ScaleY = 1.0f;
-  if (g_Rva012BB86CScaleX != 0.0f) g_Rva012BB874InverseX = 1.0f / g_Rva012BB86CScaleX;
-  else g_Rva012BB874InverseX = 1.0f;
-  if (g_Rva012BB870ScaleY != 0.0f) g_Rva012BB878InverseY = 1.0f / g_Rva012BB870ScaleY;
-  else g_Rva012BB878InverseY = 1.0f;
-  g_Rva0130699CDimensions[0] = (int)dimensions[3];
-  g_Rva0130699CDimensions[1] = (int)dimensions[4];
-  g_Rva0130699CDimensions[2] = width;
-  g_Rva0130699CDimensions[3] = dimensions[2];
+ if ((int)dimensions[3] != g_Va0130699C[0] ||
+     (int)dimensions[4] != g_Va0130699C[1] ||
+     width != g_Va0130699C[2] ||
+     dimensions[2] != g_Va0130699C[3]) {
+  if (dimensions[3]) g_Va012BB86C = (float)width / (int)dimensions[3];
+  else g_Va012BB86C = 1.0f;
+  if (dimensions[4]) g_Va012BB870 = (float)dimensions[2] / (int)dimensions[4];
+  else g_Va012BB870 = 1.0f;
+  if (g_Va012BB86C != 0.0f) g_Va012BB874 = 1.0f / g_Va012BB86C;
+  else g_Va012BB874 = 1.0f;
+  if (g_Va012BB870 != 0.0f) g_Va012BB878 = 1.0f / g_Va012BB870;
+  else g_Va012BB878 = 1.0f;
+  g_Va0130699C[0] = (int)dimensions[3];
+  g_Va0130699C[1] = (int)dimensions[4];
+  g_Va0130699C[2] = width;
+  g_Va0130699C[3] = dimensions[2];
  }
- g_Rva00F0692CTransform.m[4] *= g_Rva012BB86CScaleX;
- g_Rva00F0692CTransform.m[5] *= g_Rva012BB870ScaleY;
+ g_Rva00F0692CTransform.m[4] *= g_Va012BB86C;
+ g_Rva00F0692CTransform.m[5] *= g_Va012BB870;
  g_Rva00F06914Transform = g_Rva00F0692CTransform;
- g_Rva00F0692CTransform.m[0] *= g_Rva012BB86CScaleX;
- g_Rva00F0692CTransform.m[2] *= g_Rva012BB86CScaleX;
- g_Rva00F0692CTransform.m[1] *= g_Rva012BB870ScaleY;
- g_Rva00F0692CTransform.m[3] *= g_Rva012BB870ScaleY;
+ g_Rva00F0692CTransform.m[0] *= g_Va012BB86C;
+ g_Rva00F0692CTransform.m[2] *= g_Va012BB86C;
+ g_Rva00F0692CTransform.m[1] *= g_Va012BB870;
+ g_Rva00F0692CTransform.m[3] *= g_Va012BB870;
  // Retail accepts unordered comparisons here; do not rewrite these as <=.
  if (!(fabs(g_Rva00F0692CTransform.m[0] - 1.0f) > Rva01126A68Threshold ) && !(
      fabs(g_Rva00F0692CTransform.m[1]) > Rva01126A68Threshold ) && !(
      fabs(g_Rva00F0692CTransform.m[2]) > Rva01126A68Threshold ) && !(
      fabs(g_Rva00F0692CTransform.m[3] - 1.0f) > Rva01126A68Threshold))
-  g_Rva012BB860TransformMode = 3;
- else g_Rva012BB860TransformMode = 1;
+  g_Va012BB860 = 3;
+ else g_Va012BB860 = 1;
 }
 
 
