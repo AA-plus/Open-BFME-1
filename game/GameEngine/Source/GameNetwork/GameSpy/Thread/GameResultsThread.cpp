@@ -437,7 +437,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	memset( &sockAddr, 0, sizeof( sockAddr ) );
 	sockAddr.sin_family = AF_INET;
 	sockAddr.sin_addr.s_addr = IP;
-	sockAddr.sin_port = htons(port);
+	sockAddr.sin_port = ntohs(port);
 
 	// Start the connection process....
 	if( connect( sock, (struct sockaddr *)&sockAddr, sizeof( sockAddr ) ) == -1 )
