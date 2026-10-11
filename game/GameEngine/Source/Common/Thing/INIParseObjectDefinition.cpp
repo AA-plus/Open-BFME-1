@@ -46,10 +46,16 @@ public:
 	Rva00137E80Iterator end() { return Rva00137E80Iterator( 0, this ); }
 };
 
+// Existing retail lookup owner at 0x00137E80.
+class BfmeThingFactory
+{
+public:
+	const ThingTemplate *findTemplate(const AsciiString &name);
+};
+
 class ThingFactory
 {
 public:
-	const ThingTemplate *findTemplate( const AsciiString &name );		// 0x00137E80
 	ThingTemplate *newTemplate( const AsciiString &name );				// 0x00139B40
 
 	// BFME's takes three names, not Zero Hour's two: the body prints both
@@ -77,10 +83,12 @@ private:
 extern ThingFactory *TheThingFactory;
 
 // 0x0013E170: adds the two object field-parse tables (extra offsets 0 and 0xE0).
+class WideMulti;
+
 class Rva0013E170
 {
 public:
-	static void buildFieldParse( MultiIniFieldParse &p );
+	static void buildFieldParse( WideMulti &p );
 };
 
 void ThingFactory::parseObjectDefinition( INI *ini, const AsciiString &name,
@@ -90,7 +98,7 @@ void ThingFactory::parseObjectDefinition( INI *ini, const AsciiString &name,
 	// find existing item if present
 	ThingTemplate *thingTemplate = NULL;
 	if (TheThingFactory->rva00137E20( name ))
-		thingTemplate = (ThingTemplate *)TheThingFactory->findTemplate( name );
+		thingTemplate = (ThingTemplate *)reinterpret_cast<BfmeThingFactory *>(TheThingFactory)->findTemplate( name );
 
 	if (!thingTemplate)
 	{
@@ -105,11 +113,11 @@ void ThingFactory::parseObjectDefinition( INI *ini, const AsciiString &name,
 	}
 
 	MultiIniFieldParse p;
-	Rva0013E170::buildFieldParse( p );
+	Rva0013E170::buildFieldParse( reinterpret_cast<WideMulti &>(p) );
 
 	if (!childOf.isEmpty())
 	{
-		const ThingTemplate *parent = TheThingFactory->findTemplate( childOf );
+		const ThingTemplate *parent = reinterpret_cast<BfmeThingFactory *>(TheThingFactory)->findTemplate( childOf );
 		if (parent)
 		{
 			thingTemplate->copyFrom( parent );
@@ -127,7 +135,7 @@ void ThingFactory::parseObjectDefinition( INI *ini, const AsciiString &name,
 	}
 	else if (!reskinFrom.isEmpty())
 	{
-		const ThingTemplate *reskinTmpl = TheThingFactory->findTemplate( reskinFrom );
+		const ThingTemplate *reskinTmpl = reinterpret_cast<BfmeThingFactory *>(TheThingFactory)->findTemplate( reskinFrom );
 		if (reskinTmpl)
 		{
 			thingTemplate->copyFrom( reskinTmpl );
