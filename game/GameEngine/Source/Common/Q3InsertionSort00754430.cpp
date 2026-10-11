@@ -1,5 +1,5 @@
 // ?Gen00754430@@YAXPAUQ3SortElem4@@0UQ3SortCompare@@@Z
-// cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /FAsc /Fa build/Q3InsertionSort00754430.cod
+// cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
 
 struct Q3SortElem4
