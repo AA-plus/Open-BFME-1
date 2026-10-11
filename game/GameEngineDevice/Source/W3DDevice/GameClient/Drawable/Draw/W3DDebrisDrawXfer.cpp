@@ -2,6 +2,8 @@
 // readable body of ?xfer@W3DDebrisDraw@@MAEXPAVXfer@@@Z: game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DDebrisDraw.cpp
 // Open-BFME5: convert the W3DDebrisDraw snapshot transfer to clean C++.
 
+#include "../../../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
+
 typedef unsigned char XferVersion;
 typedef unsigned int UnsignedInt;
 typedef int Int;
@@ -14,35 +16,6 @@ enum ShadowType
 };
 
 class FXList;
-
-template <typename T> struct StringInlineData
-{
-	int m_refCount;
-	int m_length;
-	T m_text[1];
-};
-
-template <typename T> class StringBase
-{
-	friend class AsciiString;
-
-private:
-	StringBase() : m_data(0) {}
-	StringBase(const T *text);
-	StringBase(const StringBase<T> &other);
-	~StringBase();
-
-	StringInlineData<T> *m_data;
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString() : StringBase<char>() {}
-	AsciiString(const char *text) : StringBase<char>(text) {}
-	AsciiString(const AsciiString &other) : StringBase<char>(other) {}
-	~AsciiString() {}
-};
 
 class Xfer
 {
@@ -103,6 +76,15 @@ protected:
 	virtual void xfer(Xfer *xfer);
 };
 
+// ILT 2FD88 reaches the ledger's 37-byte call-then-flag-pair body at
+// 1139A0: thiscall with one pointer argument and ret 4.
+class FlagPairTarget;
+class Rva001139A0CallThenFlagPair
+{
+public:
+	void invoke(FlagPairTarget *target);
+};
+
 class DebrisDrawInterface
 {
 public:
@@ -147,7 +129,8 @@ private:
 // ?xfer@W3DDebrisDraw@@MAEXPAVXfer@@@Z
 void W3DDebrisDraw::xfer(Xfer *xfer)
 {
-	W3DDebrisDrawDrawModule::xfer(xfer);
+	reinterpret_cast<Rva001139A0CallThenFlagPair *>(this)->invoke(
+		reinterpret_cast<FlagPairTarget *>(xfer));
 
 	if (!xfer->isDraft())
 	{
