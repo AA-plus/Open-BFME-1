@@ -150225,7 +150225,7 @@ uw_00c018e0,,0x00C018E0,11,game/gen_small/uw_gen_010.cpp,matched,gen-funclet;obj
 uw_00c01900,,0x00C01900,8,game/gen_small/uw_gen_012.cpp,matched,gen-funclet;object-symbol=$L526
 uw_00c01920,,0x00C01920,8,game/gen_small/uw_gen_013.cpp,matched,gen-funclet;object-symbol=$L10830
 uw_00c01928,,0x00C01928,11,game/gen_small/uw_gen_012.cpp,matched,gen-funclet;object-symbol=$L531
-uw_00c01950,,0x00C01950,11,game/GameEngine/Source/GameLogic/Object/Behavior/RunOffMapBehaviorFriendNewModuleDataThunk.cpp,matched,gen-funclet;parent=?friend_newModuleData@RunOffMapBehavior@@SAPAVModuleData@@PAVINI@@@Z;object-symbol=$L330
+uw_00c01950,,0x00C01950,11,game/GameEngine/Source/GameLogic/Object/Behavior/RunOffMapBehaviorFriendNewModuleDataThunk.cpp,matched,gen-funclet;parent=?friend_newModuleData@RunOffMapBehavior@@SAPAVModuleData@@PAVINI@@@Z;object-symbol=$L334;eh-state-pin $L330->$L334: retail unwind map (?friend_newModuleData@RunOffMapBehavior@@SAPAVModuleData@@PAVINI@@@Z states [0]) binds this address to $L334;repin-model=gpt-6.1-sol
 uw_00c01970,,0x00C01970,8,game/gen_small/uw_gen_011.cpp,matched,gen-funclet;object-symbol=$L7395
 uw_00c01990,,0x00C01990,8,game/gen_small/uw_gen_015.cpp,matched,gen-funclet;object-symbol=$L13718
 uw_00c01998,,0x00C01998,11,game/GameEngine/Source/GameLogic/Object/Update/SlavedUpdateModuleDataDestructorThunk.cpp,matched,gen-funclet;parent=??1SlavedUpdateModuleData@@UAE@XZ;object-symbol=$L912
