@@ -89,14 +89,6 @@ MatBufferClass::MatBufferClass(const MatBufferClass & that) :
 	}
 }
 
-// ??1MatBufferClass@@UAE@XZ present-unmatched
-MatBufferClass::~MatBufferClass(void)
-{
-	for (int i=0; i<Count; i++) {
-		REF_PTR_RELEASE(Array[i]);
-	}
-}
-
 // ShareBufferClass keeps its Array at +0x08 in BFME and at +0x0C here -- the same
 // four bytes the MeshMatDescClass comment above records as an empty W3DMPO base
 // this hierarchy does not have. The body is otherwise the REF_PTR_SET expansion
