@@ -563,30 +563,12 @@ GameMessage::Type MetaMap::findGameMessageMetaType(const char* name)
 }
 
 //-------------------------------------------------------------------------------------------------
-// byte-exact reconstruction: game/GameEngine/Source/GameClient/MessageStream/MetaMap_getMetaMapRecThunk.cpp
-// ?getMetaMapRec@MetaMap@@IAEPAVMetaMapRec@@W4Type@GameMessage@@@Z present-unmatched
-MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
+// The retail getMetaMapRec body lives in MetaMap_getMetaMapRecThunk.cpp.
+// Keep the matched pool delete and MemoryPoolObject deleting destructor
+// emitted here without retaining the competing lookup implementation.
+__declspec(noinline) MetaMapRec *bfmeKeepMetaMapRecPoolGlue()
 {
-	for (MetaMapRec *map = m_metaMaps; map; map = map->m_next)
-	{
-		if (map->m_meta == t)
-			return map;
-	}
-
-	// not found.. create a new one.
-	MetaMapRec *m = newInstance(MetaMapRec);
-	m->m_meta = t;
-	m->m_key = MK_NONE;
-	m->m_transition = DOWN;
-	m->m_modState = NONE;
-	m->m_usableIn = COMMANDUSABLE_NONE;
-	m->m_category = CATEGORY_MISC;
-	m->m_description.clear();
-	m->m_displayName.clear();
-	m->m_next = m_metaMaps;
-	m_metaMaps = m;
-	
-	return m;
+    return newInstance(MetaMapRec);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -607,7 +589,5 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void INI::parseMetaMapDefinition( INI* ini )
-{
-	MetaMap::parseMetaMap(ini);
-}
+// The retail INI entry point lives in INI_parseMetaMapDefinition_Thunk.cpp.
+
