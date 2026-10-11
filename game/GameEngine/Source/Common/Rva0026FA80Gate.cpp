@@ -6,37 +6,28 @@
 // one of them fails; only when every guard passes does it return FALSE
 // (allowed). The owning class and the engaged object's real identity were
 // not recovered across two prior passes, so every name below is
-// address-derived. Every callee is reached through the same pinned/thunk
-// route its landed neighbours already use:
-//   0x00009C41 -> pinned ?bfmeAskCLE@BfmeSubCLE@@QAEPAVBfmeXCLE@@H@Z
-//   0x0002E85C -> pinned ?bfmeAccepts@BfmeFourSlotEntry@@QAE_NPAVBfmeFourSlotSource@@HH@Z
-//   0x00028F74 -> pinned ?bfmeAEQT@BfmeSubEQT@@QAEDXZ (thunk target 0x001E1770,
-//       the DispByteFieldGetters family's disp-0x4ED byte)
-//   0x0000CCD4 -> thunk to the landed Rva001E1780ByteField::get() (disp 0x4EE),
-//       the adjacent byte in that same family -- reused here under its
-//       already-matched name rather than re-pinned
-//   0x00020824 -> pinned ?getControllingPlayer@Object@@QBEPAVPlayer@@XZ
+// address-derived. The existing matched callee rows at each ILT target
+// provide the typed declarations used below (9C41 -> 1BE270,
+// 2E85C -> 1E8930, 28F74 -> 1E1770, CCD4 -> 1E1780).
 
-class BfmeXCLE;
-
-class BfmeSubCLE
+class AssistedTargetingObjectShim
 {
 public:
-	BfmeXCLE *bfmeAskCLE(int value);
+	void *find(int value);
 };
 
-class BfmeFourSlotSource;
+class Object;
 
-class BfmeFourSlotEntry
+class Weapon
 {
 public:
-	bool bfmeAccepts(BfmeFourSlotSource *source, int value, int mode);
+	bool isWithinAttackRange(const Object *source, const Object *target, int mode) const;
 };
 
-class BfmeSubEQT
+class Rva001E1770ByteField
 {
 public:
-	char bfmeAEQT();
+	unsigned char get() const;
 };
 
 class Rva001E1780ByteField
@@ -92,19 +83,19 @@ private:
 
 bool Rva0026FA80::evaluate(int value)
 {
-	BfmeXCLE *x;
+	void *x;
 	Rva0026FA80Query *query;
 	Player *player;
 
-	x = reinterpret_cast<BfmeSubCLE *>(m_engaged)->bfmeAskCLE(0);
+	x = reinterpret_cast<AssistedTargetingObjectShim *>(m_engaged)->find(0);
 	if (x)
 	{
-		if (!reinterpret_cast<BfmeFourSlotEntry *>(x)->bfmeAccepts(
-				reinterpret_cast<BfmeFourSlotSource *>(m_engaged), value, 0))
+		if (!reinterpret_cast<Weapon *>(x)->isWithinAttackRange(
+				reinterpret_cast<const Object *>(m_engaged), reinterpret_cast<const Object *>(value), 0))
 		{
 			query = reinterpret_cast<Rva0026FA80Query *>(x);
 
-			if (!reinterpret_cast<BfmeSubEQT *>(query->m_sub)->bfmeAEQT())
+			if (!reinterpret_cast<Rva001E1770ByteField *>(query->m_sub)->get())
 			{
 				if (!reinterpret_cast<Rva001E1780ByteField *>(query->m_sub)->get())
 				{
