@@ -24,13 +24,15 @@
 
 int g_Va01346E48;
 
+class ShaderClass;
+
 namespace Debug_Statistics
 {
 	void Begin_Statistics();
 	void End_Statistics();
 	void Record_Sorting_Polys_And_Vertices(int pcount, int vcount);
 	class ShaderClass;
-	void Record_DX8_Polys_And_Vertices(int pcount, int vcount, const ShaderClass &shader);
+	void Record_DX8_Polys_And_Vertices(int pcount, int vcount, const ::ShaderClass &shader);
 	int dx8_polygons;
 	int dx8_vertices;
 	int dx8_renders;
@@ -118,10 +120,10 @@ public:
 };
 
 // Retail BFME stores these counters and N-patch state in engine globals.
-// ?Debug_Statistics::Record_DX8_Polys_And_Vertices present-unmatched
-void Debug_Statistics::Record_DX8_Polys_And_Vertices(int pcount, int vcount, const ShaderClass &shader)
+// ?Record_DX8_Polys_And_Vertices@Debug_Statistics@@YAXHHABVShaderClass@@@Z
+void Debug_Statistics::Record_DX8_Polys_And_Vertices(int pcount, int vcount, const ::ShaderClass &shader)
 {
-	if ((shader.bits & 0x20000) != 0
+	if ((reinterpret_cast<const Debug_Statistics::ShaderClass &>(shader).bits & 0x20000) != 0
 		&& BfmeCurrentCaps[0x13b]) {
 		unsigned level = NPatchesLevel;
 		level *= level;

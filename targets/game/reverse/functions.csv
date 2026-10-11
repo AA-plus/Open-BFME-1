@@ -36505,7 +36505,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_0092de80@@YAXXZ,,0x0092DE80,194,game/gen_asm/d_008c3e70.asm,matched,gen-dump;bounds=high
 ?d_00934940@@YAXXZ,,0x00934940,8277,game/gen_asm/d_00930e00.asm,matched,gen-dump;ghidra=FUN_00d34940
 ?d_009369a0@@YAXXZ,,0x009369A0,773,game/gen_asm/d_00930e00.asm,matched,gen-dump;ghidra=FUN_00d369a0
-?d_009373a0@@YAXXZ,,0x009373A0,91,game/Libraries/Source/WWVegas/WW3D2/statistics.cpp,matched,object-symbol=?Record_DX8_Polys_And_Vertices@Debug_Statistics@@YAXHHABVShaderClass@1@@Z;Open-BFME5 clean C++ DX8 statistics
 ?d_0093eb50@@YAXXZ,,0x0093EB50,1983,game/gen_asm/d_00939520.asm,matched,gen-dump;ghidra=FUN_00d3eb50
 ?d_0093f440@@YAXXZ,,0x0093F440,1329,game/gen_asm/d_00939520.asm,matched,gen-dump;ghidra=FUN_00d3f440
 ?d_00940d40@@YAXXZ,,0x00940D40,1355,game/gen_asm/d_00882630.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00d40d40
@@ -171981,3 +171980,4 @@ _Rva009B0730,,0x009B0730,1583,game/GameEngine/Source/Common/BfmeVp6LoopFilter.cp
 ?Rva009B60E0BuildTree@@YAXPAI0H@Z,,0x009B60E0,441,game/GameEngine/Source/Common/Rva009B60E0BuildTree.cpp,matched,Complete caller and packed edge consumers confirm cdecl ABI; evidence=targets/game/reverse/identity_evidence/009b60e0-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
 ?Rva009B65F0Update@@YAXPAEE@Z,,0x009B65F0,331,game/GameEngine/Source/Common/Rva009B65F0Update.cpp,matched,Complete caller 009ABFF9 establishes two cdecl words; probability fields and table column induction; evidence=targets/game/reverse/identity_evidence/009b65f0-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
 ?Rva009B6080InsertSorted@@YAXPAURva009B6080Record@@HPAH@Z,,0x009B6080,88,game/GameEngine/Source/Common/Rva009B6080InsertSorted.cpp,matched,Static C++ recreates decoded ESI and EDX private argument convention; two complete returns; evidence=targets/game/reverse/identity_evidence/009b6080-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
+?Record_DX8_Polys_And_Vertices@Debug_Statistics@@YAXHHABVShaderClass@@@Z,,0x009373A0,91,game/Libraries/Source/WWVegas/WW3D2/statistics.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/009373a0-statistics-signature.md;Global ShaderClass signature proven by statistics.h and matched DX8Wrapper Draw; existing namespace view reads the same shader bits;model=gpt-6.1-sol;host=fleet
