@@ -40,7 +40,7 @@
 		}                                                                    \
 	}
 
-// The 0x00425060 element is the one walk whose callee is NOT a stand-in.
+// The 0x00425060 element already calls its matched offset-thunk owner.
 // That body is already matched as `Rva00425060::invoke()` -- the nine-byte
 // `add ecx,16 / jmp` tail thunk MemberOffsetTailThunks.cpp defines and
 // functions.csv records at 0x00425060 -- so the call is made through that
@@ -65,12 +65,20 @@ public:
 	}
 
 BFME_WALKED_ELEMENT( 000D1690, 96 )
-BFME_WALKED_ELEMENT( 000FD010, 36 )
-BFME_WALKED_ELEMENT( 0013B8E0, 20 )
-BFME_WALKED_ELEMENT( 00252A40, 44 )
+// These no-argument calls use the existing eight-byte offset-thunk owners
+// in MemberOffsetTailThunks.cpp. Caller parameter identities and strides stay
+// as recorded; each cast leaves ECX unchanged before the call.
+class Gen000FD010 { public: char m_bytes[36]; };
+class Rva000FD010 { public: void invoke(); };
+class Gen0013B8E0 { public: char m_bytes[20]; };
+class Rva0013B8E0 { public: void invoke(); };
+class Gen00252A40 { public: char m_bytes[44]; };
+class Rva00252A40 { public: void invoke(); };
 BFME_WALKED_ELEMENT( 002E9E10, 20 )
-BFME_WALKED_ELEMENT( 00351970, 20 )
-BFME_WALKED_ELEMENT( 00351980, 20 )
+class Gen00351970 { public: char m_bytes[20]; };
+class Rva00351970 { public: void invoke(); };
+class Gen00351980 { public: char m_bytes[20]; };
+class Rva00351980 { public: void invoke(); };
 BFME_WALKED_ELEMENT( 003B9270, 20 )
 BFME_WALKED_ELEMENT( 003CDE30, 60 )
 BFME_WALKED_ELEMENT( 00425060, 28 )
@@ -83,24 +91,84 @@ BFME_WALKED_ELEMENT( 00770F40, 108 )
 BFME_MEMBER_WALK( rva000D8690MemberWalk, Gen000D1690 )
 BFME_MEMBER_WALK( rva000D9A50MemberWalk, Gen000D1690 )
 BFME_MEMBER_WALK( rva000DA560MemberWalk, Gen000D1690 )
-BFME_MEMBER_WALK( rva000FE1B0MemberWalk, Gen000FD010 )
-BFME_MEMBER_WALK( rva000FEA30MemberWalk, Gen000FD010 )
-BFME_MEMBER_WALK( rva000FEA90MemberWalk, Gen000FD010 )
-BFME_MEMBER_WALK( rva0013C0B0MemberWalk, Gen0013B8E0 )
-BFME_MEMBER_WALK( rva0013C140MemberWalk, Gen0013B8E0 )
-BFME_MEMBER_WALK( rva0013C1A0MemberWalk, Gen0013B8E0 )
-BFME_MEMBER_WALK( rva00252D10MemberWalk, Gen00252A40 )
-BFME_MEMBER_WALK( rva00252D40MemberWalk, Gen00252A40 )
-BFME_MEMBER_WALK( rva00252D70MemberWalk, Gen00252A40 )
+void rva000FE1B0MemberWalk(Gen000FD010 *first, Gen000FD010 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva000FD010 *>(first)->invoke();
+}
+void rva000FEA30MemberWalk(Gen000FD010 *first, Gen000FD010 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva000FD010 *>(first)->invoke();
+}
+void rva000FEA90MemberWalk(Gen000FD010 *first, Gen000FD010 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva000FD010 *>(first)->invoke();
+}
+void rva0013C0B0MemberWalk(Gen0013B8E0 *first, Gen0013B8E0 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva0013B8E0 *>(first)->invoke();
+}
+void rva0013C140MemberWalk(Gen0013B8E0 *first, Gen0013B8E0 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva0013B8E0 *>(first)->invoke();
+}
+void rva0013C1A0MemberWalk(Gen0013B8E0 *first, Gen0013B8E0 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva0013B8E0 *>(first)->invoke();
+}
+void rva00252D10MemberWalk(Gen00252A40 *first, Gen00252A40 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva00252A40 *>(first)->invoke();
+}
+void rva00252D40MemberWalk(Gen00252A40 *first, Gen00252A40 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva00252A40 *>(first)->invoke();
+}
+void rva00252D70MemberWalk(Gen00252A40 *first, Gen00252A40 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva00252A40 *>(first)->invoke();
+}
 BFME_MEMBER_WALK( rva002EABC0MemberWalk, Gen002E9E10 )
 BFME_MEMBER_WALK( rva002EAE30MemberWalk, Gen002E9E10 )
 BFME_MEMBER_WALK( rva002EAEE0MemberWalk, Gen002E9E10 )
-BFME_MEMBER_WALK( rva00355500MemberWalk, Gen00351970 )
-BFME_MEMBER_WALK( rva00355530MemberWalk, Gen00351980 )
-BFME_MEMBER_WALK( rva00357340MemberWalk, Gen00351970 )
-BFME_MEMBER_WALK( rva00357370MemberWalk, Gen00351980 )
-BFME_MEMBER_WALK( rva00359640MemberWalk, Gen00351970 )
-BFME_MEMBER_WALK( rva00359670MemberWalk, Gen00351980 )
+void rva00355500MemberWalk(Gen00351970 *first, Gen00351970 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva00351970 *>(first)->invoke();
+}
+void rva00355530MemberWalk(Gen00351980 *first, Gen00351980 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva00351980 *>(first)->invoke();
+}
+void rva00357340MemberWalk(Gen00351970 *first, Gen00351970 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva00351970 *>(first)->invoke();
+}
+void rva00357370MemberWalk(Gen00351980 *first, Gen00351980 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva00351980 *>(first)->invoke();
+}
+void rva00359640MemberWalk(Gen00351970 *first, Gen00351970 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva00351970 *>(first)->invoke();
+}
+void rva00359670MemberWalk(Gen00351980 *first, Gen00351980 *last)
+{
+    for (; first != last; ++first)
+        reinterpret_cast<Rva00351980 *>(first)->invoke();
+}
 BFME_MEMBER_WALK( rva003BA480MemberWalk, Gen003B9270 )
 BFME_MEMBER_WALK( rva003BA990MemberWalk, Gen003B9270 )
 BFME_MEMBER_WALK( rva003BAFD0MemberWalk, Gen003B9270 )
