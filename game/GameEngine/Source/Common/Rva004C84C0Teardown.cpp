@@ -31,7 +31,7 @@ public:
 	char m_flag43c;
 };
 
-extern Rva004C84C0Obj *g_rva004C84C0A;
+Rva004C84C0Obj *g_Va012F39BC = 0;
 extern GameSpyStagingRoom *TheGameSpyGame;
 extern void *g_rva004C84C0_12b6a34;
 extern void *g_rva004C84C0_12b6a38;
@@ -52,16 +52,16 @@ void __cdecl ShowUnderlyingGUIElements(
 
 void rva004C84C0Teardown(void)
 {
-	Rva004C84C0Obj *p = g_rva004C84C0A;
+	Rva004C84C0Obj *p = g_Va012F39BC;
 	if (!p)
 		return;
 	p->slot20();
-	p = g_rva004C84C0A;
+	p = g_Va012F39BC;
 	if (p)
 		p->slot04(1);
 	if (!TheGameSpyGame->m_flag43c)
 	{
-		g_rva004C84C0A = 0;
+		g_Va012F39BC = 0;
 		ShowUnderlyingGUIElements(
 			true,
 			(char const *)g_rva004C84C0_12b6a34,
@@ -71,7 +71,7 @@ void rva004C84C0Teardown(void)
 	}
 	else
 	{
-		g_rva004C84C0A = 0;
+		g_Va012F39BC = 0;
 		ShowUnderlyingGUIElements(
 			true,
 			(char const *)g_rva004C84C0_12b6a84,
