@@ -333,11 +333,7 @@ RankPoints::RankPoints(void)
 
 RankPoints *TheRankPointValues = NULL;
 
-void SetLookAtPlayer( Int id, AsciiString nick)
-{
-	lookAtPlayerID = id;
-	lookAtPlayerName = nick.str();
-}
+
 
 //	BATTLE_HONOR_LADDER_CHAMP		= 0x0000001,
 //	BATTLE_HONOR_STREAK					= 0x0000002,

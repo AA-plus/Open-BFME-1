@@ -1,4 +1,4 @@
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 // Open-BFME: SetLookAtPlayer, retail 0x004DBB50, 120 bytes. Converted from
 // gen-dump d_004dbb50. ZH twin stores lookAtPlayerID then assigns
@@ -9,35 +9,9 @@
 // ctor ILT 0x0004048A, then atexit) is retail 0x00C6BAF0.
 
 #include <string>
+#include "ascii_string.h"
 
 typedef int Int;
-
-template <typename T> class StringBase
-{
-	friend class AsciiString;
-
-private:
-	StringBase() : m_data( 0 ) {}
-	StringBase( const T *text );
-	StringBase( const StringBase<T> &other );
-	~StringBase();
-
-	void *m_data;
-};
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString() : StringBase<char>() {}
-	AsciiString( const char *text ) : StringBase<char>( text ) {}
-	AsciiString( const AsciiString &other ) : StringBase<char>( other ) {}
-	~AsciiString() {}
-	const char *str( void ) const
-	{
-		return m_data ? (const char *)m_data + 8 : "";
-	}
-};
 
 Int lookAtPlayerID = 0;
 std::string lookAtPlayerName;
