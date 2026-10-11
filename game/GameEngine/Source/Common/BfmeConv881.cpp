@@ -1,6 +1,7 @@
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
 
+#include <string.h>
 #include <hash_map>
 #include <vector>
 
@@ -80,7 +81,7 @@ BfmeThingEOA *BfmeThingEOA::bfmeCtorEOA(char flag)
 	return this;
 }
 
-float __cdecl bfmeCalcEOC(void *a);
+float __cdecl normalizeAngle(float angle);
 
 class BfmeRetBWF
 {
@@ -153,7 +154,9 @@ struct BfmeThingEOC
 
 void BfmeThingEOC::bfmeGoEOC(void *a)
 {
-	m_bfmeF = bfmeCalcEOC(a);
+	float angle;
+	memcpy(&angle, &a, sizeof(angle));
+	m_bfmeF = normalizeAngle(angle);
 	bfmeAfterEOC();
 }
 
