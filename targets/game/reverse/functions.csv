@@ -166538,9 +166538,9 @@ uw_00c5a820,,0x00C5A820,8,game/gen_small/uw_gen_016.cpp,matched,gen-funclet;obje
 uw_00c5a828,,0x00C5A828,11,game/gen_small/uw_gen_016.cpp,matched,gen-funclet;object-symbol=$L8113
 uw_00c5a840,,0x00C5A840,8,game/gen_small/uw_gen_016.cpp,matched,gen-funclet;object-symbol=$L8028
 uw_00c5a848,,0x00C5A848,8,game/gen_small/uw_gen_016.cpp,matched,gen-funclet;object-symbol=$L8093
-uw_00c5a870,,0x00C5A870,8,game/Libraries/Source/WWVegas/WWMath/gridcull.cpp,matched,gen-funclet;parent=??1GridCullSystemClass@@UAE@XZ;object-symbol=$L9600
+uw_00c5a870,,0x00C5A870,8,game/Libraries/Source/WWVegas/WWMath/gridcull.cpp,matched,gen-funclet;parent=??1GridCullSystemClass@@UAE@XZ;object-symbol=$L9596;eh-state-pin $L9600->$L9596: retail unwind map (??1GridCullSystemClass@@UAE@XZ states [0]) binds this address to $L9596;repin-model=gpt-6.1-sol
 uw_00c5a890,,0x00C5A890,8,game/gen_small/uw_gen_003.cpp,matched,gen-funclet;object-symbol=$L6229
-uw_00c5a8b0,,0x00C5A8B0,8,game/Libraries/Source/WWVegas/WWMath/gridcull.cpp,matched,gen-funclet;parent=??0GridCullSystemClass@@QAE@XZ;object-symbol=$L12048
+uw_00c5a8b0,,0x00C5A8B0,8,game/Libraries/Source/WWVegas/WWMath/gridcull.cpp,matched,gen-funclet;parent=??0GridCullSystemClass@@QAE@XZ;object-symbol=$L12051;eh-state-pin $L12048->$L12051: retail unwind map (??0GridCullSystemClass@@QAE@XZ states [0]) binds this address to $L12051;repin-model=gpt-6.1-sol
 uw_00c5a8d0,,0x00C5A8D0,8,game/gen_small/uw_gen_016.cpp,matched,gen-funclet;object-symbol=$L9010
 uw_00c5a8d8,,0x00C5A8D8,11,game/gen_small/uw_gen_011.cpp,matched,gen-funclet;object-symbol=$L5798
 uw_00c5a8e3,,0x00C5A8E3,11,game/gen_small/uw_gen_010.cpp,matched,gen-funclet;object-symbol=$L1243

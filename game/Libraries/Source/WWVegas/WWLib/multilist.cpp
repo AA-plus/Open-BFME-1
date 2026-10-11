@@ -7,6 +7,10 @@
 /*
 ** Delcare the pool for ListNodes
 */
+// Retail lock-bearing allocation is emitted by ObjectPoolAllocateObjectMemory.cpp.
+// Do not instantiate the unlocked upstream template copy in this TU.
+template<> MultiListNodeClass *ObjectPoolClass<MultiListNodeClass,256>::Allocate_Object_Memory(void);
+
 DEFINE_AUTO_POOL(MultiListNodeClass, 256);
 
 
