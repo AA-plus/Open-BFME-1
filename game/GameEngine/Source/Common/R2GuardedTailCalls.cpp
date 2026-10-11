@@ -94,18 +94,56 @@ extern W3DShadowManager *TheW3DShadowManager;
 		return 0;                                                         \
 	}
 
-R2_TAIL_CALLEE( 0003C542, bool )
 R2_TAIL_CALLEE( 00046AA6, int )
-R2_TAIL_CALLEE( 0002162A, int )
-R2_TAIL_CALLEE( 000374B1, int )
 R2_TAIL_CALLEE( 00049FDA, bool )
 R2_TAIL_CALLEE( 009794F0, int )
 
-R2_GUARDED_TAIL_CALL( Rva000C9580, 0x220, Gen0003C542, bool )
 R2_GUARDED_TAIL_CALL( Rva001BE3D0, 0x1EC, Gen00046AA6, int )
-R2_GUARDED_TAIL_CALL( Rva006819E0, 0x08, Gen0002162A, int )
-R2_GUARDED_TAIL_CALL( Rva00681B40, 0x08, Gen000374B1, int )
 R2_GUARDED_TAIL_CALL( Rva00970690, 0x14, Gen009794F0, int )
+// Network_getFrameHeadroom.cpp owns the retail6819E0 body. The unused
+// address-named call copy formerly emitted here has no ledger identity.
+class ConnectionManager
+{
+public:
+	unsigned int getPacketRouterSlot();
+};
+
+class Rva00681B40
+{
+public:
+	char m_leading[0x08];
+	ConnectionManager *m_receiver;
+	int call();
+};
+
+int Rva00681B40::call()
+{
+	if (m_receiver)
+		return (int)m_receiver->getPacketRouterSlot();
+	return 0;
+}
+
+class AIPlayer
+{
+public:
+	bool isSupplySourceAttacked();
+};
+
+class Rva000C9580
+{
+public:
+	char m_leading[0x220];
+	AIPlayer *m_receiver;
+	bool call();
+};
+
+bool Rva000C9580::call()
+{
+	if (m_receiver)
+		return m_receiver->isSupplySourceAttacked();
+	return false;
+}
+
 // These two tail jumps go directly to the existing retail ledger bodies.
 // Their declarations and layouts are the canonical providers' own views.
 class MeshModelClass;
@@ -169,19 +207,20 @@ bool Rva006E17A0()
 // ---------------------------------------------------------------------------
 // (B)
 
-class Gen000290D2
+// Native ledger body465B80: a niladic ECX byte setter.
+class Rva00465B80
 {
 public:
-	void handle();
+	void apply();
 };
-// Retail global 0x012F19E8, canonical name and pointee type; Gen000290D2 is
+// Retail global 0x012F19E8, canonical name and pointee type; Rva00465B80 is
 // this TU's view of the pointee these forwarders call through.
 class WindowManager;
 extern WindowManager *g_rva012F19E8WindowManager;
 
-static inline Gen000290D2 *R2Ptr012F19E8()
+static inline Rva00465B80 *R2Ptr012F19E8()
 {
-	return (Gen000290D2 *)g_rva012F19E8WindowManager;
+	return (Rva00465B80 *)g_rva012F19E8WindowManager;
 }
 
 #define R2_GUARDED_GLOBAL_FORWARD( NAME, GUARD )                          \
@@ -190,7 +229,7 @@ static inline Gen000290D2 *R2Ptr012F19E8()
 	{                                                                     \
 		if ( GUARD )                                                      \
 		{                                                                 \
-			R2Ptr012F19E8()->handle();                                     \
+			R2Ptr012F19E8()->apply();                                     \
 		}                                                                 \
 	}
 
@@ -201,7 +240,7 @@ extern BfmeAptScreenLanLobby *g_rva012F4998LanLobby;
 void Rva00516690()
 {
 	if (g_rva012F4998LanLobby)
-		R2Ptr012F19E8()->handle();
+		R2Ptr012F19E8()->apply();
 }
 class BfmeAptScreenOnlineShell;
 extern BfmeAptScreenOnlineShell *g_obj12F4ACC;
@@ -216,31 +255,45 @@ R2_GUARDED_GLOBAL_FORWARD( Rva00579040, Rva012F4B54Skirmish )
 // ---------------------------------------------------------------------------
 // (C)
 
-#define R2_GUARDED_FIELD_FORWARD( NAME, CALLEE )                          \
-	class CALLEE                                                          \
-	{                                                                     \
-	public:                                                               \
-		void handle();                                                    \
-	};                                                                    \
-	class NAME                                                            \
-	{                                                                     \
-	public:                                                               \
-		char m_leading[ 0x10 ];                                           \
-		CALLEE *m_receiver;                                               \
-		char m_padding[ 4 ];                                              \
-		void *m_guard;                                                    \
-		void run();                                                       \
-	};                                                                    \
-	void NAME::run()                                                      \
-	{                                                                     \
-		if ( m_guard )                                                    \
-		{                                                                 \
-			m_receiver->handle();                                         \
-		}                                                                 \
-	}
-
-R2_GUARDED_FIELD_FORWARD( Rva00730CF0, Gen00010CF3 )
-R2_GUARDED_FIELD_FORWARD( Rva00730D10, Gen0001D697 )
+// Existing ledger receiver views; no objects are instantiated here.
+class Rva006C8D70
+{
+public:
+	void invoke();
+};
+class Rva006C8D60
+{
+public:
+	void invoke();
+};
+class Rva00730CF0
+{
+public:
+	char m_leading[0x10];
+	Rva006C8D70 *m_receiver;
+	char m_padding[4];
+	void *m_guard;
+	void run();
+};
+void Rva00730CF0::run()
+{
+	if (m_guard)
+		m_receiver->invoke();
+}
+class Rva00730D10
+{
+public:
+	char m_leading[0x10];
+	Rva006C8D60 *m_receiver;
+	char m_padding[4];
+	void *m_guard;
+	void run();
+};
+void Rva00730D10::run()
+{
+	if (m_guard)
+		m_receiver->invoke();
+}
 
 // ---------------------------------------------------------------------------
 // (D)
