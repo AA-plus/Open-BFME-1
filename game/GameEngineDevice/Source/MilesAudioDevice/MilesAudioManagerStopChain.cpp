@@ -451,7 +451,6 @@ class MilesAudioManager
 {
 public:
 	void rva006ABDA0(PlayingAudioRef *playing);
-	void rva006A59F0(PlayingAudio *release);
 	bool rva006ABFD0(PlayingAudioRef *playing);
 	void rva006ADD50(PlayingAudioRef *playing);
 	void rva006AE250(PlayingAudioRef *playing);
@@ -884,7 +883,7 @@ void Rva006B0630Owner::rva006B0410(unsigned char enabled)
 					((MilesAudioManager *)this)->rva006ABDA0(&local);
 				}
 			}
-			((MilesAudioManager *)this)->rva006A59F0(audio);
+			(((MilesAudioManager *)this)->*rva006A59F0Thunk<void (MilesAudioManager::*)(PlayingAudio *)>())(audio);
 			it = m_playingAudio.erase(it);
 		}
 		((BfmeOwnerVOB *)this)->bfmeClearVOB();
