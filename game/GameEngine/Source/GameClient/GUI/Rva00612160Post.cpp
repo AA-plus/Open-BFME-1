@@ -47,7 +47,7 @@ public:
 	LoadGameFadeWrapper *m_ptr;
 };
 
-bool postTimedOp(LoadGameFadeHolder holder, unsigned *key);
+bool postTimedOp(LoadGameFadeHolder holder, void *key);
 
 typedef int Int;
 

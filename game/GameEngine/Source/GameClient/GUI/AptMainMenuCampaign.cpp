@@ -71,7 +71,7 @@ public:
 	LoadGameFadeWrapper *m_ptr;
 };
 
-void postTimedOp( LoadGameFadeHolder holder, void *key );
+bool postTimedOp( LoadGameFadeHolder holder, void *key );
 
 extern unsigned fadeQueueKey;
 void j_00049454();
