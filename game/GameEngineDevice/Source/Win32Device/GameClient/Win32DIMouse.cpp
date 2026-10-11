@@ -65,6 +65,14 @@ extern "C" HRESULT WINAPI DirectInput8Create( HINSTANCE, DWORD, REFIID, void **,
 
 #include "GameClient/Mouse.h"
 
+// DirectInput system-mouse identifier (DirectX 8.1 dinput.h). Retail stores
+// this complete GUID at VA 0x011BB394; openMouse passes its address.
+extern "C" const GUID GUID_SysMouse =
+{
+	0x6F1D2B60, 0xD5A0, 0x11CF,
+	{ 0xBF, 0xC7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00 }
+};
+
 // dinput.h's DIERR_NOTACQUIRED is HRESULT_FROM_WIN32(ERROR_INVALID_ACCESS==12),
 // which is what getMouseEvent @0x6BBC59 compares against. The sweep shim has
 // 0x8007001A; correcting it there is another shim edit, so it is corrected here.
