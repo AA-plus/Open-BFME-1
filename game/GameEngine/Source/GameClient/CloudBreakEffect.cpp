@@ -36,6 +36,14 @@ struct CloudBreakEffect
 	static const FieldParse m_fieldParseTable[];
 };
 
+// Retail's complete one-field table at VA 0x010F0620 and its keyword.
+extern const char g_Va010B3AD4[] = "SunbeamObject";
+const FieldParse CloudBreakEffect::m_fieldParseTable[] =
+{
+	{ g_Va010B3AD4, INI::parseAsciiString, 0, 0 },
+	{ 0, 0, 0, 0 }
+};
+
 class CloudSystem
 {
 public:
