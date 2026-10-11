@@ -727,11 +727,8 @@ void MeshClass::Replace_Texture(TextureClass* texture,TextureClass* new_texture)
  * HISTORY:                                                                                    *
  *   4/2/2001   hy : Created.                                                                  *
  *=============================================================================================*/
-// ?MeshClass::Replace_VertexMaterial present-unmatched
-void MeshClass::Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMaterialClass* new_vmat)
-{
-	Model->Replace_VertexMaterial(vmat,new_vmat);
-}
+// Replace_VertexMaterial is supplied by MeshModelReplaceTexture.cpp at
+// retail RVA 0x0092C3F0. Keep that ledger-owned 11-byte forwarding body.
 
 
 /***********************************************************************************************
