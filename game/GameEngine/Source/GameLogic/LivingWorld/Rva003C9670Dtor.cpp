@@ -33,10 +33,10 @@ public:
     ~Gen_003C55F0(void);
 };
 
-class RegionObjectTree
+class Gen_003BA740
 {
 public:
-    ~RegionObjectTree(void);
+    ~Gen_003BA740(void);
 
 private:
     char m_body[12];
@@ -76,7 +76,7 @@ private:
     AsciiString m_string2C;
     std::vector<Gen_p4pod *> m_vector30;
     Gen_003C55F0 *m_effectMap;
-    RegionObjectTree m_regionObjects;
+    Gen_003BA740 m_regionObjects;
     int m_regionPopupDefaultColor;
     int m_regionPopupOverColor;
     AsciiString m_regionConqueredSound;
