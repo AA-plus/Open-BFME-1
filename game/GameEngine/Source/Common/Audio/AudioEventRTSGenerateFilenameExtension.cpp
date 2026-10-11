@@ -11,64 +11,7 @@ enum AudioType
 	AT_Music = 0
 };
 
-// Retail's AsciiString derives from StringBase<char>: its own copy ctor is the
-// forwarder at 0x0005EE50 and it holds nothing of its own, so a caller that
-// copies a string encodes the base body at 0x00887B60 directly. The delegation
-// has to be visible here for this TU to encode the same call.
-template <typename T>
-class StringBase
-{
-	friend class AsciiString;
-
-private:
-	StringBase(const StringBase<T> &src);
-
-	struct Header
-	{
-		int ref_count;
-		unsigned short length;
-		unsigned short capacity;
-		T data[1];
-	};
-
-	Header *m_data;
-};
-
-class AsciiString
-{
-public:
-	// Retail inlines this forwarder, so the call site encodes
-	// StringBase<char>'s copy ctor at 0x00887B60 directly.
-	AsciiString(const AsciiString &other)
-	{
-		((StringBase<char> *)this)->StringBase<char>::StringBase(
-			*(const StringBase<char> *)&other);
-	}
-	~AsciiString();
-
-	void set(const char *text, Int length);
-	void concat(const char *text, Int length);
-
-	void concat(const AsciiString &other)
-	{
-		const Int length = other.m_data ? other.m_data->length : 0;
-		const char *text = other.m_data ? &other.m_data->data[0] : "";
-		concat(text, length);
-	}
-
-	static const AsciiString TheEmptyString;
-
-private:
-	struct Header
-	{
-		int refCount;
-		unsigned short length;
-		unsigned short capacity;
-		char data[1];
-	};
-
-	Header *m_data;
-};
+#include "../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 class AudioSettings
 {
@@ -108,8 +51,11 @@ AsciiString AudioEventRTS::generateFilenameExtension(AudioType audioTypeToPlay)
 	AsciiString filenameExtension = AsciiString::TheEmptyString;
 	if (audioTypeToPlay != AT_Music)
 	{
-		filenameExtension.set(".", 1);
-		filenameExtension.concat(TheAudio->getAudioSettings()->m_soundsExtension);
+		filenameExtension.StringBase<char>::set(".", 1);
+		const AsciiString &extension = TheAudio->getAudioSettings()->m_soundsExtension;
+		filenameExtension.StringBase<char>::concat(
+			extension.StringBase<char>::str(),
+			extension.StringBase<char>::getLength());
 	}
 	return filenameExtension;
 }
