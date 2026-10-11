@@ -13,32 +13,38 @@ public:
 };
 
 extern AI *TheAI;
-extern float g_bfmeFactorDC;
+// 1.15f in .rdata at VA 0x01096490 (four bytes between two strings).
+float g_bfmeFactorDC = 1.15f;
 
-class BfmeSubDC
+// 0x001E1770: byte accessor at this+0x4ED.
+class Rva001E1770ByteField
 {
 public:
-	char bfmeOkDC(void);
+	unsigned char get(void) const;
 };
 
 class BfmeHolderDC
 {
 public:
 	unsigned char m_bfmeHeadDC[4];
-	BfmeSubDC *m_bfmeSubDC;
+	Rva001E1770ByteField *m_bfmeSubDC;
 };
 
-class BfmeSrcDC
+class BfmeSrcDC;
+
+// 0x001BE270 via ILT 0x9C41.
+class AssistedTargetingObjectShim
 {
 public:
-	BfmeHolderDC *bfmeGetDC(int flag);
+	void *find(int flag);
 };
 
 float __cdecl bfmeScaleDC(BfmeSrcDC *source)
 {
 	float value = TheAI->m_bfmeDataDC->m_bfmeScaleDC;
 
-	if (source->bfmeGetDC(0) != 0 && source->bfmeGetDC(0)->m_bfmeSubDC->bfmeOkDC())
+	AssistedTargetingObjectShim *shim = reinterpret_cast<AssistedTargetingObjectShim *>(source);
+	if (shim->find(0) != 0 && static_cast<BfmeHolderDC *>(shim->find(0))->m_bfmeSubDC->get())
 		return *(volatile float *)&value * g_bfmeFactorDC;
 
 	return value;
