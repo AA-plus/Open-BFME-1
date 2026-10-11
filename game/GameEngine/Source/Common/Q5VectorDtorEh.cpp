@@ -15,4 +15,5 @@ struct Gen003D1380Elem
 	Gen003D1380Elem &operator=( const Gen003D1380Elem & );
 };
 
-template class _STL::vector<Gen003D1380Elem>;
+// Emit only the destructor owned by this translation unit.
+template _STL::vector<Gen003D1380Elem>::~vector();
