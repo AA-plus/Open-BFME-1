@@ -119571,7 +119571,6 @@ _piAddListingGamesCallback,,0x0085E420,233,game/GameEngine/Source/GameNetwork/Ga
 ?j_00185570@@YAXXZ,,0x00185570,5,game/gen_small/thunks_036.cpp,matched,gen-thunk;target=thunk_FUN_00572430
 ?j_001855b0@@YAXXZ,,0x001855B0,5,game/gen_small/thunks_036.cpp,matched,gen-thunk;target=thunk_FUN_00572430
 ?j_001855f0@@YAXXZ,,0x001855F0,5,game/gen_small/thunks_036.cpp,matched,gen-thunk;target=thunk_FUN_00572430
-?j_00185630@@YAXXZ,,0x00185630,5,game/gen_small/thunks_036.cpp,matched,gen-thunk;target=thunk_FUN_00572430
 ?j_00185670@@YAXXZ,,0x00185670,5,game/gen_small/thunks_036.cpp,matched,gen-thunk;target=thunk_FUN_00572430
 ?j_001856b0@@YAXXZ,,0x001856B0,5,game/gen_small/thunks_036.cpp,matched,gen-thunk;target=thunk_FUN_00572430
 ?j_001856f0@@YAXXZ,,0x001856F0,5,game/gen_small/thunks_036.cpp,matched,gen-thunk;target=thunk_FUN_00572430
@@ -171990,3 +171989,4 @@ uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.c
 ?d_00881ea0@@YAPAEPBE@Z,,0x00881EA0,6,game/GameEngine/Source/Common/System/Rva00881D70CrtShims.cpp,matched,model=claude-opus-5-5;host=GreatFaram
 ??1BfmeAptScreenMapTransfer@@MAE@XZ,,0x00510310,7,game/GameEngine/Source/GameClient/GUI/BfmeAptScreenMapTransferDestructor.cpp,matched,model=claude-opus-5-5;host=GreatFaram
 ??1Rva0002B8C8TailBase@@UAE@XZ,,0x00113E60,7,game/GameEngine/Source/GameClient/Drawable/Behavior/Rva0002B8C8TailBaseDestructor.cpp,matched,model=claude-opus-5-5;host=GreatFaram
+??1AIFollowPathState@@UAE@XZ,,0x00185630,5,game/GameEngine/Source/GameLogic/AI/AIFollowPathStateDestructors.cpp,matched,model=claude-opus-5-5;host=GreatFaram
