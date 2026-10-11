@@ -343,16 +343,7 @@ Int VideoPlayer::getNumVideos( void )
 //============================================================================
 // VideoPlayer::removeVideo
 //============================================================================
-// ?getVideo@VideoPlayer@@ present-unmatched
-const Video* VideoPlayer::getVideo( AsciiString movieTitle )
-{
-	for (VecVideoIt it = mVideosAvailableForPlay.begin(); it != mVideosAvailableForPlay.end(); ++it) {
-		if (it->m_internalName == movieTitle) {
-			return &(*it);
-		}
-	}
-	return NULL;
-}
+// The retail name query is owned by VideoPlayerQueries.cpp.
 
 //============================================================================
 // VideoPlayer::getVideo
