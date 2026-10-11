@@ -36,27 +36,30 @@ public:
 	void bfmePush(void);
 };
 
-class BfmeA1236
+class BfmeA1236;
+class Gen_008D2B50 { public: void bfmePush(void); };
+class Gen_008D2B80 { public: void bfmePop(void); };
+struct BfmeS1209
 {
-public:
-	void bfmeBegin1236();
-	void bfmePush1236(void *a);
-	void bfmeSet1236(void *a);
-	void bfmePop1236();
-	void bfmeEnd1236();
+ float m_bfme00, m_bfme04, m_bfme08, m_bfme0c;
+ float m_bfme10, m_bfme14, m_bfme18, m_bfme1c;
 };
+class BfmeA1209 { public: void bfmeOp1209(const BfmeS1209 *a); };
+class BfmeA1210 { public: void bfmePop1210(); };
+struct BfmeThingDXH { void bfmeGoDXH(void *a); };
 
 void bfmeGo1236(BfmeA1236 *a, BfmeB1236 *b, void *c)
 {
-	a->bfmeBegin1236();
-	a->bfmePush1236(&b->m_bfme28);
+	reinterpret_cast<Gen_008D2B50 *>(a)->bfmePush();
+	reinterpret_cast<BfmeA1209 *>(a)->bfmeOp1209(
+		reinterpret_cast<const BfmeS1209 *>(&b->m_bfme28));
 	((Gen_008D2C80 *)a)->bfmePush();
 	if ((b->m_bfme04 & 0x3f) == 0xf && !((unsigned char)(~(b->m_bfme04 >> 15)) & 1))
 		b->bfmeApply1236(b->m_bfme4c);
-	a->bfmeSet1236(&b->m_bfme10);
+	reinterpret_cast<BfmeThingDXH *>(a)->bfmeGoDXH(&b->m_bfme10);
 	b->bfmeEmit1236(a, 0, c);
-	a->bfmePop1236();
-	a->bfmeEnd1236();
+	reinterpret_cast<BfmeA1210 *>(a)->bfmePop1210();
+	reinterpret_cast<Gen_008D2B80 *>(a)->bfmePop();
 }
 
 struct BfmeTransform1236
