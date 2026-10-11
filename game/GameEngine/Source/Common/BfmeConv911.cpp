@@ -213,10 +213,10 @@ void BfmeThing911E::bfmeGo911E()
 	m_bfmeSub = 0;
 }
 
-class BfmeThingVDW
+class Rva00899F00Base
 {
 public:
-	void bfmeBaseVDW(int a, int b);
+	Rva00899F00Base(unsigned int argument0, int argument1);
 };
 
 extern char g_bfme911Vft[];
@@ -232,7 +232,7 @@ public:
 
 BfmeThing911F *BfmeThing911F::bfmeGo911F(int a, void *b)
 {
-	((BfmeThingVDW *)this)->bfmeBaseVDW(a, 8);
+	((Rva00899F00Base *)this)->Rva00899F00Base::Rva00899F00Base((unsigned int)a, 8);
 	m_bfmeVft = g_bfme911Vft;
 	m_bfmeArg = b;
 	return this;
