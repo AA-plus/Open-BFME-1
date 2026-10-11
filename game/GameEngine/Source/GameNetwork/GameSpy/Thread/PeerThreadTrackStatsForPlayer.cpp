@@ -46,8 +46,9 @@ public:
 	void trackStatsForPlayer(RoomType roomType, const char *nick,
 		const char *key, const char *val);
 
-private:
 	std::string packStatKey(const char *nick, const char *key);
+
+private:
 
 	char m_beforeStats[0x94];
 	PlayerStatMap m_groupRoomStats;
