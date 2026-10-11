@@ -140,10 +140,21 @@ public:
 class BfmeThingCDE
 {
 public:
-	void d_008f7990();
-
 	char unknown00[0x10];
 	BfmeThingCDE *next;
+};
+
+// Retail calls the authored bodies at 0x008F7990 and 0x008F7AC0.
+class BfmeHostXO
+{
+public:
+	void bfmeFlushXO();
+};
+
+class Gen_008F7AC0
+{
+public:
+	void bfmeUnlink();
 };
 
 class ShroudManagerImpl008FBA40Node
@@ -165,7 +176,6 @@ class ShroudManagerImpl;
 class PartitionData
 {
 public:
-	void unlink();
 	void makeDirty();
 
 private:
@@ -349,7 +359,7 @@ void ShroudManagerImpl::drainPending()
 	while (pendingPartitionData)
 	{
 		PartitionData *partitionData = pendingPartitionData;
-		partitionData->unlink();
+		reinterpret_cast<Gen_008F7AC0 *>(partitionData)->bfmeUnlink();
 		partitionData->updateCellsTouched();
 	}
 
@@ -436,7 +446,7 @@ void ShroudManagerImpl::configure(Region3D newRegion, Real cellSize)
 		node != 0; node = node->next)
 	{
 		reinterpret_cast<Rva008F7EC0 *>(node)->method();
-		node->d_008f7990();
+		reinterpret_cast<BfmeHostXO *>(node)->bfmeFlushXO();
 		reinterpret_cast<PartitionData *>(node)->makeDirty();
 	}
 
