@@ -1132,6 +1132,24 @@ def test_glo_prefix_without_an_address_stays_descriptive():
     assert not N.opaque('GlobalData') and not N.opaque('GlowEffect')
 
 
+def test_unidentified_address_callee_respelled_to_ledger_placeholder_passes():
+    # re_attempts 59731: unidentified_0000a272 -> bfmeGet80 is placeholder to placeholder.
+    before = 'struct S { float unidentified_0000a272(int); }; float f(S *s) { return s->unidentified_0000a272(1); }\n'
+    after = 'struct S { float bfmeGet80(int); }; float f(S *s) { return s->bfmeGet80(1); }\n'
+    assert N.regressions(before, after) == []
+
+
+def test_descriptive_name_respelled_to_unidentified_address_still_fails():
+    before = 'struct S { void addExperience(int); }; void f(S *s) { s->addExperience(1); }\n'
+    after = 'struct S { void unidentified_00380ee0(int); }; void f(S *s) { s->unidentified_00380ee0(1); }\n'
+    assert ('addExperience', 'unidentified_00380ee0') in N.regressions(before, after)
+
+
+def test_unidentified_without_an_address_stays_descriptive():
+    assert not N.opaque('unidentified_owner') and not N.opaque('unidentified_00380ee0Owner')
+    assert N.opaque('unidentified_00380EE0')
+
+
 def test_bank_pairs_already_landed_in_the_source_are_not_reintroduced(repo):
     put(repo, BANK, BEFORE)
     put(repo, CODE, AFTER)

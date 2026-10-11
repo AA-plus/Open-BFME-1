@@ -47,6 +47,10 @@ OPAQUE = re.compile(
     # Glo<VA>: a type or datum named after the global's address, as
     # rename_addressed_sources.py already reads it (Glo012F4B98Type).
     r'Glo[0-9a-f]{8}|'
+    # unidentified_<address>: the address-derived spelling 35 game/ TUs
+    # already use for a callee whose identity is unproven
+    # (unidentified_00380ee0, re_attempts 59731).
+    r'unidentified_[0-9a-f]{8}(?![0-9a-z])|'
     # Owner ruling 2026-10-09: bfme*/Bfme* names are converter-invented
     # placeholders, as ilt_oracle, name_lane and ilt_guard already treat them.
     r'_?bfme)', re.I)
