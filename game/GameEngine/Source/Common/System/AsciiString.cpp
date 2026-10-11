@@ -222,25 +222,8 @@ void AsciiString::trim()
 }
 
 // -----------------------------------------------------
-// ?toLower@AsciiString@@ present-unmatched
-void AsciiString::toLower()
-{
-	validate();
-	if (m_data)
-	{
-		char buf[MAX_FORMAT_BUF_LEN];
-		strcpy(buf, peek());
-
-		char *c = buf;
-		while (c && *c)
-		{
-			*c = tolower(*c);
-			c++;
-		}
-		set(buf);
-	}
-	validate();
-}
+// Retail StringBase<char>::toLower is owned by StringBaseCaseOps.cpp
+// at 0x00887DA0 (229 bytes).
 
 // -----------------------------------------------------
 // ?removeLastChar@AsciiString@@ present-unmatched
