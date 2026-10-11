@@ -183,8 +183,6 @@ void LanguageFilter::reset() {
 void LanguageFilter::update() {
 }
 
-wchar_t ignoredChars[] = L"-_*'\"";
-
 // LanguageFilter::filterLine: retail 0x0044DB90 lives in LanguageFilter_filterLine.cpp.
 
 
