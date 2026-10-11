@@ -38,14 +38,22 @@ public:
 	Rva0035B3D0Record *m_records;
 };
 
+// Retail deletion uses ILT 0x00002338, which jumps to 0x00350E30.
+extern "C" void __identifier("?j_00002338@@YAXXZ")();
+
 class Rva0035B3D0ListNode
 {
 public:
-	void *bfmeDelete350E30(unsigned int flags);
 	~Rva0035B3D0ListNode()
 	{
 		if (m_next)
-			m_next->bfmeDelete350E30(1);
+		{
+			union {
+				void (*raw)();
+				void *(Rva0035B3D0ListNode::*member)(unsigned int);
+			} drop = { __identifier("?j_00002338@@YAXXZ") };
+			(m_next->*drop.member)(1);
+		}
 	}
 
 	Rva0035B3D0ListNode *m_next;
