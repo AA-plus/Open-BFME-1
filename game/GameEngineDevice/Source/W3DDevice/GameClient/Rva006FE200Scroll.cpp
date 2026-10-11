@@ -5,9 +5,11 @@
 #include "Lib/Coord3D.h"
 #include <math.h>
 
-extern float g_Va012F8274;
-extern float g_Va012BAC54;
-extern float g_Va012BAC50;
+// Retail cells: VA 0x012F8274 is a zero bss float; VA 0x012BAC50 and
+// 0x012BAC54 are .data floats holding 1.0f. Each is read only as a float.
+float g_Va012F8274;
+float g_Va012BAC54 = 1.0f;
+float g_Va012BAC50 = 1.0f;
 class LivingWorldManager;
 extern LivingWorldManager *TheLivingWorldManager;
 class BfmeLivingWorldManager {
