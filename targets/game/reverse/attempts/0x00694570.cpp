@@ -1,5 +1,5 @@
 // ?run@Rva00694570@@QAEKXZ
-// partial score=0.9873 date=2026-10-09
+// partial score=0.9905 date=2026-10-11
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /DBFME_STLP_NODE_ALLOC /D_STLP_USE_STATIC_LIB /MD /EHsc /O2 /Ob2 /Iinputs/vendor/stlport /Iinputs/reference/shims/stlp_nodealloc
 // stlport
 #include <list>
@@ -71,12 +71,13 @@ unsigned long Rva00694570::run()
             Rva006915E0 lock;
             if (lock.acquire(m_context) != 0x102) {
                 for (int priority = 2; !selected && priority >= 0; --priority) {
-                    if (!m_requests[priority].empty()) {
-                        selected = m_requests[priority].front();
+                    _STL::list<Gen0002857E *> &requests = m_requests[priority];
+                    _STL::list<Gen0002857E *>::const_iterator it = requests.begin(); if (requests.end() != it) {
+                        selected = *it;
                         if (!selected->m_count)
                             reinterpret_cast<Gen0002857EOwner *>(this)->Rva00693B00(selected);
                         *reinterpret_cast<Rva00691140Handle *>(&handle) = reinterpret_cast<const Rva00691140Handle &>(Rva006910F0Handle(selected));
-                        m_requests[priority].pop_front();
+                        requests.pop_front();
                     }
                 }
             }
