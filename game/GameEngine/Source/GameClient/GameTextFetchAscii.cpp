@@ -10,39 +10,18 @@
 // the complete function is 114 bytes through ret12 at RVA 0x00436FFF.
 // This isolated ABI view leaves the other GameText.cpp bodies unchanged.
 
-template<class T> struct StringData { int ref_count; unsigned short length, capacity; T text[1]; };
-template<class T> class StringBase {
-    friend class AsciiString;
-    friend class UnicodeString;
-private:
-    StringData<T> *data;
-    StringBase():data(0) {}
-    StringBase(const T*);
-    StringBase(const StringBase&);
-    ~StringBase();
-    void set(const StringBase&);
-};
-class AsciiString : private StringBase<char> {
-public:
-    AsciiString() {}
-    AsciiString(const char *p):StringBase<char>(p) {}
-    AsciiString(const AsciiString &p):StringBase<char>(p) {}
-    ~AsciiString() {}
-    const char *str() const { return data ? data->text : ""; }
-    void __cdecl format(AsciiString, ...);
-    AsciiString &operator=(const AsciiString &other) { set(other); return *this; }
-};
-class UnicodeString : private StringBase<unsigned short> {
-public:
-    UnicodeString() {}
-    UnicodeString(const unsigned short *p):StringBase<unsigned short>(p) {}
-    UnicodeString(const UnicodeString &p):StringBase<unsigned short>(p) {}
-    ~UnicodeString() {}
-    const unsigned short *str() const { return data ? data->text : (const unsigned short *)L""; }
-    void __cdecl format(UnicodeString, ...);
-    void translate(const AsciiString&);
-    UnicodeString &operator=(const UnicodeString &other) { set(other); return *this; }
-};
+#include "../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
+#include "../../../Libraries/Source/WWVegas/WWLib/unicode_string.h"
+
+inline UnicodeString::UnicodeString(const UnicodeString &that)
+{
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(
+        *(const StringBase<unsigned short> *)&that);
+}
+inline UnicodeString::~UnicodeString()
+{
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
 class GameTextManager {
 public:
@@ -52,4 +31,4 @@ public:
  virtual UnicodeString fetch(const char *label, bool *exists);
  virtual UnicodeString fetch(AsciiString label, bool *exists);
 };
-UnicodeString GameTextManager::fetch(AsciiString label,bool *exists) { return fetch(label.str(),exists); }
+UnicodeString GameTextManager::fetch(AsciiString label,bool *exists) { return fetch(label.StringBase<char>::str(),exists); }

@@ -155561,7 +155561,6 @@ uw_00c22169,,0x00C22169,8,game/gen_small/uw_gen_009.cpp,matched,gen-funclet;obje
 uw_00c22171,,0x00C22171,8,game/gen_small/uw_gen_000.cpp,matched,gen-funclet;object-symbol=$L2797
 uw_00c221a0,,0x00C221A0,8,game/GameEngine/Source/GameClient/StringInfoDestructorThunk.cpp,matched,gen-funclet;parent=??1StringInfo@@QAE@XZ;object-symbol=$L315
 uw_00c221c0,,0x00C221C0,11,game/gen_small/uw_gen_007.cpp,matched,gen-funclet;object-symbol=$L6901
-uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameText.cpp,matched,gen-funclet;parent=?fetch@GameTextManager@@UAE?AVUnicodeString@@VAsciiString@@PA_N@Z;object-symbol=$L35634
 uw_00c22259,,0x00C22259,8,game/gen_small/uw_gen_002.cpp,matched,gen-funclet;object-symbol=$L394
 uw_00c22261,,0x00C22261,8,game/gen_small/uw_gen_009.cpp,matched,gen-funclet;object-symbol=$L1717
 uw_00c22280,,0x00C22280,8,game/gen_small/uw_gen_013.cpp,matched,gen-funclet;object-symbol=$L8819
@@ -171984,3 +171983,4 @@ _Rva009B0730,,0x009B0730,1583,game/GameEngine/Source/Common/BfmeVp6LoopFilter.cp
 ?rva00880AF0@BfmeBoxF0@@QBE_NPBV1@@Z,,0x00880AF0,296,game/GameEngine/Source/Common/BfmeBoxContains.cpp,matched,Open BFME 2 Rva006C0630Cluster.cpp donor; existing box layout and opaque matched-caller identity; evidence=targets/game/reverse/identity_evidence/00880af0-bfme2-box.md;model=gpt-6.1-sol;host=fleet
 ?rva00849E20DecodeFlags@@YAII@Z,,0x00849E20,61,game/Libraries/Source/STLport/Rva00849E20DecodeFlags.cpp,matched,Open BFME 2 stlport_filebuf_open.cpp donor; opaque bank identity retained; valid CRT access modes only; evidence=targets/game/reverse/identity_evidence/00849e20-bfme2-flags.md;model=gpt-6.1-sol;host=fleet
 ?rva00755000@List00754E70@@QAEXXZ,,0x00755000,20,game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/List00754E70InsertDefault.cpp,matched,Open BFME 2 stlport_list_int_o1.cpp wrapper donor; int type refuted by complete BFME 1 value helpers; opaque address identity; evidence=targets/game/reverse/identity_evidence/00755000-bfme2-wrapper.md;model=gpt-6.1-sol;host=fleet
+uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.cpp,matched,gen-funclet;parent=?fetch@GameTextManager@@UAE?AVUnicodeString@@VAsciiString@@PA_N@Z;object-symbol=$L1965;model=gpt-6.1-sol;host=GreatFaram;eh-state-pin $L35634->$L1965: retail unwind map (?fetch@GameTextManager@@UAE?AVUnicodeString@@VAsciiString@@PA_N@Z states [1]) binds this address to $L1965;repin-model=gpt-6.1-sol

@@ -4751,10 +4751,7 @@ UnicodeString GameTextManager::fetch( const Char *label, Bool *exists )
 // *GameTextManager::fetch
 //============================================================================
 
-UnicodeString GameTextManager::fetch( AsciiString label, Bool *exists )
-{
-	return fetch(label.str(), exists);
-}
+// The retail AsciiString overload and its cleanup live in GameTextFetchAscii.cpp.
 
 //============================================================================
 // GameTextManager::getStringsWithLabelPrefix
