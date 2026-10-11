@@ -58460,7 +58460,6 @@ _piAddListingGamesCallback,,0x0085E420,233,game/GameEngine/Source/GameNetwork/Ga
 ?isMultiPlayer@GameInfo@@QAE_NXZ,,0x0061EAE0,69,game/GameEngine/Source/GameNetwork/GameInfo.cpp,matched,byte-scan placement; unique
 ?isMultiplayer@RecorderClass@@QAE_NXZ,,0x00097800,103,game/GameEngine/Source/Common/System/Recorder_isMultiplayer.cpp,matched,
 ?isMusicAlreadyLoaded@AudioManager@@UBE_NXZ,,0x006AC1A0,456,game/GameEngine/Source/Common/Audio/AudioManager_isMusicAlreadyLoadedMethodThunk.cpp,matched,Exact 456B GameEngine::init vtbl+0x138; queue RVA 0xFB32D misplaced; C++ blocked AudioManager hash @+0x70 vs ZH +0x40
-?isMuted@GameSlot@@QBE_NXZ,,0x004C3140,4,game/GameEngine/Source/GameNetwork/GameInfo.cpp,matched,icf-scan
 ?isNearlyZero@@YA_NM@Z,,0x001B4140,28,game/GameEngine/Source/GameLogic/Object/Locomotor.cpp,matched,
 ?isNegative@Rva00489380@@QBECXZ,,0x00489380,9,game/GameEngine/Source/Common/Bfme/Rva00489380Negative.cpp,matched,
 ?isNeutralControlled@Object@@QBE_NXZ,,0x001BE5B0,40,game/GameEngine/Source/GameLogic/Object/Object.cpp,matched,reloc-needle Open-BFME4+Grok asm->cpp depth Open-BFME4+Grok
@@ -123005,7 +123004,6 @@ _piAddListingGamesCallback,,0x0085E420,233,game/GameEngine/Source/GameNetwork/Ga
 ?mulVector3@Matrix3D@@QBEXAAVVector3@@@Z,,0x001C0D10,88,game/Libraries/Source/WWVegas/WW3D2/rendobj.cpp,matched,
 ?mulVector3@Matrix3D@@QBEXABVVector3@@AAV2@@Z,,0x001BD8B0,92,game/Libraries/Source/WWVegas/WW3D2/rendobj.cpp,matched,
 ?mulVector3Array@Matrix3D@@QBEXPBVVector3@@PAV2@H@Z,,0x00918680,112,game/Libraries/Source/WWVegas/WWMath/vp.cpp,matched,
-?mute@GameSlot@@QAEX_N@Z,,0x004C3130,10,game/GameEngine/Source/GameNetwork/GameInfo.cpp,matched,
 ?muxDataProcessUpgradeRemoval@UpgradeMuxData@@QBEXPAVObject@@@Z,,0x002D9C40,151,game/GameEngine/Source/Common/Thing/UpgradeMuxData.cpp,matched,clean C++ body reached by independently verified ILT 0x0002E320; complete INIException throw call followed by INT3 boundary
 ?n@Gen_00604be0@@QAEXXZ,,0x00604BE0,22,game/GameEngine/Source/Common/Gen_00604be0.cpp,matched,gen-shim;address-derived name;identity not asserted;one address-derived symbols.csv pin at 0x00409040
 ?name@Rva000A12A0Named@@QBEPBDXZ,,0x000A12A0,6,game/GameEngine/Source/Common/LiteralNameGetters_01.cpp,matched,literal name getter returning StateMachine; address-derived placeholder name
@@ -171987,3 +171985,5 @@ uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.c
 ??0Rva00943650Owner@@QAE@XZ,,0x00943650,42,game/GameEngine/Source/Common/Rva00943650OwnerCtor.cpp,matched,Complete ret at +0x29 after prior ret4 and INT3 padding; native MultiList member and scene array callback; evidence=targets/game/reverse/identity_evidence/00943650-native-list.md;model=gpt-6.1-sol;host=fleet
 ?rva008fad80@@YAXPAUGen_t_008fb410_p16pod@@00PAPAU1@0001@Z,,0x008FAD80,78,game/GameEngine/Source/Common/Rva008FAD80IteratorForward.cpp,matched,Complete ret at +0x4D followed by INT3; two opaque four-pointer iterator copies; evidence=targets/game/reverse/identity_evidence/008fad80-iterator-frame.md;model=gpt-6.1-sol;host=fleet
 ?setControlBarSchemeByPlayer@ControlBarSchemeManager@@QAEXPAVPlayer@@@Z,,0x004AE080,590,game/GameEngine/Source/GameClient/GUI/ControlBar/ControlBarSchemeManagerSetControlBarSchemeByPlayer_4AE080.cpp,matched,Decoded extent through RET 4 at +0x24B; named ControlBar caller through ILT 0x0001EF33; typed dead parameter home and canonical derived string view;identity-evidence=targets/game/reverse/identity_evidence/004ae080-stl46-preprocessing.md;model=gpt-6.1-sol;host=fleet
+?mute@GameSlot@@QAEX_N@Z,,0x004C3130,10,game/GameEngine/Source/GameNetwork/SkirmishGameInfo_xfer.cpp,matched,model=claude-opus-5-5;host=GreatFaram
+?isMuted@GameSlot@@QBE_NXZ,,0x004C3140,4,game/GameEngine/Source/GameNetwork/SkirmishGameInfo_xfer.cpp,matched,icf-scan;model=claude-opus-5-5;host=GreatFaram
