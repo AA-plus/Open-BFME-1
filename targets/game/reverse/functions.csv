@@ -34960,7 +34960,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_0025c010@@YAXXZ,,0x0025C010,382,game/gen_asm/d_0025aee0.asm,matched,gen-dump;ghidra=FUN_0065c010
 ?d_0025c220@@YAXXZ,,0x0025C220,1152,game/gen_asm/d_002310f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_0065c220
 ?d_0025e0b0@@YAXXZ,,0x0025E0B0,128,game/gen_asm/d_0025aee0.asm,matched,gen-dump;ghidra=FUN_0065e0b0
-?d_0025f6c0@@YAXXZ,,0x0025F6C0,383,game/gen_asm/d_00259090.asm,matched,gen-dump;bounds=high
 ?d_002613e0@@YAXXZ,,0x002613E0,14,game/GameEngine/Source/Common/Rva2613E0TripleResetThunk.cpp,matched,object-symbol=?reset@Rva2613E0TripleResetThunk@@QAEPAU1@XZ;Open-BFME5 clean C++ triple reset
 ?d_00261cc0@@YAXXZ,,0x00261CC0,298,game/gen_asm/d_0025aee0.asm,matched,gen-dump;ghidra=FUN_00661cc0
 ?d_00262570@@YAXXZ,,0x00262570,624,game/gen_asm/d_0025aee0.asm,matched,gen-dump;ghidra=FUN_00662570
@@ -171988,3 +171987,4 @@ uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.c
 ?Thread_Function@PeerThreadClass@@UAEXXZ,,0x0064FB90,5316,game/GameEngine/Source/GameNetwork/GameSpy/Thread/PeerThread_ThreadFunction.cpp,matched,Complete 5316-byte main body; catches at 0x00651054 and 0x006510A5 keep their own rows; full 5508-byte emitted extent verified; identity at ILT 0x0002C6EC and PeerThreadClass vtable slot 8; identity-evidence=targets/game/reverse/identity_evidence/0064fb90-thread-function.md;model=gpt-6.1-sol;host=fleet
 ?GadgetComboBoxSystem@@YA?AW4WindowMsgHandledType@@PAVGameWindow@@III@Z,,0x004B42F0,2153,game/GameEngine/Source/GameClient/GUI/Gadget/GadgetComboBoxInput.cpp,matched,identity-evidence=targets/game/reverse/identity_evidence/004b42f0-system.md; native strings and complete static helper; strict relocation and EH cleanup verified;model=gpt-6.1-sol;host=fleet
 ?getHeightMapHeight@BaseHeightMapRenderObjClass@@UBEMMMPAVCoord3D@@@Z,,0x006CBB50,957,game/GameEngineDevice/Source/W3DDevice/GameClient/BaseHeightMap_getHeightMapHeight.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/006cbb50-height-normal.md;exact;model=gpt-6.1-sol;host=fleet
+?doSpecialPowerAtObject@GrabPassengerSpecialPower@@UAEXPBVObject@@I@Z,,0x0025F6C0,383,game/GameEngine/Source/GameLogic/Object/SpecialPower/GrabPassengerSpecialPowerDoSpecialPowerAtObject.cpp,matched,identity-evidence=targets/game/reverse/identity_evidence/0025f6c0-passenger-target.md; registered constructor and slot 12; const target confirmed by ILT; complete virtual selection ABI;model=gpt-6.1-sol;host=fleet
