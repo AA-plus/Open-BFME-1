@@ -7,12 +7,10 @@ struct RvaTriple
     unsigned third;
 };
 
-extern RvaTriple bfmeRva012B5074Source;
-extern RvaTriple bfmeRva012B5080FirstCopy;
-extern RvaTriple bfmeRva012B5068SecondCopy;
-extern RvaTriple bfmeRva012B50D4Source;
-extern RvaTriple bfmeRva012B50E0FirstCopy;
-extern RvaTriple bfmeRva012B50C8SecondCopy;
+// The first six 12-byte views belong to these existing 96-byte data rows.
+extern int g_bfmeTableSrcBQ[24]; // VA012B5040
+extern int g_bfmeTableDstBQ[24]; // VA012B50A0
+
 extern RvaTriple bfmeRva012B5134Source;
 extern RvaTriple bfmeRva012B5140FirstCopy;
 extern RvaTriple bfmeRva012B5128SecondCopy;
@@ -22,28 +20,28 @@ extern RvaTriple bfmeRva012B5180SecondCopy;
 
 void bfmeRva00C6B500CopyTripleTwice()
 {
-    unsigned first = bfmeRva012B5074Source.first;
-    unsigned second = bfmeRva012B5074Source.second;
-    unsigned third = bfmeRva012B5074Source.third;
-    bfmeRva012B5080FirstCopy.first = first;
-    bfmeRva012B5080FirstCopy.second = second;
-    bfmeRva012B5080FirstCopy.third = third;
-    bfmeRva012B5068SecondCopy.first = first;
-    bfmeRva012B5068SecondCopy.second = second;
-    bfmeRva012B5068SecondCopy.third = third;
+    unsigned first = g_bfmeTableSrcBQ[13];
+    unsigned second = g_bfmeTableSrcBQ[14];
+    unsigned third = g_bfmeTableSrcBQ[15];
+    g_bfmeTableSrcBQ[16] = first;
+    g_bfmeTableSrcBQ[17] = second;
+    g_bfmeTableSrcBQ[18] = third;
+    g_bfmeTableSrcBQ[10] = first;
+    g_bfmeTableSrcBQ[11] = second;
+    g_bfmeTableSrcBQ[12] = third;
 }
 
 void bfmeRva00C6B550CopyTripleTwice()
 {
-    unsigned first = bfmeRva012B50D4Source.first;
-    unsigned second = bfmeRva012B50D4Source.second;
-    unsigned third = bfmeRva012B50D4Source.third;
-    bfmeRva012B50E0FirstCopy.first = first;
-    bfmeRva012B50E0FirstCopy.second = second;
-    bfmeRva012B50E0FirstCopy.third = third;
-    bfmeRva012B50C8SecondCopy.first = first;
-    bfmeRva012B50C8SecondCopy.second = second;
-    bfmeRva012B50C8SecondCopy.third = third;
+    unsigned first = g_bfmeTableDstBQ[13];
+    unsigned second = g_bfmeTableDstBQ[14];
+    unsigned third = g_bfmeTableDstBQ[15];
+    g_bfmeTableDstBQ[16] = first;
+    g_bfmeTableDstBQ[17] = second;
+    g_bfmeTableDstBQ[18] = third;
+    g_bfmeTableDstBQ[10] = first;
+    g_bfmeTableDstBQ[11] = second;
+    g_bfmeTableDstBQ[12] = third;
 }
 
 void bfmeRva00C6B5A0CopyTripleTwice()
