@@ -17,8 +17,6 @@ struct BfmeAllocVKJ
 	void (__cdecl *free)(void *);
 };
 
-extern BfmeAllocVKJ *g_bfmeAllocVKJ;
-
 class EAStringC
 {
 public:
@@ -57,7 +55,7 @@ EAStringC::EAStringC(unsigned int nSize)
 	if (nSize)
 	{
 		unsigned int alloc = (nSize + 12) & ~3u;
-		m_pData = (StringDataC *)g_bfmeAllocVKJ->allocate(alloc);
+		m_pData = (StringDataC *)reinterpret_cast<BfmeAllocVKJ *>(g_rva01337A30AllocPair)->allocate(alloc);
 		m_pData->m_uRefCount = 1;
 		m_pData->m_uMaxSize = (unsigned short)(alloc - 9);
 		m_pData->m_uSize = 0;
