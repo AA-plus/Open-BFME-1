@@ -86,8 +86,8 @@ public:
 		void *store, const void *userData);
 };
 
-typedef void *(__cdecl *LookupFn)(void *, void *);
-extern LookupFn g_lookup;
+extern "C" __declspec(dllimport) int __cdecl _strcmpi(const char *, const char *);
+typedef int (__cdecl *LookupFn)(const char *, const char *);
 
 // The FieldParse row at VA 0x0108DBF0 registers the RubbleNeighbor token here.
 // The parser's error string names TransitionDamageFXModuleData::NeighborIDSubobjectNameDataAppend.
@@ -107,10 +107,10 @@ void TransitionDamageFXModuleData::NeighborIDSubobjectNameDataAppend(
 	const char *token = ini->getNextTokenOrNull(ini->getSepsColon());
 	if (token != 0)
 	{
-		LookupFn compare = g_lookup;
+		LookupFn compare = _strcmpi;
 		do
 		{
-			if (compare((void *)token, (void *)"NeighborOffset") == 0)
+			if (compare(token, "NeighborOffset") == 0)
 			{
 				neighbor.m_neighborOffset.x =
 					INI::scanReal(ini->getNextSubToken("X"));
@@ -119,7 +119,7 @@ void TransitionDamageFXModuleData::NeighborIDSubobjectNameDataAppend(
 				neighbor.m_neighborOffset.z =
 					INI::scanReal(ini->getNextSubToken("Z"));
 			}
-			else if (compare((void *)token, (void *)"OCLOffset") == 0)
+			else if (compare(token, "OCLOffset") == 0)
 			{
 				neighbor.m_oclOffset.x =
 					INI::scanReal(ini->getNextSubToken("X"));
@@ -128,9 +128,9 @@ void TransitionDamageFXModuleData::NeighborIDSubobjectNameDataAppend(
 				neighbor.m_oclOffset.z =
 					INI::scanReal(ini->getNextSubToken("Z"));
 			}
-			else if (compare((void *)token, (void *)"OCL") == 0)
+			else if (compare(token, "OCL") == 0)
 				INI::parseObjectCreationList(ini, instance, &neighbor.m_ocl, 0);
-			else if (compare((void *)token, (void *)"SubObject") == 0)
+			else if (compare(token, "SubObject") == 0)
 			{
 				AsciiString subObject(ini->getNextToken(0));
 				neighbor.m_subObjects.push_back(subObject);

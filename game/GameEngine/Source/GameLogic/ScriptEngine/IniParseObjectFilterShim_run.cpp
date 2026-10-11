@@ -17,8 +17,8 @@ public:
 	const char *getNextTokenOrNull(const char *seps = 0);
 };
 
-typedef void *(__cdecl *LookupFn)(void *, void *);
-extern LookupFn g_lookup;
+extern "C" __declspec(dllimport) int __cdecl _strcmpi(const char *, const char *);
+typedef int (__cdecl *LookupFn)(const char *, const char *);
 
 extern "C" int __cdecl memcmp(const void *, const void *, unsigned int);
 extern "C" int __cdecl strcmp(const char *, const char *);
@@ -103,8 +103,8 @@ void IniParseObjectFilterShim::run(INI *ini, void *, void *store, const void *)
 	bool first = true;
 	while (token != 0)
 	{
-		LookupFn compare = g_lookup;
-		if (compare((void *)token, (void *)"ALL") == 0)
+		LookupFn compare = _strcmpi;
+		if (compare(token, "ALL") == 0)
 		{
 			if (!first)
 				THROW_FILTER_ERROR_NO_TOKEN("When using ALL in iniParseObjectFilter, ALL must be the first entry.");
@@ -114,7 +114,7 @@ void IniParseObjectFilterShim::run(INI *ini, void *, void *store, const void *)
 			entry.m_enabled = true;
 			hasRuleset = true;
 		}
-		else if (compare((void *)token, (void *)"ANY") == 0)
+		else if (compare(token, "ANY") == 0)
 		{
 			if (!first)
 				THROW_FILTER_ERROR_NO_TOKEN("When using ANY in iniParseObjectFilter, ANY must be the first entry.");
@@ -124,7 +124,7 @@ void IniParseObjectFilterShim::run(INI *ini, void *, void *store, const void *)
 			entry.m_enabled = true;
 			hasRuleset = true;
 		}
-		else if (compare((void *)token, (void *)"NONE") == 0)
+		else if (compare(token, "NONE") == 0)
 		{
 			if (!first)
 				THROW_FILTER_ERROR_NO_TOKEN("When using NONE in iniParseObjectFilter, NONE must be the first entry.");
@@ -134,7 +134,7 @@ void IniParseObjectFilterShim::run(INI *ini, void *, void *store, const void *)
 			entry.m_enabled = false;
 			hasRuleset = true;
 		}
-		else if (compare((void *)token, (void *)"ALLIES") == 0)
+		else if (compare(token, "ALLIES") == 0)
 		{
 			if (!hasRuleset)
 				THROW_FILTER_ERROR("iniParseObjectFilter: You must specify a ruleset for your data (ANY, ALL, or NONE). You specified %s.", token);
@@ -142,7 +142,7 @@ void IniParseObjectFilterShim::run(INI *ini, void *, void *store, const void *)
 				THROW_FILTER_ERROR("iniParseObjectFilter ALLIES keyword is case sensitive. You specified %s.", token);
 			entry.m_index |= 1;
 		}
-		else if (compare((void *)token, (void *)"ENEMIES") == 0)
+		else if (compare(token, "ENEMIES") == 0)
 		{
 			if (!hasRuleset)
 				THROW_FILTER_ERROR("iniParseObjectFilter: You must specify a ruleset for your data (ANY, ALL, or NONE). You specified %s.", token);
@@ -150,7 +150,7 @@ void IniParseObjectFilterShim::run(INI *ini, void *, void *store, const void *)
 				THROW_FILTER_ERROR("iniParseObjectFilter ENEMIES keyword is case sensitive. You specified %s.", token);
 			entry.m_index |= 2;
 		}
-		else if (compare((void *)token, (void *)"NEUTRAL") == 0)
+		else if (compare(token, "NEUTRAL") == 0)
 		{
 			if (!hasRuleset)
 				THROW_FILTER_ERROR("iniParseObjectFilter: You must specify a ruleset for your data (ANY, ALL, or NONE). You specified %s.", token);
