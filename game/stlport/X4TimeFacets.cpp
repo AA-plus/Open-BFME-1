@@ -447,19 +447,7 @@ __get_date_order(_Locale_time* time)
   }
 }
 
-#if !defined(_STLP_NO_FORCE_INSTANTIATE)
-template class time_get<char, istreambuf_iterator<char, char_traits<char> > >;
-// template class time_get<char, const char*>;
-template class time_put<char, ostreambuf_iterator<char, char_traits<char> > >;
-// template class time_put<char, char*>;
-
-#ifndef _STLP_NO_WCHAR_T
-template class time_get<wchar_t, istreambuf_iterator<wchar_t, char_traits<wchar_t> > >;
-// template class time_get<wchar_t, const wchar_t*>;
-template class time_put<wchar_t, ostreambuf_iterator<wchar_t, char_traits<wchar_t> > >;
-// template class time_put<wchar_t, wchar_t*>;
-#endif /* INSTANTIATE_WIDE_STREAMS */
-
-#endif
+// Facet instantiations live in TimeFacetsInstantiations.cpp.
+// This TU owns the time metadata and formatting helpers.
 
 _STLP_END_NAMESPACE
