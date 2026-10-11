@@ -759,3 +759,16 @@ def test_link_inputs_are_never_read_as_options_under_wine(tmp_path, monkeypatch)
     assert [Path(p) for p in listed] == [Path("fill00.obj"), Path("zzobj/o00000.obj"), Path("imp_kernel32.lib")]
     assert not any(Path(p).is_absolute() for p in listed)
     assert [(Path(cwd) / p).resolve() for p in listed] == [p.resolve() for p in inputs]
+
+
+def test_eh_verdict_is_a_verdict_for_a_thunk_outside_the_image():
+    """A retail target past the image's bytes (or before them) is no thunk: a
+    verdict, never IndexError (Open-BFME-1 bf7709aa22 lost its run to one)."""
+    thunk = b"\xb8" + struct.pack("<I", 0) + b"\xe9" + struct.pack("<i", 0)
+    image = bytes(16) + thunk
+    for rt in (len(image) - 9, len(image) - 5, len(image), len(image) + 100, -10, -1):
+        assert lc.eh_verdict(image, 16, image, rt, B, B) == "thunk outside the image", rt
+    assert lc.eh_verdict(image, len(image), image, 16, B, B) == "thunk outside the image"
+    # the same thunk inside both images reaches the shape and FuncInfo checks
+    assert lc.eh_verdict(image, 16, image, 16, B, B) != "thunk outside the image"
+    assert lc.eh_verdict(image, 0, image, 16, B, B) == "thunk shape differs"
