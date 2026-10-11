@@ -68,14 +68,8 @@ public:
 	Int winGetSize(Int *width, Int *height);			///< ILT thunk at 0x00036EBC
 	UnsignedInt winGetStatus(void);						///< ILT thunk at 0x00023DDA
 
-	Color winGetEnabledColor(Int index) { return m_enabledDrawData[index].color; }
-	Color winGetEnabledBorderColor(Int index) { return m_enabledDrawData[index].borderColor; }
-	Color winGetDisabledColor(Int index) { return m_disabledDrawData[index].color; }
-	Color winGetDisabledBorderColor(Int index) { return m_disabledDrawData[index].borderColor; }
-	Color winGetHiliteColor(Int index) { return m_hiliteDrawData[index].color; }
-	Color winGetHiliteBorderColor(Int index) { return m_hiliteDrawData[index].borderColor; }
 
-private:
+public:
 	unsigned char m_unreconstructed_00[0x48];
 	WinDrawData m_enabledDrawData[9];					///< retail this+0x48
 	WinDrawData m_disabledDrawData[9];					///< retail this+0xB4
@@ -165,13 +159,7 @@ inline Int BitTest(UnsignedInt bits, UnsignedInt mask) { return (bits & mask) !=
 
 #define WIN_DRAW_LINE_WIDTH 1.0f
 
-// GadgetSlider.h header inlines, all over draw-data index 0.
-inline Color GadgetSliderGetEnabledColor( GameWindow *g ) { return g->winGetEnabledColor( 0 ); }
-inline Color GadgetSliderGetEnabledBorderColor( GameWindow *g ) { return g->winGetEnabledBorderColor( 0 ); }
-inline Color GadgetSliderGetDisabledColor( GameWindow *g ) { return g->winGetDisabledColor( 0 ); }
-inline Color GadgetSliderGetDisabledBorderColor( GameWindow *g ) { return g->winGetDisabledBorderColor( 0 ); }
-inline Color GadgetSliderGetHiliteColor( GameWindow *g ) { return g->winGetHiliteColor( 0 ); }
-inline Color GadgetSliderGetHiliteBorderColor( GameWindow *g ) { return g->winGetHiliteBorderColor( 0 ); }
+// Read the witnessed draw-data index 0 directly; avoid emitting TU-local getter copies.
 
 // ?W3DGadgetVerticalSliderDraw@@YAXPAVGameWindow@@PAVWinInstanceData@@@Z
 void W3DGadgetVerticalSliderDraw( GameWindow *window, WinInstanceData *instData )
@@ -187,22 +175,22 @@ void W3DGadgetVerticalSliderDraw( GameWindow *window, WinInstanceData *instData 
 	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == 0 )
 	{
 
-		backBorder		= GadgetSliderGetDisabledBorderColor( window );
-		backColor			= GadgetSliderGetDisabledColor( window );
+		backBorder		= window->m_disabledDrawData[0].borderColor;
+		backColor			= window->m_disabledDrawData[0].color;
 
 	}  // end if, disabled
 	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
-		backBorder		= GadgetSliderGetHiliteBorderColor( window );
-		backColor			= GadgetSliderGetHiliteColor( window );
+		backBorder		= window->m_hiliteDrawData[0].borderColor;
+		backColor			= window->m_hiliteDrawData[0].color;
 
 	}  // end else if, hilited
 	else
 	{
 
-		backBorder		= GadgetSliderGetEnabledBorderColor( window );
-		backColor			= GadgetSliderGetEnabledColor( window );
+		backBorder		= window->m_enabledDrawData[0].borderColor;
+		backColor			= window->m_enabledDrawData[0].color;
 
 	}  // end else, enabled
 
