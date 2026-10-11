@@ -1,5 +1,5 @@
 // ?rva008AA650StringSplit@@YAPAVBfmeC1030@@PAVRva8CD130Value@@H@Z
-// partial score=0.4118 date=2026-10-09
+// partial score=0.4668 date=2026-10-11
 // cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 
 // RVA 008AA650: opaque Apt string split callback.
@@ -48,6 +48,7 @@ class EAStringC
 {
 public:
 	int Find(const char *text, int start);
+	EAStringC &UTF8_Initialize008A0320(int value);
 };
 
 class BfmeBufVKG
@@ -61,10 +62,10 @@ class Rva8CD130Value
 public:
 	void getName(Rva8CD130String *output);
 	__forceinline const Rva8CD130String &string008AA650() const {
-		return *(const Rva8CD130String *)
-			(((m_flags & 0x3f) == 1)
-				? (const char *)this + 8
-				: (const char *)m_indirect + 8);
+		switch (m_flags & 0x3f) {
+		case 1: return m_string;
+		default: return m_indirect->m_string;
+		}
 	}
 
 
@@ -207,7 +208,10 @@ public:
 			g_bfmeStringPool1284->free(old);
 	}
 
-	Rva008A0320String &rva008A0320(int value);
+	// ?rva008A0320@Rva008A0320String@@QAEAAV1@H@Z absent-from-retail
+	__forceinline Rva008A0320String &rva008A0320(int value) {
+		return (Rva008A0320String &)((EAStringC *)this)->UTF8_Initialize008A0320(value);
+	}
 	BfmeStringData3AF0 *m_data;
 };
 
@@ -284,9 +288,10 @@ BfmeC1030 *rva008AA650StringSplit(Rva8CD130Value *value, int count)
 			limit = g_bfmeArr1233[g_count01338748 - 2]->toInteger();
 
 		Rva8CD130String input(value->string008AA650());
+		int separatorLength = separator.m_data->m_length;
 		int index = 0;
 
-		if (separator.m_data->m_length == 0)
+		if (separatorLength == 0)
 		{
 			const unsigned char *scan = (const unsigned char *)input.m_data + 8;
 			while (index < limit)
@@ -299,14 +304,12 @@ BfmeC1030 *rva008AA650StringSplit(Rva8CD130Value *value, int count)
 					text.rva008A0320(codePoint);
 					Rva008A9B00 *object = acquire008AA650();
 					((Rva008B2EA0Node *)object)->append((char *)text.m_data + 8);
-					result->set(index, object);
+					result->set(index++, object);
 				}
-				++index;
 			}
 		}
 		else
 		{
-			int separatorLength = separator.m_data->m_length;
 			const char *text = (const char *)input.m_data + 8;
 			int start = 0;
 			while (index < limit)
@@ -320,7 +323,7 @@ BfmeC1030 *rva008AA650StringSplit(Rva8CD130Value *value, int count)
 					if (start != -1)
 						((BfmeBufVKG *)&part)->bfmeAppendVKG((const char *)input.m_data + 8 + start, -1 - start);
 					((Rva008A9A70 *)object)->set(*(const Rva008A9A70Str *)&part);
-					result->set(index, object);
+					result->set(index++, object);
 					break;
 				}
 				Rva008A9B00 *object = acquire008AA650();
@@ -332,9 +335,8 @@ BfmeC1030 *rva008AA650StringSplit(Rva8CD130Value *value, int count)
 				if (--old->m_refCount == 0)
 					g_bfmeStringPool1284->free(old);
 				object->m_data = part.m_data;
-				result->set(index, object);
+				result->set(index++, object);
 				start = found + separatorLength;
-				++index;
 			}
 
 		}
