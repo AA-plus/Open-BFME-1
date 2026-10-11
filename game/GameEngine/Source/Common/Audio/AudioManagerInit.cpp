@@ -138,7 +138,8 @@ public:
 };
 
 // ?TheGameLODManager@@3PAVGameLODManager@@A
-extern GameLODManager006B8220 *TheGameLODManager;
+class GameLODManager;
+extern GameLODManager *TheGameLODManager;
 
 // ?bfmeGo1012B@BfmeB1012@@QAEXH@Z, reached through thunk 0x00024F3C.
 class BfmeB1012
@@ -346,10 +347,10 @@ void AudioManager::init()
 	// the same instruction as the >2 clamp, so both land on one store.
 	if (TheGameLODManager)
 	{
-		int lodIndex = TheGameLODManager->m_lodIndex;
+		int lodIndex = reinterpret_cast<GameLODManager006B8220 *>(TheGameLODManager)->m_lodIndex;
 		if (lodIndex >= 0 && lodIndex < 2)
 		{
-			m_speakerClamp = TheGameLODManager->m_speakerTable[lodIndex][0];
+			m_speakerClamp = reinterpret_cast<GameLODManager006B8220 *>(TheGameLODManager)->m_speakerTable[lodIndex][0];
 			if (m_speakerClamp > 2)
 			{
 				m_speakerClamp = 2;
