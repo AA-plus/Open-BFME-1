@@ -717,15 +717,33 @@ void DX8Caps::Check_Bumpmap_Support(const D3DCAPS8& caps)
 //
 // ----------------------------------------------------------------------------
 
-// ?Check_Texture_Compression_Support@DX8Caps@@AAEXABU_D3DCAPS8@@@Z present-unmatched
+struct BFME_DX8Caps_CompressionFields
+{
+    char pad[0x139];
+    bool supportDXTC;
+    char padToDXT[0x1a2 - 0x13a];
+    bool supportDXT1;
+    bool supportDXT2;
+    bool supportDXT3;
+    bool supportDXT4;
+    bool supportDXT5;
+    char padToLog[0x2a4 - 0x1a7];
+    StringClass capsLog;
+};
+
+// ?Check_Texture_Compression_Support@DX8Caps@@AAEXABU_D3DCAPS8@@@Z
+// Ported from Open BFME 2 Code/Libraries/Source/WWVegas/WW3D2/dx8caps.cpp.
 void DX8Caps::Check_Texture_Compression_Support(const D3DCAPS8& caps)
 {
-	SupportDXTC=SupportTextureFormat[WW3D_FORMAT_DXT1]|
-		SupportTextureFormat[WW3D_FORMAT_DXT2]|
-		SupportTextureFormat[WW3D_FORMAT_DXT3]|
-		SupportTextureFormat[WW3D_FORMAT_DXT4]|
-		SupportTextureFormat[WW3D_FORMAT_DXT5];
-	DXLOG(("Texture compression support: %s\r\n",SupportDXTC ? "Yes" : "No"));
+    BFME_DX8Caps_CompressionFields *retail = (BFME_DX8Caps_CompressionFields *)this;
+    bool supportDXT1 = retail->supportDXT1;
+    bool supportDXT2 = retail->supportDXT2;
+    bool supportDXT3 = retail->supportDXT3;
+    bool supportDXT4 = retail->supportDXT4;
+    bool ok = (supportDXT1 ? supportDXT1 : supportDXT1) | supportDXT2 | retail->supportDXT5 | supportDXT3 | supportDXT4;
+    retail->supportDXTC = ok;
+    CapsWorkString.Format("Texture compression support: %s\r\n", ok ? "Yes" : "No");
+    retail->capsLog += CapsWorkString;
 }
 
 struct BFME_DX8Caps_CheckTextureFormatFields
@@ -1112,7 +1130,8 @@ struct BFME_DX8Caps_VendorFields
 #undef DXLOG
 #define DXLOG(n) CapsWorkString.Format n; retail->capsLog+=CapsWorkString;
 
-// ?Vendor_Specific_Hacks@DX8Caps@@AAEXABU_D3DADAPTER_IDENTIFIER8@@@Z present-unmatched
+// ?Vendor_Specific_Hacks@DX8Caps@@AAEXABU_D3DADAPTER_IDENTIFIER8@@@Z
+// Ported from Open BFME 2 Code/Libraries/Source/WWVegas/WW3D2/dx8caps.cpp.
 void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 {
 	BFME_DX8CAPS_VENDOR_FIELDS
@@ -1125,16 +1144,13 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 			DXLOG(("Disabling DXT1 support on NVidia hardware.\r\n"));
 		}
 
-		bool supportDxt5 = retail->supportTextureFormat[104];
-		bool supportDxt3 = retail->supportTextureFormat[102];
-		bool supportDxt2 = retail->supportTextureFormat[101];
 		SupportNPatches = false;
 		retail->supportTextureFormat[100] = false;
-		// Retail reads DXT4 after both stores. Without this barrier MSVC hoists
-		// that read above them and the body comes out two bytes short.
-		_ReadWriteBarrier();
+		bool supportDxt2 = retail->supportTextureFormat[101];
+		bool supportDxt3 = retail->supportTextureFormat[102];
 		bool supportDxt4 = retail->supportTextureFormat[103];
-		SupportDXTC = supportDxt5 | supportDxt4 | supportDxt3 | supportDxt2;
+		bool supportDxt5 = retail->supportTextureFormat[104];
+		SupportDXTC = (supportDxt5 ? supportDxt5 : supportDxt5) | supportDxt4 | supportDxt3 | supportDxt2;
 	}
 
 	if (VendorId==VENDOR_MATROX) {

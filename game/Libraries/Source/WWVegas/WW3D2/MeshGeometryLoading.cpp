@@ -49,7 +49,11 @@ class MeshGeometryClass : public W3DMPO, public RefCountClass, public MultiListO
 protected:
     bool read_aabtree(ChunkLoadClass &cload);
     bool read_triangles(ChunkLoadClass &cload);
-    enum FlagsType { DIRTY_PLANES = 0x00000002 };
+    bool read_vertex_influences(ChunkLoadClass &cload);
+    unsigned short *get_bone_links(bool create);
+    unsigned short *Rva00924760InfluenceRuns(int count);
+    int Get_Vertex_Count() const { return VertexCount; }
+    enum FlagsType { DIRTY_PLANES = 0x00000002, SKIN = 0x400 };
     void Set_Flag(int flag, bool onoff)
     {
         if (onoff) Flags |= flag;
@@ -129,5 +133,66 @@ bool MeshGeometryClass::read_triangles(ChunkLoadClass &cload)
         surface_types[i] = (uint8)tri.Attributes;
     }
 
+    return true;
+}
+
+struct Rva00925380VertInfRecord {
+    unsigned short Value[4];
+};
+
+struct Rva00925380VertInfPair {
+    unsigned short First;
+    unsigned short Second;
+};
+
+// ?read_vertex_influences@MeshGeometryClass@@IAE_NAAVChunkLoadClass@@@Z
+// Ported from Open BFME 2 Code/Libraries/Source/WWVegas/WW3D2/MeshGeometryReadVertexInfluences.cpp.
+bool MeshGeometryClass::read_vertex_influences(ChunkLoadClass &cload)
+{
+    unsigned short *links = get_bone_links(true);
+    int vertexCount = Get_Vertex_Count();
+    Rva00925380VertInfRecord influences;
+    for (int i = 0; i < vertexCount; i++) {
+        if (cload.Read(&influences, sizeof(influences)) != sizeof(influences))
+            return false;
+        links[i] = influences.Value[0];
+        links[vertexCount + i] = influences.Value[1];
+        links[i + vertexCount * 2] = influences.Value[2];
+        links[vertexCount * 3 + i] = influences.Value[3];
+    }
+
+    int runCount = 0;
+    int i = 0;
+    while (i < vertexCount) {
+        Rva00925380VertInfPair p01 = { links[i], links[vertexCount + i] };
+        Rva00925380VertInfPair p23 = { links[i + vertexCount * 2], links[vertexCount * 3 + i] };
+        int j;
+        for (j = i; j < vertexCount; j++) {
+            if (p01.First != links[j] || p01.Second != links[vertexCount + j]
+                || p23.First != links[j + vertexCount * 2] || p23.Second != links[vertexCount * 3 + j])
+                break;
+        }
+        runCount++;
+        i = j;
+    }
+
+    unsigned short *runs = Rva00924760InfluenceRuns(runCount * 2);
+    runCount = 0;
+    i = 0;
+    while (i < Get_Vertex_Count()) {
+        Rva00925380VertInfPair p01 = { links[i], links[vertexCount + i] };
+        Rva00925380VertInfPair c3 = { links[i + vertexCount * 2], links[vertexCount * 3 + i] };
+        int j;
+        for (j = i; j < Get_Vertex_Count(); j++) {
+            if (p01.First != links[j] || p01.Second != links[vertexCount + j]
+                || c3.First != links[j + vertexCount * 2] || c3.Second != links[vertexCount * 3 + j])
+                break;
+        }
+        int len = j - i;
+        runs[runCount++] = p01.First;
+        runs[runCount++] = len;
+        i = j;
+    }
+    Set_Flag(SKIN, true);
     return true;
 }
