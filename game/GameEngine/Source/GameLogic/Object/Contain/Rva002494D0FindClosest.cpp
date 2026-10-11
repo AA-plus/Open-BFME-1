@@ -10,10 +10,10 @@
 struct Rva002494D0Coord { float x; float y; float z; Rva002494D0Coord() {} Rva002494D0Coord(const Rva002494D0Coord &v) { x=v.x;y=v.y;z=v.z; } void sub(const Rva002494D0Coord *v) { x-=v->x;y-=v->y;z-=v->z; } float lengthSqr() const { return x*x+y*y+z*z; } };
 inline float sqr(float x) { return x*x; }
 
-class BfmeXCQE
+class Gen_00410BA0
 {
 public:
-	char bfmeKindCQE(void);
+	int isDrawableEffectivelyHidden(void) const;
 };
 
 class Rva002494D0Contain;
@@ -25,7 +25,7 @@ public:
 	RVASLOT(0) RVASLOT(1) RVASLOT(2) RVASLOT(3) RVASLOT(4) RVASLOT(5)
 	RVASLOT(6) RVASLOT(7) RVASLOT(8) RVASLOT(9)
 #undef RVASLOT
-	virtual BfmeXCQE *getKind(void);
+	virtual Gen_00410BA0 *getKind(void);
 
 	char m_pad[0x34];
 	Rva002494D0Coord m_position;
@@ -99,7 +99,7 @@ Object *Rva002494D0Owner::findClosest(const Rva002494D0Coord *searchPosition)
              containedObjectIt != containedObjects.end(); ++containedObjectIt)
 			{
 				Object *candidateObject = *containedObjectIt;
-				if (candidateObject->getKind()->bfmeKindCQE() == 1)
+				if ((unsigned char)candidateObject->getKind()->isDrawableEffectivelyHidden() == 1)
 					continue;
 
 				Rva002494D0Coord difference = *searchPosition;
