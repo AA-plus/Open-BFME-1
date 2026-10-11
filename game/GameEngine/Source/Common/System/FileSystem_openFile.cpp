@@ -1,4 +1,4 @@
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 // readable body of ?openFile@FileSystem@@: game/GameEngine/Source/Common/System/FileSystem.cpp
 //
 // FileSystem::openFile retail 0x009C8860 size 394 -- recovered as C++ rather
@@ -46,50 +46,12 @@
 // The access-flag tests are retail's: bit 3 (0x08) suppresses the archive
 // lookups and bit 1 (0x02) suppresses the local prefixed lookup.
 #include <string.h>
+#include "ascii_string.h"
 
-// IAT form of sprintf: call dword ptr [__imp__sprintf]
-extern "C" int (__cdecl *__imp__sprintf)(char *, const char *, ...);
-static inline int do_sprintf(char *destination, const char *format, const char *pathPrefix, const char *filename)
-{
-	return (*__imp__sprintf)(destination, format, pathPrefix, filename);
-}
+// Retail reads MSVCR71!sprintf through IAT VA0x0135948C.
+extern "C" __declspec(dllimport) int __cdecl sprintf(char *, const char *, ...);
 
 class File;
-
-// Retail's string is StringBase<char>; the two-argument concat stays out of line
-// as ?concat@?$StringBase@D@@QAEXPBDH@Z, and the one-argument form that computes
-// the length is inlined into the caller -- which is why the strlen loop below
-// appears in this function's own bytes, guarded against a null pointer.
-template <class T> class StringBase
-{
-public:
-	void concat( const T *s, int len );
-
-protected:
-	T *m_data;
-};
-
-// Retail AsciiString(const char*) is the thin 0x888BC0 body (not ZH
-// ensureUniqueBufferOfSize). Same local shim pattern as Upgrade / DifficultySelect.
-class BFMERetailAsciiString : public StringBase<char>
-{
-public:
-	BFMERetailAsciiString( const char *string );
-	~BFMERetailAsciiString() { releaseBuffer(); }
-
-	const char *str() const
-	{
-		return m_data ? m_data + 8 : "";
-	}
-
-	void concat( const char *s )
-	{
-		StringBase<char>::concat( s, s ? (int)strlen( s ) : 0 );
-	}
-
-private:
-	void releaseBuffer();
-};
 
 // Slot layouts stay attached to their call sites, because those are what the
 // emitted offsets come from.
@@ -142,12 +104,12 @@ File *FileSystem::openFile( const char *filename, int access )
 	char languagePath[0x200];
 	File *file = NULL;
 
-	do_sprintf( languagePath, "%s\\%s", byte_134CA48, filename );
+	sprintf( languagePath, "%s\\%s", byte_134CA48, filename );
 
 	if( byte_134CB50[0] )
 	{
-		BFMERetailAsciiString modPath( byte_134CB50 );
-		modPath.concat( filename );
+		AsciiString modPath( byte_134CB50 );
+		modPath.StringBase<char>::concat(filename, filename ? (int)strlen(filename) : 0);
 		file = TheLocalFileSystem->openFile( modPath.str(), access );
 	}
 
@@ -193,12 +155,12 @@ File *FileSystem::openFile( const char *filename, int access, int offset, int si
 	char languagePath[0x200];
 	File *file = NULL;
 
-	do_sprintf( languagePath, "%s\\%s", byte_134CA48, filename );
+	sprintf( languagePath, "%s\\%s", byte_134CA48, filename );
 
 	if( byte_134CB50[0] )
 	{
-		BFMERetailAsciiString modPath( byte_134CB50 );
-		modPath.concat( filename );
+		AsciiString modPath( byte_134CB50 );
+		modPath.StringBase<char>::concat(filename, filename ? (int)strlen(filename) : 0);
 		file = TheLocalFileSystem->openFile( modPath.str(), access, offset, size );
 	}
 
@@ -237,7 +199,7 @@ File *FileSystem::openFile( const char *filename, int access, int offset, int si
 bool FileSystem::doesFileExist(const char *filename) const
 {
 	char buf[0x200];
-	do_sprintf(buf, "%s\\%s", byte_134CA48, filename);
+	sprintf(buf, "%s\\%s", byte_134CA48, filename);
 	if (TheArchiveFileSystem->doesFileExist(buf))
 		return true;
 	if (TheArchiveFileSystem->doesFileExist(filename))
