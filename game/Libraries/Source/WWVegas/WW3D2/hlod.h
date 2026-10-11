@@ -319,7 +319,7 @@ public:
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2/hlod.h
 class HLodDefClass : public W3DMPO
 {
-	W3DMPO_GLUE(HLodDefClass)
+	// BFME HLodDefClass uses global new/delete (retail 00970AA0/00970650).
 public:
 
 	HLodDefClass(void);
