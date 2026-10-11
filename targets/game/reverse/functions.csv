@@ -36542,7 +36542,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_009ab530@@YAXXZ,,0x009AB530,556,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00dab530
 ?d_009ab9d0@@YAXXZ,,0x009AB9D0,1509,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00dab9d0
 ?d_009acf90@@YAXXZ,,0x009ACF90,1976,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
-?d_009ad750@@YAXXZ,,0x009AD750,848,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0;ghidra=FUN_00dad750
 ?d_009adaa0@@YAXXZ,,0x009ADAA0,727,game/gen_asm/d_009a5b80.asm,matched,gen-dump;ghidra=FUN_00dadaa0
 ?d_009add80@@YAXXZ,,0x009ADD80,2324,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009ae6a0@@YAXXZ,,0x009AE6A0,2107,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
@@ -171980,3 +171979,4 @@ uw_00c1a108,,0x00C1A108,17,game/GameEngine/Source/GameLogic/LivingWorld/LivingWo
 ?dup_000c88c0@@YAXXZ,,0x000C88C0,7,game/GameEngine/Source/GameClient/GUI/GameWindow.cpp,matched,gen-alias;object-symbol=?winGetLayout@GameWindow@@QAEPAVWindowLayout@@XZ;C++ alias;link-owner repair: retain native matched getter emitter; old helper-twin bytes and extent unchanged;model=gpt-6.1-sol;host=GreatFaram
 ?dup_002e2820@@YAXXZ,,0x002E2820,7,game/GameEngine/Source/GameClient/GUI/GameWindow.cpp,matched,gen-alias;object-symbol=?winGetParent@GameWindow@@QAEPAV1@XZ;C++ alias;link-owner repair: retain native matched getter emitter; old helper-twin bytes and extent unchanged;model=gpt-6.1-sol;host=GreatFaram
 ?dup_00642b20@@YAXXZ,,0x00642B20,7,game/GameEngine/Source/GameClient/GUI/GameWindow.cpp,matched,gen-alias;object-symbol=?winGetParent@GameWindow@@QAEPAV1@XZ;C++ alias;link-owner repair: retain native matched getter emitter; old helper-twin bytes and extent unchanged;model=gpt-6.1-sol;host=GreatFaram
+?Rva009AD750Filter@@YAXPAURva009AD750Context@@PAE1IIHPBI@Z,,0x009AD750,848,game/GameEngine/Source/Common/Rva009AD750Filter.cpp,matched,address-derived seven-dword cdecl callback;complete caller and fields verified;Open BFME 2 donor Code/Libraries/Source/VP6/DeblockVerticalEdges.cpp at game.dat 0x001BE140;evidence=targets/game/reverse/identity_evidence/0x009ad750-donor-port.md;model=gpt-6.1-sol;host=fleet
