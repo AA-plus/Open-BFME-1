@@ -48,6 +48,6 @@ int Rva008B6880::rva008B66B0(int year,int month,int day)
     if (anchor<0 || reference<0) return -1;
     int adjusted=day;
     if (reference>adjusted) adjusted=reference-(reference-adjusted)%7+7;
-    int value = (((int)floor((year-base)*0.25f)-base+anchor+year)%7+(adjusted-reference)%7)%7;
+    int value = (((int)(float)floor((double)((year-base)*0.25f))-base+anchor+year)%7+(adjusted-reference)%7)%7;
     return value;
 }
