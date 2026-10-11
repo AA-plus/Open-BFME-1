@@ -27,10 +27,10 @@ class PathAppendNodeILT
 public:
     void appendNode(const Coord3D *position, PathfindLayerEnum layer);
 };
-class BFMEObjectLayerQuery
+class Gen_001BEC20
 {
 public:
-    int getLayer() const;
+    int bfmeScale() const;
 };
 struct Object0026F460Fields
 {
@@ -175,7 +175,7 @@ void Rva0026F460::method(const Coord3D *position, int cost)
     {
         m_path = new Rva003FD790;
         Object *object = m_object;
-        int layer = reinterpret_cast<BFMEObjectLayerQuery *>(object)->getLayer();
+        int layer = reinterpret_cast<Gen_001BEC20 *>(object)->bfmeScale();
         reinterpret_cast<PathAppendNodeILT *>(m_path)->appendNode(&reinterpret_cast<Object0026F460Fields *>(object)->m_position, static_cast<PathfindLayerEnum>(layer));
         reinterpret_cast<Path0026F460Fields *>(m_path)->m_isOptimized = true;
     }
