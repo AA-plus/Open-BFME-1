@@ -1,5 +1,5 @@
 // ?bfmeFlagsCompatible@@YA_NPBVPathfindCell@@0@Z
-// partial score=0.82 date=2026-09-04
+// partial score=0.0 date=2026-09-04
 // partial score=0.82 date=2026-09-04
 // cl: /DNDEBUG /MD
 //
