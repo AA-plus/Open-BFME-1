@@ -871,6 +871,7 @@ address_global	game/GameEngineDevice/Source/VideoDevice/Bink/SubtitleEntryAlignm
 address_global	game/GameEngineDevice/Source/W3DDevice/Common/System/DeviceReset_releaseResources_rva0090F050.cpp	g_bfmeRva012D6DE0CriticalSection	3
 address_global	game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/Gen00760600DetachAndClearName.cpp	g_Rva0107301CEmptyString	2
 address_global	game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DModelDrawAttachableSubModels.cpp	g_Rva00F36E5C	2
+address_global	game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/AptDisplayStringAllocation_ctor.cpp	g_Va012BB864	2	allow=621684bc8c41539052e3afc76e8a04d286d9cf61
 address_global	game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Rva00786060AptRoundedBounds.cpp	g_Rva00F0692CTransform	2
 address_global	game/GameEngineDevice/Source/W3DDevice/GameClient/RTS3DSceneCustomizedRender.cpp	g_bfmeRva00EF9C32	2
 address_global	game/GameEngineDevice/Source/W3DDevice/GameClient/Rva006D53A0Update.cpp	g_Rva00F36E5C	3

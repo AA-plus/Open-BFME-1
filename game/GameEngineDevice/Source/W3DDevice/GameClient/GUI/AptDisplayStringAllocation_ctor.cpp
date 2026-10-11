@@ -66,7 +66,8 @@ extern GameTextInterface *TheGameText;
 class AptTextListener;
 class WindowManager { public: void bfme_bindAptText(const AsciiString&,const UnicodeString&,AptTextListener*); };
 extern WindowManager *g_rva012F19E8WindowManager;
-extern bool Rva012BB864ScaleEnabled;
+// Retail byte load at 0x0078776B reads this initialized one-byte cell.
+bool g_Va012BB864 = true;
 extern float Rva012BB86CScaleX,Rva012BB870ScaleY;
 class Rva00788290Base { public: virtual ~Rva00788290Base() {} };
 class Rva00788290Object {
@@ -102,7 +103,7 @@ public:
 };
 Rva00788290Allocation::Rva00788290Allocation(Rva00788290Object *source):
  m_displayString(0),m_rect00787710(),m_size00787710(1,1),
- m_at24(source->m_at2c),m_at28(source->m_at14),m_at2c(Rva012BB864ScaleEnabled),m_dropShadow(false),m_at2e(!source->m_at28 || !source->m_at24)
+ m_at24(source->m_at2c),m_at28(source->m_at14),m_at2c(g_Va012BB864),m_dropShadow(false),m_at2e(!source->m_at28 || !source->m_at24)
 {
  m_displayString=TheDisplayStringManager->newDisplayString();
  float x=source->m_at04;
