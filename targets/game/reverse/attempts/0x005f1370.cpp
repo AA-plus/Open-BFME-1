@@ -1,5 +1,5 @@
 // ?d_005f1370@@YAXXZ
-// partial score=0.1022 date=2026-10-09
+// partial score=0.1201 date=2026-10-11
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/Wwutil /Igame/Libraries/Source/WWVegas/WWDownload /Igame/Libraries/Source/Compression /Igame/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/shims/sweep /Igame/Libraries/Include
 #define Matrix4x4 Matrix4
 #include "aabox.h"
@@ -190,34 +190,36 @@ int Rva005F1370Owner::render(unsigned info, const AABoxClass &box, int *fieldCou
     }
     if (count < 1)
         return count;
-    BFMEWaterTrackTextureHandle texture = BFMEGetWaterTrackTexture((char *)system()->name10.str(), 0, 0);
-    if (Va012F6D88) {
-        Va012F6D88->setTexture(texture.texture);
-        switch (system()->field08) {
-        case 1:
-            Va012F6D88->shader = ShaderClass::_PresetAdditiveSpriteShader;
-            break;
-        case 2:
-            Va012F6D88->shader = Va012D6E30;
-            break;
-        case 3:
-            Va012F6D88->shader = Va012D6E34;
-            break;
-        case 4:
-            Va012F6D88->shader = Va012D6E48;
-            break;
-        case 5:
-            Va012F6D88->shader = Va012D6E60;
-            break;
-        case 6:
-            Va012F6D88->shader = Va012D6E24;
-            break;
-        case 7:
-            Va012F6D88->shader = Va012D6E28;
-            break;
+    {
+        BFMEWaterTrackTextureHandle texture = BFMEGetWaterTrackTexture((char *)system()->name10.str(), 0, 0);
+        if (Va012F6D88) {
+            Va012F6D88->setTexture(texture.texture);
+            switch (system()->field08) {
+            case 1:
+                Va012F6D88->shader = ShaderClass::_PresetAdditiveSpriteShader;
+                break;
+            case 2:
+                Va012F6D88->shader = Va012D6E30;
+                break;
+            case 3:
+                Va012F6D88->shader = Va012D6E34;
+                break;
+            case 4:
+                Va012F6D88->shader = Va012D6E48;
+                break;
+            case 5:
+                Va012F6D88->shader = Va012D6E60;
+                break;
+            case 6:
+                Va012F6D88->shader = Va012D6E24;
+                break;
+            case 7:
+                Va012F6D88->shader = Va012D6E28;
+                break;
+            }
+            ((Rva0090F8C0Holder *)Va012F6D88)->set(count, Va012F6DC8, Va012F6DCC, 0, 0);
+            Va012F6D88->render(info);
         }
-        ((Rva0090F8C0Holder *)Va012F6D88)->set(count, Va012F6DC8, Va012F6DCC, 0, 0);
-        Va012F6D88->render(info);
     }
     return count;
 }
