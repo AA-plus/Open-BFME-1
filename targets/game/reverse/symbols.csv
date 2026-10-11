@@ -90982,3 +90982,6 @@ _printf,0x009F7244,route=MSVCR71.dll!printf; IAT 0x01359464; CRT printf import j
 ?d_009ab9d0@@YAXXZ,0x009AB9D0,address-only compatibility pin for retired dump name; no signature identity claim
 ?d_00925380@@YAXXZ,0x00925380,legacy address-only compatibility pin for retired dump used by MeshGeometryReadChunks
 ?d_009c74f0@@YAXXZ,0x009C74F0,address-only compatibility for retired dump; complete retail extent and CPU dispatch slot verified
+?d_009b4390@@YAXXZ,0x009B4390,Address-only compatibility for withdrawn dump; Rva009B4390CodecCall int cdecl variadic body; landed Rva009AABB0CodecDispatch and Rva009AAC80CodecGrid still call this name; evidence=targets/game/reverse/identity_evidence/0x009b4390-donor-port.md
+?d_009a9980@@YAXXZ,0x009A9980,Address-only compatibility for withdrawn dump; Rva009A9980 eight-dword cdecl sampler; landed Rva009A9AD0Scale2D still calls this name; evidence=targets/game/reverse/identity_evidence/0x009a9980-donor-port.md
+?d_009a9a20@@YAXXZ,0x009A9A20,Address-only compatibility for withdrawn dump; Rva009A9A20 eight-dword cdecl sampler; landed Rva009A9AD0Scale2D still calls this name; evidence=targets/game/reverse/identity_evidence/0x009a9a20-donor-port.md
