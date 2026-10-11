@@ -3,13 +3,13 @@
 
 #include <vector>
 
-class BfmeSubVE
+class Q1Forwardee0000871A
 {
 public:
-	void bfmeDropVE(void *what);
+	void handle(int node);
 };
 
-class DataChunkInput : public BfmeSubVE
+class DataChunkInput : public Q1Forwardee0000871A
 {
 public:
 	bool parse(void *userData);
@@ -32,7 +32,7 @@ public:
 	~LibraryMapsParser()
 	{
 		m_vftable = _bfmeVftVE;
-		m_table->bfmeDropVE(m_parser);
+		m_table->handle(reinterpret_cast<int>(m_parser));
 	}
 
 private:
