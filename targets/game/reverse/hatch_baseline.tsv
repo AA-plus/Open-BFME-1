@@ -941,6 +941,21 @@ address_global	game/Libraries/Source/DirtySock/Y4TextToValue.c	g_Rva0130A5ACEmpt
 address_global	game/Libraries/Source/DirtySock/Y5SmallHelpers.c	g_Rva012C47A4	2
 address_global	game/Libraries/Source/DirtySock/commudp.cpp	g_Rva0130AD08Count	3
 address_global	game/Libraries/Source/DirtySock/commudp.cpp	g_Rva0130AF38Lock	5
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va01136744	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va01136754	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va01136760	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va0113676C	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va01136774	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va0113677C	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va01136784	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va01136790	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va0113679C	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va011367A8	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va011367B0	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va011367B8	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va011367C0	2	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va012D5518	4	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
+address_global	game/Libraries/Source/EA/Apt/AptStringMethodLookup.cpp	g_Va012D5580	4	allow=c4f249dfa55d1b196ac05c879471fbb3b317d7a4
 address_global	game/Libraries/Source/EA/Apt/ArrayFromStack008C8240.cpp	g_Va01337830	2
 address_global	game/Libraries/Source/EA/Apt/Bfme5AppendGlobal8CB020.cpp	g_Va013387D8	2
 address_global	game/Libraries/Source/EA/Apt/Rva00899800TableSet.cpp	g_Rva01337A28Index	5
