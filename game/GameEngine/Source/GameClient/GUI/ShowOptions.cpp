@@ -37,6 +37,9 @@ class BfmeAptScreenOptions;
 extern BfmeAptScreenOptions *g_obj12F4AD4;
 unsigned char g_optByte12F4AD0;
 unsigned char g_optByte12F4AD1;
+// The Options constructor clears this four-byte cell; Save and Cancel
+// pass its value to stopAudioEvent. Retail's loader initializes it to zero.
+void *g_Va012F4AE4 = 0;
 extern unsigned char g_optFlag12F4AD8;
 extern unsigned char g_optFlag12F4AD9;
 extern unsigned char g_optFlag12F4ADA;
