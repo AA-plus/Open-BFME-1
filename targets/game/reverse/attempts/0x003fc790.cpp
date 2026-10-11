@@ -1,9 +1,6 @@
 // ?classifyCells@PathfindLayer@@QAEXXZ
-// partial score=0.2 date=2026-09-22
-// Candidate for the BFME packed-cell bridge classifier.
-// The retail body uses the Zero Hour algorithm with BFME field and enum changes.
-
-// cl: /DNDEBUG /MD /EHsc
+// partial score=0.9758 date=2026-10-11
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Include
 
 #include <math.h>
 
@@ -11,10 +8,10 @@ typedef int Int;
 typedef float Real;
 typedef bool Bool;
 
-#define BfmeZeroRange (*(const Real *)0x01075350)
-#define g_bfmeDefaultBU (*(const Real *)0x01075334)
-#define g_bfmeDirectionWeight1285 (*(const Real *)0x01075c74)
-#define g_bfmeScaleBK (*(const Real *)0x01075c70)
+#define BfmeZeroRange 0.0f
+#define g_bfmeDefaultBU 1.0f
+#define g_bfmeDirectionWeight1285 10.0f
+#define g_bfmeScaleBK 0.1f
 
 enum PathfindLayerEnum
 {
@@ -29,34 +26,35 @@ struct ICoord2D
 	Int y;
 };
 
-struct Coord2D
+#include "Lib/Coord2D.h"
+
+#include "Lib/Coord3D.h"
+
+// ?Rva003FC790Set@@YAXPAUCoord3D@@PBU1@@Z absent-from-retail
+static __forceinline void Rva003FC790Set(Coord3D *destination, const Coord3D *source)
 {
-	Real x;
-	Real y;
-};
+	destination->x = source->x;
+	destination->y = source->y;
+	destination->z = source->z;
+}
 
-struct Coord3D
+// ?length@@YAMABUCoord3D@@@Z absent-from-retail
+static __forceinline Real length(const Coord3D &v)
 {
-	Real x;
-	Real y;
-	Real z;
+	return (Real)sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+}
 
-	Real length(void) const
-	{
-		return (Real)sqrt(x * x + y * y + z * z);
+// ?normalize@@YAXAAUCoord3D@@@Z absent-from-retail
+static __forceinline void normalize(Coord3D &v)
+{
+	Real len = length(v);
+	if (len != 0.0f) {
+		Real scale = 1.0f / len;
+		v.x *= scale;
+		v.y *= scale;
+		v.z *= scale;
 	}
-
-	void normalize(void)
-	{
-		Real len = length();
-		if (len != BfmeZeroRange) {
-			Real scale = g_bfmeDefaultBU / len;
-			x *= scale;
-			y *= scale;
-			z *= scale;
-		}
-	}
-};
+}
 
 struct Region2D
 {
@@ -84,7 +82,7 @@ public:
 	Bool isPointOnBridge(const Coord3D *point);
 	Bool isCellOnSide(const Region2D *cell);
 	Bool isCellOnEnd(const Region2D *cell);
-	Bool isCellEntryPoint(const Region2D *cell);
+	Bool isCellEntryPoint(const Region2D *cell, Real *entryZ);
 	Real getBridgeHeight(const Coord3D *point, Coord3D *normal);
 
 	void getBridgeInfo(BridgeInfo *info)
@@ -97,7 +95,12 @@ private:
 	BridgeInfo m_bridgeInfo;
 };
 
-#pragma comment(linker, "/alternatename:?isCellEntryPoint@Bridge@@QAE_NPBURegion2D@@@Z=?j_0001cf49@@YAXXZ")
+
+class Gen_003F68B0
+{
+public:
+	void bfmeSetMode(unsigned int mode);
+};
 
 class PathfindCellInfo;
 
@@ -113,7 +116,10 @@ public:
 	};
 
 	void reset(void);
-	void setType(CellType type);
+	void setType(CellType type)
+	{
+		((Gen_003F68B0 *)this)->bfmeSetMode((unsigned int)type);
+	}
 
 	void setLayer(PathfindLayerEnum layer)
 	{
@@ -186,7 +192,7 @@ private:
 	Pathfinder *m_pathfinder;
 };
 
-#define TheAI (*(AI **)0x012ef214)
+extern AI *TheAI;
 
 class TerrainLogic
 {
@@ -202,11 +208,29 @@ public:
 		Coord3D *normal = 0, Bool clip = true) const;
 };
 
-#define TheTerrainLogic (*(TerrainLogic **)0x012ef4cc)
+extern TerrainLogic *TheTerrainLogic;
 
-#define g_bfmeK1266C (*(const Real *)0x01075344)
-#define BRIDGE_DIR_SCALE (*(const Real *)0x0109c34c)
-#define REAL_TO_INT_FLOOR(value) ((Int)floor((double)(value)))
+#define g_bfmeK1266C 5.0f
+#define BRIDGE_DIR_SCALE 7.0f
+extern "C" __declspec(dllimport) double __cdecl floor(double);
+
+// ?fast_float_floor@@YAMM@Z absent-from-retail
+__forceinline float fast_float_floor(float f)
+{
+	return (float)floor((double)f);
+}
+
+// ?fast_float2long_round@@YAJM@Z absent-from-retail
+__forceinline long fast_float2long_round(float f)
+{
+	long i;
+	__asm {
+		fld [f]
+		fistp [i]
+	}
+	return i;
+}
+#define REAL_TO_INT_FLOOR(value) (fast_float2long_round(fast_float_floor(value)))
 
 class PathfindLayer
 {
@@ -233,87 +257,6 @@ private:
 	Bridge *m_bridge;
 };
 
-__forceinline void PathfindLayer::classifyLayerMapCell(Int i, Int j,
-	PathfindCell *cell, Bridge *theBridge)
-{
-	Coord3D topLeftCorner, bottomRightCorner;
-
-	topLeftCorner.y = (Real)j * g_bfmeDirectionWeight1285;
-	bottomRightCorner.y = topLeftCorner.y + g_bfmeDirectionWeight1285;
-
-	topLeftCorner.x = (Real)i * g_bfmeDirectionWeight1285;
-	bottomRightCorner.x = topLeftCorner.x + g_bfmeDirectionWeight1285;
-
-	Int bridgeCount = 0;
-	Coord3D pt;
-	if (theBridge->isPointOnBridge(&topLeftCorner)) {
-		bridgeCount++;
-	}
-	pt = topLeftCorner;
-	pt.y = bottomRightCorner.y;
-	if (theBridge->isPointOnBridge(&pt)) {
-		bridgeCount++;
-	}
-	if (theBridge->isPointOnBridge(&bottomRightCorner)) {
-		bridgeCount++;
-	}
-	pt = topLeftCorner;
-	pt.x = bottomRightCorner.x;
-	if (theBridge->isPointOnBridge(&pt)) {
-		bridgeCount++;
-	}
-
-	cell->reset();
-	cell->setLayer(m_layer);
-	cell->setType(PathfindCell::CELL_IMPASSABLE);
-	if (bridgeCount == 4) {
-		cell->setType(PathfindCell::CELL_CLEAR);
-	} else {
-		if (bridgeCount != 0) {
-			cell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
-		}
-
-		Region2D cellBounds;
-		cellBounds.lo.x = topLeftCorner.x;
-		cellBounds.lo.y = topLeftCorner.y;
-		cellBounds.hi.x = bottomRightCorner.x;
-		cellBounds.hi.y = bottomRightCorner.y;
-
-		if (m_bridge->isCellOnSide(&cellBounds)) {
-			cell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
-		} else {
-			if (m_bridge->isCellOnEnd(&cellBounds)) {
-				cell->setType(PathfindCell::CELL_CLEAR);
-			}
-			if (m_bridge->isCellEntryPoint(&cellBounds)) {
-				cell->setType(PathfindCell::CELL_CLEAR);
-				cell->setConnectLayer(LAYER_GROUND);
-				PathfindCell *groundCell = TheAI->pathfinder()->getCell(
-					LAYER_GROUND, i, j);
-				groundCell->setConnectLayer(cell->getLayer());
-			}
-		}
-	}
-
-	Coord3D center = topLeftCorner;
-	center.x += g_bfmeK1266C;
-	center.y += g_bfmeK1266C;
-	if (cell->getType() != PathfindCell::CELL_IMPASSABLE) {
-		if (cell->getConnectLayer() != LAYER_GROUND) {
-			Real groundHeight = TheTerrainLogic->getLayerHeight(
-				center.x, center.y, LAYER_GROUND);
-			Real bridgeHeight = theBridge->getBridgeHeight(&center, 0);
-			if (groundHeight + g_bfmeDirectionWeight1285 > bridgeHeight) {
-				PathfindCell *groundCell = TheAI->pathfinder()->getCell(
-					LAYER_GROUND, i, j);
-				if (groundCell->getType() != PathfindCell::CELL_OBSTACLE) {
-					groundCell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
-				}
-			}
-		}
-	}
-}
-
 void PathfindLayer::classifyCells(void)
 {
 	m_startCell.x = -1;
@@ -326,16 +269,98 @@ void PathfindLayer::classifyCells(void)
 			PathfindCell *cell = &m_layerCells[i][j];
 			cell->setConnectLayer(LAYER_INVALID);
 			cell->setLayer(m_layer);
-			classifyLayerMapCell(i + m_xOrigin, j + m_yOrigin, cell, m_bridge);
+			{
+			Int cellX = i + m_xOrigin;
+			Int cellY = j + m_yOrigin;
+			Coord3D topLeftCorner, bottomRightCorner;
+
+			topLeftCorner.y = (Real)cellY * g_bfmeDirectionWeight1285;
+			bottomRightCorner.y = topLeftCorner.y + g_bfmeDirectionWeight1285;
+
+			topLeftCorner.x = (Real)cellX * g_bfmeDirectionWeight1285;
+			bottomRightCorner.x = topLeftCorner.x + g_bfmeDirectionWeight1285;
+
+			Int bridgeCount = 0;
+			Coord3D pt;
+			if (m_bridge->isPointOnBridge(&topLeftCorner)) {
+				bridgeCount++;
+			}
+			pt = topLeftCorner;
+			pt.y = bottomRightCorner.y;
+			if (m_bridge->isPointOnBridge(&pt)) {
+				bridgeCount++;
+			}
+			if (m_bridge->isPointOnBridge(&bottomRightCorner)) {
+				bridgeCount++;
+			}
+			pt = topLeftCorner;
+			pt.x = bottomRightCorner.x;
+			if (m_bridge->isPointOnBridge(&pt)) {
+				bridgeCount++;
+			}
+
+			cell->reset();
+			cell->setLayer(m_layer);
+			cell->setType(PathfindCell::CELL_IMPASSABLE);
+			if (bridgeCount == 4) {
+				cell->setType(PathfindCell::CELL_CLEAR);
+			} else {
+				if (bridgeCount != 0) {
+					cell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
+				}
+
+				Region2D cellBounds;
+				cellBounds.lo.x = topLeftCorner.x;
+				cellBounds.lo.y = topLeftCorner.y;
+				cellBounds.hi.x = bottomRightCorner.x;
+				cellBounds.hi.y = bottomRightCorner.y;
+
+				if (m_bridge->isCellOnSide(&cellBounds)) {
+					cell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
+				} else {
+					if (m_bridge->isCellOnEnd(&cellBounds)) {
+						cell->setType(PathfindCell::CELL_CLEAR);
+					}
+					Real entryZ;
+					if (m_bridge->isCellEntryPoint(&cellBounds, &entryZ)) {
+						cell->setType(PathfindCell::CELL_CLEAR);
+						cell->setConnectLayer(LAYER_GROUND);
+						PathfindCell *groundCell = TheAI->pathfinder()->getCell(
+							LAYER_GROUND, cellX, cellY);
+						groundCell->setConnectLayer(cell->getLayer());
+					}
+				}
+			}
+
+			Coord3D center;
+			Rva003FC790Set(&center, &topLeftCorner);
+			center.x += g_bfmeK1266C;
+			center.y += g_bfmeK1266C;
+			if (cell->getType() != PathfindCell::CELL_IMPASSABLE) {
+				if (cell->getConnectLayer() != LAYER_GROUND) {
+					Real groundHeight = TheTerrainLogic->getLayerHeight(
+						center.x, center.y, LAYER_GROUND);
+					Real bridgeHeight = m_bridge->getBridgeHeight(&center, 0);
+					if (groundHeight + g_bfmeDirectionWeight1285 > bridgeHeight) {
+						PathfindCell *groundCell = TheAI->pathfinder()->getCell(
+							LAYER_GROUND, cellX, cellY);
+						if (groundCell->getType() != PathfindCell::CELL_OBSTACLE) {
+							groundCell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
+						}
+					}
+				}
+			}
+			}
 		}
 
 		BridgeInfo info;
 		m_bridge->getBridgeInfo(&info);
-		Coord3D bridgeDir = info.to;
+		Coord3D bridgeDir;
+		Rva003FC790Set(&bridgeDir, &info.to);
 		bridgeDir.x -= info.from.x;
 		bridgeDir.y -= info.from.y;
 		bridgeDir.z -= info.from.z;
-		bridgeDir.normalize();
+		normalize(bridgeDir);
 		bridgeDir.x *= BRIDGE_DIR_SCALE;
 		bridgeDir.y *= BRIDGE_DIR_SCALE;
 
