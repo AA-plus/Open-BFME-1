@@ -19,16 +19,11 @@ struct Rva009F59D0Node
 
 struct Gen009F5040Node;
 
-class Gen_dtor_009f2600
-{
-public:
-	void cleanup();
-};
-
 class PartitionManagerImpl
 {
 public:
 	void SetTreeDepth(unsigned level);
+	void RemoveAllObjects();
 	void _InsertObjectIntoTree(Gen009F5040Node *node);
 
 	Int m_0000[6];
@@ -55,7 +50,7 @@ void PartitionManagerImpl::SetTreeDepth(unsigned level)
 		count = count * 4 + 1;
 	}
 
-	((Gen_dtor_009f2600 *)this)->cleanup();
+	RemoveAllObjects();
 
 	for (int i = 0; i < 17; ++i) {
 		Gen_t_009f51f0_p8cd fillValue = {0, 0};
