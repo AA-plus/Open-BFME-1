@@ -114,7 +114,9 @@ public:
 		Int unknown);
 };
 
-extern BFMEThingFactory *TheThingFactory;
+// Native ThingFactory.cpp owns the singleton at VA012EF1D8.
+class ThingFactory;
+extern ThingFactory *TheThingFactory;
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/GlobalData.h
 class GlobalData
@@ -677,7 +679,7 @@ void InGameUI::placeBuildAvailable(const ThingTemplate *build,
 				m_mouseModeCursor = Mouse::CROSS;
 		}
 
-		Drawable *draw = TheThingFactory->newDrawable(
+		Drawable *draw = reinterpret_cast<BFMEThingFactory *>(TheThingFactory)->newDrawable(
 			build, DRAWABLE_STATUS_NO_STATE_PARTICLES, -1);
 		if (sourceObject != 0)
 		{

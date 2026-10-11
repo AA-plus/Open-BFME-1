@@ -209,7 +209,9 @@ public:
 		DrawableStatus status = DRAWABLE_STATUS_NONE, Int id = -1);
 };
 
-extern BFMEThingFactory *TheThingFactory;
+// Native ThingFactory.cpp owns the singleton at VA012EF1D8.
+class ThingFactory;
+extern ThingFactory *TheThingFactory;
 
 class GameLogic
 {
@@ -373,7 +375,7 @@ void StealthUpdate::changeVisualDisguise()
 		Player *player = ThePlayerList->getNthPlayer(m_disguiseAsPlayerIndex);
 		ModelConditionFlags flags = self->readModelConditionFlags();
 		TheGameClient->destroyDrawable(draw);
-		draw = TheThingFactory->newDrawable(m_disguiseAsTemplate);
+		draw = reinterpret_cast<BFMEThingFactory *>(TheThingFactory)->newDrawable(m_disguiseAsTemplate);
 		if (draw)
 		{
 			TheGameLogic->bindObjectAndDrawable(self, draw);
@@ -419,7 +421,7 @@ void StealthUpdate::changeVisualDisguise()
 		ModelConditionFlags flags = self->readModelConditionFlags();
 		TheGameClient->destroyDrawable(draw);
 		const ThingTemplate *tTemplate = self->getTemplate();
-		TheThingFactory->newDrawable(tTemplate);
+		reinterpret_cast<BFMEThingFactory *>(TheThingFactory)->newDrawable(tTemplate);
 		if (draw)
 		{
 			TheGameLogic->bindObjectAndDrawable(self, draw);
