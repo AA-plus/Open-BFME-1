@@ -57,8 +57,9 @@ public:
     void initFromSides(SidesList *);
 };
 extern TeamFactory *TheTeamFactory;
-class Network;
-extern Network *TheNetwork;
+// Native Network.cpp owns VA012F7714 through NetworkInterface.
+class NetworkInterface;
+extern NetworkInterface *TheNetwork;
 
 class VRelease;
 class Rva000C91C0ReleaseSet { public: void set(VRelease*); };

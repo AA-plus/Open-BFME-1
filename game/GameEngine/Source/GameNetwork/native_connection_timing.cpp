@@ -357,8 +357,11 @@ public:
 private:
 	BFMEReceiveNetworkVTable *m_vtable;
 };
-extern Network *TheNetwork;
-Bool CommandRequiresAck(NetCommandMsg *msg);
+// Network.cpp owns the singleton through its native interface pointer.
+class NetworkInterface;
+extern NetworkInterface *TheNetwork;
+// The matched retail predicate returns Int; callers consume only AL.
+int CommandRequiresAck(NetCommandMsg *msg);
 
 class BFMENetInformPlayerLeaveFrameCommandMsg : public NetCommandMsg
 {
@@ -1949,10 +1952,10 @@ void BFMEConnectionManager::runRelayPass()
 			NetPacketAddress source = packet.getAddress();
 			for (; ref; ref = ref->getNext())
 			{
-				if (TheNetwork && TheNetwork->isRouterLeavePending() &&
+				if (TheNetwork && reinterpret_cast<Network *>(TheNetwork)->isRouterLeavePending() &&
 					m_localSlot == m_packetRouterSlot && ref->getCommand()->getNetCommandType() != NETCOMMANDTYPE_FRAMEINFO)
 					continue;
-				if (CommandRequiresAck(ref->getCommand()))
+				if ((unsigned char)CommandRequiresAck(ref->getCommand()))
 					ackCommand(ref, &source);
 				if (!isDuplicateCommand(ref->getCommand()) && processIncomingCommand(ref))
 					relayCommand(ref);
@@ -1965,10 +1968,10 @@ void BFMEConnectionManager::runRelayPass()
 		NetCommandList *commands = m_wrapperList->getReadyCommands();
 		for (NetCommandRef *ref = commands->getFirstMessage(); ref; ref = ref->getNext())
 		{
-			if (TheNetwork && TheNetwork->isRouterLeavePending() &&
+			if (TheNetwork && reinterpret_cast<Network *>(TheNetwork)->isRouterLeavePending() &&
 				m_localSlot == m_packetRouterSlot && ref->getCommand()->getNetCommandType() != NETCOMMANDTYPE_FRAMEINFO)
 				continue;
-			if (CommandRequiresAck(ref->getCommand()))
+			if ((unsigned char)CommandRequiresAck(ref->getCommand()))
 				ackCommand(ref, 0);
 			if (processIncomingCommand(ref))
 				relayCommand(ref);
