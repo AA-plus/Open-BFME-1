@@ -1,5 +1,5 @@
 // ?load@W3DBridge@@QAE_NW4BodyDamageType@@@Z
-// partial score=0.9941679626749611 date=2026-09-26
+// partial score=0.9986 date=2026-10-11
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Source/WWVegas/WWDebug
 // Native bank: W3DBridge::load, RVA006D8C10,2836 bytes including four switch entries.
 // The 0x114-byte bridge layout is witnessed by its landed constructor and vertex methods.
@@ -21,7 +21,7 @@
 typedef bool Bool;
 typedef int Int;
 typedef float Real;
-template <> inline const char *StringBase<char>::str() const { return m_data ? m_data->data : ""; }
+
 enum BodyDamageType {BODY_PRISTINE,BODY_DAMAGED,BODY_REALLYDAMAGED,BODY_RUBBLE};
 class TerrainRoadType {
 public:
@@ -83,6 +83,25 @@ public:
  BodyDamageType m_curDamageState;
  bool m_enabled;
 };
+static __forceinline void Rva006D8C10TransformFirst(const Matrix3D & A,const Vector3 & in,Vector3 * out)
+{
+	Vector3 tmp;
+	Vector3 * v;
+
+	// check for aliased parameters
+	if (out == &in) {
+		tmp = in;
+		v = &tmp;
+	} else {
+		v = (Vector3 *)&in;		// whats the right way to do this...
+	}
+
+	out->X = ((*(volatile const float *)&A[0][0]) * v->X + A[0][1] * v->Y + A[0][2] * v->Z + A[0][3]);
+	out->Y = (A[1][0] * v->X + A[1][1] * v->Y + A[1][2] * v->Z + A[1][3]);
+	out->Z = (A[2][0] * v->X + A[2][1] * v->Y + A[2][2] * v->Z + A[2][3]);
+}
+
+
 Bool W3DBridge::load(enum BodyDamageType curDamageState)
 {
 	REF_PTR_RELEASE(m_bridgeTexture);
@@ -188,14 +207,14 @@ Bool W3DBridge::load(enum BodyDamageType curDamageState)
 	m_leftMaxX = -FLT_MAX;
 	m_minY = FLT_MAX;
 	m_maxY = -FLT_MAX;
-	for (i=0; i++ < numVertex;) {
+	for (i=0; i < numVertex; ++i) {
 		Vector3 vert;
-		Matrix3D::Transform_Vector(m_leftMtx, *pVert, &vert);
+		Rva006D8C10TransformFirst(m_leftMtx, pVert[i], &vert);
 		if (m_leftMinX > vert.X) m_leftMinX = vert.X;
 		if (m_minY > vert.Y) m_minY = vert.Y;
 		if (vert.X > m_leftMaxX) m_leftMaxX = vert.X;
 		if (vert.Y > m_maxY) m_maxY = vert.Y;
-        ++pVert;	 // Note - we assume all sections are the same width, so we only do maxY for first section.
+// first section width
 	}
 	if (m_bridgeType == SECTIONAL_BRIDGE) {
 		const Int sectionCount = BridgeVertexCount(m_sectionMesh);
