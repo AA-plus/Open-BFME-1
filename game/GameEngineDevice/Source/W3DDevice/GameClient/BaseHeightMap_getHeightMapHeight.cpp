@@ -1,29 +1,26 @@
-// ?getHeightMapHeight@BaseHeightMapRenderObjClass@@QBEMMMPAUCoord3D@@@Z
-// partial score=0.43 date=2026-09-22
-// cl: /O2 /Ob1 /Oy /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
+// ?getHeightMapHeight@BaseHeightMapRenderObjClass@@UBEMMMPAVCoord3D@@@Z
+// Height and smoothed normal from the BFME unsigned-word heightmap.
+// cl: /O2 /Ob1 /Oy /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Include /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Iinputs/reference/shims/sweep
 
 typedef float Real;
 typedef int Int;
 typedef unsigned short UnsignedShort;
 
-struct Coord3D
-{
-	Real x;
-	Real y;
-	Real z;
-};
+#include "coord3d.h"
+#include "vector3.h"
 
 extern const Real BfmeZeroRange;
 extern const Real g_bfmeScaleBK;
 extern const Real g_bfmeDefaultBU;
 
-#define Rva010F653CHeightScale (*(const Real *)0x010F653C)
-#define Rva010977E0NormalAxis (*(const Real *)0x010977E0)
-#define Rva01096418NormalAxisSquared (*(const Real *)0x01096418)
-#define Rva0111D88CNormalLengthBias (*(const Real *)0x0111D88C)
+#define Rva010F653CHeightScale 0.0390625f
+#define Rva010977E0NormalAxis 20.0f
+#define Rva01096418NormalAxisSquared 400.0f
+#define Rva0111D88CNormalLengthBias 160000.0f
 
 extern "C" __declspec(dllimport) double __cdecl floor(double value);
 
+// ?bfmeFloatToLong@@YAHM@Z absent-from-retail
 __forceinline Int bfmeFloatToLong(Real value)
 {
 	Int result;
@@ -33,52 +30,6 @@ __forceinline Int bfmeFloatToLong(Real value)
 	}
 	return result;
 }
-
-class WWMath
-{
-public:
-	static Real __fastcall Inv_Sqrt(Real value);
-};
-
-class Vector3
-{
-public:
-	Real X;
-	Real Y;
-	Real Z;
-
-	__forceinline void Set(Real x, Real y, Real z)
-	{
-		X = x;
-		Y = y;
-		Z = z;
-	}
-
-	__forceinline void Normalize(void)
-	{
-		Real lengthSquared = Length2();
-		if (lengthSquared != BfmeZeroRange)
-		{
-			Real inverseLength = WWMath::Inv_Sqrt(lengthSquared);
-			X *= inverseLength;
-			Y *= inverseLength;
-			Z *= inverseLength;
-		}
-	}
-
-	__forceinline Real Length2(void) const
-	{
-		return X * X + Y * Y + Z * Z;
-	}
-
-	static __forceinline void Normalized_Cross_Product(const Vector3 &a, const Vector3 &b, Vector3 *result)
-	{
-		result->X = a.Y * b.Z - a.Z * b.Y;
-		result->Y = a.Z * b.X - a.X * b.Z;
-		result->Z = a.X * b.Y - a.Y * b.X;
-		result->Normalize();
-	}
-};
 
 class WorldHeightMap
 {
@@ -94,41 +45,55 @@ public:
 class BaseHeightMapRenderObjClass
 {
 public:
-	Real getHeightMapHeight(Real x, Real y, Coord3D *normal) const;
+	virtual Real getHeightMapHeight(Real x, Real y, class Coord3D *normal) const;
 	UnsignedShort getClipHeight(Int x, Int y) const;
 
 private:
-	char m_pad[0x2FF4];
+	char m_pad[0x2FF0];
 	WorldHeightMap *m_map;
 };
 
-Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D *normal) const
+// ?getHeightMapHeight@BaseHeightMapRenderObjClass@@UBEMMMPAVCoord3D@@@Z
+/** return the height and normal of the triangle plane containing given location within heightmap. */
+Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, class Coord3D *normal) const
 {
 	if (!m_map)
 	{
 		if (normal)
 		{
+			// return a default normal pointing up
 			normal->x = 0.0f;
 			normal->y = 0.0f;
 			normal->z = 1.0f;
 		}
-		return BfmeZeroRange;
+		return 0.0f;
 	}
 
-	Real xdiv = x * g_bfmeScaleBK;
-	Real ydiv = y * g_bfmeScaleBK;
+	//	3-----2
+	//  |    /|
+	//  |  /  |
+	//	|/    |
+	//  0-----1
+	//Find surrounding grid points
+	Real xdiv = x * 0.1f;
+	Real ydiv = y * 0.1f;
 	Real ixf = (Real)floor((double)xdiv);
 	Real iyf = (Real)floor((double)ydiv);
-	Real fx = xdiv - ixf;
-	Real fy = ydiv - iyf;
+	Real fx = xdiv - ixf; //get fraction
+	Real fy = ydiv - iyf; //get fraction
+	// since ixf & iyf are already floor'ed, we can use the fastest f->i conversion we have...
 	Int ix = bfmeFloatToLong((Real)floor((double)ixf)) + m_map->m_borderSize;
 	Int iy = bfmeFloatToLong((Real)floor((double)iyf)) + m_map->m_borderSize;
 	Int xExtent = m_map->m_width;
 
+	// Check for extent-3, not extent-1: we go into the next row/column of data for smoothed triangle points, so extent-1
+	// goes off the end...
 	if (ix > xExtent - 3 || iy > m_map->m_height - 3 || iy < 1 || ix < 1)
 	{
+		// sample point is not on the heightmap
 		if (normal)
 		{
+			// return a default normal pointing up
 			normal->x = 0.0f;
 			normal->y = 0.0f;
 			normal->z = 1.0f;
@@ -141,19 +106,30 @@ Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D *no
 	Real p0 = data[idx];
 	Real p2 = data[idx + xExtent + 1];
 	Real height;
-	if (fy > fx)
+	if (fy > fx) // test if we are in the upper triangle
 	{
 		Real p3 = data[idx + xExtent];
-		height = (p3 + (g_bfmeDefaultBU - fy) * (p0 - p3) + fx * (p2 - p3)) * Rva010F653CHeightScale;
+		height = ((1.0f - fy) * (p0 - p3) + fx * (p2 - p3) + p3) * Rva010F653CHeightScale;
 	}
 	else
 	{
+		// we are in the lower triangle
 		Real p1 = data[idx + 1];
-		height = (p1 + fy * (p2 - p1) + (g_bfmeDefaultBU - fx) * (p0 - p1)) * Rva010F653CHeightScale;
+		height = ((1.0f - fx) * (p0 - p1) + fy * (p2 - p1) + p1) * Rva010F653CHeightScale;
 	}
 
 	if (normal)
 	{
+		//		9		  8
+		//
+		//10	3-----2		7
+		//	  |    /|
+		//	  |  /  |
+		//		|/    |
+		//11	0-----1		6
+		//
+		//		4			5
+		//Find surrounding grid points for smoothed normals.
 		Int idx4 = ix + (iy - 1) * xExtent;
 		Int idx0 = ix + iy * xExtent;
 		Int idx3 = ix + iy * xExtent + xExtent;
@@ -181,27 +157,22 @@ Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D *no
 		Real deltaZ_Y2 = d8 - d1;
 		Real deltaZ_Y3 = d9 - d0;
 
-		Real deltaZ_X_Left = deltaZ_X0 * (g_bfmeDefaultBU - fx) + fx * deltaZ_X3;
-		Real deltaZ_X_Right = deltaZ_X1 * (g_bfmeDefaultBU - fx) + fx * deltaZ_X2;
+		// Interpolate to get the smoothed valued.
+		Real deltaZ_X_Left = deltaZ_X0 * (1.0f - fx) + fx * deltaZ_X3;
+		Real deltaZ_X_Right = deltaZ_X1 * (1.0f - fx) + fx * deltaZ_X2;
 		Real deltaZ_X = deltaZ_X_Left * (1.0 - fy) + fy * deltaZ_X_Right;
-		Real deltaZ_Y_Left = deltaZ_Y0 * (g_bfmeDefaultBU - fx) + fx * deltaZ_Y3;
-		Real deltaZ_Y_Right = deltaZ_Y1 * (g_bfmeDefaultBU - fx) + fx * deltaZ_Y2;
+		Real deltaZ_Y_Left = deltaZ_Y0 * (1.0f - fx) + fx * deltaZ_Y3;
+		Real deltaZ_Y_Right = deltaZ_Y1 * (1.0f - fx) + fx * deltaZ_Y2;
 		Real deltaZ_Y = deltaZ_Y_Left * (1.0 - fy) + fy * deltaZ_Y_Right;
 
 		Vector3 l2r, n2f;
 		l2r.Set(Rva010977E0NormalAxis, 0.0f, deltaZ_X * Rva010F653CHeightScale);
 		n2f.Set(0.0f, Rva010977E0NormalAxis, deltaZ_Y * Rva010F653CHeightScale);
-		Real normalX = l2r.Y * n2f.Z - l2r.Z * n2f.Y;
-		Real normalY = l2r.Z * n2f.X - l2r.X * n2f.Z;
-		Real normalZ = l2r.X * n2f.Y - l2r.Y * n2f.X;
-		Real lengthSquared = normalX * normalX + normalY * normalY + normalZ * normalZ;
-		if (lengthSquared != BfmeZeroRange)
-		{
-			Real inverseLength = WWMath::Inv_Sqrt(lengthSquared);
-			normalX *= inverseLength;
-			normalY *= inverseLength;
-			normalZ *= inverseLength;
-		}
+		Vector3 normalAtTexel;
+		Vector3::Normalized_Cross_Product(l2r, n2f, &normalAtTexel);
+		Real normalX = normalAtTexel.X;
+		Real normalY = normalAtTexel.Y;
+		Real normalZ = normalAtTexel.Z;
 		normal->x = normalX;
 		normal->y = normalY;
 		normal->z = normalZ;
