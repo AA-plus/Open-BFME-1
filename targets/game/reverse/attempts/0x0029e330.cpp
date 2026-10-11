@@ -1,13 +1,9 @@
 // ?update@ProductionUpdate@@UAE?AW4UpdateSleepTime@@XZ
-// partial score=0.210885805763 date=2026-09-27
+// partial score=0.2356 date=2026-10-11
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringbaseunicode /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include
 // stlport
 #define _STLP_NO_EXCEPTIONS 1
-#include "ascii_string.h"
-#include "basetype.h"
-#include <bitset>
-#include <list>
-#include <wchar.h>
+#include "string_base.h"
 template <> inline const char *StringBase<char>::str() const {
   static const char TheNullChr = 0;
   return m_data ? m_data->data : &TheNullChr;
@@ -17,6 +13,11 @@ inline const unsigned short *StringBase<unsigned short>::str() const {
   static const unsigned short TheNullChr = 0;
   return m_data ? m_data->data : &TheNullChr;
 }
+#include "ascii_string.h"
+#include "basetype.h"
+#include <bitset>
+#include <list>
+#include <wchar.h>
 #include "Common/UnicodeString.h"
 #include <string.h>
 inline UnicodeString::~UnicodeString() {
@@ -32,6 +33,35 @@ template <> __declspec(noinline) bool StringBase<char>::isEmpty() const {
 // Neutral hidden-return helpers below are actual 0029C410/0029C440 targets;
 // no pins are supplied for their local spellings. All fields retain addresses
 // unless the ProductionUpdate twin and constructor establish their meaning.
+class NameKeyGenerator;
+extern NameKeyGenerator *TheNameKeyGenerator;
+class GameLogic;
+extern GameLogic *TheGameLogic;
+class AudioManager;
+extern AudioManager *TheAudio;
+class PlayerList;
+extern PlayerList *ThePlayerList;
+class ExperienceLevelSystem;
+extern ExperienceLevelSystem *TheExperienceLevelSystem;
+class ThingFactory;
+extern ThingFactory *TheThingFactory;
+class ScriptEngine;
+extern ScriptEngine *TheScriptEngine;
+class GameText;
+extern GameText *TheGameText;
+class InGameUI;
+extern InGameUI *TheInGameUI;
+class Radar;
+extern Radar *TheRadar;
+class Eva;
+extern Eva *TheEva;
+class FXListStore;
+extern FXListStore *TheFXListStore;
+class UpgradeCenter;
+extern UpgradeCenter *TheUpgradeCenter;
+class ControlBar;
+extern ControlBar *TheControlBar;
+
 typedef void (*Entry)();
 struct Rva0029E330CallOwner {};
 struct Rva0029E330ModelConditionView {
@@ -227,13 +257,42 @@ struct Rva0029E330ListNode {
   Rva0029E330ListNode *next, *prev;
   ObjectID id;
 };
+
+struct Rva0029C380Record;
+class Rva0029C380 {
+public:
+  Rva0029C380Record *m0029C380();
+};
+class Rva000F9780 {
+public:
+  float method(int index);
+};
+class Rva0029C440 {
+public:
+  AsciiString rva0029C440(int index);
+};
+
+extern void dup_0029c410();
+template <class Method> __forceinline Method value(Entry entry) {
+  union {
+    Entry raw;
+    Method member;
+  } binding;
+  binding.raw = entry;
+  return binding.member;
+}
 class Rva0029C410Value {
 public:
   AsciiString value();
 };
 class Rva0029C440Value {
 public:
-  AsciiString value(int);
+  __declspec(noinline) inline AsciiString value(int index) {
+    return m_names[index];
+  }
+private:
+  unsigned char m_head[0x38];
+  AsciiString m_names[8];
 };
 
 class ProductionUpdate {
@@ -249,8 +308,16 @@ __forceinline void bitSet(unsigned *bits, unsigned bit, bool set = true) {
   else
     bits[bit >> 5] &= ~(1u << (bit & 31));
 }
+enum DisabledType { DISABLED_RVA3 = 3 };
+class Player;
+class Object {
+public:
+  Player *getControllingPlayer() const;
+  void updateUpgradeModules();
+  void setDisabledUntil(DisabledType, unsigned);
+};
 __forceinline void *player(void *obj) {
-  return invoke<void *>(obj, j_00020824);
+  return ((Object *)obj)->getControllingPlayer();
 }
 __forceinline void notify(void *obj) { invoke<void>(obj, j_0002191d); }
 __forceinline void setModelBit(void *obj, unsigned offset, unsigned mask,
@@ -289,16 +356,11 @@ public:
 class Player {
 public:
   Upgrade *addUpgrade(const UpgradeTemplate *, UpgradeStatusType);
+  float getProductionTimeChangePercent(const AsciiString &) const;
 };
 class ThingTemplate {
 public:
   int calcTimeToBuild(const Player *, int) const;
-};
-enum DisabledType { DISABLED_RVA3 = 3 };
-class Object {
-public:
-  void updateUpgradeModules();
-  void setDisabledUntil(DisabledType, unsigned);
 };
 enum RadarEventType { RADAR_EVENT_RVA2 = 2 };
 class Radar {
@@ -682,90 +744,126 @@ public:
   virtual void slot100();
   virtual void *selected();
 };
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 UpdateSleepTime ProductionUpdate::update() {
+  /// @todo srj use SLEEPY_UPDATE here
   static int respawnKey =
-      invoke<int>(global<0x012ed600>(), j_0003add7, "RespawnUpdate");
-  void *self = (char *)this - 0x10;
+      invoke<int>((void *)TheNameKeyGenerator, j_0003add7, "RespawnUpdate");
   void *data = field<void *, -12>(this);
   void *us = field<void *, -8>(this);
-  unsigned now = field<unsigned, 0x3c>(global<0x012f0898>());
+  unsigned now = field<unsigned, 0x3c>((void *)TheGameLogic);
   void *experience = field<void *, 0x210>(us);
-  Rva0029E330Entry *production = invoke<Rva0029E330Entry *>(self, j_000157f3);
+  void *self = (char *)this - 0x10;
+  Rva0029E330Entry *production = (Rva0029E330Entry *)((Rva0029C380 *)self)->m0029C380();
   if (player(us)) {
     if (field<bool, 0x3d>(data)) {
-      float change = invoke<float>(player(us), j_00043cca,
-                                   (AsciiString *)((char *)data + 0x40));
+      float change = ((Player *)player(us))->getProductionTimeChangePercent(
+          field<AsciiString, 0x40>(data));
       if (change < 0.0f)
         setModelBit(us, 0x134, 0x800, true);
       else
         setModelBit(us, 0x134, 0x800, false);
     }
     if (field<void *, 0x44>(data)) {
-      float change = invoke<float>(player(us), j_00043cca,
-                                   (AsciiString *)((char *)data + 0x40));
+      float change = ((Player *)player(us))->getProductionTimeChangePercent(
+          field<AsciiString, 0x40>(data));
       if (change < 0.0f && !(field<unsigned char, 0x344>(us) & 1) &&
           !(field<unsigned, 0x90>(us) & 4)) {
-        if (!((Rva0029E330Audio *)global<0x012ed668>())
+        if (!((Rva0029E330Audio *)(void *)TheAudio)
                  ->active(field<int, 0xd4>(this))) {
           AudioEventRTS sound(field<AudioEventInfoRef, 0x44>(data),
                               field<ObjectID, 0x74>(us));
           sound.setPlayerIndex(field<int, 0x24>(player(us)));
           field<int, 0xd4>(this) =
-              ((Rva0029E330Audio *)global<0x012ed668>())->add(&sound);
+              ((Rva0029E330Audio *)(void *)TheAudio)->add(&sound);
         }
       } else {
-        ((Rva0029E330Audio *)global<0x012ed668>())
+        ((Rva0029E330Audio *)(void *)TheAudio)
             ->remove(field<int, 0xd4>(this));
         field<int, 0xd4>(this) = 1;
       }
     }
   }
+  // update the door behaviors
   if (field<int, 8>(data) > 0)
     invoke<void>(self, j_00037038);
   if (field<unsigned, 0xd0>(this) > 0)
     --field<unsigned, 0xd0>(this);
+  //
+  // if we're in the construction complete state ... we need to check frame
+  // we're in it and get out of it when the time is up
+  //
   if (field<unsigned, 0x28>(this) &&
       now - field<unsigned, 0x28>(this) > field<unsigned, 0x18>(data)) {
+    // set our frame marker to be out of construction complete state
     field<unsigned, 0x28>(this) = 0;
+    // set the flags that show the difference in the model
     field<unsigned, 0x74>(this) |= 0x200;
     field<unsigned, 0x9c>(this) &= ~0x200;
     field<bool, 0xbc>(this) = true;
   }
+  // end if
+  // end if
+  // if we have dirty bits that need to be set and cleared, do it here all at once
   if (field<bool, 0xbc>(this) == true) {
     invoke<void>(us, j_000095ed, (unsigned *)((char *)this + 0x6c),
                  (unsigned *)((char *)this + 0x94));
+    // clear the things we just set and turn off our dirty flag
     clearFields((unsigned *)((char *)this + 0x6c));
     clearFields((unsigned *)((char *)this + 0x94));
     field<bool, 0xbc>(this) = false;
   }
+  // end if
+  // if nothing in the queue get outta here
   if (!production)
     return UPDATE_SLEEP_NONE;
+  //
+  // if we've become OBJECT_STATUS_SOLD, halt all production ... leave things in the
+  // queue because if the sell process completes we get money back for them, for now we
+  // will be just frozen in time
+  // Actually, there will be nothing in the queue since everything gets cancel/refunded
+  // at the start of sell, but we still don't want to do anything here.
+  //
   if (field<unsigned, 0x90>(us) & 0x80000)
     return UPDATE_SLEEP_NONE;
+  // get the player that is building this thing
   void *owner = player(us);
+  // sanity
   if (!owner) {
+    // remove from queue list
+    // delete the production entry
     removeEntry(self, production);
     return UPDATE_SLEEP_NONE;
   }
+  // end if
+  //
+  // you can disallow types of units on the fly in scripts, so if there is something
+  // in the queue that suddenly can't be build then get rid of it
+  //
   if (production->type == 1 && !field<int, 0xc8>(this) &&
       !(field<unsigned, 0xc0>(this) > 0)) {
     bool allowed = invoke<bool>(owner, j_0001a276, production->objectTemplate);
     unsigned char available = invoke<unsigned char>(
         (char *)owner + 0x30, j_00022336, production->objectTemplate, 1);
     if ((!allowed || !available) && !production->special) {
-      if (!available && owner == field<void *, 0xc>(global<0x012ed748>()))
-        invoke<bool>(global<0x012f142c>(), j_0002b5f3, 13, (Coord3D *)0);
+      if (!available && owner == field<void *, 0xc>((void *)ThePlayerList))
+        invoke<bool>((void *)TheEva, j_0002b5f3, 13, (Coord3D *)0);
       return UPDATE_SLEEP_NONE;
     }
+    // end if
   }
+  // end if
   if (production->type == 2 && production->upgrade &&
       field<int, 4>(production->upgrade) == 1 &&
-      !invoke<bool>(us, j_000077b6, production->upgrade)) {
+      !invoke<bool>(field<void *, -8>(this), j_000077b6, production->upgrade)) {
     ((Rva0029E330Production *)((char *)this + 0x10))
         ->cancel(production->upgrade);
     return UPDATE_SLEEP_NONE;
   }
+  // increase the frames we've been under production for
   ++production->frames;
+  // how many total logic frames does it take to produce this unit
   int total;
   switch (production->type) {
   case 1:
@@ -785,28 +883,40 @@ UpdateSleepTime ProductionUpdate::update() {
   }
   if (total < 1)
     total = 1;
+  {
   float multiplier = 1.0f;
-  if (invoke<bool>(us, j_0002abf8, 12, &multiplier))
+  if (invoke<bool>(field<void *, -8>(this), j_0002abf8, 12, &multiplier))
     total = (int)((float)total / multiplier);
+  // figure out our percent complete
   float percent = (float)production->frames / (float)total * 100.0f;
   production->percent = percent;
   production->rate = 100.0f / (float)total;
+  // if we've reached 100% or more we're done, tada!
   if (production->type == 3 && ((char *)owner + 0x684)) {
-    void *object =
-        invoke<void *>((char *)owner + 0x684, j_0000a7a9,
+    int object =
+        invoke<int>((char *)owner + 0x684, j_0000a7a9,
                        production->objectTemplate, production->identifier);
-    if (!(invoke<float>((char *)owner + 0x684, j_0001e204, object) >= 1.0f) ||
+    if (!(((Rva000F9780 *)((char *)owner + 0x684))->method(object) >= 1.0f) ||
         field<int, 0xd0>(this))
       return UPDATE_SLEEP_NONE;
   } else if (!(percent >= 100.0f))
     return UPDATE_SLEEP_NONE;
+  }
   switch (production->type) {
+  // handle unit production items
   case 1:
   case 3: {
     bool isRespawn = production->type == 3;
+    // create this unit
+    //if I've got a ExitModule
     void *exitInterface = invoke<void *>(us, j_00023d4e);
     if (exitInterface) {
-      int remaining = production->quantity - production->produced;
+      //
+      // only exit if the exit interface will let us ... if we can't we'll just keep this
+      // unit in the production and keep "overbuilding" it, every frame we will check to see
+      // if we can exit and then move onto production of the next one
+      //
+      int remaining = production->quantity - production->produced;  // this will change midloop, so it can't be the For clause
       for (int item = 0; item < remaining; ++item) {
         int doorIndex = production->door;
         if (doorIndex == -1) {
@@ -816,18 +926,29 @@ UpdateSleepTime ProductionUpdate::update() {
         }
         if (doorIndex == -1)
           continue;
+        // note, could be DOOR_NONE_NEEDED! so door could be null. (srj)
         Rva0029E330Door *door =
             (doorIndex >= 0 && doorIndex < 4)
                 ? (Rva0029E330Door *)((char *)this + 0x2c + doorIndex * 16)
                 : 0;
+        //
+        // if the producing structure has a door opening animation we will set the condition
+        // bits to open the door (note that we must also take care to remove any condition
+        // that had us previously closing a door)
+        //
         if (field<int, 8>(data) > 0 && door) {
+          // if the door is closed, open it
           if (!door->opened && !door->waiting && !door->closed) {
             door->opened = now;
             bitSet((unsigned *)((char *)this + 0x94),
                    theOpeningFlags[doorIndex]);
             field<bool, 0xbc>(this) = true;
+          // end if
+          // if the door is waiting-open, keep it there
           } else if (door->waiting)
             door->waiting = now;
+          // end else if
+          // if the door is closing, for now, pop it to waiting open
           else if (door->closed) {
             door->waiting = now;
             bitSet((unsigned *)((char *)this + 0x6c),
@@ -842,12 +963,21 @@ UpdateSleepTime ProductionUpdate::update() {
                    theWaitingOpenFlags[doorIndex]);
             field<bool, 0xbc>(this) = true;
           }
+          // end else
         }
+        // end if, has door animation
+        // we now go into the construction complete condition for a while
         if (!field<unsigned, 0x28>(this)) {
           field<unsigned, 0x28>(this) = now;
           field<unsigned, 0x9c>(this) |= 0x200;
           field<bool, 0xbc>(this) = true;
         }
+        // end if
+        //
+        // make a new object, note that for production buildings that have door
+        // animations we will not make the object until the door has been totally
+        // opened
+        //
         if (field<int, 8>(data) != 0 && door && !door->waiting)
           continue;
         void *newObject;
@@ -867,12 +997,12 @@ UpdateSleepTime ProductionUpdate::update() {
             int sourceId = field<int, 0x370>(newObject);
             if (sourceId == -1)
               sourceId = field<int, 0x370>(us);
-            invoke<void>(global<0x012f0898>(), j_0003a279, newObject, sourceId);
+            invoke<void>((void *)TheGameLogic, j_0003a279, newObject, sourceId);
           } else {
             if (production->special)
               creationFlags.set(54);
             newObject = invoke<void *>(
-                global<0x012ef1d8>(), j_0004494a, production->objectTemplate,
+                (void *)TheThingFactory, j_0004494a, production->objectTemplate,
                 field<void *, 0x230>(player(us)), &creationFlags, 0u);
             if (!newObject) {
               removeEntry(self, production);
@@ -883,7 +1013,7 @@ UpdateSleepTime ProductionUpdate::update() {
               invoke<void>(newObject, j_0002852e, 0x129,
                            field<int, 0x34>(data));
             field<float, 0x258>(newObject) = (float)production->field28;
-            invoke<void>(global<0x012f0898>(), j_0003a279, newObject,
+            invoke<void>((void *)TheGameLogic, j_0003a279, newObject,
                          field<int, 0x370>(us));
           }
           field<ObjectID, 0xc8>(this) = field<ObjectID, 0x74>(newObject);
@@ -891,12 +1021,12 @@ UpdateSleepTime ProductionUpdate::update() {
           void *drawable = ((Rva0029E330ObjectV *)newObject)->drawable();
           if (drawable && invoke<int>(newObject, j_0002b81e,
                                       field<int, 0x24>(field<void *, 0xc>(
-                                          global<0x012ed748>()))) >= 3)
+                                          (void *)ThePlayerList))) >= 3)
             invoke<void>(((Rva0029E330ObjectV *)newObject)->drawable(),
                          j_0000c87e, true);
           if (field<bool, 0x3c>(data) && field<void *, 0x210>(newObject) &&
               field<int, 0x28>(experience) >= 3)
-            invoke<void>(global<0x012f0888>(), j_0001697d, newObject, 1, false);
+            invoke<void>((void *)TheExperienceLevelSystem, j_0001697d, newObject, 1, false);
           if (experience && !field<bool, 0x30>(data) &&
               invoke<bool>(experience, j_00025eeb)) {
             int value = invoke<int>(production->objectTemplate, j_0000da8a,
@@ -926,13 +1056,17 @@ UpdateSleepTime ProductionUpdate::update() {
           invoke<void>(drawable, j_0003c772);
           void *newTemplate;
           invoke<void>(drawable, j_0003aa17, true);
+          // Now, play the sound associated with the new object's production.
           const AudioEventRTS *creationSound =
               invoke<const AudioEventRTS *>(drawable, j_0001bfd1, 98);
           AudioEventRTS sound = *creationSound;
           sound.setObjectID(field<ObjectID, 0xc8>(this));
           sound.setPlayerIndex(field<int, 0x24>(player(us)));
-          ((Rva0029E330Audio *)global<0x012ed668>())->add(&sound);
+          ((Rva0029E330Audio *)(void *)TheAudio)->add(&sound);
+          // call the onUnitCreated for the player
           invoke<void>(player(us), j_00004f1b, us, newObject);
+          // onCreates have been called on newObj, and after that the owner was set,
+          // so now is the time to call the game side of CreateModules
           void **modules = field<void **, 0x1f0>(newObject);
           for (; *modules; ++modules) {
             void *b = (char *)*modules + 12;
@@ -942,6 +1076,7 @@ UpdateSleepTime ProductionUpdate::update() {
           }
           if (production->quantity ==
               production->quantity - production->produced) {
+            //Call the voice created for the 1st object -- because it's possible to create multiple objects like redguards!
             _STL::list<Drawable *> selection;
             Drawable *d = (Drawable *)drawable;
             selection.push_back(d);
@@ -955,11 +1090,11 @@ UpdateSleepTime ProductionUpdate::update() {
           ((Object *)newObject)
               ->setDisabledUntil(DISABLED_RVA3, field<unsigned, 0xc0>(this) +
                                                     field<unsigned, 0x3c>(
-                                                        global<0x012f0898>()));
+                                                        (void *)TheGameLogic));
           if (!isRespawn) {
             void *d = ((Rva0029E330ObjectV *)newObject)->drawable();
             if (d) {
-              invoke<void>(d, j_0001362e, field<int, 0xc0>(this));
+              invoke<void>(drawable, j_0001362e, field<int, 0xc0>(this));
               invoke<void>(d, j_0002d439, true);
             }
           }
@@ -968,10 +1103,10 @@ UpdateSleepTime ProductionUpdate::update() {
           if (begin != end) {
             for (AsciiString *p = begin;
                  p != field<AsciiString *, 0x2ec>(newTemplate); ++p) {
-              void *t = invoke<void *>(global<0x012ef1d8>(), j_00028560, p);
+              void *t = invoke<void *>((void *)TheThingFactory, j_00028560, p);
               if (!t)
                 continue;
-              void *extra = invoke<void *>(global<0x012ef1d8>(), j_0004494a, t,
+              void *extra = invoke<void *>((void *)TheThingFactory, j_0004494a, t,
                                            field<void *, 0x230>(player(us)),
                                            &creationFlags, 0u);
               invoke<void>(self, j_0001c0b2, extra);
@@ -994,16 +1129,17 @@ UpdateSleepTime ProductionUpdate::update() {
             invoke<void>(respawn, j_00049fb2, us);
             field<int, 0xd0>(this) = 20;
             invoke<void>(newObject, j_0003acb0,
-                         field<unsigned, 0x3c>(global<0x012f0898>()) + 20);
+                         field<unsigned, 0x3c>((void *)TheGameLogic) + 20);
           }
         } else {
-          newObject = invoke<void *>(global<0x012f0898>(), j_0001f253,
+          newObject = invoke<void *>((void *)TheGameLogic, j_0001f253,
                                      field<int, 0xc8>(this));
           if (!newObject) {
             removeEntry(self, production);
             return UPDATE_SLEEP_NONE;
           }
         }
+        // end if, door open or no door animation ... make the object
         void *contain = field<void *, 0x1fc>(newObject);
         if (contain) {
           void *rebuild = ((Rva0029E330Contain *)contain)->rva68();
@@ -1011,7 +1147,7 @@ UpdateSleepTime ProductionUpdate::update() {
             void *t;
             {
               AsciiString name = ((Rva0029E330Rebuild *)rebuild)->name();
-              t = invoke<void *>(global<0x012ef1d8>(), j_00028560, &name);
+              t = invoke<void *>((void *)TheThingFactory, j_00028560, &name);
             }
             int quantity = ((Rva0029E330Rebuild *)rebuild)->count();
             if (t) {
@@ -1023,13 +1159,13 @@ UpdateSleepTime ProductionUpdate::update() {
           }
         }
         if (!field<bool, 0xc4>(this)) {
-          float duration = field<float, 0x2f4>(finalTemplate(us));
+          float duration = field<float, 0x2f4>(finalTemplate(field<void *, -8>(this)));
           Rva0029E330ListNode *head = field<Rva0029E330ListNode *, 0xcc>(this);
           if (head->next != head)
             for (Rva0029E330ListNode *n = head->next;
                  n != field<Rva0029E330ListNode *, 0xcc>(this); n = n->next) {
               void *extra =
-                  invoke<void *>(global<0x012f0898>(), j_0001f253, n->id);
+                  invoke<void *>((void *)TheGameLogic, j_0001f253, n->id);
               if (extra) {
                 invoke<void>(((Rva0029E330ObjectV *)extra)->drawable(),
                              j_00008337, false);
@@ -1052,12 +1188,17 @@ UpdateSleepTime ProductionUpdate::update() {
         if (field<unsigned, 0x128>(newObject) & 0x8000)
           invoke<bool>(newObject, j_0003c06a, 3);
         field<int, 0xc8>(this) = 0;
+        // call the exit interface to do the rally point and position stuff
         if (!invoke<void *>(newObject, j_0002ae23, respawnKey))
           ((Rva0029E330Exit *)exitInterface)->exit(newObject, doorIndex);
+        //We created one guy, but we may want to do more so we should stay in this node of production.
+        // This is last so the voice check can easily check for "first" guy
         ++production->produced;
+        // since we successfully exited via this door, we should NOT call unreserveDoorForExit
+        // when we toss this production entry. so set it back to an innocuous value.
         production->door = -1;
         if (production->quantity == production->produced) {
-          void *producer = invoke<void *>(global<0x012f0898>(), j_0001f253,
+          void *producer = invoke<void *>((void *)TheGameLogic, j_0001f253,
                                           field<ObjectID, 0x78>(newObject));
           if (producer && field<void *, 0x1fc>(producer)) {
             void *c = field<void *, 0x1fc>(producer);
@@ -1070,16 +1211,26 @@ UpdateSleepTime ProductionUpdate::update() {
             }
           }
         }
+        // end, if we got a door reservation
       }
+      //end of trying to exit all the things we were planning on attempting
       if (production->quantity == production->produced) {
+        // remove this production entry so we can go on to the next if we are totally finished
+        // delete the production entry
         removeEntry(self, production);
         ((Rva0029E330Exit *)exitInterface)->complete();
       }
+      // end if we found an exit interface
 
     } else
+      // there is no exit interface, this is an error
+      // remove this item from the production queue
+      // delete the production entry
       removeEntry(self, production);
+      // end else
     break;
   }
+  // end if, production unit
   case 2: {
 
     void *upgrade = production->upgrade;
@@ -1089,68 +1240,85 @@ UpdateSleepTime ProductionUpdate::update() {
       if (value > 0)
         invoke<void>(experience, j_00010096, (float)value, true, true, true, 0);
     }
+    // we finished an upgrade, lets add that money spent on it to the scorekeeper
     invoke<void>((char *)owner + 0x348, j_00047ec9,
                  invoke<int>(upgrade, j_0003f8d7, owner, (void *)0));
-    ((Rva0029E330Script *)global<0x012f076c>())
+    // notify the script engine
+    ((Rva0029E330Script *)(void *)TheScriptEngine)
         ->notify(field<int, 0x24>(player(us)), field<AsciiString, 8>(upgrade),
                  field<ObjectID, 0x74>(us));
+    // print a message to the local player, if it wants one
     if (invoke<bool>(us, j_0001ff91)) {
       UnicodeString msg;
-      UnicodeString format = ((Rva0029E330GameText *)global<0x012f147c>())
+      UnicodeString format = ((Rva0029E330GameText *)(void *)TheGameText)
                                  ->fetch("UPGRADE:UpgradeComplete", 0);
       UnicodeString name =
-          ((Rva0029E330GameText *)global<0x012f147c>())
+          ((Rva0029E330GameText *)(void *)TheGameText)
               ->fetch(
                   ((const StringBase<char> &)field<AsciiString, 0x10>(upgrade))
                       .str(),
                   0);
       msg.format(UnicodeString(format.str()), name.str());
-      ((Rva0029E330UI *)global<0x012f148c>())->message(msg);
-      ((Radar *)global<0x012ef0e4>())
+      ((Rva0029E330UI *)(void *)TheInGameUI)->message(msg);
+      // upgrades are a more rare event, play a nifty radar event thingie
+      ((Radar *)(void *)TheRadar)
           ->createEvent((Coord3D *)((char *)us + 0x38), RADAR_EVENT_RVA2, 4.0f);
+      //Play the sound for the upgrade, because we just built it!
       AudioEventRTS sound = field<AudioEventRTS, 0x28>(upgrade);
-      if (((Rva0029E330Audio *)global<0x012ed668>())->valid(&sound)) {
+      if (((Rva0029E330Audio *)(void *)TheAudio)->valid(&sound)) {
+        //We have a custom upgrade complete sound.
         sound.setObjectID(field<ObjectID, 0x74>(us));
-        ((Rva0029E330Audio *)global<0x012ed668>())->add(&sound);
+        ((Rva0029E330Audio *)(void *)TheAudio)->add(&sound);
       } else
-        invoke<bool>(global<0x012f142c>(), j_0002b5f3, 6, (Coord3D *)0);
+        //Use a generic EVA event.
+        invoke<bool>((void *)TheEva, j_0002b5f3, 6, (Coord3D *)0);
+      //Play any available unit specific sound for upgrade.
       sound.assign(field<AudioEventRTS, 0x98>(upgrade));
       sound.setObjectID(field<ObjectID, 0x74>(us));
-      ((Rva0029E330Audio *)global<0x012ed668>())->add(&sound);
+      ((Rva0029E330Audio *)(void *)TheAudio)->add(&sound);
     }
-    if (!((const StringBase<char> &)((Rva0029C410Value *)data)->value())
+    // end if
+    if (!((const StringBase<char> &)(((Rva0029C410Value *)upgrade)->*value<AsciiString (Rva0029C410Value::*)()>(dup_0029c410))())
              .isEmpty()) {
       void *fx = invoke<void *>(
-          global<0x012f144c>(), j_0001669e,
-          ((const StringBase<char> &)((Rva0029C410Value *)data)->value())
+          (void *)TheFXListStore, j_0001669e,
+          ((const StringBase<char> &)(((Rva0029C410Value *)upgrade)->*value<AsciiString (Rva0029C410Value::*)()>(dup_0029c410))())
               .str());
       if (fx) {
         typedef void(__cdecl * F)(void *, void *, void *);
         ((F)j_0001253f)(fx, us, 0);
       }
     }
+    // update the upgrade status in the player or give the upgrade to the object
     if (field<int, 4>(upgrade) == 0)
       ((Player *)owner)
           ->addUpgrade((UpgradeTemplate *)upgrade, UPGRADE_STATUS_RVA2);
     else
       invoke<void>(us, j_0001a97e, upgrade);
-    void *selected = ((Rva0029E330Selected *)global<0x012f148c>())->selected();
+    //Also mark the UI dirty -- incase object with upgrade cameo is selected.
+    void *selected = ((Rva0029E330Selected *)(void *)TheInGameUI)->selected();
     void *selectedObject = selected ? field<void *, 0xfc>(selected) : 0;
     if (selectedObject) {
       void *t = invoke<void *>(selectedObject, j_000084b8);
       for (int i = 0; i < 5; ++i) {
         AsciiString name = ((Rva0029C440Value *)t)->value(i);
-        if (invoke<void *>(global<0x012ef188>(), j_0002F95A, &name) ==
+        if (invoke<void *>((void *)TheUpgradeCenter, j_0002F95A, &name) ==
             upgrade) {
-          field<bool, 0x24>(global<0x012f33f8>()) = true;
+          //Our selected object has the upgrade
+          field<bool, 0x24>((void *)TheControlBar) = true;
           break;
         }
       }
     }
+    // remove this production entry so we can go on to the next
+    // delete the production entry
     removeEntry(self, production);
     field<int, 0xc8>(this) = 0;
     return UPDATE_SLEEP_NONE;
   }
+  // end else, production upgrade
   }
+  // end if, production is 100% complete
   return UPDATE_SLEEP_NONE;
 }
+// end update
