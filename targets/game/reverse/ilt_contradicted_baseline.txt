@@ -1311,7 +1311,6 @@ functions	0x00113D20	?loadPostProcess@ObjectModule@@MAEXXZ
 functions	0x00113F20	??_GObjectModule@@UAEPAXI@Z
 functions	0x00113FB0	?friend_newModuleInstance@PointDefenseLaserUpdate@@SAPAVModule@@PAVThing@@PBVModuleData@@@Z
 functions	0x00113FB0	?friend_newModuleInstance@SmartBombTargetHomingUpdate@@SAPAVModule@@PAVThing@@PBVModuleData@@@Z
-functions	0x00114320	?friend_newModuleData@W3DLaserDraw@@SAPAVModuleData@@PAVINI@@@Z
 functions	0x001144C0	?friend_newModuleData@SpyVisionUpdate@@SAPAVModuleData@@PAVINI@@@Z
 functions	0x00114A40	?friend_newModuleData@EnragedBehavior@@SAPAVModuleData@@PAVINI@@@Z
 functions	0x00114C60	?friend_newModuleData@ClickReactionBehavior@@SAPAVModuleData@@PAVINI@@@Z
@@ -1330,7 +1329,6 @@ functions	0x00116E10	?emit_PropagandaTowerBehavior@ModulePoolGlueBulk@@YAPAVModu
 functions	0x00116F30	?emit_FireWeaponWhenDamagedBehavior@ModulePoolGlueBulk@@YAPAVModule@@PAVThing@@PBVModuleData@@@Z
 functions	0x00117050	?emit_PoisonedBehavior@ModulePoolGlueBulk@@YAPAVModule@@PAVThing@@PBVModuleData@@@Z
 functions	0x00117170	?emit_SupplyWarehouseCripplingBehavior@ModulePoolGlueBulk@@YAPAVModule@@PAVThing@@PBVModuleData@@@Z
-functions	0x00117420	?friend_newModuleData@FireWeaponWhenDamagedBehavior@@SAPAVModuleData@@PAVINI@@@Z
 functions	0x00117D40	?emit_DefaultProductionExitUpdate@ModulePoolGlueBulk@@YAPAVModule@@PAVThing@@PBVModuleData@@@Z
 functions	0x00117E40	?friend_newModuleData@BaseRegenerateUpdate@@SAPAVModuleData@@PAVINI@@@Z
 functions	0x00117EF0	?emit_DeletionUpdate@ModulePoolGlueBulk@@YAPAVModule@@PAVThing@@PBVModuleData@@@Z
@@ -1411,15 +1409,6 @@ functions	0x00122D80	?friend_newModuleData@BoneFXDamage@@SAPAVModuleData@@PAVINI
 functions	0x00122EB0	?buildFieldParse@DamDieModuleData@@SAXAAVMultiIniFieldParse@@@Z
 functions	0x00122ED0	??0KeepObjectDieModuleData@@QAE@XZ
 functions	0x00122FD0	?friend_newModuleData@AODHordeContain@@SAPAVModuleData@@PAVINI@@@Z
-functions	0x00123180	?buildFieldParse@CountermeasuresBehaviorModuleData@@SAXAAVMultiIniFieldParse@@@Z
-functions	0x00123180	?buildFieldParse@FireOCLAfterWeaponCooldownUpdateModuleData@@SAXAAVMultiIniFieldParse@@@Z
-functions	0x00123180	?buildFieldParse@GenerateMinefieldBehaviorModuleData@@SAXAAVMultiIniFieldParse@@@Z
-functions	0x00123180	?buildFieldParse@SpyVisionUpdateModuleData@@SAXAAVMultiIniFieldParse@@@Z
-functions	0x00123290	?buildFieldParse@CreateCrateDieModuleData@@SAXAAVMultiIniFieldParse@@@Z
-functions	0x00123290	?buildFieldParse@CreateObjectDieModuleData@@SAXAAVMultiIniFieldParse@@@Z
-functions	0x00123290	?buildFieldParse@EjectPilotDieModuleData@@SAXAAVMultiIniFieldParse@@@Z
-functions	0x00123290	?buildFieldParse@InstantDeathBehaviorModuleData@@SAXAAVMultiIniFieldParse@@@Z
-functions	0x00123290	?buildFieldParse@RebuildHoleExposeDieModuleData@@SAXAAVMultiIniFieldParse@@@Z
 functions	0x00123350	?buildFieldParse@CrushDieModuleData@@SAXAAVMultiIniFieldParse@@@Z
 functions	0x00123430	?buildFieldParse@SpecialPowerCompletionDieModuleData@@SAXAAVMultiIniFieldParse@@@Z
 functions	0x00123560	?buildFieldParse@UpgradeDieModuleData@@SAXAAVMultiIniFieldParse@@@Z
@@ -1451,7 +1440,6 @@ functions	0x001291B0	?clear@?$vector@UUpgrades@OCLSpecialPowerModuleData@@V?$all
 functions	0x001295C0	??_GUpgradeModuleModuleData@@UAEPAXI@Z
 functions	0x001296E0	??A?$map@HVModuleTemplate@ModuleFactory@@U?$less@H@_STL@@V?$allocator@U?$pair@$$CBHVModuleTemplate@ModuleFactory@@@_STL@@@4@@_STL@@QAEAAVModuleTemplate@ModuleFactory@@ABH@Z
 functions	0x00129810	?parseFromINI@?$BitFlags@$0HE@@@SAXPAVINI@@PAX1PBX@Z
-functions	0x001298A0	?buildFieldParse@FireWeaponWhenDamagedBehaviorModuleData@@SAXAAVMultiIniFieldParse@@@Z
 functions	0x00129AC0	?addModuleInternal@ModuleFactory@@IAEXPBX00HABVAsciiString@@H@Z
 functions	0x00129C10	??0ArmorUpgradeModuleData@@QAE@XZ
 functions	0x00129C10	??0AttributeModifierUpgradeModuleData@@QAE@XZ
@@ -2025,8 +2013,6 @@ functions	0x001D6FA0	??$find@W4NameKeyType@@@?$_Rb_tree@W4NameKeyType@@U?$pair@$
 functions	0x001D79C0	??1GenericObjectCreationNuggetAnimSets@@QAE@XZ
 functions	0x001D7BC0	?create@AttackNugget@@UBEPAVObject@@PBV2@PBUCoord3D@@1M@Z
 functions	0x001D7F90	?GetAssetList@GenericObjectCreationNugget@@QBEXAAVAssetList@@PAX@Z
-functions	0x001D81F0	??_GGenericObjectCreationNugget@@MAEPAXI@Z
-functions	0x001D8220	??1GenericObjectCreationNugget@@MAE@XZ
 functions	0x001D95A0	?get_allocator@?$vector@PAVObjectCreationNugget@@V?$allocator@PAVObjectCreationNugget@@@_STL@@@_STL@@QBE?AV?$allocator@PAVObjectCreationNugget@@@2@XZ
 functions	0x001DAF40	??A?$map@W4NameKeyType@@VObjectCreationList@@U?$less@W4NameKeyType@@@_STL@@V?$allocator@U?$pair@$$CBW4NameKeyType@@VObjectCreationList@@@_STL@@@4@@_STL@@QAEAAVObjectCreationList@@ABW4NameKeyType@@@Z
 functions	0x001DC240	?loadPostProcess@ObjectTypes@@MAEXXZ
@@ -2196,7 +2182,6 @@ functions	0x001FE790	??_GHordeUpdateModuleData@@UAEPAXI@Z
 functions	0x001FFAF0	?setShowBehindBuildingMarkers@GameLogic@@QAEX_N@Z
 functions	0x002001A0	??0ClickReactionBehaviorModuleData@@QAE@XZ
 functions	0x002003E0	??_GClickReactionBehaviorModuleData@@MAEPAXI@Z
-functions	0x00200AC0	?isDieApplicable@DieModule@@QBE_NPBVDamageInfo@@@Z
 functions	0x00200C00	?getClassMemoryPool@InstantDeathBehavior@@CAPAVMemoryPool@@XZ
 functions	0x00201510	?push_back@?$vector@PBVFXList@@V?$allocator@PBVFXList@@@_STL@@@_STL@@QAEXABQBVFXList@@@Z
 functions	0x00201CC0	??_GOathbreakersFadeAwayBehavior@@UAEPAXI@Z
@@ -2219,7 +2204,6 @@ functions	0x002046E0	??_GReplenishUnitsBehavior@@UAEPAXI@Z
 functions	0x00204B50	??1ReplenishUnitsBehavior@@UAE@XZ
 functions	0x00204E70	?parseFromINI@?$BitFlags@$0CN@@@SAXPAVINI@@PAX1PBX@Z
 functions	0x00204ED0	??0BattlePlanUpdateModuleData@@QAE@XZ
-functions	0x00204F30	?buildFieldParse@AutoHealBehaviorModuleData@@SAXAAVMultiIniFieldParse@@@Z
 functions	0x00205AC0	??1ShareExperienceBehavior@@UAE@XZ
 functions	0x00206070	??_GSiegeDockingBehaviorModuleData@@MAEPAXI@Z
 functions	0x00206710	?stopDocking@SiegeDockingBehavior@@AAEXXZ
@@ -2231,7 +2215,6 @@ functions	0x002083B0	?any@?$BitFlags@$0ED@@@QBE_NXZ
 functions	0x00209130	?buildDescription@?$BitFlags@$0FG@@@QBEXPAVAsciiString@@H@Z
 functions	0x00209240	?parse@?$BitFlags@$0HF@@@QAEXPAVINI@@PAVAsciiString@@@Z
 functions	0x00209310	?parse@DeathStatusFlags@@QAEXVAsciiString@@@Z
-functions	0x0020A730	?buildFieldParse@OpenContainModuleData@@SAXAAVMultiIniFieldParse@@@Z
 functions	0x0020A7D0	?Set_Dirty@TextureBaseClass@@QAEXXZ
 functions	0x0020B0F0	?getClassMemoryPool@SpawnBehavior@@CAPAVMemoryPool@@XZ
 functions	0x0020B180	??1SpawnBehavior@@UAE@XZ
@@ -2800,7 +2783,6 @@ functions	0x002AA910	??1LevelGrantSpecialPower@@MAE@XZ
 functions	0x002AA910	??1SpecialAbilityUpdate@@UAE@XZ
 functions	0x002AAEC0	??_GSpecialAbilityUpdate@@UAEPAXI@Z
 functions	0x002AB590	?getClassMemoryPool@StealthDetectorUpdate@@CAPAVMemoryPool@@XZ
-functions	0x002AB690	?update@StealthDetectorUpdate@@
 functions	0x002AC150	?setWakeupIfInRange@@YAHPAVObject@@PAX@Z
 functions	0x002AC200	?xfer@StealthUpdate@@MAEXPAVXfer@@@Z
 functions	0x002ACCB0	?getClassMemoryPool@StealthUpdate@@CAPAVMemoryPool@@XZ
@@ -2936,7 +2918,6 @@ functions	0x002D46A0	??_GCostModifierUpgrade@@UAEPAXI@Z
 functions	0x002D5040	?getClassMemoryPool@ExperienceScalarUpgrade@@CAPAVMemoryPool@@XZ
 functions	0x002D5280	??0ActiveShroudUpgrade@@QAE@PAVThing@@PBVModuleData@@@Z
 functions	0x002D61D0	?getClassMemoryPool@LocomotorSetUpgrade@@CAPAVMemoryPool@@XZ
-functions	0x002D6370	?buildFieldParse@ModelConditionUpgradeModuleData@@SAXAAVMultiIniFieldParse@@@Z
 functions	0x002D6410	?getClassMemoryPool@MaxHealthUpgrade@@CAPAVMemoryPool@@XZ
 functions	0x002D6740	?getClassMemoryPool@ModelConditionUpgrade@@CAPAVMemoryPool@@XZ
 functions	0x002D6C60	?getClassMemoryPool@ObjectCreationUpgrade@@CAPAVMemoryPool@@XZ
@@ -4948,7 +4929,6 @@ functions	0x006CB050	?removeAllTerrainBibs@BaseHeightMapRenderObjClass@@QAEXXZ
 functions	0x006CB050	?removeTerrainBibHighlighting@BaseHeightMapRenderObjClass@@QAEXXZ
 functions	0x006CB3A0	??0Matrix4@@QAE@ABVMatrix3D@@@Z
 functions	0x006CB570	?Set_Transform@DX8Wrapper@@SAXW4_D3DTRANSFORMSTATETYPE@@ABVMatrix3D@@@Z
-functions	0x006CBB50	?getHeightMapHeight@BaseHeightMapRenderObjClass@@QBEMMMPAUCoord3D@@@Z
 functions	0x006CD990	?render@BaseHeightMapRenderTreesShim@@QAEXPAVCameraClass@@@Z
 functions	0x006CF660	?Control_Bone@RenderObjClass@@UAEXHABVMatrix3D@@_N@Z
 functions	0x006CF660	?Error@ResourceFileClass@@UAEXHHPBD@Z
@@ -5137,7 +5117,6 @@ functions	0x006CF980	?friend_getEffectiveStealthOpacity@Drawable@@QAEMXZ
 functions	0x006CF980	?getMaxTargetPitch@WeaponTemplate@@QBEMXZ
 functions	0x006CF9A0	?Create_Decal@RenderObjClass@@UAEXPAVDecalGeneratorClass@@_N@Z
 functions	0x006CFA60	??_ETexProjectClass@@WMM@AEPAXI@Z
-functions	0x006D0590	?initHeightData@BaseHeightMapRenderObjClass@@UAEHHHPAVWorldHeightMap@@PAV?$RefMultiListIterator@VRenderObjClass@@@@_N@Z
 functions	0x006D10E0	?spin@LockClass@FastCriticalSectionClass@@CIXPAI@Z
 functions	0x006D1240	?Is_Empty@GenericMultiListClass@@QAE_NXZ
 functions	0x006D12A0	??0?$MultiListClass@VDX8PolygonRendererClass@@@@QAE@XZ
@@ -5412,7 +5391,6 @@ functions	0x00731000	?removeBibHighlighting@W3DTerrainVisual@@UAEXXZ
 functions	0x00731010	?loadPostProcess@W3DTerrainVisual@@MAEXXZ
 functions	0x007318A0	?xfer@W3DTerrainVisual@@MAEXPAVXfer@@@Z
 functions	0x007319F0	?intersectTerrain@W3DTerrainVisual@@UAE_NPAUCoord3D@@00@Z
-functions	0x00732960	?freeTreeBuffers@W3DTreeBuffer@@QAEXXZ
 functions	0x00732B00	?allocateTreeBuffers@W3DTreeBuffer@@QAEXXZ
 functions	0x00733FD0	?removeTreeAtIndex@W3DTreeBuffer@@QAEXH@Z
 functions	0x007348A0	?updateTexture@W3DTreeBuffer@@QAEXXZ
@@ -8471,7 +8449,6 @@ pins	0x00046D7B	??1AIMoveToState@@MAE@XZ
 pins	0x00046F33	??_GObject@@MAEPAXI@Z
 pins	0x0004700A	??$__copy@PAVLivingWorldArmy@@PAV1@H@_STL@@YAPAVLivingWorldArmy@@PAV1@00ABUrandom_access_iterator_tag@0@PAH@Z
 pins	0x00047069	?getCountdownPercent@OCLUpdate@@QAEMXZ
-pins	0x0004706E	??1GenericObjectCreationNugget@@MAE@XZ
 pins	0x0004709B	??0ActiveShroudUpgrade@@QAE@PAVThing@@PBVModuleData@@@Z
 pins	0x000470EB	??_GSquishCollideModuleData@@MAEPAXI@Z
 pins	0x000470F5	??1_ENUM_VALUE@EnumParameterClass@@QAE@XZ

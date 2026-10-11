@@ -49,7 +49,7 @@ public:
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include/W3DDevice/GameClient/W3DTreeBuffer.h
 class W3DTreeBuffer
 {
-public:
+protected:
 	void freeTreeBuffers(void);
 
 private:

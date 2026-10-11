@@ -82,7 +82,7 @@ class GenericObjectCreationNugget : public ObjectCreationNugget
 public:
 	GenericObjectCreationNugget();
 
-protected:
+public:
 	virtual ~GenericObjectCreationNugget();
 
 private:

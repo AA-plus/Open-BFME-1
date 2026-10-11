@@ -268,6 +268,7 @@ public:
 		return (const DieModuleData *)getModuleData();
 	}
 
+protected:
 	bool isDieApplicable( const DamageInfo *damageInfo ) const
 	{
 		return getDieModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo);

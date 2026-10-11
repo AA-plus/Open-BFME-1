@@ -61,11 +61,11 @@ private:
 	unsigned char m_tail[0x10];
 	AudioEventRTS m_bounceSound;
 
-protected:
+public:
 	virtual ~GenericObjectCreationNugget();
 };
 
-// ??1GenericObjectCreationNugget@@MAE@XZ
+// ??1GenericObjectCreationNugget@@UAE@XZ
 GenericObjectCreationNugget::~GenericObjectCreationNugget()
 {
 }

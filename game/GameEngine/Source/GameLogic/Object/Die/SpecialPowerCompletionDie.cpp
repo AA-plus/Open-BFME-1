@@ -72,10 +72,12 @@ public:
 	// Not a separate body in retail -- it inlines into onDie, and it is what
 	// makes onDie materialise the object base in a register instead of indexing
 	// off the DieModuleInterface subobject it is entered with.
+protected:
 	bool isDieApplicable( const DamageInfo *damageInfo ) const
 	{
 		return getDieModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo);
 	}
+public:
 
 	DieModule( Thing *thing, const ModuleData *moduleData )
 		: ObjectModule( thing, moduleData ),
