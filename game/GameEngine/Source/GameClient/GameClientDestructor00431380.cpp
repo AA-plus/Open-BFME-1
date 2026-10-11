@@ -153,7 +153,8 @@ extern LanguageFilter *TheLanguageFilter;
 extern Anim2DCollection *TheAnim2DCollection;
 extern ImageCollection *TheMappedImageCollection;
 extern Keyboard *TheKeyboard;
-extern Rva0048EC80Manager *Rva0048EC80TheManager;
+class DisplayStringManager;
+extern DisplayStringManager *TheDisplayStringManager;
 extern SnowManager *TheSnowManager;
 extern CloudEffectSystem *TheCloudEffectSystem;
 extern CloudSystem *TheCloudSystem;
@@ -279,8 +280,8 @@ GameClient::~GameClient()
 	delete TheKeyboard;
 	TheKeyboard = NULL;
 
-	delete Rva0048EC80TheManager;
-	Rva0048EC80TheManager = NULL;
+	delete reinterpret_cast<Rva0048EC80Manager *>(TheDisplayStringManager);
+	TheDisplayStringManager = NULL;
 
 	delete TheSnowManager;
 	TheSnowManager = NULL;

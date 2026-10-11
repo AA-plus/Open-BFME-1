@@ -267,7 +267,8 @@ extern AnimationSoundModuleManager *TheAnimationSoundModuleManager;
 class TerrainVisual;
 extern TerrainVisual *TheTerrainVisual;
 extern ParticleSystemManager *TheParticleSystemManager;
-extern Rva0048EC80Manager *Rva0048EC80TheManager;
+class DisplayStringManager;
+extern DisplayStringManager *TheDisplayStringManager;
 class WindowManager;	///< retail pointee at 0x012F19E8 (defined in GUI/WindowManager.cpp)
 extern WindowManager *g_rva012F19E8WindowManager;
 extern InGameUI *TheInGameUI;
@@ -372,7 +373,7 @@ void ClientUpdate004329D0::update() {
     }
     if (!freezeTime) at<int>(TheParticleSystemManager,0x98)=localPlayerIndex;
     ((Dispatch004329D0 *)TheDisplay)->v1c();
-    ((Dispatch004329D0 *)Rva0048EC80TheManager)->v14();
+    ((Dispatch004329D0 *)TheDisplayStringManager)->v14();
     if (!at<bool>(TheGameLogic,0x11d)) {
         TheShell->v14();
         if (m_at00C5) {
