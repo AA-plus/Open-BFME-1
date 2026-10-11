@@ -35,7 +35,10 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+// The native GameSpy SDK exports these routines with C linkage.
+extern "C" {
 #include "GameSpy/ghttp/ghttp.h"
+}
 
 #include "Lib/BaseType.h"
 #include "Common/GameEngine.h"
