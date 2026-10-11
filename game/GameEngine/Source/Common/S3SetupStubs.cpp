@@ -12,10 +12,14 @@
 // Only the global's address differs across the six, and it is a relocation, so
 // they all compile from one shape.
 
+class BfmeC994
+{
+public:
+	void addString(const char *key, const char *value);
+};
+
 struct BfmeSetupTarget
 {
-	void bfmeWrite(const char *text, int value);		// retail 0x007E8A10
-
 	char m_bfmeHead[0x1C];
 	unsigned int m_bfmeTag;					// +0x1C
 };
@@ -47,7 +51,8 @@ void __stdcall bfmeSetup_007E95A0(BfmeSetupTarget *thing)
 
 	thing->m_bfmeTag = 0x61636374;
 
-	thing->bfmeWrite("TXN", value);
+	reinterpret_cast<BfmeC994 *>(thing)->addString("TXN",
+		reinterpret_cast<const char *>(value));
 }
 
 // ?bfmeSetup_007E95D0@@YGXPAUBfmeSetupTarget@@@Z
@@ -59,7 +64,8 @@ void __stdcall bfmeSetup_007E95D0(BfmeSetupTarget *thing)
 
 	thing->m_bfmeTag = 0x61636374;
 
-	thing->bfmeWrite("TXN", value);
+	reinterpret_cast<BfmeC994 *>(thing)->addString("TXN",
+		reinterpret_cast<const char *>(value));
 }
 
 // ?bfmeSetup_007E98A0@@YGXPAUBfmeSetupTarget@@@Z
@@ -71,7 +77,8 @@ void __stdcall bfmeSetup_007E98A0(BfmeSetupTarget *thing)
 
 	thing->m_bfmeTag = 0x61636374;
 
-	thing->bfmeWrite("TXN", value);
+	reinterpret_cast<BfmeC994 *>(thing)->addString("TXN",
+		reinterpret_cast<const char *>(value));
 }
 
 // ?bfmeSetup_007E98D0@@YGXPAUBfmeSetupTarget@@@Z
@@ -83,7 +90,8 @@ void __stdcall bfmeSetup_007E98D0(BfmeSetupTarget *thing)
 
 	thing->m_bfmeTag = 0x61636374;
 
-	thing->bfmeWrite("TXN", value);
+	reinterpret_cast<BfmeC994 *>(thing)->addString("TXN",
+		reinterpret_cast<const char *>(value));
 }
 
 // ?bfmeSetup_007E9990@@YGXPAUBfmeSetupTarget@@@Z
@@ -95,7 +103,8 @@ void __stdcall bfmeSetup_007E9990(BfmeSetupTarget *thing)
 
 	thing->m_bfmeTag = 0x61636374;
 
-	thing->bfmeWrite("TXN", value);
+	reinterpret_cast<BfmeC994 *>(thing)->addString("TXN",
+		reinterpret_cast<const char *>(value));
 }
 
 // ?bfmeSetup_007E99C0@@YGXPAUBfmeSetupTarget@@@Z
@@ -107,5 +116,6 @@ void __stdcall bfmeSetup_007E99C0(BfmeSetupTarget *thing)
 
 	thing->m_bfmeTag = 0x61636374;
 
-	thing->bfmeWrite("TXN", value);
+	reinterpret_cast<BfmeC994 *>(thing)->addString("TXN",
+		reinterpret_cast<const char *>(value));
 }
