@@ -19,6 +19,8 @@ public:
 	void invoke(const AsciiString &name, Bool visible, Int a, Int b, Int c);
 };
 
+extern void j_000391c6();
+
 class NameKeyGenerator
 {
 public:
@@ -137,7 +139,9 @@ void TransitionDamageFX::rva002523E0(Bool applyTransition)
 		for (AsciiString *name = record->m_nameBegin;
 			 name != record->m_nameEnd; ++name)
 		{
-			sink->invoke(*name, status != 3, 0, 0, 0);
+			typedef void (S4Sink004135C0::*Invoke)(const AsciiString &, Bool, Int, Int, Int);
+			union { void (*fn)(); Invoke call; } invoke = { j_000391c6 };
+			(sink->*invoke.call)(*name, status != 3, 0, 0, 0);
 		}
 
 		if (applyTransition)
