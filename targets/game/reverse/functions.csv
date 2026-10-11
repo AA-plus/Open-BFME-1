@@ -36564,7 +36564,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_009c4c10@@YAXXZ,,0x009C4C10,16,game/gen_asm/d_00993b80.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret-tail refs=1
 ?d_009c4c20@@YAXXZ,,0x009C4C20,32,game/gen_asm/d_00993b80.asm,matched,gen-dump;int3-carved start=aligned-after-terminal end=ret+int3 refs=1
 ?d_009c5d60@@YAXXZ,,0x009C5D60,1529,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
-?d_009c74f0@@YAXXZ,,0x009C74F0,465,game/gen_asm/d_009c5080.asm,matched,gen-dump;ghidra=FUN_00dc74f0
 ?d_009c80c0@@YAXXZ,,0x009C80C0,98,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009c8240@@YAXXZ,,0x009C8240,655,game/gen_asm/d_009c5080.asm,matched,gen-dump;ghidra=FUN_00dc8240
 ?d_009cc020@@YAXXZ,,0x009CC020,450,game/gen_asm/d_009c5080.asm,matched,gen-dump;ghidra=FUN_00dcc020
@@ -171984,3 +171983,4 @@ _Rva009B0730,,0x009B0730,1583,game/GameEngine/Source/Common/BfmeVp6LoopFilter.cp
 ?Vendor_Specific_Hacks@DX8Caps@@AAEXABU_D3DADAPTER_IDENTIFIER8@@@Z,,0x0091BE00,1059,game/Libraries/Source/WWVegas/WW3D2/dx8caps.cpp,matched,Open BFME 2 donor dx8caps.cpp at game.dat 0x0012B9B0; BFME Compute_Caps caller and vendor literals; identity_evidence/0091be00-donor-port.md;model=gpt-6.1-sol;host=fleet
 ?read_vertex_influences@MeshGeometryClass@@IAE_NAAVChunkLoadClass@@@Z,,0x00925380,559,game/Libraries/Source/WWVegas/WW3D2/MeshGeometryLoading.cpp,matched,Open BFME 2 donor MeshGeometryReadVertexInfluences.cpp at game.dat 0x0016B1A0; BFME chunk0x0E callers and four ushort payload fields; identity_evidence/00925380-donor-port.md;model=gpt-6.1-sol;host=fleet
 ?Check_Texture_Compression_Support@DX8Caps@@AAEXABU_D3DCAPS8@@@Z,,0x0091B930,98,game/Libraries/Source/WWVegas/WW3D2/dx8caps.cpp,matched,Open BFME 2 donor dx8caps.cpp at game.dat 0x0012B4E0; Compute_Caps caller and compression literal; identity_evidence/0091b930-donor-port.md;model=gpt-6.1-sol;host=fleet
+?rva009c74f0@@YAXPBE0PAFHHHH@Z,,0x009C74F0,465,game/GameEngine/Source/Common/Rva009C74F0Filter.cpp,matched,Address-derived dispatcher with seven caller-verified slots; Open BFME 2 donor FilterBlockWmt.cpp at game.dat 0x001D7DF0; evidence=targets/game/reverse/identity_evidence/009c74f0-bfme2-donor.md;model=gpt-6.1-sol;host=fleet

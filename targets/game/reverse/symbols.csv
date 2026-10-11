@@ -90981,3 +90981,4 @@ _printf,0x009F7244,route=MSVCR71.dll!printf; IAT 0x01359464; CRT printf import j
 ?d_009b46e0@@YAXXZ,0x009B46E0,address-only compatibility pin for retired dump name; no signature identity claim
 ?d_009ab9d0@@YAXXZ,0x009AB9D0,address-only compatibility pin for retired dump name; no signature identity claim
 ?d_00925380@@YAXXZ,0x00925380,legacy address-only compatibility pin for retired dump used by MeshGeometryReadChunks
+?d_009c74f0@@YAXXZ,0x009C74F0,address-only compatibility for retired dump; complete retail extent and CPU dispatch slot verified
