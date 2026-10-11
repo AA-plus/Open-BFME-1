@@ -163873,7 +163873,7 @@ uw_00c4ba80,,0x00C4BA80,8,game/gen_small/uw_gen_006.cpp,matched,gen-funclet;obje
 uw_00c4ba88,,0x00C4BA88,8,game/gen_small/uw_gen_006.cpp,matched,gen-funclet;object-symbol=$L2391
 uw_00c4ba90,,0x00C4BA90,8,game/gen_small/uw_gen_001.cpp,matched,gen-funclet;object-symbol=$L315
 uw_00c4ba98,,0x00C4BA98,8,game/gen_small/uw_gen_006.cpp,matched,gen-funclet;object-symbol=$L2381
-uw_00c4bac0,,0x00C4BAC0,8,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayString.cpp,matched,gen-funclet;parent=?computeExtents@W3DDisplayString@@IAEXXZ;object-symbol=$L45915;eh-state-pin $L45910->$L45915: retail unwind map (?computeExtents@W3DDisplayString@@IAEXXZ states [0]) binds this address to $L45915;repin-model=claude-opus-5.5
+uw_00c4bac0,,0x00C4BAC0,8,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayString.cpp,matched,gen-funclet;parent=?computeExtents@W3DDisplayString@@IAEXXZ;object-symbol=$L46662;eh-state-pin $L45910->$L45915: retail unwind map (?computeExtents@W3DDisplayString@@IAEXXZ states [0]) binds this address to $L45915;repin-model=claude-opus-5.5;eh-state-pin $L45915->$L46662: retail unwind map (?computeExtents@W3DDisplayString@@IAEXXZ states [0]) binds this address to $L46662;repin-model=gpt-6.1-sol
 uw_00c4bae0,,0x00C4BAE0,8,game/gen_small/uw_gen_015.cpp,matched,gen-funclet;object-symbol=$L17137
 uw_00c4bb00,,0x00C4BB00,8,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayStringManager.cpp,matched,gen-funclet;parent=?postProcessLoad@W3DDisplayStringManager@@UAEXXZ;object-symbol=$L45022
 uw_00c4bb08,,0x00C4BB08,8,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayStringManager.cpp,matched,gen-funclet;parent=?postProcessLoad@W3DDisplayStringManager@@UAEXXZ;object-symbol=$L45025

@@ -167,10 +167,7 @@ void W3DDisplayString::reset( void )
 // W3DDisplayString::~W3DDisplayString ========================================
 /** */
 //=============================================================================
-W3DDisplayString::~W3DDisplayString( void )
-{
 
-}  // end ~W3DDisplayString
 
 // W3DDisplayString::textChanged ==============================================
 /** This method automatically gets called from some methods in the display
