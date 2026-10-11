@@ -183,55 +183,8 @@ Mission *Campaign::newMission( AsciiString name )
 }
 
 //-----------------------------------------------------------------------------
-// ?getMission@Campaign@@QAEPAVMission@@VAsciiString@@@Z present-unmatched
-Mission *Campaign::getMission( AsciiString missionName )
-{
-	if(missionName.isEmpty())
-		return NULL;
-	MissionListIt it;
-	it = m_missions.begin();	
-	// we've reached the end of the campaign
-	while(it != m_missions.end())
-	{
-		Mission *mission = *it;
-		if(mission->m_name.compare(missionName) == 0)
-			return mission;
-		++it;
-	}
-	DEBUG_ASSERTCRASH(FALSE, ("getMission couldn't find %s", missionName.str()));
-	return NULL;
-}
-
-//-----------------------------------------------------------------------------
-// byte-exact reconstruction: game/GameEngine/Source/GameClient/System/Campaign_getNextMission.cpp
-// ?getNextMission@Campaign@@QAEPAVMission@@PAV2@@Z present-unmatched
-Mission *Campaign::getNextMission( Mission *current)
-{
-	AsciiString name;
-	//if passed a Null pointer, load the first mission
-	if(!current)
-	{
-		name = m_firstMission;
-	}
-	else
-		name = current->m_nextMission;
-	name.toLower();
-	MissionListIt it;
-	it = m_missions.begin();	
-	// we've reached the end of the campaign
-	if(name.isEmpty())
-		return NULL;
-	while(it != m_missions.end())
-	{
-		Mission *mission = *it;
-		if(mission->m_name.compare(name) == 0)
-			return mission;
-		++it;
-	}
-//	DEBUG_ASSERTCRASH(FALSE, ("GetNextMission couldn't find %s", current->m_nextMission.str()));
-	return NULL;
-}
-
+// Retail Campaign::getMission and getNextMission are emitted by
+// Campaign_getNextMission.cpp.
 
 //-----------------------------------------------------------------------------
 // ??0CampaignManager@@QAE@XZ present-unmatched
