@@ -665,6 +665,10 @@ address_global	game/GameEngine/Source/Common/SmallLeafBodies2.cpp	g_Va01336E7C	2
 address_global	game/GameEngine/Source/Common/SmallLeafBodies2.cpp	g_Va0133F42C	2
 address_global	game/GameEngine/Source/Common/SmallLeafBodies2.cpp	g_Va0133F451	2
 address_global	game/GameEngine/Source/Common/StateSelfNamingCtorsWithFields.cpp	g_Va0109B558	2
+address_global	game/GameEngine/Source/Common/System/GameCommon.cpp	g_Va01073A98	2	allow=80a657459f87a3041c532eef7231d26209b057b8
+address_global	game/GameEngine/Source/Common/System/GameCommon.cpp	g_Va01073AA0	2	allow=80a657459f87a3041c532eef7231d26209b057b8
+address_global	game/GameEngine/Source/Common/System/GameCommon.cpp	g_Va01087AF8	2	allow=80a657459f87a3041c532eef7231d26209b057b8
+address_global	game/GameEngine/Source/Common/System/GameCommon.cpp	g_Va01087B00	2	allow=80a657459f87a3041c532eef7231d26209b057b8
 address_global	game/GameEngine/Source/Common/System/MemoryPoolFree.cpp	g_Va012D4D0C	2	allow=a10fea2ba810892e68a78c14530b188101480bb3
 address_global	game/GameEngine/Source/Common/System/MemoryPoolFree.cpp	g_bfmeRva0130EA10Owner	3
 address_global	game/GameEngine/Source/Common/System/Rva00883040.cpp	g_Va012D4D10Count	2	allow=1f027dc22929a9c7dd9038783d3fadc8729880a4
