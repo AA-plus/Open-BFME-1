@@ -35,7 +35,21 @@ struct RetailGlobalWeatherSystem
 	WeatherData m_weather[ 5 ];		// 0x28
 };
 
-extern RetailGlobalWeatherSystem *TheGlobalWeatherSystem;
+RetailGlobalWeatherSystem *TheGlobalWeatherSystem = 0;
+
+// Exact keyword bytes and the two parser records at VA 0x010EBC2C.
+// ILT 0x00018E7B reaches INI::rva000BABF0, the matched four-argument
+// counted-sound parser. Keep the table pointing at the retail ILT.
+extern void j_00018e7b();
+extern const char g_Va010EBC7C[] = "WeatherSound";
+extern const char g_Va010EBC6C[] = "HasLightning";
+
+const FieldParse WeatherData::m_fieldParseTable[] =
+{
+	{ g_Va010EBC7C, reinterpret_cast<INIFieldParseProc>( j_00018e7b ), 0, 0 },
+	{ g_Va010EBC6C, INI::parseBool, 0, 4 },
+	{ 0, 0, 0, 0 }
+};
 
 static const char *TheWeatherNames[] =
 {

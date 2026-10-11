@@ -804,6 +804,8 @@ address_global	game/GameEngine/Source/GameLogic/Pathfinder/PathfinderValidMoveme
 address_global	game/GameEngine/Source/GameLogic/ScriptEngine/Parameter_WriteParameter_Thunk.cpp	g_bfmeRva012AA068	4
 address_global	game/GameEngine/Source/GameLogic/ScriptEngine/ScriptEngineAttackInfo.cpp	g_Rva00F36E5C	3
 address_global	game/GameEngine/Source/GameLogic/System/BfmeCellGrid.cpp	g_Rva00F36E5C	2
+address_global	game/GameEngine/Source/GameLogic/System/WeatherData.cpp	g_Va010EBC6C	2	allow=15e3d0ed5efddb254b66b73f63be59976a847f22
+address_global	game/GameEngine/Source/GameLogic/System/WeatherData.cpp	g_Va010EBC7C	2	allow=15e3d0ed5efddb254b66b73f63be59976a847f22
 address_global	game/GameEngine/Source/GameNetwork/FeslBrowserFactory_ctor.cpp	g_Rva00803890Vt2	2
 address_global	game/GameEngine/Source/GameNetwork/GameSpy/Rva00872950.cpp	g_Rva0130E8B4	4
 address_global	game/GameEngine/Source/GameNetwork/GameSpy/Thread/BuddyThreadClassThreadFunction.cpp	g_Rva012F71BC	24
