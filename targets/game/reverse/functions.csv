@@ -36546,7 +36546,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_009add80@@YAXXZ,,0x009ADD80,2324,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009ae6a0@@YAXXZ,,0x009AE6A0,2107,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009aeee0@@YAXXZ,,0x009AEEE0,488,game/gen_asm/d_009a5b80.asm,matched,gen-dump;ghidra=FUN_00daeee0
-?d_009b0100@@YAXXZ,,0x009B0100,1583,game/gen_asm/d_009af200.asm,matched,gen-dump;ghidra=FUN_00db0100
 ?d_009b10e0@@YAXXZ,,0x009B10E0,3558,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009b1ed0@@YAXXZ,,0x009B1ED0,701,game/gen_asm/d_009af200.asm,matched,gen-dump;ghidra=FUN_00db1ed0
 ?d_009b2190@@YAXXZ,,0x009B2190,916,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00db2190
@@ -171980,3 +171979,5 @@ uw_00c1a108,,0x00C1A108,17,game/GameEngine/Source/GameLogic/LivingWorld/LivingWo
 ?dup_002e2820@@YAXXZ,,0x002E2820,7,game/GameEngine/Source/GameClient/GUI/GameWindow.cpp,matched,gen-alias;object-symbol=?winGetParent@GameWindow@@QAEPAV1@XZ;C++ alias;link-owner repair: retain native matched getter emitter; old helper-twin bytes and extent unchanged;model=gpt-6.1-sol;host=GreatFaram
 ?dup_00642b20@@YAXXZ,,0x00642B20,7,game/GameEngine/Source/GameClient/GUI/GameWindow.cpp,matched,gen-alias;object-symbol=?winGetParent@GameWindow@@QAEPAV1@XZ;C++ alias;link-owner repair: retain native matched getter emitter; old helper-twin bytes and extent unchanged;model=gpt-6.1-sol;host=GreatFaram
 ?Rva009AD750Filter@@YAXPAURva009AD750Context@@PAE1IIHPBI@Z,,0x009AD750,848,game/GameEngine/Source/Common/Rva009AD750Filter.cpp,matched,address-derived seven-dword cdecl callback;complete caller and fields verified;Open BFME 2 donor Code/Libraries/Source/VP6/DeblockVerticalEdges.cpp at game.dat 0x001BE140;evidence=targets/game/reverse/identity_evidence/0x009ad750-donor-port.md;model=gpt-6.1-sol;host=fleet
+_Rva009B0100Vp6BlockFilter,,0x009B0100,1583,game/GameEngine/Source/Common/BfmeVp6LoopFilter.cpp,matched,Open BFME 2 donor Code/Libraries/Source/VP6/LoopFilter.cpp at game.dat 0x001C0AF0; opaque BFME 1 identity; evidence=targets/game/reverse/identity_evidence/009b0100-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
+_Rva009B0730,,0x009B0730,1583,game/GameEngine/Source/Common/BfmeVp6LoopFilter.cpp,matched,Open BFME 2 donor Code/Libraries/Source/VP6/LoopFilter.cpp at game.dat 0x001C1120; complete ret and INT3 delimited extent; opaque BFME 1 identity; evidence=targets/game/reverse/identity_evidence/009b0730-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
