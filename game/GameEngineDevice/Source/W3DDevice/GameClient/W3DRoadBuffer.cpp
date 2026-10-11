@@ -3156,7 +3156,7 @@ public:
 class Rva006D6050
 {
 public:
-	void init(int width, int height, int format, int mipLevels, int pool, int renderTarget);
+	void init(unsigned width, unsigned height, unsigned format, unsigned mipLevels, unsigned pool, unsigned renderTarget);
 };
 
 class SurfaceResource
