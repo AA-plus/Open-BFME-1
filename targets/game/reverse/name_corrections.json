@@ -19388,5 +19388,35 @@
  "after_sha256": "5f7bf42ae278002656b428bc045830bbe5bee398cc8d7338250d1f56c4d6623d",
  "evidence": "targets/game/reverse/link_queue.csv",
  "reason": "Private per-TU spelling of the shared refcounted partition wide-iterator value struct; the emitted ??1BfmeWideResult@@QAE@XZ COMDAT must byte-match the copy link.exe keeps (first in link order), which calls ??1BfmeObjectIterator@@QAE@XZ (digest 9f7bf78dce02), the spelling BfmeConv1845DoneXJ/TerrainLogicSetWaterHeight/BridgeBehaviorHandleObjectsOnDie already established (link_queue row 17, census 96123b2483). No retail identity existed to preserve; the mangled identity is fixed by the kept copy."
-}
- ]
+},
+ {
+  "old_path": "targets/game/reverse/attempts/0x002fc570.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/ScriptEngine/ScriptActions.cpp",
+  "old_name": "m_numChars",
+  "new_name": "m_04",
+  "before_sha256": "12d680a55152f1c0d69b966347ce8f9af114a8ce49d0dcfcd205cffdf56d716e",
+  "after_sha256": "23a5dbc13a1d6fdbd1b05a90b1b8e39213bcc98a1f9e8f1f9cfb33fef2acdcff",
+  "evidence": "targets/game/reverse/identity_evidence/0x002fc570-private-views.md",
+  "reason": "Correct private bank view identities: target offsets and independent oracle absence/conflict documented; no EA field identity claimed."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002fc570.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/ScriptEngine/ScriptActions.cpp",
+  "old_name": "m_numCharsAllocated",
+  "new_name": "m_06",
+  "before_sha256": "12d680a55152f1c0d69b966347ce8f9af114a8ce49d0dcfcd205cffdf56d716e",
+  "after_sha256": "23a5dbc13a1d6fdbd1b05a90b1b8e39213bcc98a1f9e8f1f9cfb33fef2acdcff",
+  "evidence": "targets/game/reverse/identity_evidence/0x002fc570-private-views.md",
+  "reason": "Correct private bank view identities: target offsets and independent oracle absence/conflict documented; no EA field identity claimed."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002fc570.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/ScriptEngine/ScriptActions.cpp",
+  "old_name": "m_refCount",
+  "new_name": "m_00",
+  "before_sha256": "12d680a55152f1c0d69b966347ce8f9af114a8ce49d0dcfcd205cffdf56d716e",
+  "after_sha256": "23a5dbc13a1d6fdbd1b05a90b1b8e39213bcc98a1f9e8f1f9cfb33fef2acdcff",
+  "evidence": "targets/game/reverse/identity_evidence/0x002fc570-private-views.md",
+  "reason": "Correct private bank view identities: target offsets and independent oracle absence/conflict documented; no EA field identity claimed."
+ }
+]

@@ -7595,9 +7595,223 @@ void ScriptActions::doTeamGuardInTunnelNetwork(const AsciiString& teamName)
 
 //-------------------------------------------------------------------------------------------------
 // ?doRemoveCommandBarButton@ScriptActions@@IAEXABVAsciiString@@0@Z
-// Body in game/masm_dumps/ScriptActions_doRemoveCommandBarButton.asm
-// (exact 463B @ 0x2FC570). Queue RVA 0x2FC632 was INSIDE this function.
-// BFME expands ZH: primary CommandSet pass + ThingTemplate+0x294 related sets.
+extern "C" void _ReadWriteBarrier(void);
+#pragma intrinsic(_ReadWriteBarrier)
+// ?doRemoveCommandBarButton@ScriptActions@@IAEXABVAsciiString@@0@Z
+// BFME-2 donor: 2a0f7acb06 Code/GameEngine/Source/GameLogic/ScriptEngine/
+// ScriptActions_doRemoveCommandBarButton.cpp. Its per-slot null guards and
+// ModuleInfo accessor iteration guide this BFME-1 reconstruction.
+// BFME-1 extent 0x002FC570..0x002FC73F (ret 8); executeAction names it.
+// Barrier-separated string accessors retain the retail repeated null tests.
+// Clean C++ recovery of REMOVE_COMMANDBAR_BUTTON.
+// Private view names and members retain addresses/offsets: name_oracle has
+// no CommandButton+0x0C BFME witness; the ThingTemplate+0x2C witness names
+// placementViewAngle and cannot establish this lookup receiver identity.
+// Retail RVA 0x002FC570 (463 bytes); executeAction's
+// COMMANDBAR_REMOVE_BUTTON_OBJECTTYPE arm names this body.  BFME removes
+// matching buttons from the primary command set and from related behavior
+// module command sets.
+
+
+
+class CommandButton;
+class CommandSet;
+class ThingTemplate;
+class ThingFactory;
+
+
+// BFME compares the string at CommandButton+0x0C; only ZH names it m_name.
+class Rva002FC570CommandButtonName
+{
+public:
+	const AsciiString &getName() const { return m_0C; }
+
+private:
+	unsigned char m_beforeName[0x0c];
+	AsciiString m_0C;
+};
+
+
+
+
+extern ThingFactory *TheThingFactory;
+extern ControlBar *TheControlBar;
+extern GameLogic *TheGameLogic;
+
+// ModuleInfo::Nugget is private in the reference headers.  This is the
+// proven BFME storage view: two AsciiStrings, the ModuleData pointer at +8,
+// and 0x14-byte records.  Only the vector bounds and the data pointer are
+// used here; the remaining fields are deliberately not interpreted.
+struct Rva002FC570ModuleInfoNugget
+{
+	unsigned char m_bytes[0x14];
+};
+
+struct Rva002FC570ModuleInfo
+{
+	Rva002FC570ModuleInfoNugget *m_00;
+	Rva002FC570ModuleInfoNugget *m_04;
+	Rva002FC570ModuleInfoNugget *m_08;
+};
+
+// The retail call is a virtual at vtable byte offset +0x3c on the module
+// data.  Its result is an object whose command-set anchor is at +0x70.  The
+// anchor itself is the base used by this view: its AsciiString is at offset
+// zero and its behavior ModuleInfo begins at +0x294.  This names only the
+// observed ABI, not an invented BFME module class.
+class Rva002FC570ModuleDataView
+{
+public:
+	virtual void slot00() = 0;
+	virtual void slot01() = 0;
+	virtual void slot02() = 0;
+	virtual void slot03() = 0;
+	virtual void slot04() = 0;
+	virtual void slot05() = 0;
+	virtual void slot06() = 0;
+	virtual void slot07() = 0;
+	virtual void slot08() = 0;
+	virtual void slot09() = 0;
+	virtual void slot10() = 0;
+	virtual void slot11() = 0;
+	virtual void slot12() = 0;
+	virtual void slot13() = 0;
+	virtual void slot14() = 0;
+	virtual const void *getRelatedOwner() const = 0;
+};
+
+
+class Rva002FC570ThingTemplate
+{
+public:
+	const AsciiString &commandSetName() const { return m_2C; }
+	const Rva002FC570ModuleInfo &behaviorModuleInfo() const { return m_294; }
+
+private:
+	char m_padToCommandSet[0x2c];
+	AsciiString m_2C;
+	char m_padToBehavior[0x264];
+	Rva002FC570ModuleInfo m_294;
+};
+
+struct Rva002FC570AsciiStringData
+{
+	unsigned int m_00;
+	unsigned short m_04;
+	unsigned short m_06;
+};
+
+extern char Rva006A16B0Empty[];
+
+
+// Keep the button subobject address live until after the second lookup.  The
+// retail sequence adds +0x0c to that pointer before loading its AsciiString
+// data, rather than materializing the reference through a C++ accessor first.
+static __forceinline Int bfmeCompareCommandButton(const CommandButton *button,
+	const AsciiString &requestedName)
+{
+	const AsciiString *buttonName =
+		(const AsciiString *)((const char *)button + 0x0c);
+	const Rva002FC570AsciiStringData *requestedData =
+		*(const Rva002FC570AsciiStringData * const *)&requestedName;
+	Int requestedLength = requestedData
+		? requestedData->m_04 : 0;
+	_ReadWriteBarrier();
+	const char *requestedText = requestedData
+		? (const char *)(requestedData + 1)
+		: Rva006A16B0Empty;
+	const Rva002FC570AsciiStringData *buttonData =
+		*(const Rva002FC570AsciiStringData * const *)buttonName;
+	Int buttonLength = buttonData ? buttonData->m_04 : 0;
+	_ReadWriteBarrier();
+	const char *buttonText = buttonData ? (const char *)(buttonData + 1)
+		: Rva006A16B0Empty;
+	Int commonLength = buttonLength < requestedLength
+		? buttonLength : requestedLength;
+	Int result = memcmp(buttonText, requestedText, commonLength);
+	if (result != 0)
+		return result;
+	return (Int)buttonLength - (Int)requestedLength;
+}
+
+
+// ?doRemoveCommandBarButton@ScriptActions@@IAEXABVAsciiString@@0@Z
+void ScriptActions::doRemoveCommandBarButton(const AsciiString &buttonName,
+	const AsciiString &objectType)
+{
+	Int offset;
+	const AsciiString *commandSetNamePtr;
+	const Rva002FC570ThingTemplate *thingTemplate =
+		(const Rva002FC570ThingTemplate *)((BfmeThingFactory *)TheThingFactory)->findTemplate(objectType);
+	if (!thingTemplate)
+		return;
+
+	commandSetNamePtr = &thingTemplate->commandSetName();
+	const AsciiString &commandSetName = *commandSetNamePtr;
+	const CommandSet *commandSet = TheControlBar->findCommandSet(commandSetName);
+	
+	{
+		for (Int slot = 0; slot < 20; ++slot)
+		{
+			if (commandSet && ((const CommandSetShim *)commandSet)->getCommandButton(slot) &&
+				((const AsciiStringCompareShim *)&((const Rva002FC570CommandButtonName *)
+					((const CommandSetShim *)commandSet)->getCommandButton(slot))->getName())
+					->compare(buttonName) == 0)
+			{
+				TheGameLogic->setControlBarOverride(commandSetName, slot, 0);
+			}
+		}
+	}
+
+	Rva002FC570ModuleInfoNugget *nugget =
+		thingTemplate->behaviorModuleInfo().m_00;
+	Rva002FC570ModuleInfoNugget *end =
+		thingTemplate->behaviorModuleInfo().m_04;
+	Int index = 0;
+	Int count = end - nugget;
+	if (count <= 0) return;
+	offset = 0;
+	do
+	{
+		const Rva002FC570ModuleDataView *moduleData = 0;
+		if (offset >= 0 && (unsigned)index < (unsigned)count)
+			moduleData = *(const Rva002FC570ModuleDataView **)(offset + (unsigned int)nugget + 8);
+		if (moduleData)
+		{
+			const char *ownerBase =
+				(const char *)moduleData->getRelatedOwner();
+			if (ownerBase)
+			{
+				const AsciiString &relatedName =
+					*(const AsciiString *)(ownerBase + 0x70);
+				const CommandSet *relatedSet =
+					TheControlBar->findCommandSet(relatedName);
+				
+				{
+					for (Int slot = 0; slot < 20; ++slot)
+					{
+						if (relatedSet && ((const CommandSetShim *)relatedSet)->getCommandButton(slot) &&
+							bfmeCompareCommandButton(
+								((const CommandSetShim *)relatedSet)->getCommandButton(slot),
+								buttonName) == 0)
+						{
+							TheGameLogic->setControlBarOverride(relatedName, slot, 0);
+						}
+					}
+				}
+			}
+		}
+
+		nugget = thingTemplate->behaviorModuleInfo().m_00;
+		end = thingTemplate->behaviorModuleInfo().m_04;
+		++index;
+		offset += sizeof(Rva002FC570ModuleInfoNugget);
+		count = end - nugget;
+	} while (index < count);
+}
+
+
+
 
 //-------------------------------------------------------------------------------------------------
 // BFME's script-only command slot ceiling is 20; ZH's ControlBar.h says 18. Kept
