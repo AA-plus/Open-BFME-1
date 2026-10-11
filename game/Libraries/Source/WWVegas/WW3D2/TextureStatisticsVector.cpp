@@ -23,7 +23,7 @@ class TextureClass : public TextureBaseClass
 {
 };
 
-void TextureBaseClass::Add_Ref()
+inline void TextureBaseClass::Add_Ref()
 {
 	++*reinterpret_cast<unsigned short *>(reinterpret_cast<char *>(this) + 4);
 }
