@@ -124,7 +124,9 @@ private:
 };
 
 // ?find008958D0@Rva00893030Manager@@QAE?AVRefHandle008958D0@@PAVBfmeStrVKI@@@Z
-RefHandle008958D0 Rva00893030Manager::find008958D0(BfmeStrVKI *key)
+// Inline, as Rva00895A00CreateHandle.cpp must define it too (its caller only matches
+// with the body visible): both objects emit select-any copies of the same retail bytes.
+inline RefHandle008958D0 Rva00893030Manager::find008958D0(BfmeStrVKI *key)
 {
 	Rva00893030Node *n = m_head;
 
