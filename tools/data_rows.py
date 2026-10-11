@@ -264,6 +264,23 @@ def _protected_probe_name(source, symbol, tag):
     return f"data_row_protected_access_{zlib.crc32(key):08x}"
 
 
+def _run_probe(build, command, env):
+    """Compile a probe exactly as build.try_compile_source compiles its source:
+    a missing include retries once with the sweep include dirs (header
+    resolution only). Without that retry a TU the byte gate compiles, such as
+    Win32GameEngine_update.cpp's <windows.h>, failed every probe with C1083
+    (re_attempts 59857)."""
+    import subprocess
+    proc = subprocess.run(command, capture_output=True, text=True, errors="replace", env=env, cwd=str(ROOT))
+    dirs = [d for d in build._SWEEP_INCLUDE_DIRS if d.exists()]
+    if proc.returncode and dirs and "Cannot open include file" in proc.stdout + proc.stderr:
+        env = dict(env)
+        env["INCLUDE"] = env["INCLUDE"] + ";" + ";".join(build.wine_path(d) for d in dirs)
+        command = list(command) + [f"-I{build.wine_path(d)}" for d in dirs]
+        proc = subprocess.run(command, capture_output=True, text=True, errors="replace", env=env, cwd=str(ROOT))
+    return proc
+
+
 def compiled_size(source, symbol):
     """(bytes, how) = sizeof(the symbol) as MSVC 7.1 evaluates it in a probe TU
     that #includes `source` and is compiled with `source`'s own build command;
@@ -302,7 +319,7 @@ def compiled_size(source, symbol):
     command[-1] = probe.relative_to(ROOT).as_posix()
     if obj.exists():
         obj.unlink()
-    proc = subprocess.run(command, capture_output=True, text=True, errors="replace", env=env, cwd=str(ROOT))
+    proc = _run_probe(build, command, env)
     if proc.returncode or not obj.exists():
         return None, f"the sizeof probe does not compile: {(proc.stdout + proc.stderr).strip()[-300:]}"
     sections, symbols = rl.parse_coff(obj.read_bytes())
@@ -353,7 +370,7 @@ def _type_probe(source, symbol, tag, preamble, value):
     command[-1] = probe.relative_to(ROOT).as_posix()
     if obj.exists():
         obj.unlink()
-    proc = subprocess.run(command, capture_output=True, text=True, errors="replace", env=env, cwd=str(ROOT))
+    proc = _run_probe(build, command, env)
     if proc.returncode or not obj.exists():
         return None, f"the type probe does not compile: {(proc.stdout + proc.stderr).strip()[-300:]}"
     sections, symbols = rl.parse_coff(obj.read_bytes())
