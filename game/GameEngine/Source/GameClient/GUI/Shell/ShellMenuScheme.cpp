@@ -284,43 +284,8 @@ ShellMenuSchemeManager::~ShellMenuSchemeManager( void )
 	
 }
 
-// byte-exact reconstruction: game/GameEngine/Source/Common/ShellMenuSchemeManager_parseImagePart_Thunk.cpp
-// ?parseImagePart@ShellMenuSchemeManager@@ present-unmatched
-void ShellMenuSchemeManager::parseImagePart(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
-{
-	static const FieldParse myFieldParse[] = 
-		{
-			{ "Position",				INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_position ) },
-			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_size ) },
-      { "ImageName",			INI::parseMappedImage,		NULL, offsetof( ShellMenuSchemeImage, m_image ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
-		};
-
-	ShellMenuSchemeImage *schemeImage = NEW ShellMenuSchemeImage;
-	ini->initFromINI(schemeImage, myFieldParse);
-	((ShellMenuScheme*)instance)->addImage(schemeImage);
-
-}
-
-// byte-exact reconstruction: game/GameEngine/Source/Common/ShellMenuSchemeManager_parseLinePart_Thunk.cpp
-// ?parseLinePart@ShellMenuSchemeManager@@ present-unmatched
-void ShellMenuSchemeManager::parseLinePart(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
-{
-	static const FieldParse myFieldParse[] = 
-		{
-			{ "StartPosition",		INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeLine, m_startPos ) },
-			{ "EndPosition",			INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeLine, m_endPos ) },
-      { "Color",						INI::parseColorInt,				NULL, offsetof( ShellMenuSchemeLine, m_color ) },
-			{ "Width",						INI::parseInt,						NULL, offsetof( ShellMenuSchemeLine, m_width ) },
-			
-			{ NULL,								NULL,											NULL, 0 }  // keep this last
-		};
-
-	ShellMenuSchemeLine *schemeLine = NEW ShellMenuSchemeLine;
-	ini->initFromINI(schemeLine, myFieldParse);
-	((ShellMenuScheme*)instance)->addLine(schemeLine);
-
-}
+// parseImagePart and parseLinePart use the retail bodies in
+// ShellMenuSchemeManager_parseImagePart_Thunk.cpp.
 
 // ShellMenuSchemeManager::newShellMenuScheme is defined once, by its retail body
 // (0x005815E0) in ShellMenuSchemeManager_newShellMenuScheme_Thunk.cpp.
