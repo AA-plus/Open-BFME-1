@@ -18,4 +18,7 @@ struct Gen_t_00776240_p128pod
 		const Gen_t_00776240_p128pod &other);
 };
 
-template class _STL::vector<Gen_t_00776240_p128pod>;
+// Emit only the owned insertion; copying and growth have separate owners.
+template Gen_t_00776240_p128pod *
+_STL::vector<Gen_t_00776240_p128pod>::insert(
+	Gen_t_00776240_p128pod *, const Gen_t_00776240_p128pod &);

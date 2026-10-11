@@ -16,4 +16,6 @@ struct Gen_t_003a75c0_p8cd
 	AsciiString m_member_4;
 };
 
-template class _STL::vector<Gen_t_003a75c0_p8cd>;
+// Emit only the owned vector copy constructor.
+template _STL::vector<Gen_t_003a75c0_p8cd>::vector(
+	const _STL::vector<Gen_t_003a75c0_p8cd> &);

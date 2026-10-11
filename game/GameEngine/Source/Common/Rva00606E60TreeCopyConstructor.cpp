@@ -37,6 +37,5 @@ typedef _STL::_Rb_tree<AsciiString, Rva00606E60Pair,
 	_STL::_Select1st<Rva00606E60Pair>, _STL::less<AsciiString>,
 	_STL::allocator<Rva00606E60Pair> > Rva00606E60Tree;
 
-template class _STL::_Rb_tree<AsciiString, Rva00606E60Pair,
-	_STL::_Select1st<Rva00606E60Pair>, _STL::less<AsciiString>,
-	_STL::allocator<Rva00606E60Pair> >;
+// Emit only the owned tree copy constructor.
+template Rva00606E60Tree::_Rb_tree(const Rva00606E60Tree &);

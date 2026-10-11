@@ -5,4 +5,10 @@
 #include "Common/IgnorePreferences.h"
 
 // ??0?$_Rb_tree@HU?$pair@$$CBHVAsciiString@@@_STL@@U?$_Select1st@U?$pair@$$CBHVAsciiString@@@_STL@@@2@U?$less@H@2@V?$allocator@U?$pair@$$CBHVAsciiString@@@_STL@@@2@@_STL@@QAE@ABV01@@Z
-template class _STL::map<int, AsciiString>;
+// Emit only the owned underlying tree copy constructor.
+template _STL::_Rb_tree<int, _STL::pair<const int, AsciiString>,
+	_STL::_Select1st<_STL::pair<const int, AsciiString> >, _STL::less<int>,
+	_STL::allocator<_STL::pair<const int, AsciiString> > >::_Rb_tree(
+	const _STL::_Rb_tree<int, _STL::pair<const int, AsciiString>,
+		_STL::_Select1st<_STL::pair<const int, AsciiString> >, _STL::less<int>,
+		_STL::allocator<_STL::pair<const int, AsciiString> > > &);

@@ -11,4 +11,7 @@
 
 class NetPacket;
 
-template class _STL::list<NetPacket *>;
+// Emit the three owned lifetime bodies without unrelated list operations.
+template _STL::list<NetPacket *>::list(const _STL::list<NetPacket *> &);
+template _STL::_List_base<NetPacket *, _STL::allocator<NetPacket *> >::~_List_base();
+template _STL::list<NetPacket *>::~list();

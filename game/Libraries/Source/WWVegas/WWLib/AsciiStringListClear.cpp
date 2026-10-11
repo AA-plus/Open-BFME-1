@@ -10,4 +10,9 @@
 #include "ascii_string.h"
 #include <list>
 
-template class _STL::list<AsciiString>;
+// Emit the owned clear and range insertion without unrelated list operations.
+template void _STL::_List_base<AsciiString, _STL::allocator<AsciiString> >::clear();
+template void _STL::list<AsciiString>::_M_insert_dispatch<
+	_STL::list<AsciiString>::const_iterator>(
+	_STL::list<AsciiString>::iterator, _STL::list<AsciiString>::const_iterator,
+	_STL::list<AsciiString>::const_iterator, const _STL::__false_type &);
