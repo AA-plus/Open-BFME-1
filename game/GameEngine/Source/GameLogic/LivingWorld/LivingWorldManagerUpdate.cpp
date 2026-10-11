@@ -56,7 +56,8 @@ public:
 	void updateState();
 };
 
-class Rva003BF540
+// ILT 0x0000B63B reaches the bool(int) method at 0x003BDEC0.
+class Rva003BDEC0
 {
 public:
 	bool anyMatching(int mask);
@@ -106,7 +107,8 @@ public:
 };
 
 extern unsigned char Rva00563970GetFlag();
-extern void ShowControlBar(int show);
+// ILT 0x00024848 reaches the verified ShowControlBar(bool) at 0x004C0E10.
+extern void ShowControlBar(bool immediate);
 extern void j_00004c3c();
 extern void j_000231f0();
 extern void j_0003a17a();
@@ -160,6 +162,7 @@ class GameLogic;
 extern GameLogic *TheGameLogic;
 static inline Rva00367E30Logic *TheBfmeGameLogicView() { return (Rva00367E30Logic *)TheGameLogic; }
 extern Rva006174D0State *g_bfmeStateDF;
+class Rva003BF540;
 extern Rva003BF540 *TheLivingWorldLogic;
 extern BfmeC977 *g_theWindowManager;
 class AptPalantir;
@@ -199,9 +202,9 @@ void BfmeLivingWorldManager::update()
 
 	if (!m_flag288 && g_bfmeStateDF->m_field04 == 1
 		&& Rva00563970GetFlag()
-		&& !TheLivingWorldLogic->anyMatching(8))
+		&& !reinterpret_cast<Rva003BDEC0 *>(TheLivingWorldLogic)->anyMatching(8))
 	{
-		ShowControlBar(1);
+		ShowControlBar(true);
 		if (TheMouse)
 			TheMouse->_bfme_setEngineVisibility(true);
 	}
