@@ -349,7 +349,9 @@ struct GlobalData0BC8
 	unsigned char m_padBCC[4];
 	Int m_valueBD0;							// +0xbd0
 };
-extern GlobalData0BC8 *TheWritableGlobalData;
+// Native singleton: GlobalData.cpp owns VA012ED5C8.
+class GlobalData;
+extern GlobalData *TheWritableGlobalData;
 
 Int Rva0009B4B0(Int a, Int b);
 
@@ -405,8 +407,8 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 
 				Bool goodVersion = header.versionString == TheVersion->bfmeVersionTextAL()
 					&& header.versionNumber == TheVersion->getVersionNumber()
-					&& header.exeCRC == (UnsignedInt)Rva0009B4B0(TheWritableGlobalData->m_valueBD0, TheWritableGlobalData->m_valueBD0)
-					&& header.iniCRC == TheWritableGlobalData->m_crcBC8;
+					&& header.exeCRC == (UnsignedInt)Rva0009B4B0(reinterpret_cast<GlobalData0BC8 *>(TheWritableGlobalData)->m_valueBD0, reinterpret_cast<GlobalData0BC8 *>(TheWritableGlobalData)->m_valueBD0)
+					&& header.iniCRC == reinterpret_cast<GlobalData0BC8 *>(TheWritableGlobalData)->m_crcBC8;
 				Int color;
 				if (goodVersion)
 				{

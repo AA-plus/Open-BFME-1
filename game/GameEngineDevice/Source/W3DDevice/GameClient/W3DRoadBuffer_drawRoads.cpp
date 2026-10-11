@@ -182,7 +182,9 @@ struct Glo012ED5C8Type
 	char m_pad39[0x0b];
 	bool m_flag44;	// noise texture enabled
 };
-extern Glo012ED5C8Type *TheWritableGlobalData;
+// Native singleton: GlobalData.cpp owns VA012ED5C8.
+class GlobalData;
+extern GlobalData *TheWritableGlobalData;
 
 extern void *bfmeGoEMEb(void *name);
 extern void Rva009EBAC0(int assets);
@@ -381,13 +383,13 @@ void W3DRoadBuffer::drawRoads(CameraClass *camera, const TextureHandle &cloudTex
 			}
 		}
 		st = W3DShaderManager::ST_ROAD_BASE;
-		if (cloudTexture.m_p && TheWritableGlobalData->m_flag38) {
+		if (cloudTexture.m_p && reinterpret_cast<Glo012ED5C8Type *>(TheWritableGlobalData)->m_flag38) {
 			st = W3DShaderManager::ST_ROAD_BASE_NOISE1;
-			if (noiseTexture.m_p && TheWritableGlobalData->m_flag44)
+			if (noiseTexture.m_p && reinterpret_cast<Glo012ED5C8Type *>(TheWritableGlobalData)->m_flag44)
 				st = W3DShaderManager::ST_ROAD_BASE_NOISE12;
 		}
 		else
-		if (noiseTexture.m_p && TheWritableGlobalData->m_flag44)
+		if (noiseTexture.m_p && reinterpret_cast<Glo012ED5C8Type *>(TheWritableGlobalData)->m_flag44)
 			st = W3DShaderManager::ST_ROAD_BASE_NOISE2;
 
 		devicePasses = 1;

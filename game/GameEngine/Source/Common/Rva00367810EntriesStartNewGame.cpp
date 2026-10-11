@@ -114,9 +114,11 @@ struct GlobalData367470 {
     char field00[0x218];
     int field218;
 };
-extern GlobalData367470 *TheWritableGlobalData;
+// Native singleton: GlobalData.cpp owns VA012ED5C8.
+class GlobalData;
+extern GlobalData *TheWritableGlobalData;
 inline int Entry367470::delay() {
-    return TheWritableGlobalData->field218==4?field1c:field18;
+    return reinterpret_cast<GlobalData367470 *>(TheWritableGlobalData)->field218==4?field1c:field18;
 }
 class Rva00367810Entries {
     public:

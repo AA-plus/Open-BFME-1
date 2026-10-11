@@ -309,7 +309,9 @@ struct GlobalData007B14A0
 	bool m_bfmeA77;
 	float m_bfmeA78;
 };
-extern GlobalData007B14A0 *TheWritableGlobalData;
+// Native singleton: GlobalData.cpp owns VA012ED5C8.
+class GlobalData;
+extern GlobalData *TheWritableGlobalData;
 
 class Matrix4x4
 {
@@ -406,14 +408,14 @@ void W3DProjectedShadowManager::flush007B14A0(unsigned type, ShadowTexture007B6D
 
 	if (type == 0x1000) {
 		if (DX8Wrapper::Has_Stencil()) {
-			if (TheWritableGlobalData->m_bfmeA77) {
+			if (reinterpret_cast<GlobalData007B14A0 *>(TheWritableGlobalData)->m_bfmeA77) {
 				DX8Wrapper::Set_DX8_Render_State(D3DRS_STENCILFUNC, D3DCMP_NOTEQUAL);
 				DX8Wrapper::Set_DX8_Render_State(D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE, StringClass::BufferFirst());
 				BoxSetTexture(1, BfmeHandleCX());
 				DX8Wrapper::Set_Shader(Rva012BBE34Shader);
 				DX8Wrapper::Apply_Render_State_Changes();
 				DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-				int ref = (int)(TheWritableGlobalData->m_bfmeA78 * 255.0f);
+				int ref = (int)(reinterpret_cast<GlobalData007B14A0 *>(TheWritableGlobalData)->m_bfmeA78 * 255.0f);
 				DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF, ref < 0 ? 0 : (ref > 255 ? 255 : ref));
 			} else if (mode == 0) {
 				DX8Wrapper::Set_DX8_Render_State(D3DRS_STENCILFUNC, D3DCMP_ALWAYS);

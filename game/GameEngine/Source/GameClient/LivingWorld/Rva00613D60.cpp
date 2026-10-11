@@ -142,7 +142,9 @@ struct Rva006C9270GlobalData
 	AsciiString m_mapPath;
 };
 
-extern Rva006C9270GlobalData *TheWritableGlobalData;
+// Native singleton: GlobalData.cpp owns VA012ED5C8.
+class GlobalData;
+extern GlobalData *TheWritableGlobalData;
 
 void __cdecl InitGameLogicRandom(unsigned int now);										///< ILT 0x0002E8BB
 
@@ -249,7 +251,7 @@ void Rva00613D60Owner::rva00613d60(Rva00613D60Region *region)
 	const char *name = region->m_name.str();
 	AsciiString path;
 	path.format(AsciiString("maps\\%s\\%s.map"), name, name);
-	TheWritableGlobalData->m_mapPath.format(path);
+	reinterpret_cast<Rva006C9270GlobalData *>(TheWritableGlobalData)->m_mapPath.format(path);
 
 	if (Glo012F7090 != 0)
 		InitGameLogicRandom(g_bfmeNowVNH());
