@@ -42,7 +42,9 @@ public:
 
 class Rva00510DC0DisplayView;
 extern Rva00510DC0DisplayView *Rva00510DC0Display;					// 0x012F4974
-extern BfmeReleaseSink *TheBfmeReleaseSink;				// 0x012F12CC
+// The native singleton owns this cell; retain the witnessed slot-10 view.
+class DisplayStringManager;
+extern DisplayStringManager *TheDisplayStringManager;	// 0x012F12CC
 extern int g_guiFxWindowHandle;						// 0x012B7430
 // Retail 0x012F19E8 is the game-wide manager pointer EA defines as
 // `WindowManager *g_rva012F19E8WindowManager` in
@@ -59,7 +61,7 @@ void Gen_00510b50(void)
 {
 	if (reinterpret_cast<void * &>(Rva00510DC0Display))
 	{
-		TheBfmeReleaseSink->bfmeRelease(reinterpret_cast<void * &>(Rva00510DC0Display));
+		reinterpret_cast<BfmeReleaseSink *>(TheDisplayStringManager)->bfmeRelease(reinterpret_cast<void * &>(Rva00510DC0Display));
 
 		reinterpret_cast<void * &>(Rva00510DC0Display) = 0;
 	}

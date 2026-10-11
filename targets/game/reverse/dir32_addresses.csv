@@ -7060,7 +7060,6 @@ name,va
 ?TheBfmeQuickMatchScreenSlot@@3PAXA,0x012F4820
 ?TheBfmeReleaseOwner@@3PAVRva007ADB80Owner@@A,0x01306DE8
 ?TheBfmeReleaseOwner@@3PAVW3DBufferManager@@A,0x01306DE8
-?TheBfmeReleaseSink@@3PAVBfmeReleaseSink@@A,0x012F12CC
 ?TheBfmeRenderDevice@@3PAVBfmeRenderDevice@@A,0x01340538
 ?TheBfmeSecondManager@@3PAVBfmeDeletable@@A,0x012F6DA4
 ?TheBfmeSetupFirstText@@3QBDB,0x011298AC
