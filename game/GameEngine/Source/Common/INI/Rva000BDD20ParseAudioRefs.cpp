@@ -1,16 +1,6 @@
-// ?rva000BDD20@@YAXPAVINI@@PAX1PBX@Z
-// partial score=0.5169 date=2026-10-03
-// Bank only: retail385B; candidate384B, shape0.977,184 non-reloc diffs.
-// NOT byte exact: frame14 versus10; empty vector tag at local13 versus
-// incoming store slot; temporary release register/compare scheduling differs.
-// Native INIException lifetime is retained, but retail descriptor11DFC30
-// destroys through41460F->61BD0, while current named destructor is139FF0.
-// Coordinate that existing exception-family defect before promotion.
-// Audio ref layout comes from AudioManagerFindAllAudioEventsOfType.cpp;
-// its ownership needs reconciliation with the old POD overflow TU atBD3B0.
-// Complete literal NoSound and Invalid Sound '%s' read through terminators.
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/GameEngine/Include/Common/INI /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/iniexception
 // stlport
+// Retail audio-reference list parser; owner remains address-derived.
 #define _STLP_NO_EXCEPTIONS 1
 #include <vector>
 #include "INI.h"
@@ -23,11 +13,13 @@ struct AudioEventInfo
 public:
 	virtual ~AudioEventInfo();
 
+	// ?Release_Ref@AudioEventInfo@@QAEXXZ absent-from-retail
 	void Release_Ref(void)
-	{
-		if (InterlockedDecrement(&m_refCount) <= 0)
-			delete this;
-	}
+    {
+        long count = InterlockedDecrement(&m_refCount);
+        if (count <= 0)
+            delete this;
+    }
 
 	long m_refCount;
 	
@@ -36,6 +28,7 @@ public:
 class AudioEventInfoRef
 {
 public:
+	// ??0AudioEventInfoRef@@QAE@PAUAudioEventInfo@@@Z absent-from-retail
 	AudioEventInfoRef(AudioEventInfo *info = 0) : m_info(info)
 	{
 		if (m_info)
@@ -65,11 +58,10 @@ public:
     AudioEventInfo *m_info;
 };
 
-// The element type as the ledger names the vector's _M_insert_overflow
-// (0x000BD3B0): an AudioEventInfoRef by its copy (store + InterlockedIncrement)
-// and its destroy (InterlockedDecrement + deleting destructor).
+// The overflow insert consumes the retained one-pointer element.
 struct Rva000BD3B0Element : public AudioEventInfoRef
 {
+	// ??0Rva000BD3B0Element@@QAE@PAUAudioEventInfo@@@Z absent-from-retail
 	Rva000BD3B0Element(AudioEventInfo *info = 0) : AudioEventInfoRef(info) { }
 };
 
@@ -147,7 +139,9 @@ virtual void slot69();
 virtual AudioEventInfoRef find(const AsciiString *) const;
 };
 extern void *TheAudioClientUpdate;
+// ?rva000BDD20@@YAXPAVINI@@PAX1PBX@Z
 void __cdecl rva000BDD20(INI *ini, void *, void *store, const void *) {
+    _STL::vector<Rva000BD3B0Element> *sounds = (_STL::vector<Rva000BD3B0Element> *)store;
     const char *token=ini->getNextTokenOrNull();
     while (token) {
         Rva000BD3B0Element value;
@@ -155,7 +149,7 @@ void __cdecl rva000BDD20(INI *ini, void *, void *store, const void *) {
             value.AudioEventInfoRef::operator=(((Rva000BDD20AudioView *)TheAudioClientUpdate)->find(&AsciiString(token)));
             if (!value.m_info) throw INIException(3,"Invalid Sound '%s'",token);
         }
-        ((_STL::vector<Rva000BD3B0Element> *)store)->push_back(value);
+        sounds->push_back(value);
         token=ini->getNextTokenOrNull();
     }
 }
