@@ -26,7 +26,7 @@ typedef unsigned int size_t;
 extern "C" size_t strlen(const char *);
 #pragma intrinsic(strlen)
 extern "C" __declspec(dllimport) int __cdecl _memicmp(const void *, const void *, size_t);
-extern const char g_bfmeEmptyUnicode[];		// 0x0107388C
+extern const unsigned short BFMEEmptyUnicodeString;		// 0x0107388C
 
 template <typename T> struct StringHeader
 {
@@ -120,7 +120,7 @@ public:
 	UnicodeString &operator=(const UnicodeString &other) { StringBase<WideChar>::set(other); return *this; }
 
 	Int getLength() const { return m_data ? m_data->m_length : 0; }
-	const WideChar *str() const { return m_data ? m_data->m_text : (const WideChar *)g_bfmeEmptyUnicode; }
+	const WideChar *str() const { return m_data ? m_data->m_text : (const WideChar *)((const char *)&BFMEEmptyUnicodeString); }
 
 	void translate(const AsciiString &src);
 	void removeLastChar();

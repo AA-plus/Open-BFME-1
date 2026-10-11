@@ -40,7 +40,7 @@ private:
 
 extern "C" __declspec(dllimport) int __cdecl iswspace(WideChar c);
 
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 class UnicodeString : private StringBase<unsigned short>
 {
@@ -76,7 +76,7 @@ public:
 	const WideChar *str() const
 	{
 		return m_data ? &m_data->data[0]
-		              : reinterpret_cast<const WideChar *>(g_bfmeEmptyUnicode);
+		              : reinterpret_cast<const WideChar *>(((const char *)&BFMEEmptyUnicodeString));
 	}
 
 	bool nextToken(UnicodeString *out, const WideChar *separators)

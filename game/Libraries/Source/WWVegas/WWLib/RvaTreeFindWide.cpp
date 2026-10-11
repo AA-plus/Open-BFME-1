@@ -15,7 +15,7 @@
 // Like the plain insert_unique next door, retail expands the comparison in the
 // descent loop and leaves the final candidate check out of line (a call to
 // StringBase<unsigned short>::compare through ILT 0x000226EC).  The empty
-// literal is g_bfmeEmptyUnicode (0x0107388C).  StringBase is spelled here for
+// literal is BFMEEmptyUnicodeString (0x0107388C).  StringBase is spelled here for
 // the same reason as in the insert_unique file.
 
 #define _BFME_RETAIL_TREE_INSERT_LAYOUT

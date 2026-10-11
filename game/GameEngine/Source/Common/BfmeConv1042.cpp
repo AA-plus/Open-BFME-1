@@ -97,7 +97,7 @@ public:
 	void bfmeSet1042(char *t, int a, int b);
 };
 
-extern char g_bfmeLit1042[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 class BfmeC1042
 {
@@ -117,7 +117,7 @@ void BfmeC1042::bfmeGo1042E(BfmeR1042 *p)
 	if (p->m_bfmeName != 0)
 		t = p->m_bfmeName + 8;
 	else
-		t = g_bfmeLit1042;
+		t = (char *)&BFMEEmptyUnicodeString;
 
 	m_bfmeSub.bfmeSet1042(t, 0, 0);
 	m_bfmeFlag = 1;

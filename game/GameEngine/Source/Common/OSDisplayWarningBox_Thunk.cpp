@@ -27,7 +27,7 @@ private:
 };
 
 class UnicodeString;
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 class AsciiString : private StringBase<char>
 {
@@ -60,7 +60,7 @@ public:
 
     const WideChar *str() const
     {
-        return m_data ? m_data->m_text : (const WideChar *)g_bfmeEmptyUnicode;
+        return m_data ? m_data->m_text : (const WideChar *)((const char *)&BFMEEmptyUnicodeString);
     }
 
     void __cdecl format( UnicodeString format, ... );

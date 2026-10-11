@@ -42,7 +42,7 @@ public:
 };
 
 extern const char g_bfmeEmptyAscii[];
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 class AsciiString
 {
@@ -105,7 +105,7 @@ public:
 
 	const unsigned short *str(void) const
 	{
-		return m_data ? (const unsigned short *)((const unsigned char *)m_data + 8) : (const unsigned short *)g_bfmeEmptyUnicode;
+		return m_data ? (const unsigned short *)((const unsigned char *)m_data + 8) : (const unsigned short *)((const char *)&BFMEEmptyUnicodeString);
 	}
 };
 

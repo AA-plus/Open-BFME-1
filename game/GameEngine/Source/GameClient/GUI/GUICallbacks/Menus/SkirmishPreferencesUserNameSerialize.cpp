@@ -11,10 +11,10 @@ typedef bool Bool;
 typedef unsigned short WideChar;
 
 // The shared empty UnicodeString payload, retail 0x0107388C
-// (?g_bfmeEmptyUnicode@@3QBDB), and the wide separator this loop appends
+// (?BFMEEmptyUnicodeString@@3GB), and the wide separator this loop appends
 // between user names, retail 0x010806D8 (no recorded name, so the address
 // keeps it).
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 extern const WideChar g_010806D8[];
 
 template <class T> struct StringInlineData
@@ -81,7 +81,7 @@ public:
 	{
 		StringInlineData<WideChar> *data =
 			m_data;
-		return data ? data->m_text : (const WideChar *)g_bfmeEmptyUnicode;
+		return data ? data->m_text : (const WideChar *)((const char *)&BFMEEmptyUnicodeString);
 	}
 
 	void concat(const WideChar *text, int length)

@@ -12,7 +12,7 @@
 typedef unsigned short WideChar;
 
 extern "C" __declspec(dllimport) int __cdecl iswspace( WideChar c );
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 template <typename T> class StringBase
 {
@@ -85,7 +85,7 @@ public:
 
 	const WideChar *str() const
 	{
-		return m_data ? m_data->m_text : (const WideChar *)g_bfmeEmptyUnicode;
+		return m_data ? m_data->m_text : (const WideChar *)((const char *)&BFMEEmptyUnicodeString);
 	}
 };
 

@@ -22,7 +22,7 @@ enum { MAX_SLOTS = 8, PLAYERTEMPLATE_OBSERVER = -2 };
 #include <set>
 #include <string.h>
 
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 template <typename T> struct BfmeSetupStringData
 {
@@ -76,7 +76,7 @@ public:
 	~UnicodeString(void) {}
 	const WCHAR *str(void) const
 	{
-		return m_data ? m_data->m_text : (const WCHAR *)g_bfmeEmptyUnicode;
+		return m_data ? m_data->m_text : (const WCHAR *)((const char *)&BFMEEmptyUnicodeString);
 	}
 	void set(const UnicodeString &other) { StringBase<WCHAR>::set(other); }
 	void format(UnicodeString format, ...);

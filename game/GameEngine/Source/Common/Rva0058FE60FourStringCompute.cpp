@@ -4,7 +4,7 @@
 
 typedef unsigned short Rva0058FE60WideChar;
 
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 template <typename T> struct Rva0058FE60StringData
 {
@@ -39,7 +39,7 @@ public:
 
 	const Rva0058FE60WideChar *str() const
 	{
-		return m_data ? m_data->m_text : (const Rva0058FE60WideChar *)g_bfmeEmptyUnicode;
+		return m_data ? m_data->m_text : (const Rva0058FE60WideChar *)((const char *)&BFMEEmptyUnicodeString);
 	}
 
 	int getLength() const

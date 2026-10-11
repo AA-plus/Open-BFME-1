@@ -4,7 +4,7 @@
 // REL32 calls in the body) of the wide-string _M_lower_bound at 0x0054EE40
 // (game/Libraries/Source/WWVegas/WWLib/RvaTreeLowerBoundWideWalk.cpp) --
 // same node layout (color/parent/left/right at +0/+4/+8/+0xc, key at +0x10)
-// and the same expanded compare loop against g_bfmeEmptyUnicode (retail
+// and the same expanded compare loop against BFMEEmptyUnicodeString (retail
 // 0x0107388C, already pinned).
 //
 // targets/game/reverse/symbols.csv carries two _M_lower_bound pins at this address for

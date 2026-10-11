@@ -20,7 +20,7 @@ typedef unsigned short WideChar;
 class GameWindow;
 class GameSlot;
 class Team;
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 class UnicodeString;
 class AsciiString;
@@ -92,7 +92,7 @@ public:
 	const WideChar *str() const
 	{
 		return m_data ? &m_data->data[ 0 ]
-		              : reinterpret_cast<const WideChar *>( g_bfmeEmptyUnicode );
+		              : reinterpret_cast<const WideChar *>( ((const char *)&BFMEEmptyUnicodeString) );
 	}
 };
 

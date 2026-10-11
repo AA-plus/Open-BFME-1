@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "string_base.h"
 #include "unicode_string.h"
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 inline int compareWideRuns(const unsigned short *s1, int len1,
 	const unsigned short *s2, int len2)
@@ -36,7 +36,7 @@ template<> inline int StringBase<unsigned short>::compare(
 {
 	const int myLen = m_data ? m_data->length : 0;
 	const unsigned short *data = m_data ? m_data->data :
-		(const unsigned short *)g_bfmeEmptyUnicode;
+		(const unsigned short *)((const char *)&BFMEEmptyUnicodeString);
 	return compareWideRuns(data, myLen, text, len);
 }
 template<> inline int StringBase<unsigned short>::compare(
@@ -44,7 +44,7 @@ template<> inline int StringBase<unsigned short>::compare(
 {
 	int len = text.m_data ? text.m_data->length : 0;
 	const unsigned short *data = text.m_data ? text.m_data->data :
-		(const unsigned short *)g_bfmeEmptyUnicode;
+		(const unsigned short *)((const char *)&BFMEEmptyUnicodeString);
 	return compare(data, len);
 }
 inline bool operator==(const UnicodeString &left, const UnicodeString &right)

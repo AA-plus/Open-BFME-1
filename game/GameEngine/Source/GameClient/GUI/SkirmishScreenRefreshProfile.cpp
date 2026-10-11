@@ -24,7 +24,7 @@
 
 #include <list>
 
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 template <typename T> class StringBase
 {
@@ -52,9 +52,9 @@ private:
 	__forceinline int bfmeCompareNoCase( const StringBase<T> &other ) const throw()
 	{
 		const int otherLength = other.m_data ? other.m_data->length : 0;
-		const T *otherText = other.m_data ? other.m_data->text : (const T *)g_bfmeEmptyUnicode;
+		const T *otherText = other.m_data ? other.m_data->text : (const T *)((const char *)&BFMEEmptyUnicodeString);
 		const int thisLength = m_data ? m_data->length : 0;
-		const T *thisText = m_data ? m_data->text : (const T *)g_bfmeEmptyUnicode;
+		const T *thisText = m_data ? m_data->text : (const T *)((const char *)&BFMEEmptyUnicodeString);
 		const int commonLength = thisLength < otherLength ? thisLength : otherLength;
 		const int result = reinterpret_cast<const StringBase<T> *>(reinterpret_cast<const char *>(this) + 0x10)->compareNoCaseRaw( thisText, otherText, commonLength );
 		return result == 0 ? thisLength - otherLength : result;

@@ -8,8 +8,8 @@ extern "C" size_t __cdecl strlen( const char *s );
 
 // The shared empty string payloads: the narrow one at retail 0x0107388B
 // (?Rva006A16B0Empty@@3PADA / ?g_bfmeEmptyAscii@@3QBDB) and the wide one
-// immediately after it at 0x0107388C (?g_bfmeEmptyUnicode@@3QBDB).
-extern const char g_bfmeEmptyUnicode[];
+// immediately after it at 0x0107388C (?BFMEEmptyUnicodeString@@3GB).
+extern const unsigned short BFMEEmptyUnicodeString;
 
 template <typename T> class StringBase
 {
@@ -59,7 +59,7 @@ public:
 		if ( p )
 			p += 8;
 		else
-			p = (char *)g_bfmeEmptyUnicode;
+			p = (char *)((const char *)&BFMEEmptyUnicodeString);
 		return (const WideChar *)p;
 	}
 };

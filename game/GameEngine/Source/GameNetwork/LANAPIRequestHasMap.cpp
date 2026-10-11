@@ -17,7 +17,8 @@ typedef bool Bool;
 
 extern "C" __declspec(dllimport) WideChar *__cdecl wcsncpy(
 	WideChar *, const WideChar *, unsigned int);
-extern const unsigned short BFMEEmptyUnicodeString;
+// Retail VA 0x0107388C: the shared empty wide string (one zero WideChar).
+extern const unsigned short BFMEEmptyUnicodeString = 0;
 
 template <typename T> struct BfmeStringData
 {

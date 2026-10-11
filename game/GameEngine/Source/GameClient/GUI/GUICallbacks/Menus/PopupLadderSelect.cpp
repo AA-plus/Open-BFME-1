@@ -347,7 +347,7 @@ static __forceinline const char *bfmePasswordString(const AsciiString &value)
 }
 
 extern const char g_bfmeEmptyAscii[];
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 static __forceinline const char *bfmeLadderString(const AsciiString &value)
 {
@@ -359,7 +359,7 @@ static __forceinline const WideChar *bfmeLadderUnicodeString(const UnicodeString
 {
 	const void *data = *(const void *const *)&value;
 	return data ? (const WideChar *)((const char *)data + 8)
-		: (const WideChar *)g_bfmeEmptyUnicode;
+		: (const WideChar *)((const char *)&BFMEEmptyUnicodeString);
 }
 
 static __forceinline Bool bfmeUnicodeStringIsEmpty(const UnicodeString &value)

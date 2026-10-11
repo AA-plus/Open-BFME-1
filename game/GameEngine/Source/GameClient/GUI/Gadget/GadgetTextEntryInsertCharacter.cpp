@@ -121,7 +121,7 @@ struct BfmeEntryData
 typedef char BfmeEntryDataCharPosOffset[
 	(sizeof(BfmeEntryData) >= 0x20) ? 1 : -1];
 
-extern const char g_bfmeEmptyUnicode[];
+extern const unsigned short BFMEEmptyUnicodeString;
 
 extern bool __cdecl GadgetTextEntryValidateCharacter(
 WideChar character, signed char flags);
@@ -163,7 +163,7 @@ bool __cdecl GadgetTextEntryInsertCharacter(
 		int suffixChars = suffix.m_data ? suffix.m_data->length : 0;
 		const WideChar *suffixData = suffix.m_data
 			? suffix.m_data->data
-			: (const WideChar *)g_bfmeEmptyUnicode;
+			: (const WideChar *)((const char *)&BFMEEmptyUnicodeString);
 		prefix.concat(suffixData, suffixChars);
 	}
 

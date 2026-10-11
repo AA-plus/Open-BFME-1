@@ -1,4 +1,4 @@
-#define g_bfmeEmptyAA ((const char *)L"")
+extern const unsigned short BFMEEmptyUnicodeString;
 
 struct BfmeStrAA
 {
@@ -24,7 +24,7 @@ void BfmeOwnerAA::bfmeGetAA(BfmeStrAA *name, int *outX, int *outY)
 {
 	float pos[2];
 
-	const char *text = name->m_bfmeDataAA != 0 ? name->m_bfmeDataAA + 8 : g_bfmeEmptyAA;
+	const char *text = name->m_bfmeDataAA != 0 ? name->m_bfmeDataAA + 8 : ((const char *)&BFMEEmptyUnicodeString);
 
 	m_bfmeSubAA.bfmeLookupAA(pos, text);
 
