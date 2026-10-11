@@ -1,32 +1,16 @@
 // ?findGroundPath@Pathfinder@@QAEPAVPath@@PBUCoord3D@@0H_N@Z
-// partial score=0.4 date=2026-09-24
-// cl: /DNDEBUG /MD
-//
-// BFME 0x003F2160: Pathfinder::findGroundPath.
-//
-// This is deliberately TU-local.  The retail function predates the current
-// public Pathfinder declaration: its first and third machine arguments are an
-// Object* and a Coord3D*, while the surviving decorated name says Coord3D*,
-// Coord3D*, Int, Bool.  Keeping the decorated signature and recovering the
-// live argument roles here preserves both the caller ABI and the retail body.
+// partial score=0.1741 date=2026-10-11
+// cl: /DNDEBUG /MD /Igame/GameEngine/Include/Precompiled /Igame/Libraries/Source/WWVegas/WWMath /Igame/GameEngine/Source/GameLogic/Object
 
 typedef int Int;
 typedef unsigned int UnsignedInt;
 typedef bool Bool;
 typedef unsigned short UnsignedShort;
 
-struct Coord3D
-{
-	float x;
-	float y;
-	float z;
-};
-
-struct ICoord2D
-{
-	Int x;
-	Int y;
-};
+#include "coord.h"
+#undef REAL_TO_INT_FLOOR
+#define REAL_TO_INT_FLOOR(x) (fast_float2long_round((Real)floor((double)(x))))
+extern "C" __declspec(dllimport) double __cdecl floor(double);
 
 enum PathfindLayerEnum
 {
@@ -42,11 +26,8 @@ struct PathfindMovementProfile
 	Int layer;
 };
 
-class Object
-{
-public:
-	Bool bfmeIsComputerControlled(void) const;
-};
+#define OBJECT_TU_MEMBERS Bool bfmeIsComputerControlled(void) const;
+#include "object.h"
 
 class Path
 {
@@ -76,6 +57,8 @@ public:
 };
 
 extern PathfindCellInfo *g_bfmePathfindFreeList;
+extern const Int g_rva012B4B38[8];
+extern const Int g_rva012B4B10[8];
 
 extern PathfindCellInfo *__cdecl bfmeAcquirePathfindCellInfo(
 	PathfindCellInfo **freeList, PathfindCell *cell, const ICoord2D *pos);
@@ -177,7 +160,7 @@ void __cdecl operator delete(void *path);
 
 struct BfmeSeedNode
 {
-	unsigned char payload[0x80];
+	unsigned char payload[12];
 };
 
 struct BfmeSeedTag
@@ -266,9 +249,6 @@ private:
 typedef Int (__fastcall *ObjectIntFn)(Object *, void *);
 typedef Bool (__fastcall *ObjectBoolFn)(Object *, void *);
 
-// VC7.1 reserves __thiscall in a free-function-pointer typedef.  Fastcall
-// keeps the object in ECX and consumes a dummy volatile EDX argument; all
-// remaining arguments stay on the stack in the retail order.
 struct GroundCellsInfo
 {
 	Pathfinder *thePathfinder;
@@ -352,6 +332,47 @@ union GroundPathState
 
 #define source from
 
+inline __declspec(noinline) Bool Pathfinder::worldToCell(const Coord3D *worldPosition, ICoord2D *cellIndex)
+{
+	cellIndex->x = REAL_TO_INT_FLOOR(worldPosition->x/10);
+	cellIndex->y = REAL_TO_INT_FLOOR(worldPosition->y/10);
+	Bool overflow = false;
+	if (cellIndex->x < m_extent[0]) {overflow = true; cellIndex->x = m_extent[0];}
+	if (cellIndex->y < m_extent[1]) {overflow = true; cellIndex->y = m_extent[1];}
+	if (cellIndex->x > m_extent[2]) {overflow = true; cellIndex->x = m_extent[2];}
+	if (cellIndex->y > m_extent[3]) {overflow = true; cellIndex->y = m_extent[3];}
+	return overflow;
+}
+
+extern int g_rva012F1098;
+inline __declspec(noinline) PathfindCellInfo *__cdecl bfmeAcquirePathfindCellInfo(
+	PathfindCellInfo **freeListHead, PathfindCell *pathfindCell, const ICoord2D *cellPosition)
+{
+	PathfindCellInfo *cellInfoRecord = *freeListHead;
+	if (cellInfoRecord->m_freePrevLink != 0)
+	{
+		*cellInfoRecord->m_freePrevLink = cellInfoRecord->m_freeNext;
+		if (cellInfoRecord->m_freeNext != 0)
+			cellInfoRecord->m_freeNext->m_freePrevLink = cellInfoRecord->m_freePrevLink;
+		cellInfoRecord->m_freePrevLink = 0;
+		cellInfoRecord->m_freeNext = 0;
+	}
+
+	cellInfoRecord->m_cell = pathfindCell;
+	cellInfoRecord->m_pos = *cellPosition;
+	cellInfoRecord->m_nextOpen = 0;
+	cellInfoRecord->m_prevOpen = 0;
+	cellInfoRecord->m_totalCost = 0;
+	cellInfoRecord->m_costSoFar = 0;
+	cellInfoRecord->m_pathParent = 0;
+	cellInfoRecord->m_goalUnitID = 0;
+	cellInfoRecord->m_posUnitID = 0;
+	cellInfoRecord->m_goalAircraftID = 0;
+	cellInfoRecord->m_flags &= 0xffffffe0;
+	++g_rva012F1098;
+	return cellInfoRecord;
+}
+
 Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 	const Coord3D *from, Int rawToSlot, Bool diameterSlot)
 {
@@ -364,9 +385,7 @@ Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 	self->m_zoneManager.bfmeClearAL();
 	Bool isHuman = true;
 
-	// The first call is the BFME replacement for the old hierarchical-path
-	// setup.  It intentionally takes the address of the surviving first formal;
-	// retail's callee uses that stack slot as its object argument.
+	// The vector erase copies finish to finish and passes an unused iterator tag.
 	BfmeSeedNode *seed = j_0000dbe8(
 		self->m_24710,
 		self->m_24710,
@@ -385,11 +404,11 @@ Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 	}
 	else
 	{
-		j_000010fa5();
+		self->m_zoneManager.bfmeFillAL();
 	}
 
-	if (targetPosition->x == *(const float *)0x01075350 &&
-		targetPosition->y == *(const float *)0x01075350)
+	if (targetPosition->x == 0.0f &&
+		targetPosition->y == 0.0f)
 		return 0;
 	if (!self->m_isMapReady)
 		return 0;
@@ -503,9 +522,20 @@ Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 
 	Bool computerControlled =
 		((Object *)objectSlot)->bfmeIsComputerControlled();
-	Int level = ((ObjectIntFn)&j_0001fbbd)((Object *)objectSlot, 0) - 1;
-	Bool playerOwned = ((ObjectBoolFn)&j_00036b33)(
-		(Object *)objectSlot, 0);
+	union
+	{
+		void (*function)(void);
+		Int (Object::*member)(void) const;
+	} levelCall;
+	levelCall.function = j_0001fbbd;
+	Int level = (((Object *)objectSlot)->*levelCall.member)() - 1;
+	union
+	{
+		void (*function)(void);
+		unsigned char (Object::*member)(void) const;
+	} fieldCall;
+	fieldCall.function = j_00036b33;
+	unsigned char playerOwned = (((Object *)objectSlot)->*fieldCall.member)();
 	prep.profile.acceptableSurfaces = 1;
 	prep.profile.crusher = !playerOwned;
 	prep.profile.terrainOnly = computerControlled;
@@ -529,6 +559,7 @@ Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 	PathfindCell *current = self->firstLive();
 	if (current == 0)
 	{
+		*((Bool *)((char *)self + 0x83c)) = false;
 		((Rva003F7380State *)goalCell)->finishReset();
 		self->cleanup();
 		return 0;
@@ -538,6 +569,7 @@ Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 	{
 		if (current == goalCell)
 		{
+			*((Bool *)((char *)self + 0x83c)) = false;
 			Path *path = self->buildPath(startPosition, goalCell,
 				centerInCell, pathDiameter);
 			((Rva003F7380State *)current)->finishReset();
@@ -581,10 +613,10 @@ Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 			search.neighborFlags[i] = false;
 			search.coords.newCellCoord.x =
 				current->getXIndex() +
-				*((const Int *)(0x012b4b38 + i * 4));
+				g_rva012B4B38[i];
 			search.coords.newCellCoord.y =
 				current->getYIndex() +
-				*((const Int *)(0x012b4b10 + i * 4));
+				g_rva012B4B10[i];
 			PathfindCell *newCell = self->getCell((PathfindLayerEnum)current->getLayer(),
 				search.coords.newCellCoord.x,
 				search.coords.newCellCoord.y);
@@ -622,9 +654,15 @@ Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 			Bool onList = false;
 			if (newCell->m_info != 0)
 			{
-				if ((newCell->m_info->m_flags & 8) != 0 ||
-					(newCell->m_info->m_flags & 16) != 0)
+				if (((newCell->m_info->m_flags >> 3) & 1) != 0 ||
+					((newCell->m_info->m_flags >> 4) & 1) != 0)
 					onList = true;
+			}
+
+			if (onList)
+			{
+				++i;
+				continue;
 			}
 
 			Int clearDiameter = 0;
@@ -639,10 +677,6 @@ Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 					continue;
 				}
 
-				clearDiameter = self->clearCellForDiameter(0,
-					search.coords.newCellCoord.x,
-					search.coords.newCellCoord.y,
-					newCell->getLayer(), pathDiameter, 0);
 				if ((newCell->m_packed & 7) != 0 ||
 					((newCell->m_packed >> 18) & 1) != 0)
 				{
@@ -664,22 +698,21 @@ Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 					newCell->m_info->m_prevOpen = 0;
 				}
 
-				newCostSoFar = newCell->costSoFar(current);
-				if (clearDiameter < pathDiameter)
-				{
-					Int delta = pathDiameter - clearDiameter;
-					newCostSoFar += 0.6f * (delta * 10);
-				}
-				newCell->m_info->m_flags &= ~1u;
 			}
 
-			Int costRemaining = self->cellMetric(newCell, goalCell);
-			if (onList && newCell->m_info->m_costSoFar <=
-				(UnsignedShort)newCostSoFar)
+			clearDiameter = self->clearCellForDiameter(0,
+				search.coords.newCellCoord.x,
+				search.coords.newCellCoord.y,
+				newCell->getLayer(), pathDiameter, 0);
+
+			newCostSoFar = newCell->costSoFar(current);
+			if (clearDiameter < pathDiameter)
 			{
-				++i;
-				continue;
+				Int delta = pathDiameter - clearDiameter;
+				newCostSoFar += 0.6f * (delta * 10);
 			}
+			newCell->m_info->m_flags &= ~1u;
+			Int costRemaining = self->cellMetric(newCell, goalCell);
 
 			newCell->m_info->m_costSoFar = (UnsignedShort)newCostSoFar;
 			newCell->setParentCell(current);
@@ -692,6 +725,7 @@ Path *Pathfinder::findGroundPath(const Coord3D *objectSlot,
 		current = self->firstLive();
 	}
 
+	*((Bool *)((char *)self + 0x83c)) = false;
 	((Rva003F7380State *)goalCell)->finishReset();
 	self->cleanup();
 	return 0;
