@@ -145,14 +145,14 @@ inline NetPacket::NetPacket()
 	init();
 }
 
-extern Bool DoesCommandRequireACommandID(NetCommandType type);
+extern Int DoesCommandRequireACommandID(NetCommandType type);
 extern UnsignedShort GenerateNextCommandID(void);
 
 NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref)
 {
 	NetCommandMsg *msg = ref->getCommand();
 
-	if (!DoesCommandRequireACommandID(msg->getNetCommandType()))
+	if (!(UnsignedByte)DoesCommandRequireACommandID(msg->getNetCommandType()))
 	{
 		return NetPacketList();
 	}
@@ -187,7 +187,7 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref)
 			dataSizeThisPacket = (UnsignedShort)(bufferSize - bigPacketCurrentOffset);
 		}
 
-		if (DoesCommandRequireACommandID(wrapperMsg->getNetCommandType()))
+		if ((UnsignedByte)DoesCommandRequireACommandID(wrapperMsg->getNetCommandType()))
 		{
 			wrapperMsg->setID(GenerateNextCommandID());
 		}
