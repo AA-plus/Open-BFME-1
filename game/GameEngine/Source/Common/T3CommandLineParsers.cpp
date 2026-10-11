@@ -96,7 +96,7 @@ bool ScriptDebugMessagesDisabled = false;								///< retail [0x012ED4D8]
 bool g_flag12ED4D9 = false;								///< retail [0x012ED4D9]
 bool g_flag12ED4DA = false;								///< retail [0x012ED4DA]
 bool ignoreCRCMismatches = false;								///< retail [0x012ED4E8]
-extern bool g_flag12D6DA8;								///< retail [0x012D6DA8]
+bool g_flag12D6DA8 = true;								///< retail [0x012D6DA8]
 
 // ?Rva00060910_parse@@YAHQAPADH@Z
 Int Rva00060910_parse(char *args[], int num)
@@ -325,9 +325,9 @@ Int Rva00061430_parse(char *args[], int num)
 Int g_debugCRCFromFrame = -1;								///< retail [0x012A6F30]
 Int g_debugCRCUntilFrame = -1;								///< retail [0x012A6F34]
 Int forcedCRCFrame = -1;								///< retail [0x012A6F38]
-extern Int g_value12A6FA8;								///< retail [0x012A6FA8]
-extern Int g_value12A6FB0;								///< retail [0x012A6FB0]
-extern Int g_value12A6FB4;								///< retail [0x012A6FB4]
+Int g_value12A6FA8 = 0;								///< retail [0x012A6FA8]
+Int g_value12A6FB0 = 0;								///< retail [0x012A6FB0]
+Int g_value12A6FB4 = -1;								///< retail [0x012A6FB4]
 extern Int NET_CRC_INTERVAL;								///< retail [0x012A7040]
 
 // ?Rva00061260_parse@@YAHQAPADH@Z
