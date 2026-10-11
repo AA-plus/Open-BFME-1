@@ -1,5 +1,5 @@
 // ?_FunctionAptActionEquals2@AptActionInterpreter@@SAXPAV1@PAULocalContextT@1@@Z
-// partial score=0.1682 date=2026-10-09
+// partial score=0.2935 date=2026-10-11
 // cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 
 extern "C" int __cdecl memcmp(const void *, const void *, unsigned);
@@ -300,7 +300,7 @@ void AptActionInterpreter::_FunctionAptActionEquals2(
 		} else if (top->type() == 6 && IsDefinedType(under, 6)) {
 			equal = top->toNumber() == under->toNumber();
 		} else if ((top->type() == 1 || top->type() == 42) && IsString(under)) {
-			equal = top->stringValue()->equals(*under->stringValue());
+			if (top->stringValue()->equals(*under->stringValue())) equal = 1;
 		} else {
 			goto mixedCompare;
 		}
