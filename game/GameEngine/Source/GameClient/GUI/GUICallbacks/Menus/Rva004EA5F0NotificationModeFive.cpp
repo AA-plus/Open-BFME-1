@@ -9,55 +9,19 @@ template <typename T> struct StringInlineData
 	T m_text[1];
 };
 
-template <typename T> class StringBase
+
+#include "../../../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
+#include "../../../../../../Libraries/Source/WWVegas/WWLib/unicode_string.h"
+
+inline UnicodeString::UnicodeString(const UnicodeString &other)
 {
-	friend class AsciiString;
-	friend class UnicodeString;
-
-	StringInlineData<T> *m_data;
-
-	StringBase( const StringBase<T> &other );
-	~StringBase();
-	void set( const StringBase<T> &other );
-};
-
-class AsciiString : private StringBase<char>
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(
+        *(const StringBase<unsigned short> *)&other);
+}
+inline UnicodeString::~UnicodeString()
 {
-public:
-	AsciiString( const AsciiString &other )
-		: StringBase<char>( other ) {}
-	~AsciiString() {}
-
-	const char *str() const
-	{
-		return m_data ? m_data->m_text : "";
-	}
-
-	bool isNotEmpty() const
-	{
-		return m_data && m_data->m_length != 0;
-	}
-};
-
-class UnicodeString : private StringBase<unsigned short>
-{
-public:
-	UnicodeString( const UnicodeString &other )
-		: StringBase<unsigned short>( other ) {}
-	~UnicodeString() {}
-
-	void operator=( const UnicodeString &other )
-	{
-		StringBase<unsigned short>::set( other );
-	}
-
-	bool isNotEmpty() const
-	{
-		return m_data && m_data->m_length != 0;
-	}
-
-	void format( UnicodeString format, ... );
-};
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
 class GameTextInterface
 {
@@ -87,7 +51,7 @@ extern GameTextInterface *TheGameText;
 #define TheGameText004EA5F0 (TheGameText)
 class BfmeAptScreenOnlineShell;
 extern BfmeAptScreenOnlineShell *g_obj12F4ACC;
-extern unsigned int g_Va012F423C;
+unsigned int g_Va012F423C = 0;
 extern bool lastNotificationWasStatus;
 extern int numOnlineInNotification;
 extern unsigned char g_Va012F4248;
@@ -97,9 +61,10 @@ void bfme_notificationModeFive( AsciiString nick, UnicodeString message )
 	if ( reinterpret_cast<BfmeAptChatFriendLogIn *volatile &>(g_obj12F4ACC) )
 	{
 		if ( lastNotificationWasStatus && numOnlineInNotification > 1 )
-			message = TheGameText004EA5F0->fetch( "Buddy:MultipleOnlineNotification" );
+			((StringBase<unsigned short> *)&message)->set(
+                *(const StringBase<unsigned short> *)&TheGameText004EA5F0->fetch( "Buddy:MultipleOnlineNotification" ));
 
-		if ( nick.isNotEmpty() )
+		if ( *(const StringInlineData<char> **)&nick && (*(const StringInlineData<char> **)&nick)->m_length != 0 )
 			message.format( message, nick.str() );
 
 		unsigned long now = timeGetTime();

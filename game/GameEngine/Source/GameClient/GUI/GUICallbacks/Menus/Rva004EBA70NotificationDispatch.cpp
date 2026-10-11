@@ -5,41 +5,18 @@
 // logic mode.  It is called by the BFME notification wrapper and by the
 // buddy-response paths with the two string arguments passed by value.
 
-template <class T>
-class StringBase
+#include "../../../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
+#include "../../../../../../Libraries/Source/WWVegas/WWLib/unicode_string.h"
+
+inline UnicodeString::UnicodeString(const UnicodeString &other)
 {
-public:
-	StringBase(const StringBase<T> &);
-	~StringBase();
-};
-
-class AsciiString
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(
+        *(const StringBase<unsigned short> *)&other);
+}
+inline UnicodeString::~UnicodeString()
 {
-public:
-	AsciiString(const AsciiString &that)
-	{
-		((StringBase<char> *)this)->StringBase<char>::StringBase(
-			*(const StringBase<char> *)&that);
-	}
-	~AsciiString();
-
-private:
-	void *m_data;
-};
-
-class UnicodeString
-{
-public:
-	UnicodeString(const UnicodeString &that)
-	{
-		((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(
-			*(const StringBase<unsigned short> *)&that);
-	}
-	~UnicodeString();
-
-private:
-	void *m_data;
-};
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
 class GameLogicRva004EBA70
 {
