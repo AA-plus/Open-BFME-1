@@ -8,11 +8,13 @@
 #include <istream>
 #include <ostream>
 
+// The existing retail imbue provider owns the locale/cache update at RVA 0x0053F690.
 template <>
 _STL::locale
-_STL::basic_streambuf<wchar_t, _STL::char_traits<wchar_t> >::pubimbue(const _STL::locale &);
+_STL::basic_ios<char, _STL::char_traits<char> >::imbue(const _STL::locale &);
 
-template class _STL::basic_istream<char, _STL::char_traits<char> >;
-template class _STL::basic_istream<wchar_t, _STL::char_traits<wchar_t> >;
-template class _STL::basic_ostream<char, _STL::char_traits<char> >;
-template class _STL::basic_ostream<wchar_t, _STL::char_traits<wchar_t> >;
+// Only this initializer is owned here. Complete stream-class instantiations
+// also emit unrelated constructors, destructors and formatted I/O methods.
+template void
+_STL::basic_ios<char, _STL::char_traits<char> >::init(
+    _STL::basic_streambuf<char, _STL::char_traits<char> > *);
