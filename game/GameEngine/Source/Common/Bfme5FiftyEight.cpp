@@ -31,18 +31,18 @@ public:
 	BfmeThingCX *m_bfmeThing;				// +0x00
 };
 
-class Gen_0096D080
+class MeshLoadContextClass
 {
-public:
-	BfmeHandleCX bfmeGet(int index) const;
+	friend class MeshModelClass;
+	BfmeHandleCX Peek_Texture(int index);
 
 private:
 	char m_bfmeHead[0xF8];					// +0x00
 	BfmeHandleCX *m_bfmeSlots;				// +0xF8
 };
 
-// ?bfmeGet@Gen_0096D080@@QBE?AVBfmeHandleCX@@H@Z
-BfmeHandleCX Gen_0096D080::bfmeGet(int index) const
+// ?Peek_Texture@MeshLoadContextClass@@AAE?AVBfmeHandleCX@@H@Z
+BfmeHandleCX MeshLoadContextClass::Peek_Texture(int index)
 {
 	return m_bfmeSlots[index];
 }
