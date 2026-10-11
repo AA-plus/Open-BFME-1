@@ -11,7 +11,7 @@ struct Rva009B5420State {
 	signed char *predictionMode;
 	int *motionVector;
 };
-extern unsigned char g_bfmeVp6SelectorMap[40];
+extern const unsigned short Rva01142BA0Table[];
 // ?Rva009B5420@@YAXPAXIIEPAH@Z
 // Ported from Open BFME 2 Code/Libraries/Source/VP6/FindNearestandNextNearest.cpp.
 void __cdecl Rva009B5420(void *ctx, unsigned row, unsigned col, unsigned char frame, int *type)
@@ -25,7 +25,7 @@ void __cdecl Rva009B5420(void *ctx, unsigned row, unsigned col, unsigned char fr
 	int nearestIndex;
 	for (i = 0; i < 12; i++) {
 		int offset = base + pbi->neighbourOffset[i];
-		if (((const int *)g_bfmeVp6SelectorMap)[pbi->predictionMode[offset]] == frame) {
+		if (((const int *)Rva01142BA0Table)[pbi->predictionMode[offset]] == frame) {
 			int mv = pbi->motionVector[offset];
 			if (mv != 0) {
 				nearest = mv;
@@ -37,7 +37,7 @@ void __cdecl Rva009B5420(void *ctx, unsigned row, unsigned col, unsigned char fr
 	nearestIndex = i;
 	for (i++; i < 12; i++) {
 		int offset = base + pbi->neighbourOffset[i];
-		if (((const int *)g_bfmeVp6SelectorMap)[pbi->predictionMode[offset]] == frame) {
+		if (((const int *)Rva01142BA0Table)[pbi->predictionMode[offset]] == frame) {
 			int mv = pbi->motionVector[offset];
 			if (mv != nearest && mv != 0) {
 				nearVector = mv;
