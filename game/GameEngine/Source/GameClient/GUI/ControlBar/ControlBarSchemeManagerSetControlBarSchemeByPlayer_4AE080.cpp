@@ -1,5 +1,4 @@
 // ?setControlBarSchemeByPlayer@ControlBarSchemeManager@@QAEXPAVPlayer@@@Z
-// partial score=0.9932 date=2026-10-08
 // cl: /DNDEBUG /DWIN32 /MD /D_STLP_USE_STATIC_LIB /DBFME_STLP_NODE_ALLOC /EHsc /Iinputs/reference/shims/ini /Iinputs/reference/shims/controlbarvtables /Iinputs/reference/shims/stlp_nodealloc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
 // stlport
 // readable body of ?setControlBarSchemeByPlayer@ControlBarSchemeManager@@QAEXPAVPlayer@@@Z: game/GameEngine/Source/GameClient/GUI/ControlBar/ControlBarScheme.cpp
@@ -19,7 +18,7 @@
 // The player's side string is read at +0x28: +00CF `add eax,0x28` on the
 // incoming Player* and one copy constructor at +00D7, whose releaseBuffer at
 // +0234 is the scope-exit cleanup. Generals spells the read
-// `AsciiString side = p->getSide()`
+// `ControlBarSchemeAsciiString side = p->getSide()`
 // (inputs/reference/CnC_Generals_Zero_Hour/Generals/Code/GameEngine/Include/Common/Player.h:225)
 // and returns by value, which would build a temporary and copy it twice; the
 // single copy constructor here is one object constructed straight from the
@@ -34,6 +33,9 @@
 // slot, which is where retail keeps it.
 
 #include <list>
+#include "../../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
+
+template <typename T> inline bool StringBase<T>::isEmpty() const { return m_data == 0 || m_data->length == 0; }
 
 typedef int Int;
 typedef unsigned int UnsignedInt;
@@ -44,22 +46,6 @@ typedef float Real;
 extern "C" __declspec(dllimport) int __cdecl _memicmp(const void *left, const void *right, unsigned int count);
 
 class AsciiString;
-
-template <typename T>
-class StringBase
-{
-public:
-	void concat(const T *text, int length);
-	void set(const T *text, int length);
-	int compare(const StringBase<T> &other) const;
-
-private:
-	friend class AsciiString;
-	StringBase(const StringBase<T> &source);
-	StringBase(const T *text);
-	~StringBase();
-	void releaseBuffer();
-};
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameClient/Display.h
 class Display
@@ -95,43 +81,38 @@ struct RealCoord2D
 	Real y;
 };
 
-class AsciiString
+class ControlBarSchemeAsciiString : public AsciiString
 {
 public:
-	AsciiString(const char *text)
-	{
-		((StringBase<char> *)this)->StringBase<char>::StringBase(text);
-	}
-	AsciiString(const AsciiString &that)
-	{
-		((StringBase<char> *)this)->StringBase<char>::StringBase(*(const StringBase<char> *)&that);
-	}
-	~AsciiString()
-	{
-		((StringBase<char> *)this)->releaseBuffer();
-	}
+	ControlBarSchemeAsciiString(const char *text) : AsciiString(text) {}
+	ControlBarSchemeAsciiString(const ControlBarSchemeAsciiString &that) : AsciiString(that) {}
+	~ControlBarSchemeAsciiString() {}
 
+	void concat(const char *text, int length)
+	{
+		((StringBase<char> *)this)->concat(text, length);
+	}
 	void set(const char *text, int length)
 	{
 		((StringBase<char> *)this)->set(text, length);
 	}
 	bool isEmpty(void) const
 	{
-		return m_text == 0 || *(const UnsignedShort *)(m_text + 4) == 0;
+		return AsciiString::isEmpty();
 	}
-	Int compare(const AsciiString &other) const
+	Int compare(const ControlBarSchemeAsciiString &other) const
 	{
 		return ((const StringBase<char> *)this)->compare(*(const StringBase<char> *)&other);
 	}
 	Int getLength(void) const
 	{
-		return m_text ? *(const UnsignedShort *)(m_text + 4) : 0;
+		return AsciiString::getLength();
 	}
 	const char *str(void) const
 	{
-		return m_text ? m_text + 8 : "";
+		return AsciiString::str();
 	}
-	Int compareNoCase(const AsciiString &other) const
+	Int compareNoCase(const ControlBarSchemeAsciiString &other) const
 	{
 		Int otherLen = other.getLength();
 		const char *otherText = other.str();
@@ -144,9 +125,6 @@ public:
 			return difference;
 		return thisLen - otherLen;
 	}
-
-private:
-	char *m_text;
 };
 
 typedef _STL::list<class ControlBarScheme *> ControlBarSchemeList;
@@ -155,9 +133,9 @@ typedef _STL::list<class ControlBarScheme *> ControlBarSchemeList;
 class ControlBarScheme
 {
 public:
-	AsciiString m_name;
+	ControlBarSchemeAsciiString m_name;
 	ICoord2D m_ScreenCreationRes;
-	AsciiString m_side;
+	ControlBarSchemeAsciiString m_side;
 
 	void init(void);
 };
@@ -169,9 +147,9 @@ class CommandButton;
 class Player
 {
 public:
-	const AsciiString &getSide(void) const
+	const ControlBarSchemeAsciiString &getSide(void) const
 	{
-		return *(const AsciiString *)((const char *)this + 0x28);
+		return *(const ControlBarSchemeAsciiString *)((const char *)this + 0x28);
 	}
 };
 
@@ -250,12 +228,12 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 	{
 		if (TheRecorder->isMultiplayer())
 		{
-			AsciiString a("NonCommand_Communicator");
+			ControlBarSchemeAsciiString a("NonCommand_Communicator");
 			TheControlBar->setControlCommand(communicatorButton, TheControlBar->findCommandButton(a) );
 		}
 		else
 		{
-			AsciiString a("NonCommand_BriefingHistory");
+			ControlBarSchemeAsciiString a("NonCommand_BriefingHistory");
 			TheControlBar->setControlCommand(communicatorButton, TheControlBar->findCommandButton(a) );
 		}
 	}
@@ -264,7 +242,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 	// Block-scoped on purpose: a function-scope `side` stops VC7.1 from
 	// giving the two communicator strings one frame slot.
 	{
-	AsciiString side = p->getSide();
+	ControlBarSchemeAsciiString side = p->getSide();
 	ControlBarScheme *currentScheme = m_currentScheme;
 	if(currentScheme && (currentScheme->m_side.compare(side) == 0))
 	{
@@ -275,7 +253,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 		side.set("Observer", 8);
 	// The incoming Player* is dead from the copy above, so its parameter home
 	// carries the best-matching scheme from here on.
-	Player *&tempScheme = p;
+	ControlBarScheme *&tempScheme = *(ControlBarScheme **)&p;
 	tempScheme = 0;
 	ControlBarSchemeList::iterator it = m_schemeList.begin();
 	while(it != m_schemeList.end())
@@ -288,16 +266,16 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 		}
 		if(CBScheme->m_side.compareNoCase(side) == 0)
 		{
-			if(!tempScheme || ((ControlBarScheme *)tempScheme)->m_ScreenCreationRes.x < CBScheme->m_ScreenCreationRes.x)
-				tempScheme = (Player *)CBScheme;
+			if(!tempScheme || tempScheme->m_ScreenCreationRes.x < CBScheme->m_ScreenCreationRes.x)
+				tempScheme = CBScheme;
 		}
 		++it;
 	}
 	if(tempScheme)
 	{
-		m_multiplyer.x = TheDisplay->getWidth() / (Real)((ControlBarScheme *)tempScheme)->m_ScreenCreationRes.x;
-		m_multiplyer.y = TheDisplay->getHeight() / (Real)((ControlBarScheme *)tempScheme)->m_ScreenCreationRes.y;
-		m_currentScheme = (ControlBarScheme *)tempScheme;
+		m_multiplyer.x = TheDisplay->getWidth() / (Real)tempScheme->m_ScreenCreationRes.x;
+		m_multiplyer.y = TheDisplay->getHeight() / (Real)tempScheme->m_ScreenCreationRes.y;
+		m_currentScheme = tempScheme;
 	}
 	else
 	{
