@@ -86,18 +86,8 @@ const FieldParse TerrainType::m_terrainTypeFieldParseTable[] =
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-// ??0TerrainType@@ present-unmatched
-TerrainType::TerrainType( void )
-{
-
-	m_name.clear();
-	m_texture.clear();
-	m_blendEdgeTexture = FALSE;
-	m_class = TERRAIN_NONE;
-	m_restrictConstruction = FALSE;
-	m_next = NULL;
-
-}  // end TerrainType
+// Retail's constructor, including BFME's terrain-class vector and tail member,
+// is defined in TerrainTypeCtor.cpp (RVA 0x000A82F0).
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
