@@ -4,14 +4,19 @@
 // The address-derived types describe only the accessed layout.
 struct BfmeStringData3AF0 { unsigned short m_refs; };
 struct BfmeStringPool3AF0 { void *m_unknown00; void (__cdecl *free)(void *); };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 
 class Rva8CD130String
 {
 public:
     __forceinline Rva8CD130String() {
-        m_block = &g_bfmeDefaultString1284;
+        m_block = sharedEmptyString012D5298();
         ++m_block->m_refs;
     }
     __forceinline ~Rva8CD130String() {

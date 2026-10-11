@@ -7,12 +7,13 @@ struct BfmeStringPool3AF0 {
     void *m_unknown00;
     void (__cdecl *free)(void *);
 };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298();
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class EAStringC {
 public:
+    class StringDataC;
     __forceinline EAStringC() {
-        m_data = &g_bfmeDefaultString1284;
+        m_data = sharedEmptyString012D5298();
         ++m_data->m_refCount;
     }
     __forceinline ~EAStringC() {
@@ -22,6 +23,11 @@ public:
     EAStringC &rva0089FDA0(const char *source, int limit);
     BfmeStringData3AF0 *m_data;
 };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 class BfmeUtf8Cursor0089F810 {
 public:
     const unsigned char *after(int index) const;
@@ -96,7 +102,7 @@ Rva008A9B00 *rva008A9E20CodepointStringValue(AptValue *value) {
     if (obj) {
         g_free01338478 = obj->m_next;
         g_rva01337810GcRoots->add(obj);
-        if (obj->m_string.m_data != &g_bfmeDefaultString1284)
+        if (obj->m_string.m_data != sharedEmptyString012D5298())
             ((BfmeStrVKK *)&obj->m_string)->bfmeTruncVKK(0);
     } else {
         Rva008A9B00 *fresh = new Rva008A9B00;

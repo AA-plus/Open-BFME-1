@@ -13,7 +13,7 @@ struct BfmeStringPool3AF0
     void *m_unknown00;
     void (__cdecl *free)(void *);
 };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298();
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class BfmeStrVKJ
 {
@@ -23,12 +23,18 @@ public:
 class EAStringC
 {
 public:
+    class StringDataC;
     bool rva0089F730(const char *);
 };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 class Rva8CD130String
 {
 public:
-    Rva8CD130String() : m_data(&g_bfmeDefaultString1284) { ++m_data->m_refCount; }
+    Rva8CD130String() : m_data(sharedEmptyString012D5298()) { ++m_data->m_refCount; }
     Rva8CD130String(const Rva8CD130String &source) : m_data(source.m_data) { ++m_data->m_refCount; }
     ~Rva8CD130String()
     {

@@ -8,12 +8,13 @@ struct BfmeStringPool3AF0 {
     void *m_unknown00;
     void (__cdecl *free)(void *);
 };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298();
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class EAStringC {
 public:
+    class StringDataC;
     __forceinline EAStringC() {
-        m_data = &g_bfmeDefaultString1284;
+        m_data = sharedEmptyString012D5298();
         ++m_data->m_refCount;
     }
     __forceinline ~EAStringC() {
@@ -31,6 +32,11 @@ public:
     int bfmeUtf8Length() const;
     BfmeStringData3AF0 *m_data;
 };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 class Rva8CD130String;
 class Rva8CD130Value { public: void getName(Rva8CD130String *output); };
 class AptValue { public: int toInteger() const; };
@@ -74,7 +80,7 @@ __forceinline Rva008A9B00 *acquire008AAB20() {
     if (obj) {
         g_rva01338478NodeHead = (Rva008C3B60Node *)obj->m_next;
         g_rva01337810GcRoots->add(obj);
-        if (obj->m_string.m_data != &g_bfmeDefaultString1284)
+        if (obj->m_string.m_data != sharedEmptyString012D5298())
             ((BfmeStrVKK *)&obj->m_string)->bfmeTruncVKK(0);
         result = obj;
     } else {

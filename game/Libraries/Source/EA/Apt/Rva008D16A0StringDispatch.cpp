@@ -9,11 +9,11 @@ static __forceinline bool startsWith(const char *text, const char *prefix) {
 }
 struct BfmeStringData3AF0 { unsigned short m_refCount, m_length, m_capacity, m_unknown06; };
 struct BfmeStringPool3AF0 { void *m_unknown00; void (__cdecl *free)(void *); };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298();
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class Rva8CD130String {
 public:
-    __forceinline Rva8CD130String() { m_data = &g_bfmeDefaultString1284; ++m_data->m_refCount; }
+    __forceinline Rva8CD130String() { m_data = sharedEmptyString012D5298(); ++m_data->m_refCount; }
     __forceinline Rva8CD130String(const Rva8CD130String &s) { m_data=s.m_data; ++s.m_data->m_refCount; }
     __forceinline ~Rva8CD130String() {
         BfmeStringData3AF0 *old=m_data;
@@ -36,8 +36,14 @@ public:
 // The handle is one pointer wide in both views, so the cast carries no change.
 class EAStringC {
 public:
+    class StringDataC;
     int rva0089EEF0(int start, int count);
 };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 class Rva8CD130Value {
 public:
     virtual void rva008D16A0Slot00();

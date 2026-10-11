@@ -4,12 +4,17 @@
 #include <string.h>
 struct BfmeStringData3AF0 { unsigned short m_refCount, m_length, m_capacity, m_unknown06; };
 struct BfmeStringPool3AF0 { void *m_unknown00; void (__cdecl *free)(void *); };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class BfmeStrVKI {
 public:
     __forceinline BfmeStrVKI() {
-        m_data = &g_bfmeDefaultString1284;
+        m_data = sharedEmptyString012D5298();
         ++m_data->m_refCount;
     }
     BfmeStrVKI(const char *text) { bfmeSetVKI(text); }
@@ -68,7 +73,7 @@ public:
 void Rva008AD750StringBinding::refresh(Rva8CD130Value *scope)
 {
     BfmeStrVKI &key = m_string1c;
-    if (key.m_data == &g_bfmeDefaultString1284) return;
+    if (key.m_data == sharedEmptyString012D5298()) return;
     if (((char *)key.m_data)[8] == '$') return;
     BfmeStrVKI output;
     while (scope) {

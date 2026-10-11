@@ -6,11 +6,12 @@ struct BfmeStringPool3AF0
     void *m_alloc;
     void (__cdecl *m_free)(void *storage);
 };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty block 0x012D5298
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class Rva8CD130String {
 public:
- Rva8CD130String() { m_data=&g_bfmeDefaultString1284; ++m_data->m_refCount; }
+ Rva8CD130String() { m_data=(BfmeStringData3AF0 *)&g_rva012D5298Empty; ++m_data->m_refCount; }
  ~Rva8CD130String() { BfmeStringData3AF0 *old=m_data; if(--old->m_refCount==0) g_rva01337A30AllocPair->m_free(old); }
  BfmeStringData3AF0 *m_data;
 };

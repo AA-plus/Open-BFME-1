@@ -11,13 +11,18 @@ struct BfmeStringData3AF0
 	unsigned char m_unreconstructed_02[6];
 };
 
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern unsigned char flag0133781D;
 
 class BfmeString1286
 {
 public:
-	BfmeString1286() : m_data(&g_bfmeDefaultString1284)
+	BfmeString1286() : m_data(sharedEmptyString012D5298())
 	{
 		++m_data->m_refCount;
 	}

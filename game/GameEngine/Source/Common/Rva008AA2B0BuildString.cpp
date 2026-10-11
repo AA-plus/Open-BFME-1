@@ -19,7 +19,7 @@ struct BfmeStringPool3AF0
 	void (__cdecl *free)(void *);
 };
 
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298();
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 extern void *(__cdecl *Rva008C5D70Alloc)(unsigned int);
 
@@ -31,10 +31,11 @@ inline void *operator new(unsigned int, void *memory)
 class EAStringC
 {
 public:
+	class StringDataC;
 	EAStringC(unsigned int size);
 	EAStringC()
 	{
-		m_data = &g_bfmeDefaultString1284;
+		m_data = sharedEmptyString012D5298();
 		++m_data->m_refCount;
 	}
 
@@ -47,13 +48,18 @@ public:
 
 	BfmeStringData3AF0 *m_data;
 };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 
 class Rva008A0320String
 {
 public:
 	Rva008A0320String()
 	{
-		m_data = &g_bfmeDefaultString1284;
+		m_data = sharedEmptyString012D5298();
 		++m_data->m_refCount;
 	}
 
@@ -87,7 +93,7 @@ class BfmeStrEAW
 public:
 	BfmeStrEAW()
 	{
-		m_data = &g_bfmeDefaultString1284;
+		m_data = sharedEmptyString012D5298();
 		++m_data->m_refCount;
 	}
 
@@ -205,7 +211,7 @@ Rva008C3B60Node *rva008AA130(BfmeHostEAW *first, int count)
 	{
 		Rva008C3B60Head = node->m_next;
 		g_rva01337810GcRoots->addOrClear(node);
-		if (node->m_data != &g_bfmeDefaultString1284)
+		if (node->m_data != sharedEmptyString012D5298())
 			((BfmeStrVKK *)&node->m_data)->bfmeTruncVKK(0);
 	}
 	else
@@ -255,7 +261,7 @@ Rva008C3B60Node *rva008AA2B0(int unused, int count)
 	{
 		Rva008C3B60Head = node->m_next;
 		g_rva01337810GcRoots->addOrClear(node);
-		if (node->m_data != &g_bfmeDefaultString1284)
+		if (node->m_data != sharedEmptyString012D5298())
 			((BfmeStrVKK *)&node->m_data)->bfmeTruncVKK(0);
 	}
 	else

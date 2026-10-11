@@ -13,7 +13,12 @@ struct BfmeStringPool3AF0
     void *m_unknown00;
     void (__cdecl *free)(void *);
 };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 extern void *(__cdecl *Rva008C5D70Alloc)(unsigned int);
 
@@ -22,7 +27,7 @@ class Rva8CD130String
 public:
     Rva8CD130String()
     {
-        m_data = &g_bfmeDefaultString1284;
+        m_data = sharedEmptyString012D5298();
         ++m_data->m_refCount;
     }
     ~Rva8CD130String()
@@ -108,7 +113,7 @@ Rva008A9B00 *rva008C6990StringTransform(void *unknown, int count)
     {
         rva01338478FreeHead() = result->m_next;
         g_rva01337810GcRoots->addPooled(result);
-        if (result->m_data != &g_bfmeDefaultString1284)
+        if (result->m_data != sharedEmptyString012D5298())
             ((BfmeStrVKK *)&result->m_data)->bfmeTruncVKK(0);
     }
     else

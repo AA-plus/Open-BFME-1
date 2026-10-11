@@ -15,7 +15,12 @@ struct BfmeStringPool3AF0
 };
 
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 
 class BfmeStrVKI
 {
@@ -36,8 +41,8 @@ public:
 
 	BfmeStrVKI()
 	{
-		++g_bfmeDefaultString1284.m_refCount;
-		m_data = &g_bfmeDefaultString1284;
+		++sharedEmptyString012D5298()->m_refCount;
+		m_data = sharedEmptyString012D5298();
 	}
 
 	~BfmeStrVKI()

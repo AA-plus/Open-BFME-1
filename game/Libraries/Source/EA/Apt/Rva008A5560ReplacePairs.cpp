@@ -2,11 +2,16 @@
 // Retail RVA 0x008A5560: byte-verified callback; local layouts retain address-derived identities.
 struct BfmeStringData3AF0 { unsigned short m_refCount; unsigned short m_length; unsigned m_capacity; };
 struct BfmeStringPool3AF0 { void *unused; void (__cdecl *free)(void *); };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class Rva8CD130String {
 public:
- Rva8CD130String() { m_data=&g_bfmeDefaultString1284; ++m_data->m_refCount; }
+ Rva8CD130String() { m_data=sharedEmptyString012D5298(); ++m_data->m_refCount; }
  ~Rva8CD130String() { BfmeStringData3AF0 *old=m_data; if(--old->m_refCount==0) g_rva01337A30AllocPair->free(old); }
  const char *text() const { return (const char*)m_data+8; }
  BfmeStringData3AF0 *m_data;

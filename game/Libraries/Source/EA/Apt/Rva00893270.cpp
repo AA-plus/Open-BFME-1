@@ -9,7 +9,12 @@ struct BfmeStringData3AF0
 	unsigned short m_flags;
 };
 
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 
 struct BfmeStringPool3AF0
 {
@@ -25,8 +30,8 @@ class BfmeStrVKI
 public:
 	BfmeStrVKI()
 	{
-		m_block = &g_bfmeDefaultString1284;
-		++g_bfmeDefaultString1284.m_refCount;
+		m_block = sharedEmptyString012D5298();
+		++sharedEmptyString012D5298()->m_refCount;
 	}
 
 	BfmeStrVKI(const char *text)
@@ -131,7 +136,7 @@ void Rva00893270(const char *first, const char *second)
 	{
 		g_rva01338478NodeHead = (Rva008C3B60Node *)node->m_next;
 		g_rva01337810GcRoots->addOrClear(node);
-		if (node->m_block != &g_bfmeDefaultString1284)
+		if (node->m_block != sharedEmptyString012D5298())
 			((BfmeStrVKK *)&node->m_block)->bfmeTruncVKK(0);
 	}
 	else

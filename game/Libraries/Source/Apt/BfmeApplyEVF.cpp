@@ -28,15 +28,20 @@ struct BfmeStringData3AF0
 };
 
 extern BfmeStringPoolVKI *g_bfmeStringPool1284;
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 
 class BfmeStrVKI
 {
 public:
 	BfmeStrVKI()
 	{
-		g_bfmeDefaultString1284.m_refCount++;
-		m_data = (BfmeHdrVKI *)&g_bfmeDefaultString1284;
+		sharedEmptyString012D5298()->m_refCount++;
+		m_data = (BfmeHdrVKI *)sharedEmptyString012D5298();
 	}
 	BfmeStrVKI(const char *text)
 	{
@@ -137,7 +142,7 @@ void bfmeApplyEVF(void *raw_node, BfmeStrVKI *text, int mode)
 	}
 
 	bfmeApplyEVF(parent, text, mode);
-	if (node->m_text.m_data != (BfmeHdrVKI *)&g_bfmeDefaultString1284)
+	if (node->m_text.m_data != (BfmeHdrVKI *)sharedEmptyString012D5298())
 	{
 		((BfmeStrVKJ *)text)->bfmeAssignVKJ(
 			(const BfmeStrVKJ &)rva0089EB30(separator, node->m_text));

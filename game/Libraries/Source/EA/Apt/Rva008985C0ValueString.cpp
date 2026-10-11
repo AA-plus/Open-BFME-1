@@ -20,7 +20,12 @@ struct BfmeStringPool3AF0
     void (__cdecl *free)(void *);
 };
 
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 extern const float g_rva01075350;
 extern double g_bfmeSubB3;
@@ -52,7 +57,7 @@ public:
         BfmeStringData3AF0 *old = m_data;
         if (--old->m_refCount == 0)
             g_rva01337A30AllocPair->free(old);
-        m_data = &g_bfmeDefaultString1284;
+        m_data = sharedEmptyString012D5298();
         ++m_data->m_refCount;
     }
     __forceinline void assign(const Rva8CD130String &source)

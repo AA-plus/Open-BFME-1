@@ -5,14 +5,19 @@
 
 struct BfmeStringData3AF0 { unsigned short m_refCount, m_length, m_capacity, m_unknown06; };
 struct BfmeStringPool3AF0 { void *m_unknown00; void (__cdecl *free)(void *); };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 extern void *(__cdecl *Rva008C5D70Alloc)(unsigned int);
 extern void (__cdecl *TheBfmeFree)(void *, unsigned int);
 
 class BfmeStrVKI {
 public:
-    __forceinline BfmeStrVKI() : m_data(&g_bfmeDefaultString1284) { ++g_bfmeDefaultString1284.m_refCount; }
+    __forceinline BfmeStrVKI() : m_data(sharedEmptyString012D5298()) { ++sharedEmptyString012D5298()->m_refCount; }
     __forceinline ~BfmeStrVKI() {
         BfmeStringData3AF0 *old = m_data;
         if (--old->m_refCount == 0) g_rva01337A30AllocPair->free(old);
@@ -207,7 +212,7 @@ bool rva008AF650Implementation(Rva008AF650Object *object, BfmeStrVKI *key, AptVa
                 ((Rva8CD130Value *)value)->getName((Rva8CD130String *)&name);
                 if (!(text->m_string18 == name)) {
                     text->m_string18 = name;
-                    if (text->m_string1c.m_data != &g_bfmeDefaultString1284) {
+                    if (text->m_string1c.m_data != sharedEmptyString012D5298()) {
                         Rva8CD130Value *scope = object;
                         while (scope) {
                             if (scope->isType(13) || scope->isType(18)) break;
@@ -218,7 +223,7 @@ bool rva008AF650Implementation(Rva008AF650Object *object, BfmeStrVKI *key, AptVa
                         if (node) {
                             Rva008C3B60Head = (Rva008C3B60Node *)node->m_next;
                             g_rva01337810GcRoots->add(node);
-                            if (node->m_string.m_data != &g_bfmeDefaultString1284)
+                            if (node->m_string.m_data != sharedEmptyString012D5298())
                                 ((BfmeStrVKK *)&node->m_string)->bfmeTruncVKK(0);
                         } else {
                             node = new Rva008A9B00();

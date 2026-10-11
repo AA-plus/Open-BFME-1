@@ -23,7 +23,12 @@ struct BfmeStringPool3AF0 {
 	void *m_unused;
 	void (__cdecl *free)(BfmeStringData3AF0 *);
 };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern BfmeStringPool3AF0 *g_bfmeStringPool1284;
 extern char *Rva008A5380Holder;
 extern Rva00893030Manager *g_rva00893030Manager;
@@ -120,8 +125,8 @@ void dup_00894A90(int mode)
 	if (data->m_refCount == 0) {
 		g_bfmeStringPool1284->free(data);
 	}
-	++g_bfmeDefaultString1284.m_refCount;
-	g_String012D5140.m_data = &g_bfmeDefaultString1284;
+	++sharedEmptyString012D5298()->m_refCount;
+	g_String012D5140.m_data = sharedEmptyString012D5298();
 	bfmeClearHash3AF0();
 
 	(((Rva008A30C0Call *)g_rva8CD130IdleHook)->*idleCall)();

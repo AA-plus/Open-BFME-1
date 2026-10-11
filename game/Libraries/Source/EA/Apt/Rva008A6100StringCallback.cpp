@@ -8,7 +8,12 @@ struct BfmeStringPool3AF0
     void *m_unknown00;
     void (__cdecl *free)(void *);
 };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 extern void *(*WideAllocPtr)(unsigned int bytes);
 class Rva8CD130String
@@ -75,7 +80,7 @@ Rva008A9B00 *aptCallbackString008A6100(KeyValuePairs00898D80 *src, int)
     {
         g_rva008AAFD0Free = obj->m_next;
         g_bfmeRegistryVNF->addOrClear(obj);
-        if (obj->m_block != &g_bfmeDefaultString1284)
+        if (obj->m_block != sharedEmptyString012D5298())
             reinterpret_cast<BfmeStrVKK *>(&obj->m_block)->bfmeTruncVKK(0);
     }
     else
@@ -92,7 +97,7 @@ Rva008A9B00 *aptCallbackString008A62A0(KeyValuePairs00898D80 *src, int)
     {
         g_rva008AAFD0Free = obj->m_next;
         g_bfmeRegistryVNF->addOrClear(obj);
-        if (obj->m_block != &g_bfmeDefaultString1284)
+        if (obj->m_block != sharedEmptyString012D5298())
             reinterpret_cast<BfmeStrVKK *>(&obj->m_block)->bfmeTruncVKK(0);
     }
     else

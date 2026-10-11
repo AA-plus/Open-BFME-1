@@ -15,12 +15,17 @@ struct BfmeStringPool3AF0 {
     void *m_unused;
     void (__cdecl *free)(void *);
 };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 
 class BfmeStrVKJ {
 public:
-    BfmeStrVKJ() : m_data(&g_bfmeDefaultString1284) { ++m_data->m_refCount; }
+    BfmeStrVKJ() : m_data(sharedEmptyString012D5298()) { ++m_data->m_refCount; }
     BfmeStrVKJ *bfmeAssignVKJ(const BfmeStrVKJ &other);
     ~BfmeStrVKJ() {
         BfmeStringData3AF0 *data = m_data;

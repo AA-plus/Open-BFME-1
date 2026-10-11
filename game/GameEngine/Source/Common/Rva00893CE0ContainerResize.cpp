@@ -11,7 +11,12 @@ struct BfmeStringPool3AF0
 	void (__cdecl *m_destroy)(BfmeStringData3AF0 *);
 };
 
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
+static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
+{
+	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
+}
 extern BfmeStringPool3AF0 *g_bfmeStringPool1284;
 
 struct Rva00892640Item
@@ -26,7 +31,7 @@ struct Rva00892640Item
 
 Rva00892640Item::Rva00892640Item()
 {
-	m_handle = &g_bfmeDefaultString1284;
+	m_handle = sharedEmptyString012D5298();
 	++m_handle->m_refs;
 	m_extra = 0;
 }

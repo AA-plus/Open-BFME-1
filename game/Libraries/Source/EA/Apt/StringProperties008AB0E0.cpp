@@ -63,12 +63,13 @@ struct BfmeStringPool3AF0 {
     void *m_unknown00;
     void (__cdecl *free)(void *);
 };
-extern BfmeStringData3AF0 g_bfmeDefaultString1284;
+class EAStringC { public: class StringDataC; int bfmeUtf8Length() const; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class Rva8CD130String {
 public:
     __forceinline Rva8CD130String() {
-        m_data = &g_bfmeDefaultString1284;
+        m_data = (BfmeStringData3AF0 *)&g_rva012D5298Empty;
         ++m_data->m_refCount;
     }
     __forceinline ~Rva8CD130String() {
@@ -78,7 +79,6 @@ public:
     BfmeStringData3AF0 *m_data;
 };
 class Rva8CD130Value { public: void getName(Rva8CD130String *output); };
-class EAStringC { public: int bfmeUtf8Length() const; };
 
 struct R4Word { const char *name; int id; };
 const R4Word *Rva008A9710(const char *, unsigned);
