@@ -43,15 +43,15 @@
 
 struct R4Word { const char *name; int value; };
 
-#define R4_GPERF( NAME, HASHFN, WORDLIST, MINLEN, MAXLEN, MAXHASH )           \
-	int HASHFN( const char *str, unsigned int len );                          \
+#define R4_GPERF( NAME, HASHFN, WORDLIST, MINLEN, MAXLEN, MAXHASH, HASHCHAR, HASHLEN )           \
+	int HASHFN( const HASHCHAR *str, HASHLEN len );                          \
 	extern const R4Word WORDLIST[];                                           \
 	const R4Word *NAME( const char *str, unsigned int len );                  \
 	const R4Word *NAME( const char *str, unsigned int len )                   \
 	{                                                                         \
 		if ( len <= MAXLEN && len >= MINLEN )                                 \
 		{                                                                     \
-			register int key = HASHFN( str, len );                            \
+			register int key = HASHFN( reinterpret_cast<const HASHCHAR *>(str), static_cast<HASHLEN>(len) );                            \
 			if ( key <= MAXHASH && key >= 0 )                                 \
 			{                                                                 \
 				register const char *s = WORDLIST[ key ].name;                \
@@ -62,10 +62,10 @@ struct R4Word { const char *name; int value; };
 		return 0;                                                             \
 	}
 
-R4_GPERF( Rva008A44A0, Gen008A3EE0, g008A44A0, 4, 0x0E, 0x10 )
-R4_GPERF( Rva008ABF40, Gen008AB970, g008ABF40, 4, 0x11, 0x1D )
-R4_GPERF( Rva008B5610, Gen008B5050, g008B5610, 4, 0x0B, 0x0B )
-R4_GPERF( Rva008B8AD0, Gen008B8510, g008B8AD0, 3, 0x08, 0x1B )
-R4_GPERF( Rva008D48F0, Gen008D42C0, g008D48F0, 2, 0x14, 0xD3 )
-R4_GPERF( Rva008D4F80, Gen008D4980, g008D4F80, 3, 0x0B, 0x24 )
-R4_GPERF( Rva008D5DC0, Gen008D57B0, g008D5DC0, 4, 0x0F, 0x4C )
+R4_GPERF( Rva008A44A0, bfmeSkipVD, g008A44A0, 4, 0x0E, 0x10, unsigned char, int )
+R4_GPERF( Rva008ABF40, Gen008AB970, g008ABF40, 4, 0x11, 0x1D, char, unsigned int )
+R4_GPERF( Rva008B5610, bfmeSkipVG, g008B5610, 4, 0x0B, 0x0B, unsigned char, int )
+R4_GPERF( Rva008B8AD0, bfmeSkipVI, g008B8AD0, 3, 0x08, 0x1B, unsigned char, int )
+R4_GPERF( Rva008D48F0, Gen008D42C0, g008D48F0, 2, 0x14, 0xD3, char, unsigned int )
+R4_GPERF( Rva008D4F80, Gen008D4980, g008D4F80, 3, 0x0B, 0x24, char, unsigned int )
+R4_GPERF( Rva008D5DC0, Gen008D57B0, g008D5DC0, 4, 0x0F, 0x4C, char, unsigned int )
