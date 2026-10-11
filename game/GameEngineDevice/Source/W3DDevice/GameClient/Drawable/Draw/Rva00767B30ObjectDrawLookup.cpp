@@ -89,11 +89,11 @@ int Rva00767B30::method(void *outParam)
         AsciiString *preferred = (AsciiString *)(self + 0x1F4);
         if ((*(void **)preferred) != 0 &&
             *(unsigned short *)((char *)(*(void **)preferred) + 4) != 0)
-            local.set(*preferred);
+            local.StringBase<char>::set(*preferred);
         else
         {
             char *base2 = *(char **)(self - 8);
-            local.set(*(AsciiString *)(base2 + 0xE0));
+            local.StringBase<char>::set(*(AsciiString *)(base2 + 0xE0));
         }
         text = (*(void **)&local) ? (const char *)(*(void **)&local) + 8 : "";
 
@@ -133,19 +133,6 @@ int Rva00767B30::method(void *outParam)
 // The local string helper spells the ledger's UnicodeString name for the
 // one-pointer copy body at 0x00887C90, exactly like the slot-35 sibling
 // (Gen_007639E0_ObjectDrawLookup.cpp).
-class BFMERetailAsciiString
-{
-public:
-    void releaseBuffer();
-};
-class UnicodeString
-{
-public:
-    UnicodeString() : m_data(0) {}
-    ~UnicodeString() { ((BFMERetailAsciiString *)this)->releaseBuffer(); }
-    void set(const UnicodeString &other);
-    void *m_data;
-};
 class Rva00767C70Base
 {
 public:
@@ -203,10 +190,10 @@ int Rva00767C70::method(void *outParam)
     if (result)
     {
         const char *text;
-        UnicodeString local;
+        AsciiString local;
         char *base2 = *(char **)(self - 8);
-        local.set(*(UnicodeString *)(base2 + 0xE4));
-        text = local.m_data ? (const char *)local.m_data + 8 : "";
+        local.StringBase<char>::set(*(AsciiString *)(base2 + 0xE4));
+        text = (*(void **)&local) ? (const char *)(*(void **)&local) + 8 : "";
         result = result->slot31(text, 0);
         if (result)
         {
