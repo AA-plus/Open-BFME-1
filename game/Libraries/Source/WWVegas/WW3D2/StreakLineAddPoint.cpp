@@ -1,4 +1,4 @@
-// cl: /O2 /Ob0 /MD /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath
+// cl: /O2 /Ob0 /MD /DNDEBUG /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath
 #include "simplevec.h"
 #include "vector3.h"
 #include "vector4.h"

@@ -272,11 +272,8 @@ void StreakLineClass::Get_Point_Location(unsigned int point_idx, Vector3 &loc)
 	}
 }
 
-// ?Add_Point@StreakLineClass@@ present-unmatched
-void StreakLineClass::Add_Point(const Vector3 & location)
-{
-	PointLocations.Add(location);
-}
+// Retail implementation: StreakLineAddPoint.cpp (Add_Point).
+
 
 void StreakLineClass::Delete_Point(unsigned int point_idx)
 {
@@ -455,24 +452,15 @@ void StreakLineClass::Set_Merge_Intersections(int onoff)
 	LineRenderer.Set_Merge_Intersections(onoff);
 }
 
-// ?Set_Freeze_Random@StreakLineClass@@ present-unmatched
-void StreakLineClass::Set_Freeze_Random(int onoff)
-{
-	LineRenderer.Set_Freeze_Random(onoff);
-}
+// Retail implementation: StreakLineAddPoint.cpp (Set_Freeze_Random).
 
 
-// ?Set_Disable_Sorting@StreakLineClass@@ present-unmatched
-void StreakLineClass::Set_Disable_Sorting(int onoff)
-{
-	LineRenderer.Set_Disable_Sorting(onoff);
-}
 
-// ?Set_End_Caps@StreakLineClass@@ present-unmatched
-void StreakLineClass::Set_End_Caps(int onoff)
-{
-	LineRenderer.Set_End_Caps(onoff);
-}
+// Retail implementation: StreakLineAddPoint.cpp (Set_Disable_Sorting).
+
+
+// Retail implementation: StreakLineAddPoint.cpp (Set_End_Caps).
+
 
 /*
 ** RenderObjClass interface:
