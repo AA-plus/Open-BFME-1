@@ -1,8 +1,8 @@
-extern "C" unsigned char bfmeStrDULa[];
-extern "C" unsigned char bfmeStrDULb[];
-extern "C" unsigned char bfmeStrDULc[];
-extern "C" unsigned char bfmeStrDULd[];
-extern "C" unsigned char bfmeStrDULe[];
+extern const char g_Va0111D7F0[] = "PingAttack";
+extern const char g_Va0111D800[] = "PingBeacon";
+extern const char g_Va0111D810[] = "PingGeneric";
+extern const char g_Va0111D820[] = "PingInformation";
+extern const char g_Va0111D834[] = "PingUpgrade";
 
 // The five call sites below are byte-exact against retail 0x006C1C10..0x006C1CD0
 // (32 bytes each):
@@ -40,34 +40,34 @@ typedef void (__stdcall *BFMEDulCall)(void *, const char *);
 void *__stdcall bfmeGoDULa(void *other)
 {
 	volatile int tmp = 0;
-	((BFMEDulCall)bfmeCallDUL)(other, (const char *)bfmeStrDULa);
+	((BFMEDulCall)bfmeCallDUL)(other, (const char *)g_Va0111D7F0);
 	return other;
 }
 
 void *__stdcall bfmeGoDULb(void *other)
 {
 	volatile int tmp = 0;
-	((BFMEDulCall)bfmeCallDUL)(other, (const char *)bfmeStrDULb);
+	((BFMEDulCall)bfmeCallDUL)(other, (const char *)g_Va0111D800);
 	return other;
 }
 
 void *__stdcall bfmeGoDULc(void *other)
 {
 	volatile int tmp = 0;
-	((BFMEDulCall)bfmeCallDUL)(other, (const char *)bfmeStrDULc);
+	((BFMEDulCall)bfmeCallDUL)(other, (const char *)g_Va0111D810);
 	return other;
 }
 
 void *__stdcall bfmeGoDULd(void *other)
 {
 	volatile int tmp = 0;
-	((BFMEDulCall)bfmeCallDUL)(other, (const char *)bfmeStrDULd);
+	((BFMEDulCall)bfmeCallDUL)(other, (const char *)g_Va0111D820);
 	return other;
 }
 
 void *__stdcall bfmeGoDULe(void *other)
 {
 	volatile int tmp = 0;
-	((BFMEDulCall)bfmeCallDUL)(other, (const char *)bfmeStrDULe);
+	((BFMEDulCall)bfmeCallDUL)(other, (const char *)g_Va0111D834);
 	return other;
 }

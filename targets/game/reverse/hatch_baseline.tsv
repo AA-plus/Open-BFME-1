@@ -48,6 +48,11 @@ address_global	game/GameEngine/Source/Common/BfmeConv492.cpp	g_Rva0107301CEmptyS
 address_global	game/GameEngine/Source/Common/BfmeConv524.cpp	g_Rva0107301CEmptyString	3
 address_global	game/GameEngine/Source/Common/BfmeConv534.cpp	g_Rva0107301CEmptyString	2
 address_global	game/GameEngine/Source/Common/BfmeConv736.cpp	g_Rva0107301CEmptyString	2
+address_global	game/GameEngine/Source/Common/BfmeConv785.cpp	g_Va0111D7F0	2	allow=a7f23c39c42b2ac0025743ef4ce0647b82517fdf
+address_global	game/GameEngine/Source/Common/BfmeConv785.cpp	g_Va0111D800	2	allow=a7f23c39c42b2ac0025743ef4ce0647b82517fdf
+address_global	game/GameEngine/Source/Common/BfmeConv785.cpp	g_Va0111D810	2	allow=a7f23c39c42b2ac0025743ef4ce0647b82517fdf
+address_global	game/GameEngine/Source/Common/BfmeConv785.cpp	g_Va0111D820	2	allow=a7f23c39c42b2ac0025743ef4ce0647b82517fdf
+address_global	game/GameEngine/Source/Common/BfmeConv785.cpp	g_Va0111D834	2	allow=a7f23c39c42b2ac0025743ef4ce0647b82517fdf
 address_global	game/GameEngine/Source/Common/BfmeConv883.cpp	g_Rva0107301CEmptyString	3
 address_global	game/GameEngine/Source/Common/BfmeConv911.cpp	g_bfmeRva012D6DE0CriticalSection	2
 address_global	game/GameEngine/Source/Common/BfmeConv924.cpp	g_Rva005127A0InGameChat	3
