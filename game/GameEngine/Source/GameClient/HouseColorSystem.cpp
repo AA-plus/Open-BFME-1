@@ -28,7 +28,20 @@ public:
 	static const FieldParse m_fieldParseTable[];
 };
 
-extern HouseColorSystem *TheHouseColorSystem;		// 0x012F0FEC
+HouseColorSystem *TheHouseColorSystem = 0;		// 0x012F0FEC
+
+// Retail table 010EBD84 has two 16-byte entries and a zero terminator.
+// These exact keyword arrays own the table's two string targets; their names
+// keep the retail addresses because no source witness names the arrays.
+extern const char g_Va010EBD74[] = "BaseTexture";
+extern const char g_Va010EBD64[] = "HouseTexture";
+
+const FieldParse HouseColorSystem::m_fieldParseTable[] =
+{
+	{ g_Va010EBD74, INI::parseAsciiString, 0, 0x0C },
+	{ g_Va010EBD64, INI::parseAsciiString, 0, 0x08 },
+	{ 0, 0, 0, 0 }
+};
 
 // AsciiString::str() inlined: the characters sit past the eight-byte StringBase
 // header, and an empty string reads as the shared "".

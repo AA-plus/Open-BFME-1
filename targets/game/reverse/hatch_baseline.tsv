@@ -743,6 +743,8 @@ address_global	game/GameEngine/Source/GameClient/GUI/Rva00783F90PackedColor.cpp	
 address_global	game/GameEngine/Source/GameClient/GUI/Shell/Rva000E6090Ctor.cpp	g_Rva000E6090Handlers	2
 address_global	game/GameEngine/Source/GameClient/GUI/SkirmishScreenShowError.cpp	g_Rva01088AF4EmptyWideString	2
 address_global	game/GameEngine/Source/GameClient/GameClient.cpp	g_Rva0107301CEmptyString	2
+address_global	game/GameEngine/Source/GameClient/HouseColorSystem.cpp	g_Va010EBD64	2	allow=446496c6481d057a16a17fde9745146982a96357
+address_global	game/GameEngine/Source/GameClient/HouseColorSystem.cpp	g_Va010EBD74	2	allow=446496c6481d057a16a17fde9745146982a96357
 address_global	game/GameEngine/Source/GameClient/MessageStream/CommandXlat.cpp	g_Rva005127A0InGameChat	2
 address_global	game/GameEngine/Source/GameClient/MessageStream/CommandXlatVoice.cpp	g_Rva005127A0InGameChat	1
 address_global	game/GameEngine/Source/GameClient/Rva006A9800.cpp	g_Rva13595EC	2
