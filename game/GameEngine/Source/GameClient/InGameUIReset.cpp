@@ -91,7 +91,8 @@ public:
 };
 
 extern ControlBar *TheControlBar;
-extern Glo012F4B78Type *Glo012F4B78;
+class Gen00587600;
+extern Gen00587600 *g_bfmeSubsystem012F4B78;
 class AptPalantir;
 extern AptPalantir *TheAptPalantir;
 extern BannerUI *TheBannerUI;
@@ -232,7 +233,7 @@ void InGameUI::reset()
 	m_field_00e = true;
 
 	TheControlBar->reset();
-	Glo012F4B78->reset();
+	reinterpret_cast<Glo012F4B78Type *>(g_bfmeSubsystem012F4B78)->reset();
 	reinterpret_cast<Glo012F4B98Type *>(TheAptPalantir)->reset();
 	TheBannerUI->reset();
 
