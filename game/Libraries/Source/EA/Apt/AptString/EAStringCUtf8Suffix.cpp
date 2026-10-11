@@ -20,17 +20,13 @@ struct EAStringData
 	unsigned short m_hash;
 };
 
-extern EAStringData g_emptyStringData;
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 
 class EAStringC
 {
 public:
-	__forceinline EAStringC(int)
-	{
-		m_data = &g_emptyStringData;
-		++g_emptyStringData.m_refCount;
-	}
+	class StringDataC;
+	__forceinline EAStringC(int);
 
 	~EAStringC()
 	{
@@ -45,6 +41,14 @@ public:
 private:
 	EAStringData *m_data;
 };
+
+extern EAStringC::StringDataC g_rva012D5298Empty;
+
+__forceinline EAStringC::EAStringC(int)
+{
+	m_data = reinterpret_cast<EAStringData *>(&g_rva012D5298Empty);
+	++reinterpret_cast<EAStringData *>(&g_rva012D5298Empty)->m_refCount;
+}
 
 // Advances n codepoints; returns 0 when the terminator is decoded first.
 static __forceinline const unsigned char *utf8Advance0089FAC0(const unsigned char *s, int n)
