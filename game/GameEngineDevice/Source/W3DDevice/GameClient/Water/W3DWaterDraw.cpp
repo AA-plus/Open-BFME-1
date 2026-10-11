@@ -30,8 +30,6 @@ class ShroudTexture { public: ShroudFilter *getFilter(); };
 class Gen_00920a60 { public: void m(int); };
 void BoxSetTexture(unsigned, TextureBaseClass *&);
 
-struct BfmeObjRB;
-
 // Counted texture handle returned by W3DShroud::getShroudTexture (0x006D2630).
 class TextureHandle
 {
@@ -51,15 +49,17 @@ public:
 	char m_pad[0x30B8];
 	W3DShroud *m_shroud;			// +0x30B8
 };
-extern BfmeTerrainRenderObject *TheTerrainRenderObject;
+// BaseHeightMap.cpp owns the native singleton at VA012F7FE0.
+class BaseHeightMapRenderObjClass;
+extern BaseHeightMapRenderObjClass *TheTerrainRenderObject;
 
 // Retail reaches W3DShaderManager's texture-slot and shader setters through
 // their ILT thunks 0x0003F427 (-> 0x006D25E0) and 0x0003FD82 (-> 0x00716980),
 // which the ledger already pins under these names.
-void bfmeOneRB(int stage, BfmeObjRB *texture);
+void bfme5SetTextureSlot(int stage, TextureClass **texture);
 void bfmeTwoRB(int shader, int pass);
 static inline void setShaderTexture(int stage, const TextureHandle &texture) {
-    bfmeOneRB(stage,(BfmeObjRB *)&texture);
+    bfme5SetTextureSlot(stage,(TextureClass **)&texture.m_p);
 }
 
 struct WaterMatrix007A7240 { float m[16]; };
@@ -219,8 +219,8 @@ void WaterShader007A7240::setup(char *settings) {
     ((Gen_00920a60 *)((ShroudTexture *)(settings+0x24))->getFilter())->m(2);
     DX8Wrapper::Apply_Render_State_Changes();
     if(*(unsigned *)((char *)this+0x2b8)) {
-        if(TheTerrainRenderObject->getShroud()) {
-            setShaderTexture(0,TheTerrainRenderObject->getShroud()->getShroudTexture());
+        if(reinterpret_cast<BfmeTerrainRenderObject *>(TheTerrainRenderObject)->getShroud()) {
+            setShaderTexture(0,reinterpret_cast<BfmeTerrainRenderObject *>(TheTerrainRenderObject)->getShroud()->getShroudTexture());
             bfmeTwoRB(5,3);
             waterDevice()->SetRenderState(D3DRS_ZFUNC,D3DCMP_LESSEQUAL);
         } else {
