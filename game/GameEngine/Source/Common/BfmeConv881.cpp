@@ -74,7 +74,7 @@ struct BfmeThingEOA
 
 BfmeThingEOA *BfmeThingEOA::bfmeCtorEOA(char flag)
 {
-	bfmeBaseEOA();
+	reinterpret_cast<Gen_009D83D0 *>(this)->Gen_009D83D0::Gen_009D83D0();
 	m_bfmeFlag = flag;
 	m_bfmeVft = bfmeVftEOA;
 	m_bfmeK = 0;
