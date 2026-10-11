@@ -4,6 +4,7 @@ Each rule research 31 / the round-2 review found missing has a positive control
 (the pilot's rule passes it, this one fails it) and a negative control."""
 import collections
 import struct
+import subprocess
 import sys
 from pathlib import Path
 
@@ -715,3 +716,46 @@ def test_row_kinds_keep_dumps_out_of_credit():
     ok = {"a": True, ("unit", 2): True}
     assert lc.greatest_closure(ok, {"a": {("unit", 2)}}) == {"a", ("unit", 2)}
     assert lc.greatest_closure(ok, {"a": {("dump", 2)}}, bad_targets=("fill", "stub", "dump")) == {("unit", 2)}
+
+
+# ported from Open-BFME-2 (33dabdfc81, ab786c9801) with the code they test
+@pytest.mark.parametrize("platform, first", [("linux", "wine"), ("win32", "lib.exe")])
+def test_import_libs_run_lib_exe_through_wine_off_windows(tmp_path, monkeypatch, platform, first):
+    # lib.exe is a Windows binary checked in without an exec bit: off Windows it runs under wine, as link.exe does
+    calls = []
+
+    def run(cmd, **kw):
+        calls.append(cmd)
+        Path(next(a for a in cmd if a.startswith("/OUT:"))[5:]).write_bytes(b"!<arch>\n")
+        return subprocess.CompletedProcess(cmd, 0, "", "")
+    monkeypatch.setattr(lc.sys, "platform", platform)
+    monkeypatch.setattr(lc.subprocess, "run", run)
+    monkeypatch.setattr(lc.build, "vc71_root", lambda: tmp_path)
+    monkeypatch.setattr(lc.build, "compiler_environment", lambda root: {})
+    libs = lc.make_import_libs({"KERNEL32.dll": ["Sleep@4"]}, tmp_path)
+    assert [p.name for p in libs] == ["imp_kernel32.lib"]
+    assert Path(calls[0][0]).name == first and Path(calls[0][1 if first == "wine" else 0]).name == "lib.exe"
+
+
+def test_link_inputs_are_never_read_as_options_under_wine(tmp_path, monkeypatch):
+    # link.exe under wine reads an absolute POSIX path in the response file as an option (LNK4044) and
+    # drops the input: every input is named relative to the link's working directory instead
+    calls = []
+
+    def run(cmd, **kw):
+        calls.append((cmd, kw.get("cwd")))
+        return subprocess.CompletedProcess(cmd, 0, "", "")
+    monkeypatch.setattr(lc.sys, "platform", "linux")
+    monkeypatch.setattr(lc.subprocess, "run", run)
+    monkeypatch.setattr(lc.build, "vc71_root", lambda: tmp_path)
+    monkeypatch.setattr(lc.build, "compiler_environment", lambda root: {})
+    (tmp_path / "zzobj").mkdir()
+    inputs = [tmp_path / "fill00.obj", tmp_path / "zzobj" / "o00000.obj", tmp_path / "imp_kernel32.lib"]
+    lc.link("base", inputs, tmp_path / "order.txt", "_start", lc.BASE, tmp_path)
+    cmd, cwd = calls[0]
+    assert cmd[0] == "wine" and Path(cwd) == tmp_path
+    listed = [line.strip('"') for line in (tmp_path / "base.rsp").read_text().splitlines()]
+    # compared as paths: a Windows host simulating linux writes zzobj\o00000.obj
+    assert [Path(p) for p in listed] == [Path("fill00.obj"), Path("zzobj/o00000.obj"), Path("imp_kernel32.lib")]
+    assert not any(Path(p).is_absolute() for p in listed)
+    assert [(Path(cwd) / p).resolve() for p in listed] == [p.resolve() for p in inputs]
