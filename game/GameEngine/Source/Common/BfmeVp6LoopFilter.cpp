@@ -33,9 +33,19 @@ typedef int *(__cdecl *Rva009B0100Setup)(Rva009AF530Context *, int);
 typedef void (__cdecl *Rva009B0100Filter)(void *, unsigned char *, int, void *);
 
 extern Rva009B0100Setup g_rva01356e68SetupBounding;
-extern Rva009B0100Filter g_rva01356E9C;
-extern Rva009B0100Filter g_rva01356EBC;
-extern const int g_rva012D7B58[64];
+Rva009B0100Filter g_rva01356E9C;		// retail .bss callback slot 0x01356E9C
+Rva009B0100Filter g_rva01356EBC;		// retail .bss callback slot 0x01356EBC
+// retail .data 0x012D7B58..0x012D7C58 (g_Va012D7C58 follows)
+extern const int g_rva012D7B58[64] = {
+	30, 25, 20, 20, 15, 15, 14, 14,
+	13, 13, 12, 12, 11, 11, 10, 10,
+	9, 9, 8, 8, 7, 7, 7, 7,
+	6, 6, 6, 6, 5, 5, 5, 5,
+	4, 4, 4, 4, 3, 3, 3, 3,
+	2, 2, 2, 2, 2, 2, 2, 2,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+};
 
 #define CODED(i) ctx->IsCoded(i)
 #define FILTER_H(x) g_rva01356E9C(ctx, (x), stride, work)
