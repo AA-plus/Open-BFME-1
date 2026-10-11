@@ -8,6 +8,9 @@
 
 #include "../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
+// Existing four-byte payload view used by the retail push_front provider.
+struct Rva006F9160Element { int m_body; };
+
 namespace _STL
 {
 template <class T> class allocator
@@ -92,7 +95,8 @@ BaseHeightMapFloorElement *Rva006F9900Owner::addElement006F9A90(int id,
 		if (element->init006F8A60())
 		{
 			if (atFront)
-				m_elements.push_front(entry);
+				reinterpret_cast<_STL::list<Rva006F9160Element> *>(&m_elements)->push_front(
+					reinterpret_cast<const Rva006F9160Element &>(entry));
 			else
 				m_elements.push_back(entry);
 			m_count = m_elements.size();
