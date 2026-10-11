@@ -51,12 +51,12 @@ typedef void (__cdecl *Rva009B2A50Dering)(Rva009A6130Context *, unsigned char *,
 	unsigned char *, int, int, const int *);
 typedef void (__cdecl *Rva009B2A50Copy)(unsigned char *, unsigned char *, int);
 
-extern Rva009B2A50Dering g_rva01356EC0;
-extern Rva009B2A50Dering g_rva01356EA0;
+extern Rva009B2A50Dering g_Va01356EC0;
+extern Rva009B2A50Dering g_Va01356EA0;
 extern void *g_bfmeSlotB44;
 extern int g_rva01356940[64];
-extern int g_rva012D7F58[64];
-extern int g_rva012D8058[64];
+extern int g_Va012D7F58[64];
+extern int g_Va012D8058[64];
 
 #define BLOCK_SRC (srcPtr + 8 * col)
 #define BLOCK_DST (srcPtr + 8 * col + (dstPtr - srcPtr))
@@ -93,9 +93,9 @@ void __cdecl Rva009B2A50(Rva009A6130Context *ctx, unsigned char *src, unsigned c
 	}
 
 	if (ctx->m_mode >= 5)
-		table = g_rva012D8058;
+		table = g_Va012D8058;
 	else if (ctx->m_mode >= 2)
-		table = g_rva012D7F58;
+		table = g_Va012D7F58;
 	else
 		table = g_rva01356940;
 
@@ -114,20 +114,20 @@ void __cdecl Rva009B2A50(Rva009A6130Context *ctx, unsigned char *src, unsigned c
 			int variance = ctx->m_metric[index];
 			if (ctx->m_level > 5 && variance > thresh3)
 			{
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST_FIRST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST_FIRST, lineLength, quality, table);
 				if ((col > 0 && ctx->m_metric[index - 1] > thresh4) ||
 					(col + 1 < blocksAcross && ctx->m_metric[index + 1] > thresh4) ||
 					(row + 1 < blocksDown && ctx->m_metric[index + blocksAcross] > thresh4) ||
 					(row > 0 && ctx->m_metric[index - blocksAcross] > thresh4))
 				{
-					g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST_FIRST, lineLength, quality, table);
-					g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST_FIRST, lineLength, quality, table);
+					g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST_FIRST, lineLength, quality, table);
+					g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST_FIRST, lineLength, quality, table);
 				}
 			}
 			else if (variance > thresh2)
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST_FIRST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST_FIRST, lineLength, quality, table);
 			else if (variance > thresh1)
-				g_rva01356EA0(ctx, BLOCK_SRC, BLOCK_DST_FIRST, lineLength, quality, table);
+				g_Va01356EA0(ctx, BLOCK_SRC, BLOCK_DST_FIRST, lineLength, quality, table);
 			else
 				((Rva009B2A50Copy)g_bfmeSlotB44)(BLOCK_SRC, BLOCK_DST_FIRST, lineLength);
 			++index;
@@ -147,20 +147,20 @@ void __cdecl Rva009B2A50(Rva009A6130Context *ctx, unsigned char *src, unsigned c
 			int variance = ctx->m_metric[index];
 			if (ctx->m_level > 5 && variance > thresh3)
 			{
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
 				if ((col > 0 && ctx->m_metric[index - 1] > thresh4) ||
 					(col + 1 < blocksAcross && ctx->m_metric[index + 1] > thresh4) ||
 					(row + 1 < blocksDown && ctx->m_metric[index + blocksAcross] > thresh4) ||
 					(row > 0 && ctx->m_metric[index - blocksAcross] > thresh4))
 				{
-					g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
-					g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+					g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+					g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
 				}
 			}
 			else if (variance > thresh2)
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
 			else if (variance > thresh1)
-				g_rva01356EA0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EA0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
 			else
 				((Rva009B2A50Copy)g_bfmeSlotB44)(BLOCK_SRC, BLOCK_DST, lineLength);
 			++index;
@@ -182,14 +182,14 @@ void __cdecl Rva009B2A50(Rva009A6130Context *ctx, unsigned char *src, unsigned c
 			int variance = ctx->m_metric[index];
 			if (ctx->m_level > 5 && variance > thresh4)
 			{
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
 			}
 			else if (variance > thresh2)
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
 			else if (variance > thresh1)
-				g_rva01356EA0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EA0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
 			else
 				((Rva009B2A50Copy)g_bfmeSlotB44)(BLOCK_SRC, BLOCK_DST, lineLength);
 			++index;
@@ -209,14 +209,14 @@ void __cdecl Rva009B2A50(Rva009A6130Context *ctx, unsigned char *src, unsigned c
 			int variance = ctx->m_metric[index];
 			if (ctx->m_level > 5 && variance > thresh4)
 			{
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
 			}
 			else if (variance > thresh2)
-				g_rva01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EC0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
 			else if (variance > thresh1)
-				g_rva01356EA0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
+				g_Va01356EA0(ctx, BLOCK_SRC, BLOCK_DST, lineLength, quality, table);
 			else
 				((Rva009B2A50Copy)g_bfmeSlotB44)(BLOCK_SRC, BLOCK_DST, lineLength);
 			++index;
