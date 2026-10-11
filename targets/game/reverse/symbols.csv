@@ -90989,3 +90989,5 @@ _printf,0x009F7244,route=MSVCR71.dll!printf; IAT 0x01359464; CRT printf import j
 ?d_00880af0@@YAXXZ,0x00880AF0,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_0087af30.asm
 ?d_00849e20@@YAXXZ,0x00849E20,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_008462b0.asm
 ?d_00755000@@YAXXZ,0x00755000,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_00724a20.asm
+?d_009b58f0@@YAXXZ,0x009B58F0,legacy address-only alias for retired dump; four-slot cdecl and byte-return callees independently decoded; evidence=targets/game/reverse/identity_evidence/009b58f0-donor-port.md
+?d_009b5420@@YAXXZ,0x009B5420,legacy address-only alias for retired dump; five-slot cdecl with byte selector independently decoded; evidence=targets/game/reverse/identity_evidence/009b5420-donor-port.md
