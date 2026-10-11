@@ -3,22 +3,7 @@
 // released Zero Hour declaration adds a MemoryPoolObject word not present in
 // the retail BFME layout.
 
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString
-{
-public:
-	AsciiString() : m_data(0) {}
-	~AsciiString();
-	AsciiString &operator=(const char *text)
-	{
-		set(text, 0);
-		return *this;
-	}
-	void set(const char *text, int length);
-
-private:
-	void *m_data;
-};
+#include "../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameNetwork/IPEnumeration.h
 class EnumeratedIP
@@ -34,7 +19,7 @@ private:
 
 EnumeratedIP::EnumeratedIP()
 {
-	m_IPstring = "";
+	m_IPstring.StringBase<char>::set("", 0);
 	m_next = 0;
 	m_IP = 0;
 }

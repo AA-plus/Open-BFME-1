@@ -61,6 +61,10 @@ public:
 
 IPEnumeration::IPEnumeration( void )
 {
+	// Retain the separately verified depooling delete helper after removing
+	// the upstream address enumerator that formerly instantiated it.
+	(void)static_cast<void (*)(void *, EnumeratedIP::EnumeratedIPMagicEnum)>(
+		&EnumeratedIP::operator delete);
 	m_IPlist = NULL;
 	m_isWinsockInitialized = false;
 }
@@ -84,109 +88,7 @@ IPEnumeration::~IPEnumeration( void )
 	}
 }
 
-// ?getAddresses@IPEnumeration@@ present-unmatched
-EnumeratedIP * IPEnumeration::getAddresses( void )
-{
-	if (m_IPlist)
-		return m_IPlist;
-
-	if (!m_isWinsockInitialized)
-	{
-		WORD verReq = MAKEWORD(2, 2);
-		WSADATA wsadata;
-
-		int err = WSAStartup(verReq, &wsadata);
-		if (err != 0) {
-			return NULL;
-		}
-
-		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2)) {
-			WSACleanup();
-			return NULL;
-		}
-		m_isWinsockInitialized = true;
-	}
-
-	// get the local machine's host name
-	char hostname[256];
-	if (gethostname(hostname, sizeof(hostname)))
-	{
-		DEBUG_LOG(("Failed call to gethostname; WSAGetLastError returned %d\n", WSAGetLastError()));
-		return NULL;
-	}
-	DEBUG_LOG(("Hostname is '%s'\n", hostname));
-	
-	// get host information from the host name
-	HOSTENT* hostEnt = gethostbyname(hostname);
-	if (hostEnt == NULL)
-	{
-		DEBUG_LOG(("Failed call to gethostnyname; WSAGetLastError returned %d\n", WSAGetLastError()));
-		return NULL;
-	}
-	
-	// sanity-check the length of the IP adress
-	if (hostEnt->h_length != 4)
-	{
-		DEBUG_LOG(("gethostbyname returns oddly-sized IP addresses!\n"));
-		return NULL;
-	}
-	
-	// construct a list of addresses
-	int numAddresses = 0;
-	char *entry;
-	while ( (entry = hostEnt->h_addr_list[numAddresses++]) != 0 )
-	{
-		EnumeratedIP *newIP = newInstance(EnumeratedIP);
-
-		AsciiString str;
-		str.format("%d.%d.%d.%d", (unsigned char)entry[0], (unsigned char)entry[1], (unsigned char)entry[2], (unsigned char)entry[3]);
-
-		UnsignedInt testIP = *((UnsignedInt *)entry);
-		UnsignedInt ip = htonl(testIP);
-
-		/*
-		ip = *entry++;
-		ip <<= 8;
-		ip += *entry++;
-		ip <<= 8;
-		ip += *entry++;
-		ip <<= 8;
-		ip += *entry++;
-		*/
-
-		newIP->setIPstring(str);
-		newIP->setIP(ip);
-
-		DEBUG_LOG(("IP: 0x%8.8X / 0x%8.8X (%s)\n", testIP, ip, str.str()));
-
-		// Add the IP to the list in ascending order
-		if (!m_IPlist)
-		{
-			m_IPlist = newIP;
-			newIP->setNext(NULL);
-		}
-		else
-		{
-			if (newIP->getIP() < m_IPlist->getIP())
-			{
-				newIP->setNext(m_IPlist);
-				m_IPlist = newIP;
-			}
-			else
-			{
-				EnumeratedIP *p = m_IPlist;
-				while (p->getNext() && p->getNext()->getIP() < newIP->getIP())
-				{
-					p = p->getNext();
-				}
-				newIP->setNext(p->getNext());
-				p->setNext(newIP);
-			}
-		}
-	}
-
-	return m_IPlist;
-}
+// Retail getAddresses is owned by IPEnumerationGetAddresses.cpp.
 
 // byte-exact reconstruction: game/GameEngine/Source/GameNetwork/IPEnumerationRuntime.cpp
 // ?getMachineName@IPEnumeration@@ present-unmatched
