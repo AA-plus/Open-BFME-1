@@ -192,7 +192,7 @@ class Display; extern Display *TheDisplay;
 class GameLogic; extern GameLogic *TheGameLogic;
 class GlobalData; extern GlobalData *TheWritableGlobalData;
 class GameLODManager; extern GameLODManager *TheGameLODManager;
-class PalantirUIState; extern PalantirUIState *g_aptPalantirUIState;
+class Rva006092D0State; typedef Rva006092D0State PalantirUIState; extern PalantirUIState *g_rva012F7048LivingWorld;	// client LivingWorld singleton 0x012F7048 (data_rows.csv)
 extern unsigned char g_optByte12F4AD0;
 struct Rva0055E470Logic { char pad[0x10c]; int field10c; };
 struct Rva0055E470Global { char pad[0xbc0]; float m_keyboardDefaultScrollFactor; };
@@ -205,7 +205,7 @@ struct Rva0055E470LOD { StaticGameLODInfo presets[6]; char pad120[0x16c4-0x120];
 #define logic ((Rva0055E470Logic *)TheGameLogic)
 #define global ((Rva0055E470Global *)TheWritableGlobalData)
 #define lod ((Rva0055E470LOD *)TheGameLODManager)
-#define state ((Rva0055E470State *)g_aptPalantirUIState)
+#define state ((Rva0055E470State *)g_rva012F7048LivingWorld)
 class BfmeAptScreenOptions { public:
  void _bfme_reset(const char *);
  char pad000[0x258]; int m_page; char pad25c[0x284-0x25c];
