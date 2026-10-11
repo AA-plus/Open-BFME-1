@@ -30,7 +30,7 @@ public:
 		void (__cdecl *buildFieldParse)(MultiIniFieldParse &));
 };
 
-extern "C" void __cdecl __identifier("DestroyEnvironmentUpdateFieldParse")();
+void __cdecl j_00014b87();
 
 class DestroyEnvironmentUpdate
 {
@@ -44,7 +44,7 @@ ModuleData *DestroyEnvironmentUpdate::friend_newModuleData(INI *ini)
 	DestroyEnvironmentUpdateModuleData *data = new DestroyEnvironmentUpdateModuleData;
 	if (ini)
 		ini->initFromINIMultiProc(data,
-			reinterpret_cast<void (__cdecl *)(MultiIniFieldParse &)>(__identifier("DestroyEnvironmentUpdateFieldParse")));
+			reinterpret_cast<void (__cdecl *)(MultiIniFieldParse &)>(j_00014b87));
 	return (ModuleData *)data;
 }
 
@@ -52,6 +52,5 @@ ModuleData *DestroyEnvironmentUpdate::friend_newModuleData(INI *ini)
 // ?friend_newModuleData@DestroyEnvironmentUpdate@@SAPAVModuleData@@PAVINI@@@Z), and the only
 // symbol the build defines at that address is the five-byte ILT thunk
 // ?j_00014b87@@YAXXZ (game/gen_small/gthunks_022.cpp), a `jmp` to 0x0028CD50, the
-// module-data class's static field-parse builder.  The old
-// `extern "C" DestroyEnvironmentUpdateFieldParse` was invented in this TU and nothing
-// defines it; the thunk is retail's real spelling of this operand.
+// module-data class's static field-parse builder. The callback names this
+// exact thunk row, preserving the address retail pushes.
