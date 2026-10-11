@@ -15,3 +15,15 @@ An independently implemented noinline setRange copy makes the constructor only 4
 Scratch trials are in build/a2_005fd9e0/. re_log.py measured both candidate and previous bank before replacing the preferred stash. The standalone finish_measure invocation reported that its compiled object or dependencies were no longer current; its result was not used as acceptance evidence. The sole-writer banking command completed with the measured 0.8462 score.
 
 The supplied census index reports the existing constructor TU LINKED 0 -> 0, blocked by its non-retail naked constructor emission. No new escape hatch, pin, data row, header change or generated-source edit was introduced. Landing still requires an exact body and convergence with the shared FXParticleSystem class declaration.
+
+A second bounded constructor-context probe improved the native bank further.
+A four-byte address-derived scalar wrapper with an inline value constructor
+at +0x10 emits 91 bytes with 11 differences (quality 0.8791), restoring the
+vptr-before-push schedule. It is a source-shaping experiment, not an EA type
+identity. name_oracle has no DefaultPhysicsModuleInfo layout witness. Its
+scalar store still precedes the random-variable stores; retail puts it after
+them. Native-derived empty variable and grouped-float constructors preserve
+14 differences. A default-empty scalar with a body assignment leaves 19 or
+16 differences. No such experimental wrapper was introduced in game/ or a
+shared header. The second preferred bank retains the native Snapshot and
+GameClientRandomVariable identities, and remains nonmatching evidence.

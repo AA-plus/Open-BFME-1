@@ -1,5 +1,5 @@
 // ??0DefaultPhysicsModuleInfo@FXParticleSystem@@QAE@XZ
-// partial score=0.8462 date=2026-10-11
+// partial score=0.8791 date=2026-10-11
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/GameEngine/Source/Common/System
 
 #define SNAPSHOT_CPP
@@ -8,6 +8,12 @@
 inline Snapshot::Snapshot() {}
 
 #include "game_client_random_variable.h"
+
+struct Rva005FD9E0Scalar
+{
+ Rva005FD9E0Scalar(int value) : at00(value) {}
+ int at00;
+};
 
 namespace FXParticleSystem
 {
@@ -25,7 +31,7 @@ private:
 	float m_field0;
 	float m_field1;
 	float m_field2;
-	int m_field3;
+	Rva005FD9E0Scalar m_field3;
 	GameClientRandomVariable m_var1;
 };
 
