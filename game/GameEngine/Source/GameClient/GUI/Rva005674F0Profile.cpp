@@ -84,7 +84,7 @@ class WindowManager
 
 extern GameTextInterface *TheGameText;
 extern WindowManager *g_rva012F19E8WindowManager;
-extern "C" __declspec(dllimport) unsigned int __cdecl bfmeLenVGI(const unsigned short *text);
+extern "C" __declspec(dllimport) unsigned int __cdecl wcslen(const unsigned short *text);
 
 class SkirmishBattleHonors
 {
@@ -205,7 +205,7 @@ void Rva005674F0Profile::apply(SkirmishPreferences value)
         else
         {
             static const unsigned short emptyFavorite[] = {'-', '-', 0};
-            ((StringBase<unsigned short> *)&text)->concat(emptyFavorite, bfmeLenVGI(emptyFavorite));
+            ((StringBase<unsigned short> *)&text)->concat(emptyFavorite, wcslen(emptyFavorite));
         }
         rva005674F0SetText("APT:FavoriteSideNum", text);
     }
