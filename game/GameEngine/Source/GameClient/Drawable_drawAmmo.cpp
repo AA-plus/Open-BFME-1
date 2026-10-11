@@ -56,10 +56,10 @@ class GeometryInfo
 {
 public:
 	Real getMaxHeightAbovePosition() const;
-	Real getBoundingSphereRadius() const
-	{
-		return *(const Real *)((const char *)this + 0x14);
-	}
+	Real getBoundingSphereRadius() const;
+	unsigned char m_unreconstructed_00[0x14];
+	// name_oracle: GeometryInfo+0x14, confidence 1.00, layout_witness.
+	Real m_boundingSphereRadius;
 };
 
 class Object
@@ -76,10 +76,7 @@ public:
 	{
 		return &m_position;
 	}
-	const GeometryInfo &getGeometryInfo() const
-	{
-		return m_geometryInfo;
-	}
+	const GeometryInfo &getGeometryInfo() const;
 };
 
 class InGameUI
@@ -304,14 +301,14 @@ void Drawable::drawAmmo()
 	pos.x += TheGlobalData->m_ammoPipWorldOffset.x;
 	pos.y += TheGlobalData->m_ammoPipWorldOffset.y;
 	pos.z += TheGlobalData->m_ammoPipWorldOffset.z +
-		obj->getGeometryInfo().getMaxHeightAbovePosition();
+		obj->m_geometryInfo.getMaxHeightAbovePosition();
 	// retail: test eax,eax / jne bail -- 0 (WTS_INSIDE_FRUSTUM) is the keep-going
 	// case, so the sense here is the TriReturn enum's, not ZH's Bool wrapper.
 	if (TheTacticalView->worldToScreenTriReturn(&pos, &screenCenter) !=
 		View::WTS_INSIDE_FRUSTUM)
 		return;
 
-	Real bounding = obj->getGeometryInfo().getBoundingSphereRadius() * scale;
+	Real bounding = obj->m_geometryInfo.m_boundingSphereRadius * scale;
 	Int posx = *(Int *)((char *)this + 0x3c4);
 	Int posy = screenCenter.y +
 		(Int)(TheGlobalData->m_ammoPipScreenOffset.y * bounding);
