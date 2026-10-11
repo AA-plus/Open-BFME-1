@@ -8,9 +8,9 @@ extern "C" void _ReadWriteBarrier(void);
 #pragma intrinsic(_ReadWriteBarrier)
 #include <vector>
 
-int bfmeCallFHA(void *first, void *second);
-void *bfmeMakeBNG(void *first, void *second);
-unsigned int bfmeHash0000DD28(unsigned int left, unsigned int right);
+int Rva003C92A0(int first, int second);
+int Rva003C9220(int first, int second);
+int Rva0061A350(int left, int right);
 
 struct Rva0061B170TransferState
 {
@@ -48,9 +48,9 @@ private:
 void LivingWorldRegion::rva0061B170(Xfer *xfer)
 {
 	*xfer == m_active;
-	int oldHandle = bfmeCallFHA(m_madeBNG, m_madeBNG);
+	int oldHandle = Rva003C92A0((int)m_madeBNG, (int)m_madeBNG);
 	*xfer == oldHandle;
-	m_madeBNG = bfmeMakeBNG((void *)oldHandle, (void *)oldHandle);
+	m_madeBNG = (void *)Rva003C9220(oldHandle, oldHandle);
 	*xfer == m_atAC;
 	*xfer == m_atB8;
 	*xfer == m_atBC;
@@ -74,7 +74,7 @@ void LivingWorldRegion::rva0061B170(Xfer *xfer)
 			m_names.push_back(name);
 		}
 		unsigned int madeHandle = (unsigned int)m_madeBNG;
-		unsigned int hash = bfmeHash0000DD28(madeHandle, 0xC56EC456);
+		unsigned int hash = Rva0061A350((int)madeHandle, (int)0xC56EC456);
 		if (hash != 0x462E416F)
 		{
 			m_atEC->m_at18 = 1;
