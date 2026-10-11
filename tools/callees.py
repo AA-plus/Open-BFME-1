@@ -127,7 +127,67 @@ def decoded_extent(rva, size):
     end = 0
     for instruction in Cs(CS_ARCH_X86, CS_MODE_32).disasm(body, rva):
         end = instruction.address + instruction.size - rva
+    if end != size:
+        tables = switch_tables_extent(body, rva)
+        if tables is not None:
+            return tables
     return end
+
+
+IMAGE_BASE = 0x400000
+
+
+def switch_tables_extent(body, rva):
+    """len(body) when everything past the code is MSVC switch tables, else None.
+
+    MSVC places a switch's `jmp [reg*4+table]` dword table, and the optional
+    byte index table read by `mov reg8,[reg+index]`, after the function's last
+    instruction. Linear decoding runs into them and stops, which read as an
+    incomplete inventory although no code follows. The tail is admitted only
+    when the decoded code references every table and each table holds exactly
+    what a switch table can: dwords pointing into the decoded code, then bytes
+    that index a referenced dword table. Anything else keeps the warning.
+    """
+    from capstone import Cs, CS_ARCH_X86, CS_MODE_32
+    from capstone.x86 import X86_OP_MEM
+
+    md = Cs(CS_ARCH_X86, CS_MODE_32)
+    md.detail = True
+    jump_tables, index_tables = set(), set()
+    for instruction in md.disasm(body, rva):
+        for operand in instruction.operands:
+            if operand.type != X86_OP_MEM or not (operand.mem.base or operand.mem.index):
+                continue
+            offset = (operand.mem.disp & 0xFFFFFFFF) - IMAGE_BASE - rva
+            if not 0 < offset < len(body):
+                continue
+            if (instruction.mnemonic == "jmp" and operand.mem.scale == 4
+                    and operand.mem.index and not operand.mem.base):
+                jump_tables.add(offset)
+            elif operand.size == 1 and instruction.mnemonic in ("mov", "movzx"):
+                index_tables.add(offset)
+    if not jump_tables:
+        return None
+    starts = sorted(jump_tables | index_tables)
+    code_end = 0
+    for instruction in md.disasm(body[:starts[0]], rva):
+        code_end = instruction.address + instruction.size - rva
+    if code_end != starts[0]:
+        return None
+    entries = 0
+    for position, start in enumerate(starts):
+        stop = starts[position + 1] if position + 1 < len(starts) else len(body)
+        if start in jump_tables:
+            if (stop - start) % 4:
+                return None
+            for slot in range(start, stop, 4):
+                target = struct.unpack_from("<I", body, slot)[0] - IMAGE_BASE - rva
+                if not 0 <= target < code_end:
+                    return None
+            entries = max(entries, (stop - start) // 4)
+        elif any(value >= entries for value in body[start:stop]):
+            return None
+    return len(body)
 
 
 def import_calls(rva, size):

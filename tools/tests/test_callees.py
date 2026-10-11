@@ -137,3 +137,30 @@ def test_decoding_that_stops_early_is_reported(monkeypatch, capsys):
     assert run_main(monkeypatch, body) == 3
     output = capsys.readouterr().out
     assert "INCOMPLETE INVENTORY" in output and "+0x5 of 0xD" in output
+
+
+def switch_body(entries, index=b"", tail=b""):
+    # jmp [eax*4+table]; mov al,[ecx+index]; ret; ret -- then the tables.
+    start = 0x2000
+    code_len = 7 + 6 + 2
+    table = start + code_len + 0x400000
+    index_va = table + 4 * len(entries)
+    code = (bytes.fromhex("ff 24 85") + struct.pack("<I", table)
+            + bytes.fromhex("8a 81") + struct.pack("<I", index_va) + bytes.fromhex("c3 c3"))
+    body = code + b"".join(struct.pack("<I", start + 0x400000 + e) for e in entries)
+    return start, body + index + tail
+
+
+def test_trailing_switch_tables_complete_the_inventory():
+    start, body = switch_body([13, 14], index=bytes([0, 1, 1, 0]))
+    assert callees.switch_tables_extent(body, start) == len(body)
+
+
+@pytest.mark.parametrize("entries,index,tail", [
+    ([13, 0x900], b"\x00", b""),              # entry leaves the body's code
+    ([13, 14], bytes([0, 2]), b""),            # index past the dword table
+    ([13, 14], b"", bytes.fromhex("e8 00 00")),  # code after the table
+])
+def test_tail_that_is_not_a_switch_table_keeps_the_warning(entries, index, tail):
+    start, body = switch_body(entries, index, tail)
+    assert callees.switch_tables_extent(body, start) is None
