@@ -1,6 +1,6 @@
 // The callback globals are address-derived; the second call passes two stack slots.
-extern "C" void (__cdecl *g_012F3934)(void);
-extern "C" void (__cdecl *g_012F3930)(void);
+extern int g_012F3934;
+extern int g_012F3930;
 
 void j_00042a50(void);
 void j_0002fcb1(void);

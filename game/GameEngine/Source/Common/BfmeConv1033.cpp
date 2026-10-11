@@ -2,8 +2,8 @@
 
 extern "C" void bfmeFnA1033(void);
 extern "C" void bfmeFnB1033(void);
-extern int g_012F3930;
-extern int g_012F3934;
+int g_012F3930;
+int g_012F3934;
 
 __declspec(noinline) void bfmeReg1033(void (*a)(void), void (*b)(void))
 {
