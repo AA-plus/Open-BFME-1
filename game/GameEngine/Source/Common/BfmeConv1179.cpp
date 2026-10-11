@@ -37,8 +37,8 @@ extern "C" __declspec(dllimport) int __cdecl sprintf(char *, const char *, ...);
 extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char *);
 extern int g_rva00F405E0;
 extern unsigned long g_rva00F405D4;
-extern int g_rva00ED6DC4;
-extern int g_rva00F405E4;
+int g_Va012D6DC4 = 41;
+int g_Va013405E4 = 0;
 extern int g_rva00F405DC;
 extern const char *g_rva00F405D8;
 
@@ -47,13 +47,13 @@ char Rva00905B70(const char *file, int line)
     char buffer[260];
     char result = bfmeUnlock1179();
     if (result && g_rva00F405E0 == bfmeTid1179()) {
-        g_rva00F405E4 = timeGetTime() - g_rva00F405D4;
-        if (g_rva00F405E4 > g_rva00ED6DC4) {
+        g_Va013405E4 = timeGetTime() - g_rva00F405D4;
+        if (g_Va013405E4 > g_Va012D6DC4) {
             sprintf(buffer, "%s(%d): DX Aquired.  Thread(%08x) \n",
                 g_rva00F405D8, g_rva00F405DC, g_rva00F405E0);
             OutputDebugStringA(buffer);
             sprintf(buffer, "%s(%d): DX Released. Thread(%08X) Time (%d). \n",
-                file, line, bfmeTid1179(), g_rva00F405E4);
+                file, line, bfmeTid1179(), g_Va013405E4);
             OutputDebugStringA(buffer);
         }
     }

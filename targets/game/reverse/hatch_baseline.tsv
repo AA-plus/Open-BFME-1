@@ -31,6 +31,8 @@ address_global	game/GameEngine/Source/Common/BfmeAltAAV.cpp	g_Rva01088AF4EmptyWi
 address_global	game/GameEngine/Source/Common/BfmeCheckJX.cpp	g_Rva01142620	13
 address_global	game/GameEngine/Source/Common/BfmeConv1019.cpp	g_Rva0130A5B0	3
 address_global	game/GameEngine/Source/Common/BfmeConv1040.cpp	g_Rva01141808	2
+address_global	game/GameEngine/Source/Common/BfmeConv1179.cpp	g_Va012D6DC4	2	allow=695465e91ed76d5fc3b591763306a2587480d307
+address_global	game/GameEngine/Source/Common/BfmeConv1179.cpp	g_Va013405E4	4	allow=695465e91ed76d5fc3b591763306a2587480d307
 address_global	game/GameEngine/Source/Common/BfmeConv1182.cpp	g_Va0134CC58	6	allow=7c4d3ebb5587e97d6b4b4a6c168aaa8748394ede
 address_global	game/GameEngine/Source/Common/BfmeConv1182.cpp	g_Va0134D058	3	allow=7c4d3ebb5587e97d6b4b4a6c168aaa8748394ede
 address_global	game/GameEngine/Source/Common/BfmeConv1196.cpp	g_Va0109FB78	2	allow=b529446f89f6f3de1b4fe706bafff8ad074b44d0
