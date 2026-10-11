@@ -21,6 +21,7 @@ int Rva003C9220(int,int);
 struct Rva0061AF80Pair { int a,b; Rva0061AF80Pair():a(0),b(0) {} };
 class LivingWorldRegion : public BfmeBaseVUQ { public:
  LivingWorldRegion(const AsciiString&);
+ ~LivingWorldRegion(); // Retail body is in LivingWorldRegion_dtor.cpp.
  Rva0061A5F0 m_04;
  _STL::vector<Gen0061A200> m_9c;
  unsigned char m_a8;
