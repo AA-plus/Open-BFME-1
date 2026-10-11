@@ -1,23 +1,25 @@
 // ?do_put@?$money_put@DV?$ostreambuf_iterator@DV?$char_traits@D@_STL@@@_STL@@@_STL@@MBE?AV?$ostreambuf_iterator@DV?$char_traits@D@_STL@@@2@V32@_NAAVios_base@2@DABV?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@2@@Z
-// partial score=0.21 date=2026-09-16
+// partial score=0.9922 date=2026-10-11
 // cl: /O2 /MD /D_STLP_USE_STATIC_LIB /EHsc
 // stlport
-//
-// STLport 4.5.3 money_put<char, ostreambuf_iterator<char> >::do_put(digits).
-// The retail body is slot 1 of the vtable at VA 0x0112E96C, whose RTTI complete
-// object locator names the narrow money_put.  MSVC writes an overload set into
-// a vtable backwards, so slot 1 holds the second do_put that
-// vendor/stlport/stl/_monetary.h declares and that overload writes a string.
+
+
+
+
+
+
 
 #include "stlport_prefix.h"
 
+#define private public
 #include <stl/_monetary.h>
+#undef private
 
 _STLP_BEGIN_NAMESPACE
 
-// Retail inlines the locale destructor here, so its body has to be visible.
-// It matches the landed 0x00832170 body, which drops the impl reference
-// through vtable slot 2.
+
+
+
 class _Locale_impl
 {
 public:
@@ -33,11 +35,233 @@ __forceinline locale::~locale() _STLP_NOTHROW
 
 typedef ostreambuf_iterator<char, char_traits<char> > BfmeNarrowPutIterator;
 
-template BfmeNarrowPutIterator
-money_put<char, BfmeNarrowPutIterator>::do_put(BfmeNarrowPutIterator,
-					       bool,
-					       ios_base &,
-					       char,
-					       const string &) const;
+template <> __forceinline BfmeNarrowPutIterator& BfmeNarrowPutIterator::operator=(char c) {
+  _M_ok = _M_ok && !traits_type::eq_int_type(
+      _M_buf->sputc(c), traits_type::eof());
+  return *this;
+}
+template <> inline BfmeNarrowPutIterator __copy(
+    const char* first, const char* last, BfmeNarrowPutIterator result,
+    const random_access_iterator_tag&, int*) {
+  for (int n = last - first; n > 0; --n) {
+    *result = *first;
+    ++first;
+    ++result;
+  }
+  return result;
+}
 
-_STLP_END_NAMESPACE
+#pragma inline_depth(0)
+template <> __forceinline BfmeNarrowPutIterator fill_n(BfmeNarrowPutIterator first, unsigned int n, const char& value) {
+  for (; n > 0; --n) first = value;
+  return first;
+}
+#pragma inline_depth(255)
+template <> __forceinline BfmeNarrowPutIterator copy(const char* first, const char* last, BfmeNarrowPutIterator result) {
+  random_access_iterator_tag tag;
+  return __copy(first, last, result, tag, (ptrdiff_t*)0);
+}
+
+#pragma inline_depth(0)
+__forceinline void __money_write_point(BfmeNarrowPutIterator& out, const char& value) {
+  out = value;
+}
+#pragma inline_depth(255)
+
+struct _MoneySignPolicy : random_access_iterator_tag { bool negative; };
+typedef char _MoneySignPolicyIsOneByte[(sizeof(_MoneySignPolicy) == 1) ? 1 : -1];
+#pragma inline_depth(0)
+__forceinline BfmeNarrowPutIterator __money_copy_symbol(
+    const char* first, const char* last, BfmeNarrowPutIterator out,
+    const _MoneySignPolicy& policy) {
+  for (int n = last - first; n > 0; --n) {
+    out = *first;
+    ++first;
+  }
+  return out;
+}
+#pragma inline_depth(255)
+
+#pragma inline_depth(0)
+template <> template <> __forceinline basic_string<char>::basic_string(
+    const char* first, const char* last, const allocator<char>& a)
+    : _String_base<char, allocator<char> >(a) {
+  _M_range_initialize(first, last, forward_iterator_tag());
+}
+#pragma inline_depth(255)
+// Ported from Open BFME 2 Code/Libraries/Source/WWVegas/WWLib/stlport_narrow_money_put_string.cpp.
+template <> inline BfmeNarrowPutIterator money_put<char, BfmeNarrowPutIterator>::do_put(
+    BfmeNarrowPutIterator __s, bool __intl, ios_base& __str,
+    char_type __fill, const string_type& __digits) const
+{
+  typedef char _CharT;
+  typedef BfmeNarrowPutIterator _OutputIter;
+  typedef ctype<_CharT>             _Ctype;
+  typedef moneypunct<_CharT, false> _Punct;
+  typedef moneypunct<_CharT, true>  _Punct_intl;
+
+  locale __loc = __str.getloc();
+  const _Ctype&      __c_type      = use_facet<_Ctype>(__loc) ;
+  const _Punct&      __punct      = use_facet<_Punct>(__loc) ;
+  const _Punct_intl& __punct_intl = use_facet<_Punct_intl>(__loc) ;
+
+  char_type __minus = __c_type.widen('-');
+  char_type __plus  = __c_type.widen('+');
+  char_type __space = __c_type.widen(' ');
+  char_type __zero  = __c_type.widen('0');
+  char_type __point = __intl ? __c_type.widen(__punct_intl.decimal_point())
+			     : __c_type.widen(__punct.decimal_point());
+
+  char_type __sep = __intl ? __punct_intl.thousands_sep()
+			   : __punct     .thousands_sep();
+
+  string __grouping = __intl ? __punct_intl.grouping()
+		             : __punct     .grouping();
+
+  int __frac_digits      = __intl ? __punct_intl.frac_digits()
+                                  : __punct.frac_digits();
+
+  string_type __curr_sym = __intl ? __punct_intl.curr_symbol()
+                                  : __punct.curr_symbol();
+
+  if (__digits.size() == 0)
+    return __s;
+
+  string_type::const_iterator __digits_first = __digits.begin();
+  string_type::const_iterator __digits_last  = __digits.end();
+
+  _MoneySignPolicy __sign_policy;
+  __sign_policy.negative = *__digits_first == __minus;
+  if (__sign_policy.negative)
+    ++__digits_first;
+
+  string_type __sign = __intl ?
+			 __sign_policy.negative ? __punct_intl.negative_sign()
+				       : __punct_intl.positive_sign()
+			      :
+			 __sign_policy.negative ? __punct.negative_sign()
+				       : __punct.positive_sign();
+  string_type::const_iterator __cp = __digits_first;
+  while (__cp != __digits_last && __c_type.is(ctype_base::digit, *__cp))
+    ++__cp;
+  if (__cp == __digits_first)
+    return __s;
+  __digits_last = __cp;
+
+  string_type __new_digits(__digits_first, __digits_last);
+
+  if (__grouping.size() != 0) {
+    if (__grouping.size() == 1)
+      __grouping.push_back(__grouping[0]);
+    __grouping[0] += __frac_digits;
+    _CharT* __data_ptr = __CONST_CAST(_CharT*,__new_digits.data());
+    _CharT* __data_end = __data_ptr + __new_digits.size();
+
+    ptrdiff_t __value_length = __insert_grouping(__data_ptr,
+	  				         __data_end,
+					         __grouping,
+					         __sep,
+					         __plus, __minus, 0);
+    __digits_first = __new_digits.begin();
+    __digits_last  = __digits_first + __value_length;
+  }
+
+  size_t __width        = __str.width();
+
+#if defined(_STLP_DEBUG) && (defined(__HP_aCC) || (__HP_aCC <= 1))
+  size_t __value_length = operator -(__digits_last, __digits_first);
+#else
+  size_t __value_length = __digits_last - __digits_first;
+#endif
+
+  size_t __length       = __value_length;
+
+  __length += __sign.size();
+  if (__frac_digits != 0)
+    ++__length;
+
+  bool __generate_curr = (__str.flags() & ios_base::showbase) !=0;
+  if (__generate_curr)
+    __length += __curr_sym.size();
+
+  __declspec(align(8)) money_base::pattern __format =
+    __intl ? (__sign_policy.negative ? __punct_intl.neg_format()
+                            : __punct_intl.pos_format())
+           : (__sign_policy.negative ? __punct.neg_format()
+                            : __punct.pos_format());
+  {
+    for (int __i = 0; __i < 4; ++__i)
+      if (__format.field[__i] == (char) money_base::space)
+        ++__length;
+  }
+
+  size_t __fill_amt = __length < __width ? __width - __length : 0;
+
+  ios_base::fmtflags __fill_pos = __str.flags() & ios_base::adjustfield;
+
+  if (__fill_amt != 0 &&
+      !(__fill_pos & (ios_base::left | ios_base::internal)))
+    __s = fill_n(__s, __fill_amt, __fill);
+
+  for (int __i = 0; __i < 4; ++__i) {
+    char __ffield = __format.field[__i];
+    if (__ffield == money_base::none) {
+      if (__fill_amt != 0 && __fill_pos == ios_base::internal)
+        __s = fill_n(__s, __fill_amt, __fill);
+    }
+    else if (__ffield == money_base::space) {
+      *__s++ = __space;
+      if (__fill_amt != 0 && __fill_pos == ios_base::internal)
+        __s = fill_n(__s, __fill_amt, __fill);
+    }
+    else if (__ffield == money_base::symbol) {
+      if (__generate_curr)
+        __s = __money_copy_symbol(static_cast<const string_type&>(__curr_sym).begin(), static_cast<const string_type&>(__curr_sym).end(), __s, __sign_policy);
+    }
+    else if (__ffield == money_base::sign) {
+      if (__sign.size() != 0)
+        *__s++ = __sign[0];
+    }
+    else if (__ffield == money_base::value) {
+      if (__frac_digits == 0)
+        __s = copy(__digits_first, __digits_last, __s);
+      else {
+        if ((int)__value_length <= __frac_digits) {
+          __money_write_point(__s,__point);
+          __s = copy(__digits_first, __digits_last, __s);
+          __s =  fill_n(__s, __frac_digits - __value_length, __zero);
+        }
+        else {
+          __s = copy(__digits_first, __digits_last - __frac_digits, __s);
+          if (__frac_digits != 0) {
+            __money_write_point(__s,__point);
+            __s = copy(__digits_last - __frac_digits, __digits_last, __s);
+          }
+        }
+      }
+    }
+  } 
+
+  if (__sign.size() > 1)
+    __s = __money_copy_symbol(static_cast<const string_type&>(__sign).begin() + 1, static_cast<const string_type&>(__sign).end(), __s, __sign_policy);
+  if (!(__fill_pos & (ios_base::right | ios_base::internal)))
+    __s = fill_n(__s, __fill_amt, __fill);
+
+  return __s;
+}
+
+struct bfmeNarrowMoneyPutEmitter : money_put<char, BfmeNarrowPutIterator>
+{
+	static void emit(const bfmeNarrowMoneyPutEmitter *p, BfmeNarrowPutIterator a, bool b, ios_base &s,
+		char f, const string &d);
+};
+#pragma inline_depth(0)
+
+void bfmeNarrowMoneyPutEmitter::emit(const bfmeNarrowMoneyPutEmitter *p, BfmeNarrowPutIterator a, bool b, ios_base &s,
+	char f, const string &d)
+{
+	p->money_put<char, BfmeNarrowPutIterator>::do_put(a, b, s, f, d);
+}
+#pragma inline_depth()
+
+}
