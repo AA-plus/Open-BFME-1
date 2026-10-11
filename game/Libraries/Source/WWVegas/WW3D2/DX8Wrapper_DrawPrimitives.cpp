@@ -318,7 +318,6 @@ public:
 };
 
 extern unsigned char g_00710e30;
-extern float g_bfmeScaleBK;
 extern unsigned number_of_DX8_calls;
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2/dx8wrapper.h
@@ -622,16 +621,16 @@ void DX8Wrapper::Draw(
 	if (DrawPolygonLowBoundLimit && DrawPolygonLowBoundLimit >= polygon_count) return;
 
 	// When this material filter is enabled, skip a missing material or one
-	// whose three emissive components are all below the global threshold.
+	// whose three emissive components are all below the retail 0.1f threshold.
 	// Preserve the short-circuit comparisons, including their NaN behavior.
 	if (g_00710e30) {
 		VertexMaterialClass *material = render_state.material;
 		if (!material) return;
 		Vector3 emissive;
 		material->Get_Emissive(&emissive);
-		if (emissive.X < g_bfmeScaleBK
-			&& emissive.Y < g_bfmeScaleBK
-			&& emissive.Z < g_bfmeScaleBK) return;
+		if (emissive.X < 0.1f
+			&& emissive.Y < 0.1f
+			&& emissive.Z < 0.1f) return;
 	}
 
 	Apply_Render_State_Changes();
