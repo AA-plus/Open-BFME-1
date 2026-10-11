@@ -771,6 +771,7 @@ address_global	game/GameEngine/Source/GameClient/GUI/ControlBar/ControlBarPopula
 address_global	game/GameEngine/Source/GameClient/GUI/ControlBar/ControlBarPopulateObserverInfoWindow.cpp	g_Va012F35E8	2	allow=4f6241295600174b1161b9f070b899c203979df5
 address_global	game/GameEngine/Source/GameClient/GUI/ControlBar/ControlBarPopulateObserverInfoWindow.cpp	g_Va012F35EC	2	allow=4f6241295600174b1161b9f070b899c203979df5
 address_global	game/GameEngine/Source/GameClient/GUI/ControlBar/ControlBarPopulateObserverInfoWindow.cpp	g_Va012F35F0	2	allow=4f6241295600174b1161b9f070b899c203979df5
+address_global	game/GameEngine/Source/GameClient/GUI/ControlBar/WOLQuickMatchMenuShutdownComplete.cpp	g_Va012F4804	5	allow=7c2c91b70aed515326c53c43197c8b39cac6d5fb
 address_global	game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/BfmeAptScreenOptionsSave.cpp	g_Va012F4AE4	4
 address_global	game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/OnlineChatConstructor.cpp	g_bfmeRva011051ECVt	2
 address_global	game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/Rva00511CC0InGameChat.cpp	g_Rva005127A0InGameChat	4
