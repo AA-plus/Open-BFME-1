@@ -264,7 +264,9 @@ struct Rva004CA140EntryData {
  unsigned short opaque1e;
  unsigned short conCharPos;
 };
-extern Bool shiftDown, ctrlDown, altDown, absolute;
+extern Bool shiftDown, ctrlDown, altDown;
+// Native KeyboardOptionsMenu state; retail VA 0x012F3AF7 starts false.
+Bool absolute = false;
 void doKeyDown(EntryData *, UnicodeString);
 void doKeyUp(EntryData *, UnicodeString);
 void setKeyDown(UnicodeString, Bool);
