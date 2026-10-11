@@ -32,7 +32,13 @@ struct StringHeader0054FB10 { int field00; short field04; short field06; };
 inline short shortLength0054FB10(const void *s) { StringHeader0054FB10 *p=*(StringHeader0054FB10*const*)s; if(p) return p->field04; return 0; }
 class Gen_0054F1A0 { public: unsigned field00,field04; Gen_0054F1A0() {} bool bfmeDiffers(const Gen_0054F1A0&) const; };
 class OptionPreferences { public: OptionPreferences(); virtual ~OptionPreferences(); bool hasGotOnline(); private: char field04[16]; };
-class WindowManager { public: void add(void*,const char*,int,void*,int,int,int,int); };
+class WindowManager;
+// ILT 0x00015235 reaches the native eight-word dispatcher at 0x004675F0.
+class BfmeLevelAN {
+public:
+ char *bfmeBuildAN(unsigned int level, int p2, int p3, int p4,
+                   int p5, int p6, int p7, int p8);
+};
 extern WindowManager *g_rva012F19E8WindowManager;
 struct LoginContext0054FB10 { char field00[0x250]; void *field250; };
 class BfmeAptScreenOnlineLogin {
@@ -84,24 +90,24 @@ bool BfmeAptScreenOnlineLogin::applyLoginGadgets0054FB10() {
   if(old9d!=field9d) {
    const char* s=field9d?"EnableButtonLogin":"DisableButtonLogin";
    void *w=field34->field250;
-   g_rva012F19E8WindowManager->add(w,"CallChild",1,(void*)s,0,0,0,0);
+   reinterpret_cast<BfmeLevelAN *>(g_rva012F19E8WindowManager)->bfmeBuildAN(reinterpret_cast<unsigned int>(w),reinterpret_cast<int>("CallChild"),1,reinterpret_cast<int>(s),0,0,0,0);
    const char *s2=field9d?"EnableButtonDeleteNickname":"DisableButtonDeleteNickname";
    void *w2=field34->field250;
-   g_rva012F19E8WindowManager->add(w2,"CallChild",1,(void*)s2,0,0,0,0);
+   reinterpret_cast<BfmeLevelAN *>(g_rva012F19E8WindowManager)->bfmeBuildAN(reinterpret_cast<unsigned int>(w2),reinterpret_cast<int>("CallChild"),1,reinterpret_cast<int>(s2),0,0,0,0);
   }
   if(old9e!=field9e) {
    if(field9e) {
     OptionPreferences prefs;
-    if(prefs.hasGotOnline()) { void *w=field34->field250; g_rva012F19E8WindowManager->add(w,"CallChild",1,(void*)"EnableButtonRegister",0,0,0,0); }
-    else { void *w=field34->field250; g_rva012F19E8WindowManager->add(w,"CallChild",1,(void*)"GlowButtonRegister",0,0,0,0); }
+    if(prefs.hasGotOnline()) { void *w=field34->field250; reinterpret_cast<BfmeLevelAN *>(g_rva012F19E8WindowManager)->bfmeBuildAN(reinterpret_cast<unsigned int>(w),reinterpret_cast<int>("CallChild"),1,reinterpret_cast<int>("EnableButtonRegister"),0,0,0,0); }
+    else { void *w=field34->field250; reinterpret_cast<BfmeLevelAN *>(g_rva012F19E8WindowManager)->bfmeBuildAN(reinterpret_cast<unsigned int>(w),reinterpret_cast<int>("CallChild"),1,reinterpret_cast<int>("GlowButtonRegister"),0,0,0,0); }
    } else {
     void *w=field34->field250;
-    g_rva012F19E8WindowManager->add(w,"CallChild",1,(void*)"DisableButtonRegister",0,0,0,0);
+    reinterpret_cast<BfmeLevelAN *>(g_rva012F19E8WindowManager)->bfmeBuildAN(reinterpret_cast<unsigned int>(w),reinterpret_cast<int>("CallChild"),1,reinterpret_cast<int>("DisableButtonRegister"),0,0,0,0);
     field9d=true;
    }
   }
   void *w=field34->field250;
-  g_rva012F19E8WindowManager->add(w,"CallChild",1,(void*)"EnableButtonServiceTerms",0,0,0,0);
+  reinterpret_cast<BfmeLevelAN *>(g_rva012F19E8WindowManager)->bfmeBuildAN(reinterpret_cast<unsigned int>(w),reinterpret_cast<int>("CallChild"),1,reinterpret_cast<int>("EnableButtonServiceTerms"),0,0,0,0);
   return field9d;
  }
  return false;

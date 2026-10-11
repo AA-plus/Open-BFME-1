@@ -148,11 +148,12 @@ class BfmeAptFunctorMarker {};
 
 class BfmeH1065;
 
-class GenActionSink
+// ILT 0x00015235 reaches the native eight-word dispatcher at 0x004675F0.
+class BfmeLevelAN
 {
 public:
-	unsigned char *invokeAtLevel( int level, const char *name, int kind,
-		const char *value, int a, int b, int c, int d );
+	char *bfmeBuildAN( unsigned int level, int p2, int p3, int p4,
+		int p5, int p6, int p7, int p8 );
 };
 
 int bfmeAptLevel00465CE0( BfmeH1065 *self );
@@ -357,8 +358,8 @@ void BfmeAptScreenQuitMenu::_bfme_onInitialized( const char * )
 			!Glo012F1028->m_campaignActive )
 			return;
 
-		((GenActionSink *)g_rva012F19E8WindowManager)->invokeAtLevel(
-			bfmeAptLevel00465CE0( (BfmeH1065 *)this ), "disableButton", 1, "Restart",
+		((BfmeLevelAN *)g_rva012F19E8WindowManager)->bfmeBuildAN(
+			bfmeAptLevel00465CE0( (BfmeH1065 *)this ), reinterpret_cast<int>("disableButton"), 1, reinterpret_cast<int>("Restart"),
 			0, 0, 0, 0 );
 
 		if( !((Rva003BDEC0 *)Glo012F1028)->allowed() )
@@ -369,17 +370,17 @@ void BfmeAptScreenQuitMenu::_bfme_onInitialized( const char * )
 	}
 
 	disableRestart:
-	((GenActionSink *)g_rva012F19E8WindowManager)->invokeAtLevel(
-		bfmeAptLevel00465CE0( (BfmeH1065 *)this ), "disableButton", 1, "Restart",
+	((BfmeLevelAN *)g_rva012F19E8WindowManager)->bfmeBuildAN(
+		bfmeAptLevel00465CE0( (BfmeH1065 *)this ), reinterpret_cast<int>("disableButton"), 1, reinterpret_cast<int>("Restart"),
 		0, 0, 0, 0 );
 
 	goto disableSaveLoad;
 
 	disableSaveLoad:
-	((GenActionSink *)g_rva012F19E8WindowManager)->invokeAtLevel(
-		bfmeAptLevel00465CE0( (BfmeH1065 *)this ), "disableButton", 1, "Save",
+	((BfmeLevelAN *)g_rva012F19E8WindowManager)->bfmeBuildAN(
+		bfmeAptLevel00465CE0( (BfmeH1065 *)this ), reinterpret_cast<int>("disableButton"), 1, reinterpret_cast<int>("Save"),
 		0, 0, 0, 0 );
-	((GenActionSink *)g_rva012F19E8WindowManager)->invokeAtLevel(
-			bfmeAptLevel00465CE0( (BfmeH1065 *)this ), "disableButton", 1, "Load",
+	((BfmeLevelAN *)g_rva012F19E8WindowManager)->bfmeBuildAN(
+			bfmeAptLevel00465CE0( (BfmeH1065 *)this ), reinterpret_cast<int>("disableButton"), 1, reinterpret_cast<int>("Load"),
 			0, 0, 0, 0 );
 }
