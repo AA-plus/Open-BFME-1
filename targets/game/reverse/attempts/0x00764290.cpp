@@ -1,5 +1,5 @@
 // ?method@BfmeRva64290@@QAEXXZ
-// partial score=0.9922 date=2026-10-09
+// partial score=0.9978 date=2026-10-11
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /D_STLP_USE_STATIC_LIB /DBFME_STLP_NODE_ALLOC /MD /EHsc /Iinputs/reference/shims/debugvtable /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/shims/stlp_nodealloc /Iinputs/reference/shims/w3dmodeldraw /Iinputs/reference/shims/asciistring8 /Iinputs/reference/shims/sweep /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
 #include "WW3D2/RendObj.h"
 #include "WW3D2/HTree.h"
@@ -155,6 +155,7 @@ public:
 	unsigned char m_flag165;       // +0x165
 };
 
+//-------------------------------------------------------------------------------------------------
 // ?method@BfmeRva64290@@QAEXXZ present-unmatched
 void BfmeRva64290::method()
 {
@@ -178,6 +179,8 @@ void BfmeRva64290::method()
 					(HTreeClass *)m_renderObject->Get_HTree();
 				if (htree)
 				{
+					//get the bone of this subobject so we can hide all other child objects that use this bone
+					//as a parent.
 					int boneIdx = m_renderObject->Get_Sub_Object_Bone_Index(0, objIndex);
 					if (boneIdx > 0 && boneIdx < m_renderObject->Get_Num_Bones())
 					{
@@ -231,7 +234,7 @@ void BfmeRva64290::method()
 					{
 						entry->m_f10 = 0.0f;
 						entry->m_f14 = 0.0f;
-						entry->m_fc = entry->m_f8 > g_rva01075350
+						entry->m_fc = entry->m_f8 > 0.0f
 							? g_bfmeDefaultBU : g_rva01075350;
 						entry->m_f8 = 0.0f;
 						((Rva0075C8B0Owner *)((char *)this - 0xc))->update(
@@ -263,6 +266,8 @@ void BfmeRva64290::method()
 					(HTreeClass *)m_renderObject->Get_HTree();
 				if (htree)
 				{
+					//get the bone of this subobject so we can hide all other child objects that use this bone
+					//as a parent.
 					int boneIdx = m_renderObject->Get_Sub_Object_Bone_Index(0, objIndex);
 					if (boneIdx > 0 && boneIdx < m_renderObject->Get_Num_Bones())
 					{
