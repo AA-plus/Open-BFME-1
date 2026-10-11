@@ -119,7 +119,9 @@ public:
 // Landed cdecl helpers that transfer three floats, a drawable ID and a matrix.
 class BfmeSeedTarget;
 void bfmeHandOver_00001A50(BfmeSeedTarget *target, void *item);
-void BfmeParticleSystemXferHandle(Xfer &xfer, void *value);
+class MidVirtualSlot90Receiver;
+// Retail ILT 0x00008CA1 reaches the ledger's cdecl slot-0x90 forwarder.
+void Rva0010C3E0(MidVirtualSlot90Receiver *xfer, void *value);
 void BfmeParticleSystemXferMatrix(Xfer &xfer, void *value);
 
 struct Rva00736B60Data;
@@ -179,12 +181,13 @@ private:
 	ModuleInfo m_moduleInfo2A0;
 };
 
-class ThingFactory
+class BfmeThingFactory
 {
 public:
 	const ThingTemplate *findTemplate(const AsciiString &name);
 };
 
+class ThingFactory;
 extern ThingFactory *TheThingFactory;
 
 class MeshClass;
@@ -323,7 +326,7 @@ void W3DTreeBuffer::xfer(Xfer *xfer)
 			xfer->xferAsciiString(&m_treeTypes[i].m_templateName);
 			if (xfer->IsLoading()) {
 				// Rebuild the type's draw data and mesh from the loaded names.
-				const ThingTemplate *tmpl = TheThingFactory->findTemplate(m_treeTypes[i].m_templateName);
+				const ThingTemplate *tmpl = reinterpret_cast<BfmeThingFactory *>(TheThingFactory)->findTemplate(m_treeTypes[i].m_templateName);
 				if (tmpl) {
 					const ModuleData *moduleData = tmpl->getModuleInfo2A0().getNthData(0);
 					if (moduleData)
@@ -379,7 +382,7 @@ void W3DTreeBuffer::xfer(Xfer *xfer)
 		xfer->xferReal(&tree.location.Z);
 		xfer->xferReal(&tree.scale);
 		BfmeParticleSystemXferMatrix(*xfer, &tree.transform);
-		BfmeParticleSystemXferHandle(*xfer, &tree.drawableID);
+		Rva0010C3E0(reinterpret_cast<MidVirtualSlot90Receiver *>(xfer), &tree.drawableID);
 
 		// Topple parameters; saves before version 3 carry no separate topple matrix.
 		xfer->xferReal(&tree.m_angularVelocity);
