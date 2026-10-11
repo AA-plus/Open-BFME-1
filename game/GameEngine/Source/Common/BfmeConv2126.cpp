@@ -52,20 +52,23 @@ public:
 
 typedef _STL::hash_map<int, BfmeItemAM *> BfmeItemMapAAY;
 
-class BfmeSubAAY
+class BfmeSubAAY;
+
+// Native ledger entries reached by the shutdown routine's retail ILTs.
+class Rva0060C2A0 { public: void reset(); };
+class Rva00383850 { public: void invoke(); };
+class BfmeLivingWorldManager
 {
 public:
-	void bfmeCloseAAY();
+	void rva00617c60();
+	void rva00616410();
 };
-
-struct Rva00367E30Logic
-{
-	void bfmeResetAAY();
-};
+class Rva0060FFF0Owner { public: void updateElements(); };
+class Gen_00613CC0 { public: void bfmeClear(); };
 
 class GameLogic;
-// 0x012F0898 is retail's `GameLogic *TheGameLogic`; Rva00367E30Logic is this
-// TU's local view of the same global, so cast at the use.
+// 0x012F0898 is retail's `GameLogic *TheGameLogic`; this
+// TU uses the native Rva00383850 adjustment thunk at the call.
 extern GameLogic *TheGameLogic;
 
 class Gen_00609320
@@ -88,12 +91,8 @@ class BfmeHostAAY
 public:
 	void bfmeShutdownAAY();
 
-	void bfmeStep1AAY();
-	void bfmeStep2AAY();
 	void bfmeStep3AAY();
-	void bfmeStep4AAY();
 	void bfmeStep5AAY();
-	void bfmeStep6AAY();
 
 	unsigned char m_bfmeHeadAAY[0x210];
 	BfmeItemMapAAY m_bfmeItemsAAY;
@@ -136,21 +135,21 @@ void BfmeHostAAY::bfmeStep3AAY()
 
 void BfmeHostAAY::bfmeShutdownAAY()
 {
-	bfmeStep1AAY();
-	bfmeStep2AAY();
+	reinterpret_cast<BfmeLivingWorldManager *>(this)->rva00617c60();
+	reinterpret_cast<BfmeLivingWorldManager *>(this)->rva00616410();
 	bfmeStep3AAY();
-	bfmeStep4AAY();
+	reinterpret_cast<Rva0060FFF0Owner *>(this)->updateElements();
 
 	BfmeSubAAY *s = m_bfme28CAAY;
 
 	if (s != 0)
-		s->bfmeCloseAAY();
+		reinterpret_cast<Rva0060C2A0 *>(s)->reset();
 
 	bfmeStep5AAY();
-	bfmeStep6AAY();
+	reinterpret_cast<Gen_00613CC0 *>(this)->bfmeClear();
 
 	if (TheGameLogic != 0)
-		((Rva00367E30Logic *)TheGameLogic)->bfmeResetAAY();
+		reinterpret_cast<Rva00383850 *>(TheGameLogic)->invoke();
 
 	if (g_rva012F7048LivingWorld != 0)
 		((Gen_00609320 *)g_rva012F7048LivingWorld)->bfmeFinishAAY();
