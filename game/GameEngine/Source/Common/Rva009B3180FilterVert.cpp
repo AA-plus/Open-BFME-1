@@ -1,10 +1,8 @@
-// ?Rva009B3180FilterVert@@YAXPAXPAEHPBH@Z
-// partial score=1.0 date=2026-10-11
 // cl: /O2 /G6 /DNDEBUG /MD
+// ?Rva009B3180FilterVert@@YAXPAXPAEHPBH@Z
 extern unsigned char g_bfmeClampTable[];
 
 // Ported from Open BFME 2 Code/Libraries/Source/VP6/FilterHorizSimple2.cpp.
-// ?Rva009B3180FilterVert@@YAXPAXPAEHPBH@Z
 void Rva009B3180FilterVert(void *, unsigned char *ptr, int pitch, const int *bounding)
 {
 	int i, step, left, right, amount, half;

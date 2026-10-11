@@ -90994,3 +90994,6 @@ _printf,0x009F7244,route=MSVCR71.dll!printf; IAT 0x01359464; CRT printf import j
 ?d_0047e630@@YAXXZ,0x0047E630,Address-only compatibility pin for retired dump; body now winProcessMouseEvent; no identity assertion
 ?d_00895b20@@YAXXZ,0x00895B20,legacy address-only compatibility pin for retired dump still called by game/gen_asm/d_00894a90.asm
 ?d_00895a00@@YAXXZ,0x00895A00,legacy address-only compatibility pin for retired dump still called by existing game/gen_asm sources
+?d_009b3180@@YAXXZ,0x009B3180,address-only compatibility for retired dump; complete leaf extent verified; evidence=targets/game/reverse/identity_evidence/009b3180-noref-abi.md
+?d_009b3f40@@YAXXZ,0x009B3F40,address-only compatibility for retired dump; complete leaf extent verified; evidence=targets/game/reverse/identity_evidence/009b3f40-noref-abi.md
+?d_009b4170@@YAXXZ,0x009B4170,address-only compatibility for retired dump; complete leaf extent verified; evidence=targets/game/reverse/identity_evidence/009b4170-noref-abi.md

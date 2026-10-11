@@ -1,5 +1,4 @@
 // ?Rva009B4170@@YAXPAXPAF1E@Z
-// partial score=1.0 date=2026-10-11
 // cl: /O2 /G6 /Z7 /MD
 #include <stdlib.h>
 extern unsigned char g_Rva01142608[8];
