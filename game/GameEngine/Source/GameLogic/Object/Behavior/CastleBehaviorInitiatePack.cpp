@@ -48,12 +48,15 @@ public:
 
 class Drawable
 {
-public:
-	void bfmeDelayA(int);
-
 private:
 	void applyPendingModelConditionFlags(bool);
 	friend class CastleBehavior;
+};
+
+class BfmeInit962
+{
+public:
+	void bfmeInit962(int);
 };
 
 extern void j_00010820();
@@ -167,19 +170,19 @@ void CastleBehavior::initiatePack()
 	{
 		Object *owned = findObject00376C70(*it);
 		if (owned)
-			owned->getDrawable()->bfmeDelayA(delay);
+			reinterpret_cast<BfmeInit962 *>(owned->getDrawable())->bfmeInit962(delay);
 	}
 	for (_STL::vector<ObjectID>::iterator it = field00376C70<_STL::vector<ObjectID> >(this, 0xdc).begin(); it != field00376C70<_STL::vector<ObjectID> >(this, 0xdc).end(); ++it)
 	{
 		Object *owned = findObject00376C70(*it);
 		if (owned)
-			owned->getDrawable()->bfmeDelayA(delay);
+			reinterpret_cast<BfmeInit962 *>(owned->getDrawable())->bfmeInit962(delay);
 	}
 	for (_STL::vector<ObjectID>::iterator it = field00376C70<_STL::vector<ObjectID> >(this, 0xc4).begin(); it != field00376C70<_STL::vector<ObjectID> >(this, 0xc4).end(); ++it)
 	{
 		Object *owned = findObject00376C70(*it);
 		if (owned)
-			owned->getDrawable()->bfmeDelayA(delay);
+			reinterpret_cast<BfmeInit962 *>(owned->getDrawable())->bfmeInit962(delay);
 	}
 	if (object->m_modelConditionFlags.test(207))
 	{
