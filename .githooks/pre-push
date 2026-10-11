@@ -29,20 +29,6 @@ fail() {
 
 refs="$(cat || true)"
 remote_name="${1:-origin}"
-# The repository this push writes to: git passes its URL, which a remote whose
-# push URL differs from its fetch URL would otherwise misdirect (Open-BFME-2 port review).
-window_remote="${2:-${1:-origin}}"
-pushes_master=0
-
-# A cooperative publish window (tools/publish_window.py): while a landing
-# publisher holds refs/landing/window, pushes to master wait. Checked before
-# the gates and again after them, so a window opened meanwhile is honoured.
-window_check() {
-    [ "${_remote_ref:-}" = refs/heads/master ] || return 0
-    [ -f tools/publish_window.py ] || return 0
-    python3 tools/publish_window.py check --remote "$window_remote" \
-        || fail "publish window (see above): push with python3 tools/publish_window.py push"
-}
 
 ZERO=0000000000000000000000000000000000000000
 
@@ -50,7 +36,7 @@ while read -r _local_ref local_sha _remote_ref remote_sha; do
     [ -z "${local_sha:-}" ] && continue
     # Shared body claims (tools/claims.py) are parentless marker commits with an
     # empty tree, not code: there is no ledger or source in them to verify.
-    # The publish window ref (tools/publish_window.py) is a lock marker of the same kind.
+    # So are leftover publish-window refs (refs/landing/*), which no gate reads.
     case "${_remote_ref:-}" in refs/claims/*|refs/landing/*) continue ;; esac
     # A fleet run whose shared claim was lost or expired (tools/fleet_run.py
     # Heartbeat) may not publish: another worker owns those bodies now.
@@ -58,14 +44,12 @@ while read -r _local_ref local_sha _remote_ref remote_sha; do
         fail "this fleet run lost its claim ($(head -1 "$BFME_RUN_DIR/claim_lost")); nothing from it may be pushed"
     fi
     [ "$local_sha" = "$ZERO" ] && continue   # deleting a remote ref
-    if [ "${_remote_ref:-}" = refs/heads/master ]; then pushes_master=1; fi
     # The build below reads the working-tree ledgers: they must be the pushed commit's.
     python3 tools/ledger_guard.py --commit "$local_sha" || fail "working-tree ledgers differ from $local_sha (see above)"
     # The pushed tree's spelling: a ledger, baseline or hook tracked under another case
     # is read by no gate, and --no-verify skips the commit hook's own check.
     python3 tools/check_case_collisions.py --ref "$local_sha" \
         || fail "case-only collision, or a control path not spelled as the hooks read it, at $local_sha (see above)"
-    window_check
 
     # The SHA on stdin is the destination tip advertised by THIS push
     # negotiation.  Never substitute a possibly stale origin/master here: an
@@ -244,7 +228,6 @@ while read -r _local_ref local_sha _remote_ref remote_sha; do
             || { rm -f "$wide_empty" "$wide_manifest"; \
                  fail "post-gate snapshot verification (see above)"; }
         rm -f "$wide_empty" "$wide_manifest"
-        window_check
         echo "PRE-PUSH OK (full gate after wide dependency change)"
         continue
     fi
@@ -402,14 +385,7 @@ PY
                  fail "verification evidence recording (see above)"; }
         rm -f "$selector_in" "$selector_out" "$cache_manifest"
     fi
-    window_check
     echo "PRE-PUSH OK (${#verify[@]} outgoing verification selector(s) checked)"
 done <<< "$refs"
 # Publisher rollout (tools/publisher_hook.py; mode in targets/game/reverse/publisher_mode): shadow submits the landed range as a unit in the background and never fails the push; enforce queues it and refuses (exit 3).
 [ ! -f tools/publisher_hook.py ] || [ -n "${CHECKER_DIGEST:-}" ] || python3 tools/publisher_hook.py pre-push "${1:-origin}" <<< "$refs" || [ $? != 3 ] || exit 1
-# The window's last word, after every ref's gates and the publisher: a window a rival
-# opened during a later ref's gates is honoured too (GPT-6.1-Sol, Open-BFME-2 port review).
-if [ "$pushes_master" -eq 1 ]; then
-    _remote_ref=refs/heads/master
-    window_check
-fi

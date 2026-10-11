@@ -380,10 +380,11 @@ controllers will not acquire all new behavior merely because Git advances.
 The publisher is the only writer of master. Seats submit units; isolated
 builders gate them with a pinned checker; the publisher fast-forwards master
 only to a tip whose signed receipt names exactly the current head. Design,
-limits and commands are in the module docstring. It replaces
-`landing_service.py` for publication: that service ran the candidate's own
-pre-push, inherited credentials into unit `verify` commands, and slept ten
-minutes after every pass. The file imports nothing from this repository;
+limits and commands are in the module docstring. It replaced
+`landing_service.py` for publication (removed with the publish window,
+2026-10-11): that service ran the candidate's own pre-push, inherited
+credentials into unit `verify` commands, and slept ten minutes after every
+pass. The file imports nothing from this repository;
 BFME2 copies `publisher.py`, `publisher_load.py` and `publisher_pre_push.sh`
 unchanged.
 
@@ -463,8 +464,9 @@ disk counts only through `verify_record(record, key)` (signed with
    `python3 tools/publisher.py init --state /srv/pub --target <origin URL>
    --set 'checker_paths=["tools",".githooks","build.sh","build.cmd"]'
    --set 'toolchain_paths=["inputs/toolchains"]' --set builders=6
-   --set 'submit_remote="<origin URL>"'`, and `--set gate=...` to the
-   pre-push call `landing_service.DEFAULT_GATE` makes.
+   --set 'submit_remote="<origin URL>"'`, and `--set gate=...` to
+   `printf "refs/heads/master %s refs/heads/master %s\n" "$LANDING_TIP"
+   "$LANDING_BASE" | bash .githooks/pre-push origin origin`.
    The gate runs the bundle's `.githooks/pre-push`, overlaid on the candidate
    and hidden from `git diff` (skip-worktree).
 3. **Operators.** Run `publisher.py operator --state /srv/pub <name>

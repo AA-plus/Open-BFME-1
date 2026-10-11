@@ -390,7 +390,7 @@ def main():
     # a model=/launched=/host= typed into --notes is read as the caller's
     # claim and rewritten, never allowed to stand in for the receipt (review
     # 2026-09-29: notes model=X masked a launch/claim disagreement). None of
-    # it is authenticated -- see tools/landing_service.py.
+    # it is authenticated.
     receipt_key = re.compile(r"(?:^|(?<=[\s;]))(model|launched|host)=([^\s;]*)")
     typed = dict(receipt_key.findall(args.notes))
     notes = receipt_key.sub("", args.notes)

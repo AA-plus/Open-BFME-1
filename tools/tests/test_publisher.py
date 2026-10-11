@@ -10,7 +10,6 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import landing_service as ls  # noqa: E402
 import publisher as pub  # noqa: E402
 import publisher_load as load  # noqa: E402
 
@@ -136,7 +135,7 @@ def world(tmp_path):
 
 
 # ---- the pinned checker ------------------------------------------------
-def test_candidate_weakening_its_own_checker_is_not_published(world, tmp_path):
+def test_candidate_weakening_its_own_checker_is_not_published(world):
     weak = {"checker/gate.sh": "#!/bin/bash\nexit 0\n", "bad_exploit.txt": "x\n"}
     good = world.submit({"good1.txt": "1\n"})
     exploit = world.submit(weak)
@@ -146,22 +145,12 @@ def test_candidate_weakening_its_own_checker_is_not_published(world, tmp_path):
     assert state == "rejected" and record["reason"] == "gate"
     assert "bad_exploit.txt" not in world.files()
     assert (world.state / "landed" / f"{good}.json").exists()
-    # positive control: the legacy service runs the candidate's own gate and lands it
-    legacy_origin = tmp_path / "legacy.git"
-    git(tmp_path, "clone", "-q", "--bare", str(world.origin), str(legacy_origin))
-    svc = tmp_path / "svc"
-    git(tmp_path, "init", "-q", str(svc))
-    for k, v in (("user.name", "svc"), ("user.email", ""), ("core.hooksPath", "no-hooks")):
-        git(svc, "config", k, v)
-    git(svc, "remote", "add", "origin", str(legacy_origin))
-    service = ls.Service(repo=svc, state=tmp_path / "legacy", gate="bash checker/gate.sh",
-                         fence=lambda record: True)
-    patch = tmp_path / "exploit.patch"
-    patch.write_bytes(subprocess.run(["git", "format-patch", "-1", "--stdout"], cwd=world.seat,
-                                     capture_output=True, check=True).stdout)
-    unit = service.enqueue(patch)
-    assert service.run_once()["landed"] == [unit]
-    assert "bad_exploit.txt" in git(legacy_origin, "ls-tree", "--name-only", "master")
+    # positive control: a gate that runs the candidate's own checker (what a
+    # client hook or BFME1's landing_service does) approves the same commit
+    world.commit(weak)
+    own = subprocess.run(["bash", "checker/gate.sh"], cwd=world.seat, capture_output=True,
+                         env=dict(os.environ, LANDING_BASE=world.master(), LANDING_TIP="HEAD"))
+    assert own.returncode == 0
 
 
 def test_builder_is_scrubbed_remoteless_and_ignores_unit_commands(world, monkeypatch):

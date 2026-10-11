@@ -81,3 +81,10 @@ tools/fleet/provider_seat.py
 tools/tests/test_provider_seat.py
 tools/throwinfo_graph.py
 tools/tests/test_throwinfo_graph.py
+# Retired 2026-10-11: the publish window is off (as in Open-BFME-2 e037b8cacb); pushes go
+# straight to master. landing_service.py was a prototype with no invoker in this repository; nothing else read gate_evidence.py.
+tools/publish_window.py
+tools/tests/test_publish_window.py
+tools/landing_service.py
+tools/tests/test_landing_service.py
+tools/gate_evidence.py

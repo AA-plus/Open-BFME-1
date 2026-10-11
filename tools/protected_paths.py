@@ -30,8 +30,7 @@ tip), never the working copy, so an edit to this file cannot approve itself.
 
 LIMIT. Client-side hooks are advisory against an agent that edits the hooks
 or pushes with --no-verify (both forbidden by AGENTS.md). Hard enforcement
-belongs to the one publisher (tools/landing_service.py), which runs
-`--range` before it fast-forwards master.
+needs a server-side or CI run of `--range` over what reaches master.
 
   python3 tools/protected_paths.py --commit-msg .git/COMMIT_EDITMSG
   python3 tools/protected_paths.py --range BASE TIP
@@ -48,8 +47,6 @@ PROTECTED = (
     "build.sh", "build.cmd", "tools/build.py", "tools/gate_baseline.py",
     "tools/verification_cache.py", "tools/delta_sources.py", "tools/header_dependents.py",
     "tools/layout_migration.py", "tools/find_declared_unmatched.py",
-    # evidence reuse and the publish window both decide whether a gate runs
-    "tools/gate_evidence.py", "tools/publish_window.py",
     # the publisher decides what reaches master and with which checker
     "tools/publisher.py", "tools/publisher_pre_push.sh", "tools/publisher_fixtures/*",
     # which models may judge, and how they are called (decision record, pillar 5)
