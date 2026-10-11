@@ -1,3 +1,7 @@
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
+// stlport
+#include "Common/MapObject.h"
+
 // Sixteen 16-byte __thiscall members that make two no-argument member calls on
 // the same object, the second of them a tail call.
 //
@@ -21,8 +25,9 @@
 // THE ONLY AXIS IS THE PAIR OF REL32 TARGETS: sixteen members over 16
 // distinct pairs.
 //
-// IDENTITY IS NOT RECOVERED.  Names are address-derived; callee pins are
-// additive and address-derived.
+// Caller identities remain address-derived. The RVA00089A20 pair uses
+// the independently verified MapObject callee names; other pairs retain their
+// existing address-derived declarations.
 
 #define BFME_TAIL_PAIR_CALLEES( FIRST, SECOND )                              \
 	class Gen##FIRST##_##SECOND                                              \
@@ -45,7 +50,6 @@
 	}
 
 BFME_TAIL_PAIR_CALLEES( 00087C30, 00088480 )
-BFME_TAIL_PAIR_CALLEES( 000889A0, 00089450 )
 BFME_TAIL_PAIR_CALLEES( 0013AE00, 0013A820 )
 BFME_TAIL_PAIR_CALLEES( 00206CB0, 002B2070 )
 BFME_TAIL_PAIR_CALLEES( 002B2070, 00299BB0 )
@@ -62,7 +66,20 @@ BFME_TAIL_PAIR_CALLEES( 00789440, 0046C5F0 )
 BFME_TAIL_PAIR_CALLEES( 009A4D60, 0081C330 )
 
 BFME_TAIL_PAIR_FORWARDER( Rva00088980TailPairForwarder, Gen00087C30_00088480, 00087C30, 00088480 )
-BFME_TAIL_PAIR_FORWARDER( Rva00089A20TailPairForwarder, Gen000889A0_00089450, 000889A0, 00089450 )
+// Retail's two ILTs route to MapObject::verifyValidTeam (RVA889A0) and
+// MapObject::verifyValidUniqueID (RVA89450), with the unadjusted this pointer.
+class Rva00089A20TailPairForwarder
+{
+public:
+    void invoke();
+};
+
+void Rva00089A20TailPairForwarder::invoke()
+{
+    MapObject *object = reinterpret_cast<MapObject *>(this);
+    object->verifyValidTeam();
+    object->verifyValidUniqueID();
+}
 BFME_TAIL_PAIR_FORWARDER( Rva0013B970TailPairForwarder, Gen0013AE00_0013A820, 0013AE00, 0013A820 )
 BFME_TAIL_PAIR_FORWARDER( Rva002071E0TailPairForwarder, Gen00206CB0_002B2070, 00206CB0, 002B2070 )
 BFME_TAIL_PAIR_FORWARDER( Rva00299D80TailPairForwarder, Gen002B2070_00299BB0, 002B2070, 00299BB0 )
