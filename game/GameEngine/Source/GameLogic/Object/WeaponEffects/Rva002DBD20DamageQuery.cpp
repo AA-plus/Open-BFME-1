@@ -1,9 +1,8 @@
 // ?method@Rva002DBD20@@UAE_NPAVRva002DBD20Weapon@@PAVObject@@@Z
-// partial score=0.6341 date=2026-10-08
 // cl: /O2 /Ob2 /DNDEBUG /DWIN32 /MD /EHs-c- /Igame/GameEngine/Source/GameLogic/Object /Igame/GameEngine/Source/Common/Thing
 
 // stlport
-// Retail table 0x010CE9CC slot 1 reaches this 399-byte Boolean query.
+// The virtual query keeps its address identity; see identity_evidence/002dbd20-damage-query.md.
 #include <algorithm>
 #undef min
 struct Rva002DB3F0Vec6 { int v[6]; bool notEquals(const Rva002DB3F0Vec6*) const; };
@@ -128,7 +127,7 @@ bool Rva002DBD20::method(Rva002DBD20Weapon* weapon,Object* target) {
  }
  float amount=(((const Rva002DBD20Calls*)target)->*route<float (Rva002DBD20Calls::*)(Rva002DBD20DamageInput&) const>(&j_00043fae))(damage.in);
  if(weapon->m_template->m_508 && source->getContain()) {
-  unsigned count=(source->m_contain->members()->*route<unsigned (Rva002DBD20Calls::*)() const>(&j_0000c176))();
+  unsigned count=(source->getContain()->members()->*route<unsigned (Rva002DBD20Calls::*)() const>(&j_0000c176))();
   int maximum=weapon->m_template->m_509;
   if(maximum>0) { float ratio=(float)count/maximum; const float& capped=std::min(ratio,1.0f); amount*=capped; }
  }

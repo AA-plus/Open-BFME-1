@@ -35047,7 +35047,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_002d9f90@@YAXXZ,,0x002D9F90,67,game/gen_asm/d_002cf8c0.asm,matched,gen-dump;ghidra=FUN_006d9f90
 ?d_002daec0@@YAXXZ,,0x002DAEC0,392,game/gen_asm/d_002d3970.asm,matched,gen-dump;bounds=high
 ?d_002db5e0@@YAXXZ,,0x002DB5E0,495,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_006db5e0
-?d_002dbd20@@YAXXZ,,0x002DBD20,399,game/gen_asm/d_002d3970.asm,matched,gen-dump;bounds=high
 ?d_002ddff0@@YAXXZ,,0x002DDFF0,256,game/gen_asm/d_002db880.asm,matched,gen-dump;ghidra=FUN_006ddff0
 ?d_002de9b0@@YAXXZ,,0x002DE9B0,325,game/gen_asm/d_002db880.asm,matched,gen-dump;ghidra=FUN_006de9b0
 ?d_002defe0@@YAXXZ,,0x002DEFE0,229,game/gen_asm/d_002db880.asm,matched,gen-dump;ghidra=FUN_006defe0
@@ -171984,3 +171983,4 @@ uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.c
 ?Rva009B58F0@@YAXPAEHIH@Z,,0x009B58F0,511,game/GameEngine/Source/Common/Rva009B58F0.cpp,matched,Open BFME 2 donor DecodeBlock.cpp at game.dat 0x001C61F0; opaque four-argument cdecl identity; evidence=targets/game/reverse/identity_evidence/009b58f0-donor-port.md;model=gpt-6.1-sol;host=fleet
 ?Rva009B5420@@YAXPAXIIEPAH@Z,,0x009B5420,272,game/GameEngine/Source/Common/Rva009B5420.cpp,matched,Open BFME 2 donor FindNearestandNextNearest.cpp at game.dat 0x001C5D20; opaque five-argument cdecl identity; evidence=targets/game/reverse/identity_evidence/009b5420-donor-port.md;model=gpt-6.1-sol;host=fleet
 ?winProcessMouseEvent@GameWindowManager@@UAE?AW4WinInputReturnCode@@W4GameWindowMessage@@PAUICoord2D@@PAX@Z,,0x0047E630,1569,game/GameEngine/Source/GameClient/GUI/GameWindowManagerMouseEvent.cpp,matched,Open BFME 2 GameWindowManagerMouseEvent.cpp donor at game.dat 0x002C1FD5; identity evidence targets/game/reverse/identity_evidence/0047e630-bfme2-donor.md; retail vtable 010F8B60 slot41 via ILT 00001136; switch tables included;model=gpt-6.1-sol;host=fleet
+?method@Rva002DBD20@@UAE_NPAVRva002DBD20Weapon@@PAVObject@@@Z,,0x002DBD20,399,game/GameEngine/Source/GameLogic/Object/WeaponEffects/Rva002DBD20DamageQuery.cpp,matched,Complete ret8 virtual Boolean ABI and six-word input copy; opaque owner retained; identity_evidence/002dbd20-damage-query.md; native getContain accessor restores exact saved-register lifetimes;model=gpt-6.1-sol;host=fleet
