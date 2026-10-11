@@ -159,7 +159,7 @@ struct NetPacketAddress
 class Transport
 {
 public:
-	void update( void );
+	Bool update( void );
 	Bool queueSend(NetPacketAddress *address,
 		const unsigned char *data, Int length);
 };
