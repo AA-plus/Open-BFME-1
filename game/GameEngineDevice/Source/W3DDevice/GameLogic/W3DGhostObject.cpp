@@ -253,37 +253,12 @@ __declspec(noinline) TextureMapperClass *bfmeKeepVertexMaterialMapper(
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-// ?update@W3DRenderObjectSnapshot@@AAEXPAVRenderObjClass@@PAUDrawableInfo@@_N@Z present-unmatched
-void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInfo,
-																		 Bool cloneParentRobj)
+// The retail update body lives in W3DRenderObjectSnapshotUpdate.cpp. Keep
+// RenderObjClass's matched inline setter emitted here without a second update.
+__declspec(noinline) void bfmeKeepRenderObjectColor(RenderObjClass *object,
+    unsigned int color)
 {
-	REF_PTR_RELEASE(m_robj);
-
-	if( cloneParentRobj == TRUE )
-	{
-
-		m_robj=robj->Clone();
-		m_robj->Set_ObjectColor(robj->Get_ObjectColor());
-#ifdef DEBUG_FOG_MEMORY
-		m_robjName = m_robj->Get_Name();
-#endif
-		//Set cloned object to same state as original object.
-		m_robj->Set_Transform(robj->Get_Transform());
-		if (robj->Class_ID() == RenderObjClass::CLASSID_HLOD)
-		{	
-			float frame,mult;
-			int mode,numFrames;
-
-			HAnimClass *hanim=((HLodClass *)robj)->Peek_Animation_And_Info(frame,numFrames,mode,mult);
-			m_robj->Set_Animation(hanim,frame);
-			disableUVAnimations(m_robj);
-		}	//HLOD
-	}
-	else
-		m_robj=robj;
-
-	m_robj->Set_User_Data(drawInfo);
-
+    object->Set_ObjectColor(color);
 }
 
 // ------------------------------------------------------------------------------------------------

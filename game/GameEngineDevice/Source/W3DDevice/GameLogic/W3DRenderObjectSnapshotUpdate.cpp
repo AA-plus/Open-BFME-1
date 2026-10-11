@@ -166,10 +166,7 @@ public:
 		return m_objectColor;
 	}
 
-	void Set_ObjectColor(unsigned int color)
-	{
-		m_objectColor = color;
-	}
+	void Set_ObjectColor(unsigned int color);
 };
 
 struct DrawableInfo;
@@ -209,7 +206,7 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 	if (cloneParentRobj == true)
 	{
 		snapshot->m_robj = parent->Clone();
-		snapshot->m_robj->Set_ObjectColor(parent->Get_ObjectColor());
+		snapshot->m_robj->m_objectColor = parent->Get_ObjectColor();
 		parent->Get_Transform();
 		snapshot->m_robj->Set_Transform(parent->m_transform);
 		if (parent->Class_ID() == 0x19)
