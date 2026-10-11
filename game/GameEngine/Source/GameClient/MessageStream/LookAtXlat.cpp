@@ -97,27 +97,7 @@ void LookAtTranslator::stopScrolling( void )
 
 //-----------------------------------------------------------------------------
 // byte-exact reconstruction: game/GameEngine/Source/GameClient/MessageStream/LookAtTranslator_ctor.cpp
-// ??0LookAtTranslator@@ present-unmatched
-LookAtTranslator::LookAtTranslator() :
-	m_isScrolling(false),
-	m_isRotating(false),
-	m_isPitching(false),
-	m_isChangingFOV(false),
-	m_timestamp(0),
-	m_lastPlaneID(INVALID_DRAWABLE_ID),
-	m_lastMouseMoveFrame(0),
-	m_scrollType(SCROLL_NONE)
-{
-	//Added By Sadullah Nader
-	//Initializations misssing and needed
-	m_anchor.x = m_anchor.y = 0;
-	m_currentPos.x = m_currentPos.y = 0;
-	m_originalAnchor.x = m_originalAnchor.y = 0;
-	//
-
-	DEBUG_ASSERTCRASH(!TheLookAtTranslator, ("Already have a LookAtTranslator - why do you need two?"));
-	TheLookAtTranslator = this;
-}
+// The retail constructor is emitted by LookAtTranslator_ctor.cpp.
 
 //-----------------------------------------------------------------------------
 LookAtTranslator::~LookAtTranslator()
