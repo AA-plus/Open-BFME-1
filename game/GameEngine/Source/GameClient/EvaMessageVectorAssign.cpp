@@ -21,4 +21,6 @@ struct EvaMessageInfo
 	EvaMessageInfo &operator=( const EvaMessageInfo & );
 };
 
-template class _STL::vector<EvaMessageInfo>;
+// Emit only the assignment owned by this translation unit.
+template _STL::vector<EvaMessageInfo> &_STL::vector<EvaMessageInfo>::operator=(
+	const _STL::vector<EvaMessageInfo> &);

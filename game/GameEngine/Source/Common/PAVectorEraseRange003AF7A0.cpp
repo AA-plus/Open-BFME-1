@@ -19,4 +19,6 @@ struct Elem003AF7A0
 	Elem003AF7A0 &operator=( const Elem003AF7A0 & );
 };
 
-template class _STL::vector<Elem003AF7A0>;
+// Emit only the range erase owned by this translation unit.
+template Elem003AF7A0 *_STL::vector<Elem003AF7A0>::erase(
+	Elem003AF7A0 *, Elem003AF7A0 *);
