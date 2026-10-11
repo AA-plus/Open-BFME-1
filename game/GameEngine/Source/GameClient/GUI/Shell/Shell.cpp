@@ -522,35 +522,8 @@ void Shell::doPush( AsciiString layoutFile )
 //-------------------------------------------------------------------------------------------------
 /** Actually do the work for a pop */
 //-------------------------------------------------------------------------------------------------
-// ?doPop@Shell@@IAEX_N@Z present-unmatched
-void Shell::doPop( Bool impendingPush )
-{
-	WindowLayout *currentTop = top();
+// The retail doPop body is owned by Shell_doPop.cpp.
 
-	// there better be a top of the stack since we're popping
-	DEBUG_ASSERTCRASH( currentTop, ("Shell: No top of stack and we want to pop!\n") );
-		
-	// remove this screen from our list
-	unlinkScreen( currentTop );
-
-	// delete all the windows in the screen
-	currentTop->destroyWindows();
-
-	// release the screen object back to the memory pool
-	currentTop->deleteInstance();
-
-	// run the init for the new top of the stack if present
-	WindowLayout *newTop = top();
-	if( newTop && !impendingPush )
-	{
-		newTop->runInit( NULL );
-		//newTop->bringForward();
-	}
-
-	if (TheIMEManager)
-		TheIMEManager->detatch();
-
-}  // end doPop
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a layout has finished its shutdown process.  Layouts are

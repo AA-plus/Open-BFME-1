@@ -7,31 +7,7 @@
 
 typedef bool Bool;
 
-template <typename T> class StringBase
-{
-    friend class AsciiString;
-
-private:
-    StringBase(const StringBase<T> &other);
-    ~StringBase();
-
-public:
-    void set(const T *text, int length);
-
-    void *m_data;
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-    AsciiString(const AsciiString &other) : StringBase<char>(other) {}
-    ~AsciiString() {}
-
-    void set(const char *text, int length)
-    {
-        ((StringBase<char> *)this)->set(text, length);
-    }
-};
+#include "../../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 class WindowLayout;
 
@@ -76,7 +52,7 @@ void Shell::shutdownComplete(WindowLayout *, Bool impendingPush)
         union { void (*fn)(); Fn call; } push = { j_00026792 };
         (this->*push.call)(m_pendingPushName);
         m_bfmeState4c = false;
-        m_pendingPushName.set("", 0);
+        m_pendingPushName.StringBase<char>::set("", 0);
     }
     else if (m_pendingPop)
     {
