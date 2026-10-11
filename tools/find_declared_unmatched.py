@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """List functions defined in source files that are not yet in functions.csv."""
 
+import collections
 import csv
 import argparse
 import os
@@ -56,9 +57,9 @@ OPERATOR_CODES = {
 }
 
 
-def git_show(path: Path):
+def git_show(path: Path, rev: str = ""):
     result = subprocess.run(
-        ["git", "show", f":{path.as_posix()}"],
+        ["git", "show", f"{rev}:{path.as_posix()}"],
         cwd=ROOT,
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
@@ -69,9 +70,11 @@ def git_show(path: Path):
     return result.stdout
 
 
-def read_function_names(path: Path, staged: bool):
-    text = git_show(path.relative_to(ROOT)) if staged else None
+def read_function_names(path: Path, staged: bool, rev: str = ""):
+    text = git_show(path.relative_to(ROOT), rev) if staged else None
     if text is None:
+        if rev:
+            return None
         text = path.read_text(encoding="utf-8")
     declared = set()
     matched = set()
@@ -290,12 +293,56 @@ def main():
     if args.paths_from:
         args.paths += read_path_list(args.paths_from)
 
+    unmatched, violations = scan(args, rev="")
+    if args.staged and unmatched:
+        # A ratchet, like every other gate here: refuse definitions this commit
+        # makes unclaimed, not ones the file already carried at HEAD. Blaming
+        # inherited debt refused commits that only shrank it (re_attempts
+        # 60056: deleting an unmatched Squad::xfer was refused for the
+        # untouched, already-unclaimed Squad::getAllObjects beside it). HEAD is
+        # scanned against HEAD's own ledger, so retiring a row still exposes its
+        # definition as new.
+        inherited = collections.Counter(scan(args, rev="HEAD", quiet=True)[0])
+        kept = []
+        for entry in unmatched:
+            if inherited[entry]:
+                inherited[entry] -= 1
+            else:
+                kept.append(entry)
+        if len(kept) != len(unmatched):
+            print(f"note: {len(unmatched) - len(kept)} unclaimed definition(s) already "
+                  f"present at HEAD are not blamed on this commit")
+        unmatched = kept
+
+    if violations:
+        for violation in violations:
+            print(violation)
+    if not unmatched and not violations:
+        print("All defined functions are already matched.")
+        return
+
+    for rel_path, class_name, method_name in unmatched:
+        print(f"{rel_path}: {class_name}::{method_name}")
+    if args.fail:
+        sys.exit(1)
+
+
+def scan(args, rev="", quiet=False):
+    """(unclaimed definitions, violations) for args' sources.
+
+    rev "" reads the index under --staged; "HEAD" reads the committed tree
+    and ledger, and a source absent there contributes nothing."""
+    if rev and not args.staged:
+        return [], []
+    ledger = read_function_names(FUNCTIONS_CSV, args.staged, rev)
+    if ledger is None:
+        return [], []
     (declared, matched, matched_by_source, matched_sources,
-     matched_aliases_by_source) = read_function_names(FUNCTIONS_CSV, args.staged)
+     matched_aliases_by_source) = ledger
     whitelist = load_claims_whitelist()
     # a data-only TU owns its globals in data_rows.csv (tools/data_rows.py, byte-verified by the gate)
     data_ledger = Path("targets/game/reverse/data_rows.csv")
-    data_text = git_show(data_ledger) if args.staged else (
+    data_text = git_show(data_ledger, rev) if args.staged else (
         (ROOT / data_ledger).read_text(encoding="utf-8") if (ROOT / data_ledger).exists() else None)
     if data_text:
         sys.path.insert(0, str(ROOT / "tools"))
@@ -315,7 +362,7 @@ def main():
         # Fetch concurrently; everything below still runs in the given order.
         rel_paths = [p.relative_to(ROOT) for p in source_paths if p.suffix == ".cpp"]
         with ThreadPoolExecutor(max_workers=min(8, os.cpu_count() or 1)) as pool:
-            staged_text = dict(zip(rel_paths, pool.map(git_show, rel_paths)))
+            staged_text = dict(zip(rel_paths, pool.map(lambda p: git_show(p, rev), rel_paths)))
     for source_path in source_paths:
         if source_path.suffix != ".cpp":
             continue
@@ -374,7 +421,7 @@ def main():
                     f"{rel_path}: {label} is matched in functions.csv from this file but "
                     f"still marked {marker} (stale annotation — remove the marker)"
                 )
-        if args.paths and marker_labels:
+        if args.paths and marker_labels and not quiet:
             print(
                 f"note: {rel_path}: {file_matched} matched row(s), "
                 f"{len(marker_labels)} unclaimed definition(s)"
@@ -434,18 +481,7 @@ def main():
                 if any(open_needle in name for name in claim_names):
                     continue
             unmatched.append((rel_path, class_name, method_name))
-
-    if violations:
-        for violation in violations:
-            print(violation)
-    if not unmatched and not violations:
-        print("All defined functions are already matched.")
-        return
-
-    for rel_path, class_name, method_name in unmatched:
-        print(f"{rel_path}: {class_name}::{method_name}")
-    if args.fail:
-        sys.exit(1)
+    return unmatched, violations
 
 
 if __name__ == "__main__":
