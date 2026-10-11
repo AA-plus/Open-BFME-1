@@ -220,7 +220,7 @@ while IFS= read -r path; do
         targets/game/reverse/body_guard_baseline.csv) body_baseline_changed=1 ;;
         # Rows already red on origin: a removed line claims a repair (gate_baseline
         # --validate, HEAD's repair_queue verify-removed), so it may not take the exit.
-        targets/game/reverse/full_gate_baseline.txt|targets/game/reverse/dir32_known_red.txt) full_baseline_changed=1 ;;
+        targets/game/reverse/full_gate_baseline.txt|targets/game/reverse/dir32_known_red.txt|targets/game/reverse/dir32_unowned_known.txt) full_baseline_changed=1 ;;
         # verify_dir32_addresses trusts this record, so a hand edit is a free pass.
         targets/game/reverse/dir32_addresses.csv) dir32_record_changed=1 ;;
         # symbols.csv gets its own flag as well as ledger_changed: a PIN
@@ -256,7 +256,7 @@ while IFS= read -r path; do
         targets/game/reverse/data_rows.csv) data_rows_changed=1 ;;
         targets/game/reverse/pin_consistency_baseline.csv) baseline_changed=1 ;;
         targets/game/reverse/body_guard_baseline.csv) body_baseline_changed=1 ;;
-        targets/game/reverse/full_gate_baseline.txt|targets/game/reverse/dir32_known_red.txt) full_baseline_changed=1 ;;
+        targets/game/reverse/full_gate_baseline.txt|targets/game/reverse/dir32_known_red.txt|targets/game/reverse/dir32_unowned_known.txt) full_baseline_changed=1 ;;
         targets/game/reverse/dir32_addresses.csv) dir32_record_changed=1 ;;
         targets/game/reverse/symbols.csv) ledger_changed=1; pins_changed=1 ;;
         targets/game/reverse/functions.csv|targets/game/reverse/deleted_rows.csv) ledger_changed=1 ;;
@@ -324,7 +324,7 @@ fi
 # red a header could never land, and the gate is red partly BECAUSE of header
 # fixes it refused, so the check is "no NEW red row",
 # not "no red row". A gate that dies before byte comparison still fails.
-if git diff --cached --quiet -- targets/game/reverse/full_gate_baseline.txt targets/game/reverse/dir32_known_red.txt; then :; else
+if git diff --cached --quiet -- targets/game/reverse/full_gate_baseline.txt targets/game/reverse/dir32_known_red.txt targets/game/reverse/dir32_unowned_known.txt; then :; else
     python3 tools/gate_baseline.py --validate || fail "full-gate baseline may only shrink (see above)"
 fi
 # The build reads the WORKING-TREE ledgers. An unstaged row edit (a rename the

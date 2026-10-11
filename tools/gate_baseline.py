@@ -14,6 +14,8 @@ into the file.
   python3 tools/gate_baseline.py --check       run the gate, fail on any NEW red (hook use)
   python3 tools/gate_baseline.py --validate    staged baseline must be a subset of HEAD's
   python3 tools/gate_baseline.py --check --output FILE   compare a saved gate transcript
+  python3 tools/gate_baseline.py --record-unowned   on a clean origin/master checkout: run the
+      gate, write targets/game/reverse/dir32_unowned_known.txt from build/dir32_unowned.txt
 
 A gate that dies before byte comparison (a TU that will not compile) is a
 failure in every mode: there is no red set to compare and nothing is proven.
@@ -36,6 +38,14 @@ ROOT = Path(__file__).resolve().parents[1]
 BASELINE = ROOT / "targets/game/reverse" / "full_gate_baseline.txt"
 DIR32_BASELINE = ROOT / "targets/game/reverse" / "dir32_known_red.txt"
 DIR32_REPORT = ROOT / "build" / "dir32_inconsistent.txt"
+# DIR32 references to unowned names already on origin/master (owner_queue row 119):
+# build.py tolerates exactly these (base, name) pairs; anything else still fails.
+UNOWNED_BASELINE = ROOT / "targets/game/reverse" / "dir32_unowned_known.txt"
+UNOWNED_REPORT = ROOT / "build" / "dir32_unowned.txt"
+UNOWNED_HEADER = ("# DIR32 references to names no ledger identity backs, already present on\n"
+                  "# origin/master. Written only by tools/gate_baseline.py --record-unowned; shrink-only.\n"
+                  "# One '<base va>\\t<symbol>' per line.\n")
+UNOWNED_FAIL_RE = re.compile(r"^DIR32 consistency: FAIL \d+ unrecorded name")
 FAIL_RE = re.compile(r"^  FAIL (?P<name>.+) \((?P<source>[^()]*)\)$")
 FUNCTIONS_RE = re.compile(r"^Functions: (OK|FAIL) ")
 FULL_GATE_RE = re.compile(r"^FULL GATE: FAIL \S+ \d+ red: (?P<checks>.+)$")
@@ -208,7 +218,46 @@ def check(output, baseline, dir32_baseline=None, dir32_report=None, returncode=N
 
 
 def validate_staged():
-    return max(validate_file(BASELINE), validate_file(DIR32_BASELINE))
+    return max(validate_file(BASELINE), validate_file(DIR32_BASELINE), validate_file(UNOWNED_BASELINE))
+
+
+def unowned_pairs(report_text):
+    """'<base>\\t<symbol>' lines from build.py's dir32_unowned.txt ('<base>\\t<symbol>: why')."""
+    pairs = set()
+    for line in report_text.splitlines():
+        if "\t" not in line:
+            continue
+        base, rest = line.split("\t", 1)
+        if re.fullmatch(r"0x[0-9A-F]{8}", base):
+            pairs.add(f"{base}\t{rest.split(': ', 1)[0]}")
+    return sorted(pairs)
+
+
+def unowned_record_text(output, report_text):
+    """The baseline text for a finished gate transcript, or None when the
+    transcript does not prove which unowned names are red: the gate must have
+    run the unowned half of DIR32 consistency (either verdict) to the end."""
+    lines = output.splitlines()
+    if verdict(output) is None:
+        return None
+    if any(UNOWNED_FAIL_RE.match(line) for line in lines):
+        if report_text is None:
+            return None
+        return UNOWNED_HEADER + "".join(p + "\n" for p in unowned_pairs(report_text))
+    if any(line.startswith("DIR32 consistency: OK") for line in lines):
+        return UNOWNED_HEADER
+    return None
+
+
+def clean_origin_master():
+    """Only origin/master's own red may be recorded: HEAD must be origin/master and
+    no game source or ledger may differ from it."""
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    origin = subprocess.run(["git", "rev-parse", "origin/master"], cwd=ROOT,
+                            capture_output=True, text=True).stdout.strip()
+    dirty = subprocess.run(["git", "status", "--porcelain", "--", "game", "targets", "inputs"],
+                           cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    return bool(head) and head == origin and not dirty
 
 
 def validate_file(path):
@@ -242,16 +291,31 @@ def main():
     ap.add_argument("--record", action="store_true")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--validate", action="store_true")
+    ap.add_argument("--record-unowned", action="store_true")
     ap.add_argument("--output", type=Path, help="use a saved gate transcript instead of running")
     a = ap.parse_args()
     if a.validate:
         sys.exit(validate_staged())
-    if not (a.record or a.check):
-        ap.error("one of --record, --check, --validate")
+    if not (a.record or a.check or a.record_unowned):
+        ap.error("one of --record, --check, --validate, --record-unowned")
+    if a.record_unowned and not clean_origin_master():
+        print("gate_baseline: --record-unowned records origin/master only: check out origin/master "
+              "with no change under game/, targets/ or inputs/")
+        sys.exit(2)
     if a.output:  # a saved transcript has no exit status; its verdict line must stand alone
         returncode, output = None, a.output.read_text(encoding="utf-8", errors="replace")
     else:
         returncode, output = run_gate()
+    if a.record_unowned:
+        report = UNOWNED_REPORT.read_text(encoding="utf-8") if UNOWNED_REPORT.exists() else None
+        text = unowned_record_text(output, report)
+        if text is None or (returncode is not None and verdict(output) and not exit_agrees(verdict(output), returncode)):
+            print("gate_baseline: the gate did not finish DIR32 consistency's unowned check; refusing to record")
+            sys.exit(2)
+        UNOWNED_BASELINE.write_text(text, encoding="utf-8")
+        print(f"gate_baseline: recorded {len(parse_baseline(text))} unowned DIR32 reference(s) to "
+              f"{UNOWNED_BASELINE.relative_to(ROOT).as_posix()}")
+        sys.exit(0)
     if a.record:
         now = red_rows(output)
         final = verdict(output)

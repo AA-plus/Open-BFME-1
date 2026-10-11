@@ -3466,11 +3466,33 @@ def dir32_identities(recorded):
     return at, data
 
 
+DIR32_UNOWNED_KNOWN = ROOT / "targets/game/reverse" / "dir32_unowned_known.txt"
+
+
+def read_dir32_unowned_known(path=None):
+    """{("0x%08X" base, name)} from dir32_unowned_known.txt: unowned references
+    already on origin/master, written only by gate_baseline.py --record-unowned
+    from a full gate's build/dir32_unowned.txt and shrink-only (--validate)."""
+    path = Path(path) if path is not None else DIR32_UNOWNED_KNOWN
+    if not path.exists():
+        return set()
+    known = set()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip() and not line.startswith("#"):
+            base, name = line.rstrip("\n").split("\t", 1)
+            known.add((base, name))
+    return known
+
+
 def unowned_dir32_baseline():
     """Unrecorded names already in the tree when the rule landed: keyed
-    ("dir32", base, name) lines in body_guard_baseline.csv, shrink-only."""
+    ("dir32", base, name) lines in body_guard_baseline.csv, shrink-only, plus the
+    (base, name) pairs already unowned on origin/master (dir32_unowned_known.txt,
+    owner_queue row 119). A pair that is not listed -- a new name, or a known
+    name read at a different address -- still fails."""
     import body_guard
-    return {(base, name) for check, base, name in body_guard.read_baseline() if check == "dir32"}
+    return ({(base, name) for check, base, name in body_guard.read_baseline() if check == "dir32"}
+            | read_dir32_unowned_known())
 
 
 def unrecorded_dir32_problem(sym, base, identities, symbol_map=None):
@@ -3635,6 +3657,8 @@ def verify_dir32_consistency(rows, *, propose=True):
     # commit, which skips the delta path, cannot land one either.
     identities, symbol_map, unowned = dir32_identities(recorded), load_symbol_map(), []
     known = unowned_dir32_baseline()
+    unowned_report = ROOT / "build" / "dir32_unowned.txt"
+    unowned_report.unlink(missing_ok=True)  # a stale report must not feed --record-unowned
     for sym in sorted(sym2base.keys() - recorded.keys() - whitelist):
         bases = sym2base[sym]
         if (len(bases) != 1 or sym.startswith(("__imp_", "__real@"))
@@ -3642,7 +3666,7 @@ def verify_dir32_consistency(rows, *, propose=True):
             continue
         problem = unrecorded_dir32_problem(sym, base, identities, symbol_map)
         if problem and ("0x%08X" % base, sym) not in known:
-            unowned.append(f"{sym}: {problem}")
+            unowned.append(f"0x{base:08X}\t{sym}: {problem}")
     if unowned:
         report = ROOT / "build" / "dir32_unowned.txt"
         report.parent.mkdir(parents=True, exist_ok=True)
