@@ -120,14 +120,15 @@ extern WaterSetting WaterSettings[];
 enum { WATER_SETTING_COUNT = 6 };
 
 void W3DRadarResetLock( void );
-void BFME_DX8_Thread_Assert( void );
+// Retail 0x00905B10 returns char; this cleanup ignores the result.
+char bfmeUnlock1179( void );
 
 class WaterDestructorGuard
 {
 public:
 	~WaterDestructorGuard( void )
 	{
-		BFME_DX8_Thread_Assert();
+		bfmeUnlock1179();
 	}
 };
 
