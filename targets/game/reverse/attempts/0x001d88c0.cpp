@@ -1,30 +1,23 @@
 // ?reallyCreate@GenericObjectCreationNugget@@QBE?AV?$vector@PAVObject@@V?$allocator@PAVObject@@@_STL@@@_STL@@PBUCoord3D@@PBVMatrix3D@@MPBVObject@@I@Z
-// partial score=0.1721 date=2026-09-28
-// cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib /Igame/GameEngine/Source/GameLogic/Object
+// partial score=0.2477 date=2026-10-11
+// cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib /Igame/GameEngine/Source/GameLogic/Object /Igame/Libraries/Include/Lib
 // stlport
-// PARTIAL (not matched): GenericObjectCreationNugget::reallyCreate, retail 0x001D88C0 (2556 B).
-// Identity: EA name chain GenericObjectCreationNugget::reallyCreate, __FILE__ ObjectCreationList.cpp,
-// FieldParse offsets (m_putInContainer +0x10, m_debrisToGenerate +0x28, formation +0x84..+0x8c,
-// fade +0x7c/+0x80/+0x118/+0x119, flags +0x104..+0x11c). BFME returns vector<Object*> (ret 0x18).
-// Measured: ours 2431 B vs 2556, 1866 differing bytes, shape 0.840.
-// Main residue: retail leaves many inline helpers out of line (vector copy ctor, erase, ~vector at
-// the final return, StringBase::isEmpty on sourceObj name) but inlines isEmpty on m_putInContainer,
-// and keeps an EH state for the default-argument allocator temporary without a normal-path
-// ~allocator call. Looks like an exhausted per-function inline budget; see the re_attempts verdict.
+// Evidence: targets/game/reverse/identity_evidence/001d88c0-layout-and-cleanup.md
 #include <vector>
 #include <list>
+#include <bitset>
 #include "ascii_string.h"
 
 typedef bool Bool;
 enum ObjectID { INVALID_ID = 0 };
 #define BFME_HAVE_OBJECTID
 #define BFME_HAVE_ASCIISTRING
-struct Coord3D { float x, y, z; };
+#include "Coord3D.h"
 #define BFME_HAVE_COORD3D
 class Matrix3D;
 class Player;
 class Team;
-enum KindOfType { KINDOF_TREE = 61, KINDOF_SHRUB = 62, KINDOF_OPTIMIZED_PROP = 67, KINDOF_HORDE = 108 };
+enum KindOfType { KINDOF_TREE = 93, KINDOF_SHRUB = 94, KINDOF_OPTIMIZED_PROP = 99, KINDOF_HORDE = 108 };
 enum PathfindLayerEnum { LAYER_INVALID = 0, LAYER_GROUND = 1 };
 #define THING_TU_MEMBERS Bool isKindOf(KindOfType t) const;
 #define OBJECT_TU_MEMBERS \
@@ -38,7 +31,6 @@ enum PathfindLayerEnum { LAYER_INVALID = 0, LAYER_GROUND = 1 };
 
 namespace _STL {
 template<> _Vector_base<Object *, allocator<Object *> >::_Vector_base(const allocator<Object *> &a);
-template<> _Vector_base<Object *, allocator<Object *> >::~_Vector_base();
 template<> vector<Object *, allocator<Object *> >::vector(const vector<Object *, allocator<Object *> > &x);
 template<> vector<Object *, allocator<Object *> >::iterator vector<Object *, allocator<Object *> >::erase(iterator first, iterator last);
 template<> void vector<Object *, allocator<Object *> >::push_back(Object *const &x);
@@ -56,17 +48,18 @@ class ThingTemplate
 {
 public:
 	unsigned char m_pad000[0xc8];
-	UnsignedInt m_kindof[6]; // +0xc8
+	_STL::bitset<181> m_kindof; // +0xc8
 	unsigned char m_pad0e0[0x3c0 - 0xe0];
 	Real m_3c0; // +0x3c0
 	unsigned char m_pad3c4[0x480 - 0x3c4];
 	unsigned short m_maxSimultaneousOfType; // +0x480
-	Bool isKindOf(KindOfType t) const { return (m_kindof[(t - 32) >> 5] & (1 << (t & 31))) != 0; }
+	__forceinline Bool isKindOf(KindOfType t) const { return m_kindof._Unchecked_test((UnsignedInt)t); }
 };
 
-class Rva000C7CD0Obj;
+struct Rva000C7CD0Obj;
 class Rva000C7CD0
 {
+	unsigned char m_storage[0xc];
 public:
 	unsigned char ok(Rva000C7CD0Obj *tmpl, int count);
 };
@@ -76,7 +69,7 @@ class Player
 public:
 	unsigned char m_pad000[0x30];
 	Rva000C7CD0 m_030; // +0x30
-	unsigned char m_pad031[0x230 - 0x31];
+	unsigned char m_pad031[0x230 - 0x3c];
 	Team *m_defaultTeam; // +0x230
 	Bool isPlayerActive() const;
 	void countObjectsByThingTemplate(int numTmplates, const ThingTemplate *const *things, Bool ignoreDead, int *counts, Bool ignoreUnderConstruction) const;
@@ -195,9 +188,9 @@ class AudioEventRTS
 {
 public:
 	AudioEventRTS(const AsciiString &eventName, int ownerID);
-	~AudioEventRTS();
+	virtual ~AudioEventRTS();
 	void setObjectID(ObjectID id);
-	unsigned char m_storage[0x70];
+	unsigned char m_storage[0x6c];
 };
 
 class AudioManager
@@ -217,21 +210,20 @@ struct FindPositionOptions
 	UnsignedInt flags;
 	Real minRadius;
 	Real maxRadius;
-	Real minZ;
-	Real maxZ;
-	Real maxZDelta;
+	union { Real minZ; Real startAngle; };
+	union { Real maxZ; Real maxZDelta; };
 	const Object *ignoreObject;
 	const Object *sourceToPathToDest;
-	Player *relationshipObject;
-	FindPositionOptions()
+	const Object *relationshipObject;
+	__forceinline FindPositionOptions()
 	{
-		flags = 0; minRadius = 0.0f; maxRadius = 0.0f; minZ = -99999.9f; maxZ = 1e10f; maxZDelta = 0.0f;
+		flags = 0; minRadius = 0.0f; maxRadius = 0.0f; startAngle = -99999.9f; maxZDelta = 1e10f;
 		ignoreObject = 0; sourceToPathToDest = 0; relationshipObject = 0;
 	}
 };
 
 class SpawnBoneRow { public: SpawnBoneRow(); float x, y, z, w; };
-struct MatrixRows001D88C0 { SpawnBoneRow row[3]; };
+typedef SpawnBoneRow MatrixRows001D88C0[3];
 
 extern ThingFactory *TheThingFactory;
 extern TerrainLogic *TheTerrainLogic;
@@ -304,8 +296,9 @@ _STL::vector<Object *> GenericObjectCreationNugget::reallyCreate(const Coord3D *
 		return objects;
 
 	if (m_requiresLivePlayer && (!sourceObj || !sourceObj->getControllingPlayer()->isPlayerActive()))
-		return objects;
+		return objects; // don't spawn useful objects for dead players.  Avoid the zombie units from Yuri's.
 
+	// Object type debris might need this information to process visual UpgradeModules.
 	Object *debris = NULL;
 	Team *debrisOwner = NULL;
 	if (sourceObj)
@@ -326,10 +319,10 @@ _STL::vector<Object *> GenericObjectCreationNugget::reallyCreate(const Coord3D *
 			{
 				MatrixRows001D88C0 rows;
 				const SpawnBoneRow *src = (const SpawnBoneRow *)mtx;
-				rows.row[0].x = src[0].x; rows.row[0].y = src[0].y; rows.row[0].z = src[0].z;
-				rows.row[1].x = src[1].x; rows.row[1].y = src[1].y; rows.row[1].z = src[1].z;
-				rows.row[2].x = src[2].x; rows.row[2].y = src[2].y; rows.row[2].z = src[2].z;
-				rows.row[2].w = 0.0f; rows.row[1].w = 0.0f; rows.row[0].w = 0.0f;
+				rows[0].x = src[0].x; rows[0].y = src[0].y; rows[0].z = src[0].z;
+				rows[1].x = src[1].x; rows[1].y = src[1].y; rows[1].z = src[1].z;
+				rows[2].x = src[2].x; rows[2].y = src[2].y; rows[2].z = src[2].z;
+				rows[2].w = 0.0f; rows[1].w = 0.0f; rows[0].w = 0.0f;
 				Real scale = containerTmpl->m_3c0;
 				if (containerTmpl->isKindOf(KINDOF_TREE))
 					TheTerrainLogic->onTreeTemplate001AD080(containerTmpl, pos, (const Matrix3D *)&rows, scale);
@@ -367,6 +360,8 @@ _STL::vector<Object *> GenericObjectCreationNugget::reallyCreate(const Coord3D *
 		}
 		else
 		{
+			//this is using the generic debris type so it's probably safe to
+			//remove if requested by the GameLOD manager.
 			if (TheGameLODManager->isDebrisSkipped())
 				continue;
 			tmpl = debrisTemplate;
@@ -396,6 +391,11 @@ _STL::vector<Object *> GenericObjectCreationNugget::reallyCreate(const Coord3D *
 			if (container != NULL && container->m_contain != NULL && container->m_contain->isValidContainerFor(debris, true))
 				container->m_contain->addToContain(debris);
 
+			// if we want the objects being created to appear in a spread formation
+			// PLEASE NOTE --> if/when the object placement logic is modified so that
+			// objects that are placed in the same location are no longer placed in a
+			// diagonal line but rather in random locations nearby, this logic will no
+			// longer be necessary and can be taken out -- amit
 			if (m_spreadFormation)
 			{
 				Coord3D resultPos;
@@ -416,6 +416,7 @@ _STL::vector<Object *> GenericObjectCreationNugget::reallyCreate(const Coord3D *
 			}
 			else
 			{
+				// do stuff to contained objects too
 				doStuffToObj(debris, m_names[pick], pos, mtx, orientation, sourceObj, lifetimeFrames, nn);
 			}
 
@@ -468,10 +469,10 @@ _STL::vector<Object *> GenericObjectCreationNugget::reallyCreate(const Coord3D *
 		{
 			MatrixRows001D88C0 rows;
 			const SpawnBoneRow *src = (const SpawnBoneRow *)mtx;
-			rows.row[0].x = src[0].x; rows.row[0].y = src[0].y; rows.row[0].z = src[0].z;
-			rows.row[1].x = src[1].x; rows.row[1].y = src[1].y; rows.row[1].z = src[1].z;
-			rows.row[2].x = src[2].x; rows.row[2].y = src[2].y; rows.row[2].z = src[2].z;
-			rows.row[2].w = 0.0f; rows.row[1].w = 0.0f; rows.row[0].w = 0.0f;
+			rows[0].x = src[0].x; rows[0].y = src[0].y; rows[0].z = src[0].z;
+			rows[1].x = src[1].x; rows[1].y = src[1].y; rows[1].z = src[1].z;
+			rows[2].x = src[2].x; rows[2].y = src[2].y; rows[2].z = src[2].z;
+			rows[2].w = 0.0f; rows[1].w = 0.0f; rows[0].w = 0.0f;
 			Real scale = tmpl->m_3c0;
 			if (tmpl->isKindOf(KINDOF_TREE))
 				TheTerrainLogic->onTreeTemplate001AD080(tmpl, pos, (const Matrix3D *)&rows, scale);
