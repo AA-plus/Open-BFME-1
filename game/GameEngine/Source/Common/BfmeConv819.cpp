@@ -37,17 +37,23 @@ extern "C" void piFindPlayerByIP(BfmeThingEMB *a, void *b)
 	bfmeCallEMB(a->m_bfmeP, bfmeCbEMB, &b);
 }
 
-class BfmeObjEMC
+class BfmeObjEMC;
+
+// Existing7E8A80 ledger contract; only the output pointer is char-typed.
+class BfmeThingUPB
 {
 public:
-	void bfmeCallEMC(void *x, void *b, void *c);
+	char bfmeGoUPB(void *a, char *out, void *c);
+	char m_bfmePad[0x10];
+	void *m_bfmeTable;
 };
 
 extern void *g_bfmeXEMC;
 
 void __stdcall bfmeGoEMC(BfmeObjEMC *o, void *b, void *c)
 {
-	o->bfmeCallEMC(g_bfmeXEMC, b, c);
+	reinterpret_cast<BfmeThingUPB *>(o)->bfmeGoUPB(
+		g_bfmeXEMC, static_cast<char *>(b), c);
 }
 
 class BfmeObjEME
