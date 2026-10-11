@@ -13,7 +13,8 @@ private:
 	_STL::vector< _STL::list<int> > m_lists;
 };
 
-template class _STL::vector< _STL::list<int> >;
+// Only the destructor is retail's (00246740/206: node deallocation and
+// delete); the wrapper's out-of-line destructor instantiates just that.
 
 Rva00246740::~Rva00246740()
 {
