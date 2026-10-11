@@ -192,32 +192,8 @@ void MeshModelClass::Reset(int polycount,int vertcount,int passcount)
 	return ;
 }
 
-// ?MeshModelClass::Register_For_Rendering present-unmatched
-void MeshModelClass::Register_For_Rendering()
-{
-	HasBeenInUse=true;
-//WW3D::Set_NPatches_Level(1);
-	if (WW3D::Get_NPatches_Level()>1) {
-		if (WW3D::Get_NPatches_Gap_Filling_Mode()!=WW3D::NPATCHES_GAP_FILLING_DISABLED) {
-			Init_For_NPatch_Rendering();
-		}
-		else if (GapFiller) {
-			delete GapFiller;
-			GapFiller=NULL;
-		}
-	}
-	else {
-		if (WW3D::Get_NPatches_Gap_Filling_Mode()==WW3D::NPATCHES_GAP_FILLING_FORCE) {
-			Init_For_NPatch_Rendering();
-		}
-		else if (GapFiller) {
-			delete GapFiller;
-			GapFiller=NULL;
-		}
-	}
-
-	TheDX8MeshRenderer.Register_Mesh_Type(this);
-}
+// Register_For_Rendering is supplied by MeshModelRegisterForRendering.cpp.
+// The 59-byte retail body at RVA 0x0094F900 uses BFME renderer state.
 
 // ?MeshModelClass::Replace_Texture present-unmatched
 void MeshModelClass::Replace_Texture(TextureClass* texture,TextureClass* new_texture)
