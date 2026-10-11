@@ -101,7 +101,6 @@ public:
 
 private:
 	bool _bfme_shouldSkipClientFrame(void);
-	bool _bfme_shouldSkipClientFrameCall(void);
 	void _bfme_updateClientFrameRatio(void);
 
 	AsciiStringLayout m_name;       // 0x04, inherited SubsystemInterface::m_name
@@ -337,7 +336,7 @@ void GameEngine::_bfme_updateClientSubsystems(void)
 	}
 
 	WindowManagerSubsystem->update();
-	if (*g_012A7244 == 0 &&_bfme_shouldSkipClientFrameCall())
+	if (*g_012A7244 == 0 &&_bfme_shouldSkipClientFrame())
 	{
 		int skippedClientFrames = SkippedClientFrames;
 		ClientFrameSubsystem *client = GameClientSubsystem;
