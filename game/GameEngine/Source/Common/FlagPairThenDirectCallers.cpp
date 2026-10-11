@@ -89,13 +89,11 @@ BFME_FLAG_PAIR_CALLEE( 00113E70 )
 BFME_FLAG_PAIR_CALLEE( 0016B140 )
 BFME_FLAG_PAIR_CALLEE( 001B0E20 )
 BFME_FLAG_PAIR_CALLEE( 001EF3D0 )
-BFME_FLAG_PAIR_CALLEE( 002077D0 )
 BFME_FLAG_PAIR_CALLEE( 0020F330 )
 BFME_FLAG_PAIR_CALLEE( 00216170 )
 BFME_FLAG_PAIR_CALLEE( 00217810 )
 BFME_FLAG_PAIR_CALLEE( 002298B0 )
 BFME_FLAG_PAIR_CALLEE( 002475A0 )
-BFME_FLAG_PAIR_CALLEE( 0024F500 )
 BFME_FLAG_PAIR_CALLEE( 00250A40 )
 BFME_FLAG_PAIR_CALLEE( 00255160 )
 BFME_FLAG_PAIR_CALLEE( 00256C90 )
@@ -107,12 +105,32 @@ BFME_FLAG_PAIR_CALLEE( 002CD700 )
 BFME_FLAG_PAIR_CALLEE( 002D9BD0 )
 BFME_FLAG_PAIR_CALLEE( 00776AC0 )
 
+// These two direct targets are emitted by S3SeedPairsGuarded.cpp. Retail
+// reaches them through ILTs 0x0003689A and 0x00001D57 respectively; both
+// receive this in ECX and take the same callee-popped target pointer.
+class BfmeSeedTarget;
+class Gen_002077D0 { public: void bfmeSeed(BfmeSeedTarget *target); };
+class Gen_0024F500 { public: void bfmeSeed(BfmeSeedTarget *target); };
+
 BFME_FLAG_PAIR_THEN_CALL( Rva0014F1A0Caller, Gen0016B140 )
 BFME_FLAG_PAIR_THEN_CALL( Rva0016B5C0Caller, Gen000A1510 )
 BFME_FLAG_PAIR_THEN_CALL( Rva0016D1D0Caller, Gen0016B140 )
 BFME_FLAG_PAIR_THEN_CALL( Rva0016E190Caller, Gen0016B140 )
 BFME_FLAG_PAIR_THEN_CALL( Rva001EF3D0Caller, Gen00113D50 )
-BFME_FLAG_PAIR_THEN_CALL( Rva001F7290Caller, Gen002077D0 )
+class Rva001F7290Caller : public Gen_002077D0
+{
+public:
+    void invoke(FlagPairTarget *target);
+};
+
+void Rva001F7290Caller::invoke(FlagPairTarget *target)
+{
+    FlagPair flags;
+    flags.m_first = true;
+    flags.m_second = true;
+    target->applyFlags(flags);
+    bfmeSeed(reinterpret_cast<BfmeSeedTarget *>(target));
+}
 BFME_FLAG_PAIR_THEN_CALL( Rva00200890Caller, Gen00255160 )
 BFME_FLAG_PAIR_THEN_CALL( Rva002051C0Caller, Gen001EF3D0 )
 BFME_FLAG_PAIR_THEN_CALL( Rva00205950Caller, Gen002B2080 )
@@ -134,13 +152,104 @@ BFME_FLAG_PAIR_THEN_CALL( Rva002189C0Caller, Gen00217810 )
 BFME_FLAG_PAIR_THEN_CALL( Rva00218C50Caller, Gen00217810 )
 BFME_FLAG_PAIR_THEN_CALL( Rva00220380Caller, Gen002298B0 )
 BFME_FLAG_PAIR_THEN_CALL( Rva0024D3A0Caller, Gen002475A0 )
-BFME_FLAG_PAIR_THEN_CALL( Rva0024F760Caller, Gen0024F500 )
-BFME_FLAG_PAIR_THEN_CALL( Rva0024FA40Caller, Gen0024F500 )
-BFME_FLAG_PAIR_THEN_CALL( Rva0024FDC0Caller, Gen0024F500 )
-BFME_FLAG_PAIR_THEN_CALL( Rva0024FFC0Caller, Gen0024F500 )
-BFME_FLAG_PAIR_THEN_CALL( Rva00250210Caller, Gen0024F500 )
-BFME_FLAG_PAIR_THEN_CALL( Rva00250420Caller, Gen0024F500 )
-BFME_FLAG_PAIR_THEN_CALL( Rva00250600Caller, Gen0024F500 )
+class Rva0024F760Caller : public Gen_0024F500
+{
+public:
+    void invoke(FlagPairTarget *target);
+};
+
+void Rva0024F760Caller::invoke(FlagPairTarget *target)
+{
+    FlagPair flags;
+    flags.m_first = true;
+    flags.m_second = true;
+    target->applyFlags(flags);
+    bfmeSeed(reinterpret_cast<BfmeSeedTarget *>(target));
+}
+class Rva0024FA40Caller : public Gen_0024F500
+{
+public:
+    void invoke(FlagPairTarget *target);
+};
+
+void Rva0024FA40Caller::invoke(FlagPairTarget *target)
+{
+    FlagPair flags;
+    flags.m_first = true;
+    flags.m_second = true;
+    target->applyFlags(flags);
+    bfmeSeed(reinterpret_cast<BfmeSeedTarget *>(target));
+}
+class Rva0024FDC0Caller : public Gen_0024F500
+{
+public:
+    void invoke(FlagPairTarget *target);
+};
+
+void Rva0024FDC0Caller::invoke(FlagPairTarget *target)
+{
+    FlagPair flags;
+    flags.m_first = true;
+    flags.m_second = true;
+    target->applyFlags(flags);
+    bfmeSeed(reinterpret_cast<BfmeSeedTarget *>(target));
+}
+class Rva0024FFC0Caller : public Gen_0024F500
+{
+public:
+    void invoke(FlagPairTarget *target);
+};
+
+void Rva0024FFC0Caller::invoke(FlagPairTarget *target)
+{
+    FlagPair flags;
+    flags.m_first = true;
+    flags.m_second = true;
+    target->applyFlags(flags);
+    bfmeSeed(reinterpret_cast<BfmeSeedTarget *>(target));
+}
+class Rva00250210Caller : public Gen_0024F500
+{
+public:
+    void invoke(FlagPairTarget *target);
+};
+
+void Rva00250210Caller::invoke(FlagPairTarget *target)
+{
+    FlagPair flags;
+    flags.m_first = true;
+    flags.m_second = true;
+    target->applyFlags(flags);
+    bfmeSeed(reinterpret_cast<BfmeSeedTarget *>(target));
+}
+class Rva00250420Caller : public Gen_0024F500
+{
+public:
+    void invoke(FlagPairTarget *target);
+};
+
+void Rva00250420Caller::invoke(FlagPairTarget *target)
+{
+    FlagPair flags;
+    flags.m_first = true;
+    flags.m_second = true;
+    target->applyFlags(flags);
+    bfmeSeed(reinterpret_cast<BfmeSeedTarget *>(target));
+}
+class Rva00250600Caller : public Gen_0024F500
+{
+public:
+    void invoke(FlagPairTarget *target);
+};
+
+void Rva00250600Caller::invoke(FlagPairTarget *target)
+{
+    FlagPair flags;
+    flags.m_first = true;
+    flags.m_second = true;
+    target->applyFlags(flags);
+    bfmeSeed(reinterpret_cast<BfmeSeedTarget *>(target));
+}
 BFME_FLAG_PAIR_THEN_CALL( Rva002509F0Caller, Gen00250A40 )
 BFME_FLAG_PAIR_THEN_CALL( Rva00250A40Caller, Gen001EF3D0 )
 BFME_FLAG_PAIR_THEN_CALL( Rva00251830Caller, Gen00250A40 )
