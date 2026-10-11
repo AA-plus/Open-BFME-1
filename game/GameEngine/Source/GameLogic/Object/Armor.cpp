@@ -129,7 +129,8 @@ void ArmorTemplate::clear()
 }
 
 class ArmorStore;
-extern ArmorStore *TheArmorStore;		// 0x012EF4E8
+// Native Armor.cpp owns this singleton; retail VA012EF4E8 is zero4B.
+ArmorStore *TheArmorStore = NULL;
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Armor.h
 class ArmorStore : public SubsystemInterface
