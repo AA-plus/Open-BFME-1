@@ -28,8 +28,14 @@ Under-counting would let a broken TU through, so every doubt widens the set:
     includers are still found;
   - a changed .cpp, .c or table that a scanned file #includes by name compiles
     inside that file, so it reaches its includers like a header does;
-  - toolchain, vendored-library and STLport changes, or a set larger than
-    --limit sources, exit 2: the caller runs the full gate.
+  - a change at or under inputs/toolchains/ or inputs/vendor/, in any letter
+    case, exits 2 whether or not a scanned file includes it (a vendored source
+    or archive no scanned file names); so do a changed header or included file
+    whose path names STLport and a set larger than --limit sources: the caller
+    runs the full gate;
+  - a changed path that spells game/, inputs/ or a root under it in another
+    letter case, or that is such a root itself, exits 2: every test of a path
+    against those roots, and the scan, reads the lowercase spelling only.
 
   python3 tools/header_dependents.py --staged           # pre-commit
   python3 tools/header_dependents.py --range OLD NEW    # pre-push
@@ -52,6 +58,9 @@ SOURCE_SUFFIXES = (".cpp", ".c", ".cc", ".cxx", ".cp", ".c++")
 SCANNED_ROOTS = ("game/", "inputs/reference/")
 FULL_GATE_ROOTS = ("inputs/toolchains/", "inputs/vendor/")
 IGNORED_ROOTS = ("mods/", "worldbuilder/", "targets/worldbuilder/")
+SHIM_ROOT = "inputs/reference/shims/"
+# every root select(), is_wide() and scan() route a changed path by
+ROUTED_ROOTS = ("game/", "inputs/", *SCANNED_ROOTS, SHIM_ROOT, *FULL_GATE_ROOTS)
 LEDGER = "targets/game/reverse/functions.csv"
 DIRECTIVE = re.compile(r"^[ \t]*#[ \t]*(?:include|import)\b[ \t]*(.*)$", re.M)
 MACRO = re.compile(r"[A-Za-z_]\w*")
@@ -87,9 +96,37 @@ def git(*args):
 
 
 def changed(args):
+    """Changed paths as git stores them. -z: without it git quotes a path holding a
+    non-ASCII byte, a quote, a backslash, a tab or a newline, and no prefix or suffix
+    test below matches the quoted form."""
     if args.staged:
-        return git("diff", "--cached", "--name-only", "--no-renames", "--diff-filter=ACMRTD").splitlines()
-    return git("diff", "--name-only", "--no-renames", args.range[0], args.range[1]).splitlines()
+        listing = git("diff", "--cached", "--name-only", "-z", "--no-renames", "--diff-filter=ACMRTD")
+    else:
+        listing = git("diff", "--name-only", "-z", "--no-renames", args.range[0], args.range[1])
+    return [path for path in listing.split("\0") if path]
+
+
+def full_gate_input(path):
+    """A FULL_GATE_ROOTS entry itself (a symlink or gitlink put where the directory
+    was) or anything under one. Letter case is ignored: Inputs/Vendor/ is the same
+    directory to the compiler on a case-insensitive host."""
+    low = path.lower()
+    return any(low == root.rstrip("/") or low.startswith(root) for root in FULL_GATE_ROOTS)
+
+
+def misrouted_input(path):
+    """The root `path` falls under in every letter case but its own, or the root it
+    IS (a symlink or gitlink where the directory was), else None. The scan and every
+    prefix test read ROUTED_ROOTS as spelt here, so such a path would be routed as
+    nothing: Inputs/reference/x.tbl is neither scanned nor followed to its includers,
+    yet it is the file the compiler opens on a case-insensitive host. IGNORED_ROOTS is
+    not folded: a case variant of an ignored root is not ignored."""
+    low = path.lower()
+    for root in ROUTED_ROOTS:
+        bare = root.rstrip("/")
+        if low == bare or (low.startswith(root) and not path.startswith(root)):
+            return root
+    return None
 
 
 def snapshot(args):
@@ -278,6 +315,15 @@ def dependents(headers, includers, macro):
 
 def select(args):
     paths = [p for p in changed(args) if not p.startswith(IGNORED_ROOTS)]
+    # a toolchain or vendored change reaches TUs no scanned #include names (a vendored
+    # source or archive nothing includes): the full gate, included or not
+    vendored = [p for p in paths if full_gate_input(p)]
+    if vendored:
+        raise Widen(f"{vendored[0]} is toolchain/vendored")
+    for path in paths:
+        root = misrouted_input(path)
+        if root:
+            raise Widen(f"{path} is {root} in another letter case, or that root itself")
     wide = [p for p in paths if is_wide(p)]
     others = [p for p in paths if not is_wide(p) and p.startswith(("game/", "inputs/"))]
     if not wide and not others:

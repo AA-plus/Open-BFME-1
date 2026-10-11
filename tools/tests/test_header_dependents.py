@@ -347,3 +347,347 @@ def test_pre_push_refuses_a_dirty_includer_of_a_pushed_header(hook_repo):
     assert result.returncode != 0
     assert "working tree differs" in result.stderr
     assert not (hook_repo / "built").exists()
+
+
+# A vendored source or archive that no scanned file includes (inputs/vendor/nbench/hardware.c,
+# d3dx9.lib, whose members the ledger claims) reaches TUs no #include names. Only a header or
+# an included file was a root, so such a change alone selected nothing and both hooks took
+# their narrow path: the full gate never ran.
+VENDORED = ["inputs/vendor/nbench/hardware.c", "inputs/vendor/d3dx9/d3dx9.lib"]
+
+
+def vendored_change(repo, path, operation):
+    """Commit the base, then stage `operation` on `path`. A rename moves it out of
+    inputs/vendor/ or into it (the other side under no scanned or gated root), or within it."""
+    elsewhere = (path.rsplit("/", 1)[0] + "/moved/" if operation == "rename-within" else "attic/") + path.rsplit("/", 1)[-1]
+    if operation != "add":
+        put(repo, elsewhere if operation == "rename-in" else path, "x\n")
+    base(repo)
+    if operation == "delete":
+        git(repo, "rm", "-q", path)
+    elif operation.startswith("rename"):
+        source, target = (elsewhere, path) if operation == "rename-in" else (path, elsewhere)
+        (repo / target).parent.mkdir(parents=True, exist_ok=True)
+        git(repo, "mv", source, target)
+    else:
+        put(repo, path, "y\n")
+
+
+@pytest.mark.parametrize("path", VENDORED)
+@pytest.mark.parametrize("operation", ["add", "modify", "delete", "rename-out", "rename-in", "rename-within"])
+@pytest.mark.parametrize("staged", [True, False])
+def test_a_vendored_file_nothing_includes_needs_the_full_gate(repo, capsys, path, operation, staged):
+    vendored_change(repo, path, operation)
+    if staged:
+        assert run(repo, capsys, "--staged")[0] == 2
+    else:
+        old = head(repo)
+        git(repo, "commit", "-qm", operation)
+        assert run(repo, capsys, "--range", old, head(repo))[0] == 2
+
+
+def record_full_gate(repo):
+    """The full gate (gate_baseline.py --check) records that it ran; pre-push's evidence
+    cache around it passes."""
+    put(repo, "tools/gate_baseline.py", "import sys\nopen('full-gate', 'a').write(' '.join(sys.argv[1:]) + '\\n')\n")
+    put(repo, "tools/verification_cache.py", "raise SystemExit(0)\n")
+
+
+def full_gate(repo):
+    path = repo / "full-gate"
+    return path.read_text().splitlines() if path.exists() else []
+
+
+def vendored_commit(repo, path, operation):
+    record_full_gate(repo)
+    put(repo, path, "x\n")
+    git(repo, "commit", "-qm", "vendored")
+    if operation == "delete":
+        git(repo, "rm", "-q", path)
+    elif operation == "rename":
+        moved = path.rsplit("/", 1)[0] + "/moved/" + path.rsplit("/", 1)[-1]
+        (repo / moved).parent.mkdir(parents=True)
+        git(repo, "mv", path, moved)
+    else:
+        put(repo, path, "y\n")
+
+
+@pytest.mark.parametrize("path", VENDORED)
+@pytest.mark.parametrize("operation", ["modify", "delete", "rename"])
+def test_pre_commit_runs_the_full_gate_for_a_vendored_change_alone(hook_repo, path, operation):
+    """pre-commit asks the selector before its early exit, so the selector alone decides."""
+    vendored_commit(hook_repo, path, operation)
+    result = hook(hook_repo, "pre-commit")
+    assert result.returncode == 0, result.stderr
+    assert full_gate(hook_repo) == ["--check"], result.stderr
+
+
+@pytest.mark.parametrize("path", VENDORED)
+@pytest.mark.parametrize("operation", ["modify", "delete", "rename"])
+def test_pre_push_runs_the_full_gate_for_a_vendored_change_alone(hook_repo, path, operation):
+    vendored_commit(hook_repo, path, operation)
+    base_sha = head(hook_repo)
+    git(hook_repo, "commit", "-qm", operation)
+    result = hook(hook_repo, "pre-push", f"refs/heads/main {head(hook_repo)} refs/heads/main {base_sha}\n")
+    assert result.returncode == 0, result.stderr
+    assert full_gate(hook_repo) == ["--check"], result.stdout + result.stderr
+
+
+# ---- review round 2 (GPT-6.1-Sol and GPT-6-Astra, 2026-10-11): path shapes that still selected nothing ----
+import os  # noqa: E402
+
+POSIX_ONLY = pytest.mark.skipif(os.name == "nt", reason="Windows cannot create this file name")
+# Without -z git lists each of these quoted and escaped ("inputs/vendor/caf\303\251.lib"), so the
+# listed path began with a double quote and matched no root.
+QUOTED = [
+    "inputs/vendor/café.lib",
+    pytest.param('inputs/vendor/a"b.lib', marks=POSIX_ONLY),
+    pytest.param("inputs/vendor/a\tb.lib", marks=POSIX_ONLY),
+    pytest.param("inputs/vendor/a\nb.lib", marks=POSIX_ONLY),
+    pytest.param("inputs/vendor/a\\b.lib", marks=POSIX_ONLY),
+]
+# The same directories to the compiler on a case-insensitive host; check_case_collisions.py
+# refuses only a whole-path collision, so nothing else stops one of these.
+CASE_VARIANTS = ["Inputs/vendor/nbench/hardware.c", "inputs/Vendor/nbench/hardware.c",
+                 "Inputs/Toolchains/vc71/bin/c1xx.dll"]
+
+
+def selector_exit(repo, capsys, staged, message="change"):
+    """The selector's exit code and output for what is staged now, or for that committed."""
+    if staged:
+        return run(repo, capsys, "--staged")
+    old = head(repo)
+    git(repo, "commit", "-qm", message)
+    return run(repo, capsys, "--range", old, head(repo))
+
+
+@pytest.mark.parametrize("path", QUOTED)
+@pytest.mark.parametrize("operation", ["add", "modify", "delete", "rename-out", "rename-in", "rename-within"])
+@pytest.mark.parametrize("staged", [True, False])
+def test_a_vendored_name_git_would_quote_needs_the_full_gate(repo, capsys, path, operation, staged):
+    vendored_change(repo, path, operation)
+    assert selector_exit(repo, capsys, staged)[0] == 2
+
+
+@pytest.mark.parametrize("path", CASE_VARIANTS)
+@pytest.mark.parametrize("operation", ["add", "modify", "delete"])
+@pytest.mark.parametrize("staged", [True, False])
+def test_a_full_gate_root_in_another_letter_case_needs_the_full_gate(repo, capsys, path, operation, staged):
+    vendored_change(repo, path, operation)
+    assert selector_exit(repo, capsys, staged)[0] == 2
+
+
+@pytest.mark.parametrize("root", ["inputs/vendor", "inputs/toolchains", "Inputs/Vendor"])
+@pytest.mark.parametrize("entry", ["symlink", "gitlink"])
+@pytest.mark.parametrize("staged", [True, False])
+def test_an_entry_at_a_full_gate_root_itself_needs_the_full_gate(repo, capsys, root, entry, staged):
+    """A symlink or gitlink where the directory was: git lists `inputs/vendor`, no slash after it."""
+    base(repo)
+    if entry == "symlink":
+        blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=repo, input="elsewhere",
+                              capture_output=True, text=True, check=True).stdout.strip()
+        git(repo, "update-index", "--add", "--cacheinfo", f"120000,{blob},{root}")
+    else:
+        git(repo, "update-index", "--add", "--cacheinfo", f"160000,{head(repo)},{root}")
+    assert selector_exit(repo, capsys, staged)[0] == 2
+
+
+@pytest.mark.parametrize("path", ["inputs/vendor2/file.lib", "inputs/vendorx", "inputs/toolchains-old/cl.exe",
+                                  "attic/inputs/vendor/file.lib", "mods/inputs/vendor/file.lib"])
+@pytest.mark.parametrize("staged", [True, False])
+def test_a_path_that_only_resembles_a_full_gate_root_selects_nothing(repo, capsys, path, staged):
+    """The slash boundary holds, a root is matched from the start of the path, ignored roots stay ignored."""
+    vendored_change(repo, path, "add")
+    assert selector_exit(repo, capsys, staged) == (0, [])
+
+
+@pytest.mark.parametrize("staged", [True, False])
+def test_a_header_git_would_quote_still_reaches_its_includers(repo, capsys, staged):
+    """The quoted listing hid more than vendored paths: a header named with a non-ASCII
+    character was no header (its listed name ended in a double quote) and selected nothing."""
+    base(repo)
+    header = "game/Inc/Café.h"
+    put(repo, header, "int cafe;\n")
+    (repo / "game/D.cpp").write_bytes('#include "Inc/Café.h"\nvoid d() {}\n'.encode("utf-8"))
+    git(repo, "add", "--", "game/D.cpp")
+    ledger(repo, "game/A.cpp", "game/B.cpp", "game/C.cpp", "game/D.cpp")
+    git(repo, "commit", "-qm", "a header with a non-ASCII name")
+    put(repo, header, "int cafe2;\n")
+    assert selector_exit(repo, capsys, staged) == (0, ["game/D.cpp"])
+
+
+# Coverage the reviewers probed that the selector already had; kept so it stays.
+@pytest.mark.parametrize("shape", ["space", "mode", "copy", "symlink", "gitlink"])
+@pytest.mark.parametrize("staged", [True, False])
+def test_other_changes_under_a_full_gate_root_need_the_full_gate(repo, capsys, shape, staged):
+    path = "inputs/vendor/a file.lib" if shape == "space" else "inputs/vendor/file.lib"
+    put(repo, path, "x\n")
+    base(repo)
+    if shape == "space":
+        put(repo, path, "y\n")
+    elif shape == "mode":
+        git(repo, "update-index", "--chmod=+x", path)
+    elif shape == "copy":
+        put(repo, "inputs/vendor/copied.lib", "x\n")
+    elif shape == "symlink":   # the file becomes a link, by index entry so that Windows can run it
+        blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=repo, input="elsewhere.lib",
+                              capture_output=True, text=True, check=True).stdout.strip()
+        git(repo, "update-index", "--cacheinfo", f"120000,{blob},{path}")
+    else:
+        git(repo, "update-index", "--add", "--cacheinfo", f"160000,{head(repo)},inputs/vendor/submodule")
+    assert selector_exit(repo, capsys, staged)[0] == 2
+
+
+def test_a_vendored_change_that_arrives_by_merge_needs_the_full_gate(repo, capsys):
+    base(repo)
+    old = head(repo)
+    git(repo, "checkout", "-qb", "vendor-branch")
+    put(repo, "inputs/vendor/merge.lib", "x\n")
+    git(repo, "commit", "-qm", "vendor")
+    git(repo, "checkout", "-q", "--detach", old)
+    put(repo, "README.md", "independent\n")
+    git(repo, "commit", "-qm", "main")
+    git(repo, "merge", "--no-ff", "-qm", "merge", "vendor-branch")
+    assert run(repo, capsys, "--range", old, head(repo))[0] == 2
+
+
+HOOK_SHAPES = ["inputs/vendor/café.lib", pytest.param("inputs/vendor/a\tb.lib", marks=POSIX_ONLY),
+               "Inputs/vendor/nbench/hardware.c"]
+
+
+def with_the_real_case_guard(repo):
+    """The stub would prove nothing here: the real guard is what lets these paths through."""
+    shutil.copyfile(TOOLS / "check_case_collisions.py", repo / "tools/check_case_collisions.py")
+    git(repo, "add", "tools/check_case_collisions.py")
+
+
+@pytest.mark.parametrize("path", HOOK_SHAPES)
+def test_pre_commit_runs_the_full_gate_for_a_quoted_or_case_variant_vendored_path(hook_repo, path):
+    with_the_real_case_guard(hook_repo)
+    vendored_commit(hook_repo, path, "modify")
+    result = hook(hook_repo, "pre-commit")
+    assert result.returncode == 0, result.stderr
+    assert full_gate(hook_repo) == ["--check"], result.stderr
+
+
+@pytest.mark.parametrize("path", HOOK_SHAPES)
+def test_pre_push_runs_the_full_gate_for_a_quoted_or_case_variant_vendored_path(hook_repo, path):
+    with_the_real_case_guard(hook_repo)
+    vendored_commit(hook_repo, path, "modify")
+    base_sha = head(hook_repo)
+    git(hook_repo, "commit", "-qm", "modify")
+    result = hook(hook_repo, "pre-push", f"refs/heads/main {head(hook_repo)} refs/heads/main {base_sha}\n")
+    assert result.returncode == 0, result.stderr
+    assert full_gate(hook_repo) == ["--check"], result.stdout + result.stderr
+
+
+# ---- review round 3 (GPT-6.1-Sol, 2026-10-11): a routed root in another letter case ----
+# A ledger source includes Inputs/reference/fixture.tbl and only that table changes: the path
+# began with no root the selector knows, so it selected nothing and both hooks passed without
+# verifying the includer. The selector cannot follow such a path, so it asks for the full gate.
+
+def index_entry(repo, path, text):
+    """Stage `path` by index entry alone, so that a case-insensitive file system cannot
+    fold its spelling into a directory that already exists."""
+    blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=repo, input=text,
+                          capture_output=True, text=True, check=True).stdout.strip()
+    git(repo, "update-index", "--add", "--cacheinfo", f"100644,{blob},{path}")
+
+
+@pytest.mark.parametrize("path", ["inputs/reference/fixture.tbl", "Inputs/reference/fixture.tbl"])
+@pytest.mark.parametrize("staged", [True, False])
+def test_an_included_table_under_a_miscased_root_is_not_dropped(repo, capsys, path, staged):
+    put(repo, path, "1, 2, 3,\n")
+    put(repo, "game/A.cpp", '#include "../' + path + '"\n')
+    ledger(repo, "game/A.cpp")
+    git(repo, "commit", "-qm", "base")
+    put(repo, path, "4, 5, 6,\n")
+    result = selector_exit(repo, capsys, staged)
+    if path.startswith("inputs/"):
+        assert result == (0, ["game/A.cpp"])      # control: the lowercase root is followed
+    else:
+        assert result[0] == 2
+
+
+def miscased_hook_change(repo, path):
+    with_the_real_case_guard(repo)
+    record_full_gate(repo)
+    put(repo, path, "1, 2, 3,\n")
+    put(repo, "game/D.cpp", '#include "../' + path + '"\n')
+    ledger(repo, "game/Lib/Outer.cpp", "game/Net/Host.cpp", "game/Lib/Huff.cpp", "game/D.cpp")
+    git(repo, "commit", "-qm", "base")
+    put(repo, path, "4, 5, 6,\n")
+
+
+def verified_by(repo, path, result):
+    """The lowercase path's includer is built by the scoped gate; the other spelling runs the full gate."""
+    assert result.returncode == 0, result.stderr
+    built = (repo / "built").read_text().splitlines() if (repo / "built").exists() else []
+    if path.startswith("inputs/"):
+        assert built == ["game/D.cpp"] and full_gate(repo) == []
+    else:
+        assert full_gate(repo) == ["--check"], result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("path", ["inputs/reference/fixture.tbl", "Inputs/reference/fixture.tbl"])
+def test_pre_commit_verifies_the_includer_of_a_table_under_a_miscased_root(hook_repo, path):
+    miscased_hook_change(hook_repo, path)
+    verified_by(hook_repo, path, hook(hook_repo, "pre-commit"))
+
+
+@pytest.mark.parametrize("path", ["inputs/reference/fixture.tbl", "Inputs/reference/fixture.tbl"])
+def test_pre_push_verifies_the_includer_of_a_table_under_a_miscased_root(hook_repo, path):
+    miscased_hook_change(hook_repo, path)
+    base_sha = head(hook_repo)
+    git(hook_repo, "commit", "-qm", "change")
+    verified_by(hook_repo, path,
+                hook(hook_repo, "pre-push", f"refs/heads/main {head(hook_repo)} refs/heads/main {base_sha}\n"))
+
+
+# every routed root, miscased at each of its components
+MISCASED = ["Game/Lib/table.tbl", "GAME/Inc/New.h", "Inputs/table.tbl", "inputs/Reference/fixture.tbl",
+            "Inputs/reference/shims/shim.cpp", "inputs/reference/Shims/shim.cpp", "inputs/Reference/shims/shim.h"]
+
+
+@pytest.mark.parametrize("path", MISCASED)
+@pytest.mark.parametrize("operation", ["add", "modify", "delete"])
+@pytest.mark.parametrize("staged", [True, False])
+def test_a_routed_root_in_another_letter_case_needs_the_full_gate(repo, capsys, path, operation, staged):
+    if operation != "add":
+        index_entry(repo, path, "x\n")
+    base(repo)
+    if operation == "delete":
+        git(repo, "update-index", "--force-remove", "--", path)
+    else:
+        index_entry(repo, path, "y\n")
+    assert selector_exit(repo, capsys, staged)[0] == 2
+
+
+@pytest.mark.parametrize("root", ["game", "Game", "inputs", "inputs/reference", "inputs/reference/shims",
+                                  "Inputs/Reference/Shims"])
+@pytest.mark.parametrize("staged", [True, False])
+def test_an_entry_at_a_routed_root_itself_needs_the_full_gate(repo, capsys, root, staged):
+    put(repo, "README.md", "x\n")
+    git(repo, "commit", "-qm", "base")
+    blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=repo, input="elsewhere",
+                          capture_output=True, text=True, check=True).stdout.strip()
+    git(repo, "update-index", "--add", "--cacheinfo", f"120000,{blob},{root}")
+    assert selector_exit(repo, capsys, staged)[0] == 2
+
+
+@pytest.mark.parametrize("path", ["mods/Game/table.tbl", "worldbuilder/Inputs/table.tbl",   # ignored, as spelt
+                                  "Mods/table.tbl", "Mods/game/table.tbl",   # not ignored, and under no routed root
+                                  "docs/Game/table.tbl", "gamex/table.tbl", "Gamex/table.tbl", "inputsx/table.tbl"])
+@pytest.mark.parametrize("staged", [True, False])
+def test_letter_case_outside_the_routed_roots_selects_nothing(repo, capsys, path, staged):
+    base(repo)
+    index_entry(repo, path, "x\n")
+    assert selector_exit(repo, capsys, staged) == (0, [])
+
+
+@pytest.mark.parametrize("staged", [True, False])
+def test_a_header_under_a_miscased_ignored_root_is_still_followed(repo, capsys, staged):
+    """Mods/ is not mods/: the ignored roots are not folded, so its header is a changed header."""
+    base(repo)
+    index_entry(repo, "Mods/Inc/Low.h", "int low3;\n")
+    assert selector_exit(repo, capsys, staged) == (0, ["game/A.cpp"])
