@@ -19,14 +19,14 @@ template<class T> inline T StringBase<T>::getCharAt(int i) const { if(m_data) re
 inline UnicodeString::~UnicodeString() { ((StringBase<unsigned short>*)this)->releaseBuffer(); }
 #undef iswalnum
 extern "C" __declspec(dllimport) int __cdecl iswalnum(unsigned short);
-int bfmeMake_0054F920(int,int);
-unsigned bfmeMakeW2(unsigned,unsigned);
-unsigned bfmeMakeW3(unsigned,unsigned);
-int bfmeMake_0054FA00(int,int);
-unsigned bfmeHash00013412(unsigned,unsigned);
-unsigned bfmeHashCombineB(unsigned,unsigned);
-unsigned bfmeHashCompareA(unsigned,unsigned);
-unsigned bfmeHashCompareB(unsigned,unsigned);
+int Rva0054E760(int,int);
+int Rva0054E860(int,int);
+int Rva0054E8E0(int,int);
+int Rva0054E960(int,int);
+int Rva0054E5E0(int,int);
+int Rva0054E7E0(int,int);
+int Rva0054E660(int,int);
+int Rva0054E6E0(int,int);
 int Rva0054E9E0(int,int);
 struct StringHeader0054FB10 { int field00; short field04; short field06; };
 inline short shortLength0054FB10(const void *s) { StringHeader0054FB10 *p=*(StringHeader0054FB10*const*)s; if(p) return p->field04; return 0; }
@@ -60,7 +60,7 @@ bool BfmeAptScreenOnlineLogin::applyLoginGadgets0054FB10() {
   {
    Gen_0054F1A0 a,b;
    int len=shortLength0054FB10(&text);
-   a.field04=bfmeMake_0054F920(len,len);
+   a.field04=Rva0054E760(len,len);
    b.field04=0x858a1a56;
    differs=a.bfmeDiffers(b);
   }
@@ -69,16 +69,16 @@ bool BfmeAptScreenOnlineLogin::applyLoginGadgets0054FB10() {
    unsigned index=0x342c2be0;
    for(;;) {
     unsigned len78=text78.getLength();
-    if(bfmeHash00013412(index,bfmeMakeW2(len78,len78))==0x342c2be0) break;
+    if(Rva0054E5E0(index,Rva0054E860(len78,len78))==0x342c2be0) break;
     if(iswalnum(text78.getCharAt(Rva0054E9E0(index,index)))) ++count;
-    index=bfmeHashCombineB(index,0x352d2ff1);
+    index=Rva0054E7E0(index,0x352d2ff1);
    }
-   unsigned encodedCount=bfmeMakeW3(count,count);
-   if(bfmeHashCompareA(encodedCount,0x88772dde)!=0xaa37acc2) {
+   unsigned encodedCount=Rva0054E8E0(count,count);
+   if(Rva0054E660(encodedCount,0x88772dde)!=0xaa37acc2) {
     UnicodeString text7c=bfmeGetTextAt7C();
     int len7c=shortLength0054FB10(&text7c);
-    unsigned encodedLen=bfmeMake_0054FA00(len7c,len7c);
-    if(bfmeHashCompareB(encodedLen,0x88772dde)!=0xaa37acc2) field9d=true;
+    unsigned encodedLen=Rva0054E960(len7c,len7c);
+    if(Rva0054E6E0(encodedLen,0x88772dde)!=0xaa37acc2) field9d=true;
    }
   }
   if(old9d!=field9d) {
