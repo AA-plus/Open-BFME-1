@@ -558,9 +558,8 @@ int Rva007FE250( struct Rva007FE250Request *request )
  * jumps, so the call it skips can never run.  That is what a debug print looks
  * like once its guard has folded to a constant zero, and it is reproduced here
  * rather than dropped because the bytes carry it. */
-__declspec(dllimport) int __stdcall Rva01358D00CreateWorker(
-	void *security, unsigned int stackSize, void *start, void *parameter,
-	unsigned int flags, unsigned int *identifier );
+/* Retail IAT VA0x01358D00 is KERNEL32!CreateThread. windows.h supplies
+ * its native HANDLE return and six-argument stdcall declaration. */
 /* Native WinBase.h supplies this missing C-shim API declaration. */
 __declspec(dllimport) BOOL __stdcall SetThreadPriority( HANDLE hThread, int nPriority );
 
@@ -581,7 +580,7 @@ int Rva007FE780( const char *pFormat, ... );
 
 void Rva007FE520( int priority )
 {
-	unsigned int pid;
+	DWORD pid;
 
 	g_Rva0130ACB4 = 0;
 	g_Rva012C3CDCDraining = -1;
@@ -590,8 +589,8 @@ void Rva007FE520( int priority )
 	Rva007FEA20( (struct Rva0130AB68List *)&g_Rva0130AC90 );
 
 	g_Rva0130ACB8Thread = 1;
-	g_Rva0130ACB8Thread = Rva01358D00CreateWorker( 0, 0, (void *)Rva007FE620,
-	                                               0, 0, &pid );
+	g_Rva0130ACB8Thread = (int)CreateThread( 0, 0,
+	    (LPTHREAD_START_ROUTINE)Rva007FE620, 0, 0, &pid );
 
 	if ( g_Rva0130ACB8Thread != 0 )
 	{
