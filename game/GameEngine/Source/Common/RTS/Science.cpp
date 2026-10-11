@@ -107,21 +107,6 @@ ScienceType ScienceStore::getScienceFromInternalName(const AsciiString& name) co
 
 
 //-----------------------------------------------------------------------------
-// return a vector of all the currently-known science names
-// NOTE: this is really only for use by WorldBuilder! Please
-// do not use it in RTS!
-std::vector<AsciiString> ScienceStore::friend_getScienceNames() const
-{
-	std::vector<AsciiString> v;
-	for (ScienceInfoVec::const_iterator it = m_sciences.begin(); it != m_sciences.end(); ++it)
-	{
-		const ScienceInfo* si = (const ScienceInfo*)(*it)->getFinalOverride();
-		NameKeyType nk = (NameKeyType)(si->m_science);
-		v.push_back(TheNameKeyGenerator->keyToName(nk));
-	}
-	return v;
-}
-
 //-----------------------------------------------------------------------------
 // ?addRootSciences@ScienceInfo@@ present-unmatched
 // Still here, unlike its Zero Hour caller: friend_parseScienceDefinition does
