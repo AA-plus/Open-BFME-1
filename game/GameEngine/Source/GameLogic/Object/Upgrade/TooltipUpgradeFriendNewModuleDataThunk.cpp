@@ -35,7 +35,7 @@ public:
 // to the matched forwarder at 0x002D93B0. The proc is taken by address only, so
 // the thunk's no-argument cdecl declaration is the honest view; the
 // cast restores the MultiIniFieldParse ABI.
-extern "C" void __cdecl __identifier("TooltipUpgradeFieldParse")();
+void __cdecl j_000297e9();
 
 class TooltipUpgrade
 {
@@ -49,6 +49,6 @@ ModuleData *TooltipUpgrade::friend_newModuleData(INI *ini)
 	TooltipUpgradeModuleData *data = new TooltipUpgradeModuleData;
 	if (ini)
 		ini->initFromINIMultiProc(data,
-			reinterpret_cast<void (__cdecl *)(MultiIniFieldParse &)>(&__identifier("TooltipUpgradeFieldParse")));
+			reinterpret_cast<void (__cdecl *)(MultiIniFieldParse &)>(&j_000297e9));
 	return (ModuleData *)data;
 }

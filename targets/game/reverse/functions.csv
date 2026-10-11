@@ -150352,7 +150352,7 @@ uw_00c02583,,0x00C02583,11,game/gen_small/uw_gen_012.cpp,matched,gen-funclet;obj
 uw_00c025b0,,0x00C025B0,8,game/gen_small/uw_gen_011.cpp,matched,gen-funclet;object-symbol=$L6222
 uw_00c025b8,,0x00C025B8,11,game/gen_small/uw_gen_012.cpp,matched,gen-funclet;object-symbol=$L554
 uw_00c025c3,,0x00C025C3,8,game/gen_small/uw_gen_013.cpp,matched,gen-funclet;object-symbol=$L10830
-uw_00c025e0,,0x00C025E0,11,game/GameEngine/Source/GameLogic/Object/Upgrade/TooltipUpgradeFriendNewModuleDataThunk.cpp,matched,gen-funclet;parent=?friend_newModuleData@TooltipUpgrade@@SAPAVModuleData@@PAVINI@@@Z;object-symbol=$L330
+uw_00c025e0,,0x00C025E0,11,game/GameEngine/Source/GameLogic/Object/Upgrade/TooltipUpgradeFriendNewModuleDataThunk.cpp,matched,gen-funclet;parent=?friend_newModuleData@TooltipUpgrade@@SAPAVModuleData@@PAVINI@@@Z;object-symbol=$L334;eh-state-pin $L330->$L334: retail unwind map (?friend_newModuleData@TooltipUpgrade@@SAPAVModuleData@@PAVINI@@@Z states [0]) binds this address to $L334;repin-model=gpt-6.1-sol
 uw_00c02600,,0x00C02600,8,game/gen_small/uw_gen_011.cpp,matched,gen-funclet;object-symbol=$L7044
 uw_00c02608,,0x00C02608,11,game/gen_small/uw_gen_015.cpp,matched,gen-funclet;object-symbol=$L15202
 uw_00c02630,,0x00C02630,8,game/gen_small/uw_gen_011.cpp,matched,gen-funclet;object-symbol=$L7044
