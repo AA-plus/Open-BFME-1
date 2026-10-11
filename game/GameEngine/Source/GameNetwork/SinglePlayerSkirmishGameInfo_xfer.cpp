@@ -127,14 +127,9 @@ public:
             m_startPos = -1;
     }
     void setTeamNumber(Int value) { m_teamNumber = value; }
-    void saveOffOriginalInfo()
-    {
-        m_origPlayerTemplate = m_playerTemplate;
-        m_origStartPos = m_startPos;
-        m_origColor = m_color;
-    }
 
 protected:
+    friend class SinglePlayerSkirmishGameInfo;
     SlotState m_state;
     Bool m_isAccepted;
     Bool m_hasMap;
@@ -255,7 +250,15 @@ void SinglePlayerSkirmishGameInfo::xfer(Xfer *xfer)
                 m_slot[slot]->setPlayerTemplate(origPlayerTemplate);
                 m_slot[slot]->setStartPos(origStartPos);
                 m_slot[slot]->setColor(origColor);
-                m_slot[slot]->saveOffOriginalInfo();
+                // GameSlot::saveOffOriginalInfo (0x0061E560, GameInfo.cpp), inlined as retail
+                // inlines it here. Calling an in-class copy made this object emit a second COMDAT
+                // definition that collided with GameInfo.cpp's at link time.
+                {
+                    GameSlot *saved = m_slot[slot];
+                    saved->m_origPlayerTemplate = saved->m_playerTemplate;
+                    saved->m_origStartPos = saved->m_startPos;
+                    saved->m_origColor = saved->m_color;
+                }
                 m_slot[slot]->setTeamNumber(teamNumber);
                 m_slot[slot]->setColor(color);
                 m_slot[slot]->setStartPos(startPos);
