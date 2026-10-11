@@ -100,16 +100,61 @@ R2_TAIL_CALLEE( 0002162A, int )
 R2_TAIL_CALLEE( 000374B1, int )
 R2_TAIL_CALLEE( 00049FDA, bool )
 R2_TAIL_CALLEE( 009794F0, int )
-R2_TAIL_CALLEE( 0092C4B0, int )
-R2_TAIL_CALLEE( 00980B60, int )
 
 R2_GUARDED_TAIL_CALL( Rva000C9580, 0x220, Gen0003C542, bool )
 R2_GUARDED_TAIL_CALL( Rva001BE3D0, 0x1EC, Gen00046AA6, int )
 R2_GUARDED_TAIL_CALL( Rva006819E0, 0x08, Gen0002162A, int )
 R2_GUARDED_TAIL_CALL( Rva00681B40, 0x08, Gen000374B1, int )
 R2_GUARDED_TAIL_CALL( Rva00970690, 0x14, Gen009794F0, int )
-R2_GUARDED_TAIL_CALL( Rva00970BE0, 0x14, Gen0092C4B0, int )
-R2_GUARDED_TAIL_CALL( Rva00971B50, 0x14, Gen00980B60, int )
+// These two tail jumps go directly to the existing retail ledger bodies.
+// Their declarations and layouts are the canonical providers' own views.
+class MeshModelClass;
+class Rva0092C4B0Box
+{
+public:
+	int ramSize() const;
+	char m_pad[0xC8];
+	MeshModelClass *m_model;
+};
+
+struct Rva00980B60Definition
+{
+	char m_reserved[0x18];
+	unsigned int m_count18;
+	char m_reserved1c[0x3c];
+	const char *m_name58;
+	unsigned int encodedLength() const;
+};
+
+class Rva00970BE0
+{
+public:
+	char m_leading[0x14];
+	Rva0092C4B0Box *m_receiver;
+	int call();
+};
+
+int Rva00970BE0::call()
+{
+	if (m_receiver)
+		return m_receiver->ramSize();
+	return 0;
+}
+
+class Rva00971B50
+{
+public:
+	char m_leading[0x14];
+	Rva00980B60Definition *m_receiver;
+	int call();
+};
+
+int Rva00971B50::call()
+{
+	if (m_receiver)
+		return (int)m_receiver->encodedLength();
+	return 0;
+}
 
 extern Gen00049FDA *R2Ptr012F0FE0;
 bool Rva006E17A0()
