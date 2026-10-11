@@ -164,6 +164,12 @@ public:
 	const ThingTemplate *findTemplate(const AsciiString &name);
 };
 
+class BfmeThingFactory
+{
+public:
+	const ThingTemplate *findTemplate(const AsciiString &name);
+};
+
 extern ThingFactory *TheThingFactory;
 
 class Team
@@ -234,7 +240,7 @@ void Team::killTeam(void)
 
 	Player *owner = getControllingPlayer();
 	PlayerTemplate *playerTemplate = owner->getPlayerTemplate();
-	const ThingTemplate *beaconTemplate = TheThingFactory->findTemplate(
+	const ThingTemplate *beaconTemplate = reinterpret_cast<BfmeThingFactory *>(TheThingFactory)->findTemplate(
 		*reinterpret_cast<const AsciiString *>(
 			reinterpret_cast<const unsigned char *>(playerTemplate) + 0xe4));
 
