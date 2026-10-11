@@ -81,10 +81,15 @@ public:
  AsciiString generateLadderGameResultsPacket();
  AsciiString getLadderIP()const;
  unsigned int getSeed()const{return seed;}
- unsigned short getLadderPort()const{return ladderPort;}
  bool isQuickMatch()const{return isQM;}
  GameSpyGameSlot slots[8];char extra[0x24];bool isQM;char qmGap[3];int qmType;char ladderGap[12];unsigned short ladderPort;
 };
+// Retail packet+205 reads the existing unsigned16-bit port at room+450.
+// Keep this access local to the partial staging-room view.
+static __forceinline unsigned short getLadderPort(const GameSpyStagingRoom *room)
+{
+ return room->ladderPort;
+}
 struct PlayerTemplate {char prefix[8];AsciiString side;const AsciiString&getSide()const{return side;}};
 class ScoreKeeper{public:
  char prefix[4];int earnings;char gap[0x84];int unitsBuilt,unitsLost;char gap2[0x80];int buildingsBuilt,buildingsLost;
@@ -155,7 +160,7 @@ AsciiString GameSpyStagingRoom::generateLadderGameResultsPacket()
  AsciiString results;
  results.format("seed=%d,slotNum=%d,sawDesync=%d,sawGameEnd=%d,winningTeam=%d,disconEnd=%d,duration=%d,numPlayers=%d,isQM=%d,map=%s",getSeed(),localSlotNum,TheGameLogic->sawMismatch,sawGameEnd,winningTeam,numTeamsAtGameEnd<2,endFrame,numPlayers,isQuickMatch(),TheGameState->realMapPathToPortableMapPath(getMap()).str());
  AsciiString tempStr;
- tempStr.format(",ladderIP=%s,ladderPort=%d",getLadderIP().str(),getLadderPort());
+ tempStr.format(",ladderIP=%s,ladderPort=%d",getLadderIP().str(),getLadderPort(this));
  results.concat(tempStr);
  int playerID=0;
  for(i=0;i<8;++i){
