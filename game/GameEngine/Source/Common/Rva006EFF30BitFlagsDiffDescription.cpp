@@ -23,7 +23,7 @@ void Rva006EFF30::buildDescription(AsciiString *str, const Rva006EFF30 &other, b
     AsciiString description;
     if (str == 0)
         return;
-    str->clear();
+    str->StringBase<char>::clear();
     int count = 0;
     bool first = true;
     for (int i = 0; i < 304; ++i)
@@ -42,17 +42,17 @@ void Rva006EFF30::buildDescription(AsciiString *str, const Rva006EFF30 &other, b
             if (newSet && !oldSet)
             {
                 description.format(AsciiString("+%s"), ModelConditionNames[i]);
-                static_cast<StringBase<char> *>(str)->concat(description.str(), description.getLength());
+                static_cast<StringBase<char> *>(str)->concat(description.str(), description.StringBase<char>::getLength());
             }
             else if (includeSame && newSet)
             {
                 description.format(AsciiString("%s"), ModelConditionNames[i]);
-                static_cast<StringBase<char> *>(str)->concat(description.str(), description.getLength());
+                static_cast<StringBase<char> *>(str)->concat(description.str(), description.StringBase<char>::getLength());
             }
             else
             {
                 description.format(AsciiString("-%s"), ModelConditionNames[i]);
-                static_cast<StringBase<char> *>(str)->concat(description.str(), description.getLength());
+                static_cast<StringBase<char> *>(str)->concat(description.str(), description.StringBase<char>::getLength());
             }
             first = false;
             ++count;
