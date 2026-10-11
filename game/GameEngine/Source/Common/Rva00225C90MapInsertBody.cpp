@@ -1,5 +1,8 @@
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS
 
+// Native hinted insert at 0x00224DC0: ECX tree; output, by-value hint, value; RET12.
+extern "C" void __identifier("?insert_unique@?$_Rb_tree@IU?$pair@$$CBIUGen_t_00224dc0_m12pod@@@_STL@@U?$_Select1st@U?$pair@$$CBIUGen_t_00224dc0_m12pod@@@_STL@@@2@U?$less@I@2@V?$allocator@U?$pair@$$CBIUGen_t_00224dc0_m12pod@@@_STL@@@2@@_STL@@QAE?AU?$_Rb_tree_iterator@U?$pair@$$CBIUGen_t_00224dc0_m12pod@@@_STL@@U?$_Nonconst_traits@U?$pair@$$CBIUGen_t_00224dc0_m12pod@@@_STL@@@2@@2@U32@ABU?$pair@$$CBIUGen_t_00224dc0_m12pod@@@2@@Z")();
+
 // Open-BFME5: STLport map::insert(iterator, const value_type &), retail 0x00225C90,
 // 31 bytes. The body carried only a machine byte-dump row and no name.
 //
@@ -41,6 +44,10 @@ struct _Nonconst_traits
 template <class Value, class Traits>
 struct _Rb_tree_iterator
 {
+	// Construct directly in the caller return buffer, matching retail.
+	template <class Tree>
+	__forceinline _Rb_tree_iterator(Tree *, const _Rb_tree_iterator &, const Value &);
+
 	_Rb_tree_iterator( const _Rb_tree_iterator &that )
 		: m_node( that.m_node )
 	{
@@ -70,8 +77,20 @@ class _Rb_tree
 public:
 	typedef _Rb_tree_iterator<Value, _Nonconst_traits<Value> > iterator;
 
-	iterator insert_unique( iterator position, const Value &value );
 };
+
+template <class Value, class Traits>
+template <class Tree>
+__forceinline _Rb_tree_iterator<Value, Traits>::_Rb_tree_iterator(
+	Tree *tree, const _Rb_tree_iterator &position, const Value &value)
+{
+	union
+	{
+		void (*address)();
+		void (Tree::*member)(_Rb_tree_iterator *, _Rb_tree_iterator, const Value &);
+	} route = { __identifier("?insert_unique@?$_Rb_tree@IU?$pair@$$CBIUGen_t_00224dc0_m12pod@@@_STL@@U?$_Select1st@U?$pair@$$CBIUGen_t_00224dc0_m12pod@@@_STL@@@2@U?$less@I@2@V?$allocator@U?$pair@$$CBIUGen_t_00224dc0_m12pod@@@_STL@@@2@@_STL@@QAE?AU?$_Rb_tree_iterator@U?$pair@$$CBIUGen_t_00224dc0_m12pod@@@_STL@@U?$_Nonconst_traits@U?$pair@$$CBIUGen_t_00224dc0_m12pod@@@_STL@@@2@@2@U32@ABU?$pair@$$CBIUGen_t_00224dc0_m12pod@@@2@@Z") };
+	(tree->*route.member)(this, position, value);
+}
 
 template <class Key, class Value, class Compare, class Alloc>
 class map
@@ -82,7 +101,7 @@ public:
 
 	iterator insert( iterator position, const value_type &value )
 	{
-		return m_tree.insert_unique( position, value );
+		return iterator(&m_tree, position, value);
 	}
 
 private:
