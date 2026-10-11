@@ -11,7 +11,15 @@
 typedef int Int;
 typedef bool Bool;
 
-extern "C" __declspec(dllimport) Int __stdcall bfmeStatusDXD(void *handle);
+extern "C" __declspec(dllimport) Int __stdcall AIL_3D_sample_status(void *handle);
+
+struct Rva006A5080Slot;
+
+class Rva006A5080Owner
+{
+public:
+	void releaseSlot(Rva006A5080Slot *slot);
+};
 
 class Rva006A9800Elem
 {
@@ -29,7 +37,6 @@ class Rva006A9800This
 public:
 	void vtableSlot(); // declared, never defined/called; not a vtable claim
 	void rva006A5570();
-	void rvaElemClose(Rva006A9800Elem *elem);
 
 private:
 	char pad_0[0xb44];
@@ -46,9 +53,9 @@ void Rva006A9800This::rva006A5570()
 		{
 			Bool done = true;
 			if (e->ptr_4)
-				done = bfmeStatusDXD(e->ptr_4) != 4;
+				done = AIL_3D_sample_status(e->ptr_4) != 4;
 			if (done)
-				rvaElemClose(&m_elemsB44[i]);
+				((Rva006A5080Owner *)this)->releaseSlot((Rva006A5080Slot *)&m_elemsB44[i]);
 		}
 	}
 }
