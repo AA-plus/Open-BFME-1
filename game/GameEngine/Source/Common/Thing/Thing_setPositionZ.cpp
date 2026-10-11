@@ -3,18 +3,31 @@
 // stlport
 // Byte-exact C++ reconstruction of Thing::setPositionZ at retail RVA 0x00132B60.
 
-#include "PreRTS.h"
-#include "Common/PerfTimer.h"
-#include "Common/Thing.h"
+#define __PLACEMENT_VEC_NEW_INLINE
+#include "Lib/BaseType.h"
+#include "Common/GameMemory.h"
+#include "Common/STLTypedefs.h"
+#include "Common/AsciiString.h"
+#include "Common/SubsystemInterface.h"
+#include "Common/OVERRIDE.h"
 #include "Common/ThingTemplate.h"
-#include "Common/ThingFactory.h"
-#include "Common/GlobalData.h"
-#include "Common/NameKeyGenerator.h"
-#include "Common/Player.h"
-#include "Common/PlayerList.h"
-#include "Common/Team.h"
-#include "Lib/Trig.h"
+#include "WWMath/Matrix3D.h"
 #include "GameLogic/TerrainLogic.h"
+
+#define BFME_HAVE_COORD3D
+#define THING_TU_MEMBERS \
+	void setPositionZ(Real z); \
+	void rva00132200(const Matrix3D *mx); \
+	Real getOrientation() const { return m_cachedAngle; }
+#include "thing.h"
+#undef THING_TU_MEMBERS
+#undef BFME_HAVE_COORD3D
+
+enum
+{
+	VALID_ALTITUDE_TERRAIN = 0x02,
+	VALID_ALTITUDE_SEALEVEL = 0x04
+};
 
 class BFMERetailThingVTable
 {
@@ -52,17 +65,9 @@ public:
 	virtual Bool isUnderwater(Real x, Real y, Real *waterZ, Real *terrainZ) = 0;
 };
 
-class BfmeSubC1054;
-
-class BfmeD1054
-{
-public:
-	void bfmeAdd1054(BfmeSubC1054 *item);
-};
-
 void Thing::setPositionZ(Real z)
 {
-	if (!(reinterpret_cast<const unsigned char *>(m_template.operator->())[0xc8] & 0x10))
+	if (!(reinterpret_cast<const unsigned char *>(OVERRIDE<ThingTemplate>(m_template).operator->())[0xc8] & 0x10))
 	{
 		Real oldAngle;
 		Coord3D oldPos;
@@ -96,7 +101,7 @@ void Thing::setPositionZ(Real z)
 		pos.y = m_cachedPos.y;
 		pos.z = z;
 		reinterpret_cast<BFMERetailTerrainLogicVTable *>(TheTerrainLogic)->alignOnTerrain(getOrientation(), pos, stickToGround, mtx);
-		reinterpret_cast<BfmeD1054 *>(this)->bfmeAdd1054(reinterpret_cast<BfmeSubC1054 *>(&mtx));
+		rva00132200(&mtx);
 	}
 	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'\n", m_template->getName().str()));
 }
