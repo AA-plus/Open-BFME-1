@@ -7,6 +7,8 @@
 // 0x0075BBA0 with an adjusted this (this-0x0C). Always clears an AsciiString
 // member at +0x8C to the empty literal at 0x0107301C.
 
+#include "../../../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
+
 class BfmeDrawVTableThing060600
 {
 public:
@@ -18,19 +20,14 @@ public:
     virtual void slot20();
 };
 
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString
-{
-public:
-    void set(const char *text, int len);
-};
-
 extern const char g_Rva0107301CEmptyString[];
 
-class BfmeBaseHelper060600
+class Matrix3D;
+
+class W3DModelDraw
 {
 public:
-    void helper(int param1, void *ptr2);
+    void rva0075BBA0(int param1, const Matrix3D *transform);
 };
 
 class Gen_00760600
@@ -55,9 +52,9 @@ void Gen_00760600::m(int param1)
         vt->slot20();
         void *ptr2 = (unsigned char *)vt + 0x18;
         void *base = (unsigned char *)this - 0x0C;
-        ((BfmeBaseHelper060600 *)base)->helper(param1, ptr2);
+        ((W3DModelDraw *)base)->rva0075BBA0(param1, (const Matrix3D *)ptr2);
     }
     m_flag78 = 1;
     m_unreconstructed_7c = 0;
-    m_name.set(g_Rva0107301CEmptyString, 0);
+    m_name.StringBase<char>::set(g_Rva0107301CEmptyString, 0);
 }
