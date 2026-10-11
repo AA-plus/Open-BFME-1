@@ -107,7 +107,8 @@ public:
 	void bfmeCall_00045c91(void);					// retail 0x00045C91
 };
 
-extern BfmeGlobal_012f4b98 *TheBfmeGlobal_012f4b98;				// 0x012F4B98
+class AptPalantir;
+extern AptPalantir *TheAptPalantir;				// 0x012F4B98
 
 class BfmeGlobal_012f4c64
 {
@@ -149,7 +150,8 @@ public:
 	void bfmeCall_0002ec85(void);					// retail 0x0002EC85
 };
 
-extern BfmeGlobal_012f7fe0 *TheBfmeGlobal_012f7fe0;				// 0x012F7FE0
+class BaseHeightMapRenderObjClass;
+extern BaseHeightMapRenderObjClass *TheTerrainRenderObject;				// 0x012F7FE0
 
 // ?Gen_0006c170@@YAXXZ
 void Gen_0006c170(void)
@@ -172,7 +174,7 @@ void Gen_002ed950(void)
 // ?Gen_002eec60@@YAXXZ
 void Gen_002eec60(void)
 {
-	TheBfmeGlobal_012f4b98->bfmeCall_00045c91();
+	reinterpret_cast<BfmeGlobal_012f4b98 *>(TheAptPalantir)->bfmeCall_00045c91();
 }
 
 // ?Gen_002eff20@@YAXXZ
@@ -256,13 +258,13 @@ void Gen_006a37b0(void)
 // ?Gen_006be3f0@@YAXXZ
 void Gen_006be3f0(void)
 {
-	TheBfmeGlobal_012f7fe0->bfmeCall_00029532();
+	reinterpret_cast<BfmeGlobal_012f7fe0 *>(TheTerrainRenderObject)->bfmeCall_00029532();
 }
 
 // ?Gen_006be400@@YAXXZ
 void Gen_006be400(void)
 {
-	TheBfmeGlobal_012f7fe0->bfmeCall_0002ec85();
+	reinterpret_cast<BfmeGlobal_012f7fe0 *>(TheTerrainRenderObject)->bfmeCall_0002ec85();
 }
 
 // ?Gen_006fd020@@YAXXZ

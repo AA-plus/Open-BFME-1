@@ -113,7 +113,8 @@ struct Rva00367E30Logic
 	void rva00001569(int value);								///< ILT 0x00001569
 };
 
-extern Rva00367E30Logic *TheBfmeGameLogic;
+class GameLogic;
+extern GameLogic *TheGameLogic;
 
 class BfmeZ1100
 {
@@ -183,9 +184,7 @@ public:
 	void hide(Bool hidden);										///< ILT 0x0001420E
 };
 
-class Glo012F4B98Type;
-
-extern Glo012F4B98Type *Glo012F4B98;
+extern AptPalantir *TheAptPalantir;
 
 class InGameUI
 {
@@ -244,7 +243,7 @@ void Rva00613D60Owner::rva00613d60(Rva00613D60Region *region)
 	if (TheRecorder->getMode() == RECORDERMODETYPE_RECORD)
 		TheRecorder->stopRecording();
 
-	((BfmeHost961 *)TheBfmeGameLogic)->bfmeFallback961(0, 0);
+	((BfmeHost961 *)TheGameLogic)->bfmeFallback961(0, 0);
 	((BfmeZ1100 *)TheMouse)->bfmeEnd1100(0);
 	((BfmeHostAAY *)this)->bfmeStep6AAY();
 
@@ -260,16 +259,16 @@ void Rva00613D60Owner::rva00613d60(Rva00613D60Region *region)
 
 	GameMessage *message = TheMessageStream->appendMessage(0x1E);
 
-	((BfmeGameLogicPause *)TheBfmeGameLogic)->setGamePaused(true, 1, false);
-	((BfmeGameLogicPause *)TheBfmeGameLogic)->setGamePaused(false, 1, false);
+	((BfmeGameLogicPause *)TheGameLogic)->setGamePaused(true, 1, false);
+	((BfmeGameLogicPause *)TheGameLogic)->setGamePaused(false, 1, false);
 
-	((Rva00386090 *)TheBfmeGameLogic)->set((Rva0036CA00Str *)((Rva00618E60FieldAddress *)region)->get());
-	((Rva003860F0 *)TheBfmeGameLogic)->set(
+	((Rva00386090 *)TheGameLogic)->set((Rva0036CA00Str *)((Rva00618E60FieldAddress *)region)->get());
+	((Rva003860F0 *)TheGameLogic)->set(
 		(Rva0036CA00Str *)((Rva00618E70FieldAddress *)region)->get(),
 		(Rva0036CA00Str *)((Rva00618E80FieldAddress *)region)->get(),
 		(Rva0036CA00Str *)((Rva00618E90FieldAddress *)region)->get());
 
-	((AptPalantir *)Glo012F4B98)->hide(true);
+	((AptPalantir *)TheAptPalantir)->hide(true);
 	TheInGameUI->u10();
 	TheMouse->setCursorTooltip(UnicodeString::TheEmptyString, -1, 0, 1.0f);
 
