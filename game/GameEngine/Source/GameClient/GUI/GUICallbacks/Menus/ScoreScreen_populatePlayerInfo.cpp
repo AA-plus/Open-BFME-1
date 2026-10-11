@@ -46,7 +46,7 @@ public:
     Int winHide(Bool);
     Int winGetEnabledTextBorderColor();
     void winSetEnabledTextColors(Int,Int);
-    void winSetEnabledImage(Int,const Image*);
+    Int winSetEnabledImage(Int,const Image*);
 };
 enum NameKeyType { NAMEKEY_INVALID=0 };
 class NameKeyGenerator
