@@ -154386,7 +154386,6 @@ uw_00c1b978,,0x00C1B978,8,game/gen_small/uw_gen_000.cpp,matched,gen-funclet;obje
 uw_00c1b980,,0x00C1B980,8,game/gen_small/uw_gen_000.cpp,matched,gen-funclet;object-symbol=$L4794
 uw_00c1b988,,0x00C1B988,8,game/gen_small/uw_gen_000.cpp,matched,gen-funclet;object-symbol=$L4794
 uw_00c1b9b0,,0x00C1B9B0,8,game/gen_small/uw_gen_000.cpp,matched,gen-funclet;object-symbol=$L3552
-uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic.cpp,matched,gen-funclet;parent=?loadMapINI@GameLogic@@QAEXVAsciiString@@@Z;object-symbol=$L121909
 uw_00c1b9d8,,0x00C1B9D8,11,game/gen_small/uw_gen_003.cpp,matched,gen-funclet;object-symbol=$L5055
 uw_00c1b9e3,,0x00C1B9E3,11,game/gen_small/uw_gen_007.cpp,matched,gen-funclet;object-symbol=$L10050
 uw_00c1b9ee,,0x00C1B9EE,11,game/gen_small/uw_gen_007.cpp,matched,gen-funclet;object-symbol=$L10050
@@ -171990,3 +171989,4 @@ uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.c
 ?W3d_Shader_Set_Src_Blend_Func@@YAXPAUW3dShaderStruct@@H@Z,,0x00978670,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
 ?W3d_Shader_Set_Texturing@@YAXPAUW3dShaderStruct@@H@Z,,0x00978680,12,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
 ?dup_009786c0@@YAXXZ,,0x009786C0,8,game/Libraries/Source/WWVegas/WW3D2/w3d_util_convert_shader.cpp,matched,gen-alias;object-symbol=?W3d_Shader_Get_Depth_Compare@@YAHPBUW3dShaderStruct@@@Z;C++ alias; re-homed from w3d_util.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram
+uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic_loadMapINIMethodThunk.cpp,matched,gen-funclet;parent=?loadMapINI@GameLogic@@QAEXVAsciiString@@@Z;object-symbol=$L1642;re-homed from GameLogic.cpp (owner_queue row 120);model=claude-opus-5-5;host=GreatFaram;eh-state-pin $L121909->$L1642: retail unwind map (?loadMapINI@GameLogic@@QAEXVAsciiString@@@Z states [0]) binds this address to $L1642;repin-model=claude-opus-5-5

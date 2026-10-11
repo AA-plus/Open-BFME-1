@@ -3873,78 +3873,7 @@ static void findAndSelectCommandCenter(Object *obj, void* alreadyFound)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-// byte-exact reconstruction: game/GameEngine/Source/Common/GameLogic_loadMapINIMethodThunk.cpp
-// ?loadMapINI@GameLogic@@QAEXVAsciiString@@@Z present-unmatched
-void GameLogic::loadMapINI( AsciiString mapName )
-{
-
-	if (!TheMapCache) {
-		// Need the map cache to get the map and user map directories.
-		return;
-	}
-
-	char filename[_MAX_PATH];
-	char fullFledgeFilename[_MAX_PATH];
-
-	memset(filename, 0, _MAX_PATH);
-	strcpy(filename, mapName.str());
-
-	//
-	// if map name begins with a "SAVE_DIRECTORY\", then the map refers to a map
-	// that has been extracted from a save game file ... in that case we need to get
-	// the pristine map name string in order to manipulate and load the right map.ini
-	// for that map from it's original location
-	//
-	if (TheGameState->isInSaveDirectory(filename))
-		strcpy( filename, TheGameState->getSaveGameInfo()->pristineMapName.str() );
-
-	// sanity
-	int length = strlen(filename);
-	if (length < 4) { 
-		return;
-	}
-
-	// back up over the ".map" extension and to the first directory separator
-	char *extension = filename + length - 4;
-	while ((extension > filename) && (*extension != '\\') && (*extension != '/')) {
-		--extension;
-	}
-	*extension = 0;
-
-
-	sprintf(fullFledgeFilename, "%s\\map.ini", filename);
-	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
-		DEBUG_LOG(("Loading map.ini\n"));
-		INI ini;
-		ini.load( AsciiString(fullFledgeFilename), INI_LOAD_CREATE_OVERRIDES, NULL );
-	}
-
-	sprintf(fullFledgeFilename, "%s\\solo.ini", filename);
-	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
-		DEBUG_LOG(("Loading solo.ini\n"));
-		INI ini;
-		ini.load( AsciiString(fullFledgeFilename), INI_LOAD_CREATE_OVERRIDES, NULL );
-	}
-	
-	// No error here. There could've just *not* been a map.ini file.
-
-	// now look for a string file
-	sprintf(fullFledgeFilename, "%s\\map.str", filename);
-
-	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
-		TheGameText->initMapStringFile(fullFledgeFilename);
-	}
-
-	// we want to do this before doing the actual map load!
-	if (TheDisplay)
-	{
-		const char* ASSET_USAGE_FILE_NAME = "AssetUsage.txt";
-		sprintf(fullFledgeFilename, "%s\\%s", filename, ASSET_USAGE_FILE_NAME);
-		// note: call this EVEN IF THE FILE IN QUESTION DOES NOT EXIST.
-		TheDisplay->doSmartAssetPurgeAndPreload(fullFledgeFilename);
-	}
-
-}
+// Retail GameLogic::loadMapINI (0x00386A30) is implemented in GameLogic_loadMapINIMethodThunk.cpp.
 
 // ------------------------------------------------------------------------------------------------
 /** Process the destroy list, destroying all pending objects.
