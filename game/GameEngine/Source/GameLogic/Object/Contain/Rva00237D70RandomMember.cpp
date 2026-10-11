@@ -44,7 +44,7 @@ class GameLogic
 public:
     Object *findObjectByID(int id);
 };
-extern GameLogic *TheBfmeGameLogic;
+extern GameLogic *TheGameLogic;
 extern int __cdecl GetGameLogicRandomValue(int low, int high, char *file, int line);
 
 class Rva00237D70
@@ -72,7 +72,7 @@ Object *Rva00237D70::rva00237d70()
             "F:\\bfme\\Code\\gameengine\\Source\\GameLogic\\Object\\Contain\\HordeContain\\HordeContain.cpp", 0x1064); index != 0; --index)
             entry = (Rva00237D70TreeNode *)_STL::_Rb_global<bool>::_M_increment(
                 (_STL::_Rb_tree_node_base *)entry);
-        return TheBfmeGameLogic->findObjectByID(entry->m_key);
+        return TheGameLogic->findObjectByID(entry->m_key);
     }
     Rva00237D70MemberList::const_iterator first = members->begin();
     for (int index = GetGameLogicRandomValue(0, members->size() - 1,

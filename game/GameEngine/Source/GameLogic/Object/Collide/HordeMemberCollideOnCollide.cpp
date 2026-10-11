@@ -59,7 +59,7 @@ public:
 	Object *findObjectByID(int);
 };
 
-extern GameLogic *TheBfmeGameLogic;
+extern GameLogic *TheGameLogic;
 
 class HordeMemberCollide
 {
@@ -90,7 +90,7 @@ void HordeMemberCollide::onCollide(Object *other, const Coord3D *, const Coord3D
         facet->add(other);
         return;
     }
-    Object *recordObject = TheBfmeGameLogic->findObjectByID(facet->getLeaderId());
+    Object *recordObject = TheGameLogic->findObjectByID(facet->getLeaderId());
     if (facet->accepts(recordObject))
         return;
     Object *otherContainer = other->getContainedBy();
