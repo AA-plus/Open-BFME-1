@@ -145,16 +145,8 @@ void W3DBridge::renderBridge(Bool wireframe)
 //=============================================================================
 /** Frees all bridge objects (meshes & texture).  */
 //=============================================================================
-// byte-exact reconstruction: game/GameEngineDevice/Source/W3DDevice/GameClient/W3DBridgeClearBridge.cpp
-// ?clearBridge@W3DBridge@@QAEXXZ present-unmatched
-void W3DBridge::clearBridge(void)
-{
-	m_visible = false;
-	REF_PTR_RELEASE(m_bridgeTexture);
-	REF_PTR_RELEASE(m_leftMesh);
-	REF_PTR_RELEASE(m_sectionMesh);
-	REF_PTR_RELEASE(m_rightMesh);
-}
+// W3DBridge::clearBridge: the retail BFME body (0x006D7680, 78 B) lives in W3DBridgeClearBridge.cpp;
+// the Zero Hour donor definition that was here duplicated it.
 
 //=============================================================================
 // W3DBridge::cullBridge
@@ -3690,16 +3682,8 @@ void W3DBridgeBuffer::freeBridgeBuffers(void)
 //=============================================================================
 /** Removes all bridges. */
 //=============================================================================
-// ?clearAllBridges@W3DBridgeBuffer@@QAEXXZ present-unmatched
-void W3DBridgeBuffer::clearAllBridges(void)
-{
-	Int curBridge;
-	for (curBridge=0; curBridge<m_numBridges; curBridge++) {
-		m_bridges[curBridge].clearBridge();
-	}
-	m_curNumBridgeIndices = 0;
-	m_numBridges=0;
-}
+// W3DBridgeBuffer::clearAllBridges: the retail BFME body (0x006D7900, 130 B) lives in W3DBridgeClearBridge.cpp;
+// the Zero Hour donor definition that was here duplicated it.
 
 //=============================================================================
 // W3DBridgeBuffer::loadBridges
