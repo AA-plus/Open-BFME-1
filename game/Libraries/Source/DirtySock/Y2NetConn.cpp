@@ -17,7 +17,8 @@ unsigned int Rva007EB520NetConnMAC( void *adapter );   // 0x007EB520
 void Rva007FD080( int priority );                     // 0x007FD080
 void Rva007FD270( void );                             // 0x007FD270
 void Rva007F8D30( void );                             // 0x007F8D30
-__declspec(dllimport) void __stdcall Rva01358F30Sleep( unsigned int ms );
+// Retail imports KERNEL32!Sleep at IAT VA 0x01358F30.
+extern "C" __declspec(dllimport) void __stdcall Sleep( unsigned long ms );
 
 // The idle-handler table 0x007F8D30 sweeps: sixteen slots of a function and a
 // ref, indexed with an eight-byte stride.  Sixteen is the loop's own bound.
@@ -246,7 +247,7 @@ int Rva007EB650Shutdown( void )
 // call and nothing else in it.
 void Rva007EB680Sleep( unsigned int ms )
 {
-	Rva01358F30Sleep( ms );
+	Sleep( ms );
 }
 
 // THREE SEVEN-BYTE BODIES THAT RETURN ZERO, byte-identical and at three
