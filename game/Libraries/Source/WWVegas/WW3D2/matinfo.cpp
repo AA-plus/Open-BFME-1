@@ -46,24 +46,8 @@
 // The default MaterialInfoClass constructor is supplied by
 // MaterialInfoClassCtor.cpp, retail RVA 0x00931220 (132 bytes).
 
-// ??0MaterialInfoClass@@ present-unmatched
-MaterialInfoClass::MaterialInfoClass(const MaterialInfoClass & src)
-{
-	for (int mi=0; mi<src.VertexMaterials.Count(); mi++) {
-		VertexMaterialClass * vmat;
-		vmat = src.VertexMaterials[mi]->Clone();
-		VertexMaterials.Add(vmat);
-	}
-	
-	for (int ti=0; ti<src.Textures.Count(); ti++) {
-		TextureClass * tex = src.Textures[ti];
-		tex->Add_Ref();
-		Textures.Add(tex);
-	}
-}
-
-
-
+// The copy constructor is supplied by MaterialInfoCopyCtor.cpp.
+// Its complete retail body at RVA 0x00930E00 is 352 bytes.
 
 // ?Clone@MaterialInfoClass@@QBEPAV1@XZ present-unmatched
 MaterialInfoClass * MaterialInfoClass::Clone(void) const
