@@ -51,8 +51,6 @@ public:
 	bool intersectsVisibleBounds(const AABoxClass &box) const;
 	void updateShadowState();
 	bool bfmeIntersectsVisibleBounds(const AABoxClass &box) const;
-	void buildBuffer();
-	void renderBuffer();
 
 	void *m_vtable;
 	unsigned char m_isEnabled;
@@ -81,15 +79,26 @@ extern Vector3 ShadowCameraPosition;
 class W3DVolumetricShadowManager
 {
 public:
-	void setupShadowBuffers();
 	void setShadowStencil(Bool frontFace);
-	void drawAndRelease(Bool frontFace);
 	void renderShadows(void);
 
 private:
 	unsigned char m_bfmeBufferFields[8];
 	W3DVolumetricShadow *m_shadowList;
 	void *m_dynamicShadowVolumesToRender;
+};
+
+struct BfmeVolumetricShadowBufferOwner
+{
+	void buildBuffer();
+	void renderBuffer();
+};
+
+class BfmeVolumetricShadowBufferLocks
+{
+public:
+	void setupRenderState();
+	void drawAndRelease(int frontFace);
 };
 
 void W3DVolumetricShadowManager::renderShadows(void)
@@ -125,14 +134,14 @@ void W3DVolumetricShadowManager::renderShadows(void)
 							if (!setupDone)
 							{
 								setupDone = TRUE;
-								setupShadowBuffers();
+								reinterpret_cast<BfmeVolumetricShadowBufferLocks *>(this)->setupRenderState();
 							}
 							if (!stencilDone)
 							{
 								stencilDone = TRUE;
 								setShadowStencil(FALSE);
 							}
-							shadow->buildBuffer();
+							reinterpret_cast<BfmeVolumetricShadowBufferOwner *>(shadow)->buildBuffer();
 						}
 					}
 				}
@@ -140,21 +149,21 @@ void W3DVolumetricShadowManager::renderShadows(void)
 		}
 
 		if (m_dynamicShadowVolumesToRender)
-			drawAndRelease(FALSE);
+			reinterpret_cast<BfmeVolumetricShadowBufferLocks *>(this)->drawAndRelease(FALSE);
 
 		if (bufferedShadow)
 			{
 				if (!setupDone)
 				{
 					setupDone = TRUE;
-					setupShadowBuffers();
+					reinterpret_cast<BfmeVolumetricShadowBufferLocks *>(this)->setupRenderState();
 				}
 				setShadowStencil(TRUE);
 				for (shadow = bufferedShadow; shadow; shadow = shadow->m_bufferNext)
-					shadow->renderBuffer();
+					reinterpret_cast<BfmeVolumetricShadowBufferOwner *>(shadow)->renderBuffer();
 
 				if (m_dynamicShadowVolumesToRender)
-					drawAndRelease(TRUE);
+					reinterpret_cast<BfmeVolumetricShadowBufferLocks *>(this)->drawAndRelease(TRUE);
 			}
 	}
 
