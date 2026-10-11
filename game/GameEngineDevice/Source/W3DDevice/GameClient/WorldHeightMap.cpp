@@ -226,72 +226,8 @@ RenderObjClass* MapObject::getBridgeRenderObject( BridgeTowerType type )
 
 // verifyValidTeam is byte-verified in MapObject_verifyValidTeamMethodThunk.cpp.
 
-// byte-exact reconstruction: game/GameEngine/Source/Common/MapObject_verifyValidUniqueIDMethodThunk.cpp
-// ?verifyValidUniqueID@MapObject@@QAEXXZ present-unmatched
-void MapObject::verifyValidUniqueID(void)
-{
-	Bool exists;
-	AsciiString uniqueID = getProperties()->getAsciiString(TheKey_uniqueID, &exists);
-	MapObject *obj = MapObject::getFirstMapObject();
-
-	// -1 is the sentinel
-	int highestIndex = -1;
-
-	while (obj) {
-		if (obj == this) {
-			// the first object is THIS OBJECT, cause we've already been added. 
-			obj = obj->getNext();
-			continue;
-		}
-
-		if (obj->isWaypoint()) {
-			// waypoints throw this off. Sad but true. :-(
-			obj = obj->getNext();
-			continue;
-		}
-
-		Bool iterateExists;
-		AsciiString tempStr = obj->getProperties()->getAsciiString(TheKey_uniqueID, &iterateExists);
-		const char* lastSpace = tempStr.reverseFind(' ');
-
-		int testIndex = -1; 
-		if (lastSpace) {
-			testIndex = atoi(lastSpace);
-		}
-
-		if (testIndex > highestIndex) {
-			highestIndex = testIndex;
-		}
-		break;
-	}
-
-	int indexOfThisObject = highestIndex + 1;
-	
-	const char* thingName;
-	if (getThingTemplate()) {
-		thingName = getThingTemplate()->getName().str();
-	} else if (isWaypoint()) {
-		thingName = getWaypointName().str();
-	} else {
-		thingName = getName().str();
-	}
-	const char* pName = thingName;
-
-	while (*thingName) {
-		if ((*thingName) == '/') {
-			pName = thingName + 1;
-		}
-		++thingName;
-	}
-
-	AsciiString newID;
-	if (isWaypoint()) {
-		newID.format("%s", pName);
-	} else {
-		newID.format("%s %d", pName, indexOfThisObject);
-	}
-	getProperties()->setAsciiString(TheKey_uniqueID, newID);
-}
+// The BFME verifyValidUniqueID body is byte-verified in
+// MapObject_verifyValidUniqueIDMethodThunk.cpp. Keep that retail-owned copy.
 
 // ?fastAssignAllUniqueIDs@MapObject@@SAXXZ present-unmatched
 void MapObject::fastAssignAllUniqueIDs(void)
