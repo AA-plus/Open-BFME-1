@@ -793,71 +793,9 @@ static const LadderInfo * getLadderInfo( void )
 	return li;
 }
 
-void PopulateQMLadderComboBox( void )
-{
-	if (!parentWOLQuickMatch || !comboBoxLadder)
-		return;
-
-	isPopulatingLadderBox = true;
-
-	QuickMatchPreferences pref;
-	Int localProfile = TheGameSpyInfo->getLocalProfileID();
-
-	Color specialColor = GameSpyColor[GSCOLOR_MAP_SELECTED];
-	Color normalColor = GameSpyColor[GSCOLOR_MAP_UNSELECTED];
-	Int index;
-	GadgetComboBoxReset( comboBoxLadder );
-	index = GadgetComboBoxAddEntry( comboBoxLadder, TheGameText->fetch("GUI:NoLadder"), normalColor );
-	GadgetComboBoxSetItemData( comboBoxLadder, index, 0 );
-
-	std::set<const LadderInfo *> usedLadders;
-
-	Int selectedPos = 0;
-	AsciiString lastLadderAddr = pref.getLastLadderAddr();
-	UnsignedShort lastLadderPort = pref.getLastLadderPort();
-	const LadderInfo *info = TheLadderList->findLadder( lastLadderAddr, lastLadderPort );
-	if (isValidLadder(info))
-	{
-		usedLadders.insert(info);
-		index = GadgetComboBoxAddEntry( comboBoxLadder, info->name, specialColor );
-		GadgetComboBoxSetItemData( comboBoxLadder, index, (void *)(info->index) );
-		selectedPos = index;
-
-		// we selected a ladder?  No game size choice for us...
-		GadgetComboBoxSetSelectedPos(comboBoxNumPlayers, info->playersPerTeam-1);
-		comboBoxNumPlayers->winEnable( FALSE );
-	}
-	else
-	{
-		comboBoxNumPlayers->winEnable( TRUE );
-	}
-
-	LadderPreferences ladPref;
-	ladPref.loadProfile( localProfile );
-	const LadderPrefMap recentLadders = ladPref.getRecentLadders();
-	for (LadderPrefMap::const_iterator cit = recentLadders.begin(); cit != recentLadders.end(); ++cit)
-	{
-		AsciiString addr = cit->second.address;
-		UnsignedShort port = cit->second.port;
-		if (addr == lastLadderAddr && port == lastLadderPort)
-			continue;
-		const LadderInfo *info = TheLadderList->findLadder( addr, port );
-		if (isValidLadder(info) && usedLadders.find(info) == usedLadders.end())
-		{
-			usedLadders.insert(info);
-			index = GadgetComboBoxAddEntry( comboBoxLadder, info->name, normalColor );
-			GadgetComboBoxSetItemData( comboBoxLadder, index, (void *)(info->index) );
-		}
-	}
-
-	index = GadgetComboBoxAddEntry( comboBoxLadder, TheGameText->fetch("GUI:ChooseLadder"), normalColor );
-	GadgetComboBoxSetItemData( comboBoxLadder, index, (void *)-1 );
-
-	GadgetComboBoxSetSelectedPos( comboBoxLadder, selectedPos );
-	isPopulatingLadderBox = false;
-
-	populateQMSideComboBox(pref.getSide(), getLadderInfo()); // this will set side to random and disable if necessary
-}
+// PopulateQMLadderComboBox: the retail BFME body (0x005091D0, 16 B) lives in PopulateQMLadderComboBox.cpp;
+// the Zero Hour donor definition that was here was the copy the link kept instead of retail's.
+void PopulateQMLadderComboBox( void );
 
 static void populateQuickMatchMapSelectListbox( QuickMatchPreferences& pref )
 {
