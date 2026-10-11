@@ -1,6 +1,21 @@
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Include
-// Evidence: targets/game/reverse/identity_evidence/004b4010-input-and-private-helper.md
+// Evidence: targets/game/reverse/identity_evidence/004b4010-input-and-private-helper.md and 004b42f0-system.md
 #include "ascii_string.h"
+#include "unicode_string.h"
+inline UnicodeString::UnicodeString() { m_text = 0; }
+inline UnicodeString::UnicodeString(const UnicodeString &that)
+{
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(*(const StringBase<unsigned short> *)&that);
+}
+inline UnicodeString::~UnicodeString()
+{
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
+inline UnicodeString &UnicodeString::operator=(const UnicodeString &that)
+{
+    ((StringBase<unsigned short> *)this)->set(*(const StringBase<unsigned short> *)&that);
+    return *this;
+}
 
 enum WindowMsgHandledType { MSG_IGNORED, MSG_HANDLED };
 enum GameWindowMessage
@@ -11,6 +26,7 @@ enum GameWindowMessage
 };
 enum { KEY_TAB = 15, KEY_STATE_DOWN = 2, GWS_MOUSE_TRACK = 0x400, GGM_LEFT_DRAG = 0x4000 };
 #include "Lib/Coord3D.h"
+struct ICoord2D { int x, y; };
 
 // The complete constructor and destructor own the opaque event storage.
 class AudioEventRTS
@@ -30,7 +46,8 @@ class GameFont;
 class WinInstanceData
 {
 public:
-    unsigned char m_head[0x0c];
+    unsigned char m_head[8];
+    unsigned int m_state;
     unsigned int m_style;
     unsigned char m_middle[0x184-0x10];
     GameFont *m_font;
@@ -38,6 +55,12 @@ public:
     unsigned int getStyle() { return m_style; }
     // ?getFont@WinInstanceData@@QAEPAVGameFont@@XZ absent-from-retail
     GameFont *getFont() { return m_font; }
+    void setText(UnicodeString text);
+};
+struct Rva004B42F0Image
+{
+    unsigned char m_head[0x24];
+    ICoord2D m_imageSize;
 };
 class GameWindow
 {
@@ -50,6 +73,11 @@ public:
     int winGetSize(int *width, int *height);
     int winSetSize(int width, int height);
     int winSetPosition(int x, int y);
+    int winGetWindowId();
+    int winEnable(bool enable);
+    unsigned int winGetStatus();
+    unsigned char m_pad00[0x48];
+    Rva004B42F0Image *m_ptr48;
 };
 struct ComboBoxData
 {
@@ -66,9 +94,12 @@ struct ComboBoxData
 };
 struct ListboxData
 {
-    unsigned char m_pad00[0x12];
+    short listLength;
+    short columns;
+    unsigned char m_pad04[0x0e];
     bool m_flag12, m_flag13;
-    unsigned char m_pad14[8];
+    unsigned char m_pad14[4];
+    void *listData;
     GameWindow *upButton, *downButton, *slider;
     unsigned char m_pad28[8];
     int m_int30;
@@ -179,20 +210,20 @@ public:
     virtual unsigned int addAudioEvent(const AudioEventRTS *event);
 };
 extern AudioManager *TheAudio;
+typedef AudioManager Rva004B42F0AudioClient;
+// Both source spellings use the recorded AudioManager singleton.
+#define TheAudioClientUpdate TheAudio
 void bfmeGo1017Y(int a, int b, int c);
 void HideListBox(GameWindow *window);
-struct ICoord2D { int x, y; };
-// ?GadgetComboBoxGetEditBox@@YAPAVGameWindow@@PAV1@@Z absent-from-retail
-static __forceinline GameWindow *GadgetComboBoxGetEditBox(GameWindow *window)
+inline GameWindow *GadgetComboBoxGetEditBox(GameWindow *window)
 {
     ComboBoxData *data = (ComboBoxData *)window->winGetUserData();
     return data && data->editBox ? data->editBox : 0;
 }
-// ?GadgetComboBoxGetListBox@@YAPAVGameWindow@@PAV1@@Z absent-from-retail
-static __forceinline GameWindow *GadgetComboBoxGetListBox(GameWindow *window)
+inline GameWindow *GadgetComboBoxGetListBox(GameWindow *window)
 {
     ComboBoxData *data = (ComboBoxData *)window->winGetUserData();
-    return data ? data->listBox : 0;
+    return data && data->listBox ? data->listBox : 0;
 }
 // ?Rva004B3E30@@YAXPAVGameWindow@@@Z
 static __declspec(noinline) void Rva004B3E30(GameWindow *window)
@@ -200,7 +231,8 @@ static __declspec(noinline) void Rva004B3E30(GameWindow *window)
     if (!window) return;
     ComboBoxData *comboData = (ComboBoxData *)window->winGetUserData();
     comboData->dontHide = false;
-    GameWindow *listBox = GadgetComboBoxGetListBox(window);
+    ComboBoxData *componentData = (ComboBoxData *)window->winGetUserData();
+    GameWindow *listBox = componentData ? componentData->listBox : 0;
     if (!listBox) return;
     if (listBox->winIsHidden())
     {
@@ -244,6 +276,29 @@ static __declspec(noinline) void Rva004B3E30(GameWindow *window)
         TheWindowManager->winSetLoneWindow(0);
     }
 }
+
+typedef int Int;
+typedef short Short;
+typedef bool Bool;
+typedef unsigned int UnsignedInt;
+typedef unsigned int WindowMsgData;
+typedef int Color;
+enum { FALSE = 0, TRUE = 1, WIN_STATE_HILITED = 2, GWM_INPUT_FOCUS = 0x17,
+    GCM_UPDATE_TEXT = 0x402d, GCM_SELECTED = 0x4025, GGM_FOCUS_CHANGE = 0x4003 };
+struct ListEntryRow;
+struct Rva004B42F0EntryData { unsigned char m_head[0x16]; bool m_flag16; };
+UnicodeString GadgetTextEntryGetText(GameWindow *window);
+void GadgetTextEntrySetText(GameWindow *window, UnicodeString text);
+void GadgetTextEntrySetTextColor(GameWindow *window, int color);
+void GadgetListBoxSetSelected(GameWindow *window, int index);
+void GadgetListBoxGetSelected(GameWindow *window, int *index);
+void GadgetListBoxSetItemData(GameWindow *window, void *data, int row, int column = 0);
+void *GadgetListBoxGetItemData(GameWindow *window, int row, int column);
+UnicodeString GadgetListBoxGetTextAndColor(GameWindow *window, int *color, int row, int column);
+void GadgetListBoxReset(GameWindow *window);
+void GadgetListBoxSetListLength(GameWindow *window, int length);
+int GadgetListBoxAddEntryText(GameWindow *window, UnicodeString text, int color, int row, int column, bool overwrite);
+
 // ?GadgetComboBoxInput@@YA?AW4WindowMsgHandledType@@PAVGameWindow@@III@Z
 WindowMsgHandledType GadgetComboBoxInput(GameWindow *window, unsigned int msg, unsigned int mData1, unsigned int mData2)
 {
@@ -293,3 +348,330 @@ WindowMsgHandledType GadgetComboBoxInput(GameWindow *window, unsigned int msg, u
     }
     return MSG_HANDLED;
 }
+
+typedef ComboBoxData Rva004B42F0ComboData;
+typedef ListboxData Rva004B42F0ListboxData;
+// GadgetListBoxSystem ========================================================
+/** Handle system messages for list box */
+//=============================================================================
+// ?GadgetComboBoxSystem@@YA?AW4WindowMsgHandledType@@PAVGameWindow@@III@Z
+WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
+													WindowMsgData mData1, WindowMsgData mData2 )
+{
+//	ListboxData *list = (ListboxData *)window->winGetUserData();
+	WinInstanceData *instData = window->winGetInstanceData();
+	Rva004B42F0ComboData *comboData = (Rva004B42F0ComboData *)window->winGetUserData();
+	switch( msg )
+	{
+		// ------------------------------------------------------------------------
+		case 0x4001:
+		{
+			instData->setText(*(UnicodeString*)mData1);
+			break;
+		}  // end set lavel
+		// ------------------------------------------------------------------------
+		case 0x4026:
+		{
+			if(comboData->editBox)
+				*(UnicodeString*)mData2 = GadgetTextEntryGetText(comboData->editBox);
+			break;
+		} // end Get text
+		// ------------------------------------------------------------------------
+		case 0x4027:
+		{
+			if (comboData->editBox)
+				GadgetTextEntrySetText(comboData->editBox,*(const UnicodeString*)mData1);
+			break;
+		}  // end set text
+		case 0x4031:
+		{
+			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
+																	GCM_UPDATE_TEXT,
+																	(WindowMsgData)window,
+																	0 );
+			if (comboData->listBox)
+			{
+				GadgetListBoxSetSelected(comboData->listBox, -1);
+				HideListBox(window);
+			}
+			break;
+		}
+		// ------------------------------------------------------------------------
+		// if we get sent an edit done message from the text box, lets notify the parent
+		case 0x4030:
+		{
+			if ((GameWindow *)mData1 == comboData->editBox)
+			{
+				HideListBox(window);
+				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
+																		GCM_SELECTED,
+																		(WindowMsgData)window,
+                                                                        (WindowMsgData)-1 );
+                TheWindowManager->winNextTab(window);
+			}
+			break;
+		}
+		// ------------------------------------------------------------------------
+		// Set the selection in the listbox, this will trigger the listbox selected message 
+		// which will set the edit box.
+		case 0x402C:
+		{
+			GameWindow *listBox = GadgetComboBoxGetListBox(window);
+			if(listBox)
+			{
+				if( !listBox->winIsHidden() && mData2 == TRUE )
+					comboData->dontHide = TRUE;
+				GadgetListBoxSetSelected(listBox, (Int)mData1);
+			}
+			break;
+		}
+		// ------------------------------------------------------------------------
+		// Get what the listbox has selected.
+		case 0x402B:
+		{
+			if(comboData->listBox)
+				GadgetListBoxGetSelected(comboData->listBox, (Int *)mData2);
+			else
+			{
+				*(Int *)mData2 = -1;
+			}
+			break;
+		} //case GCM_GET_SELECTION:
+		// ------------------------------------------------------------------------
+		// Set the User Data for the specified listbox element
+		case 0x402A:
+		{
+			if(comboData->listBox)
+			{
+				GadgetListBoxSetItemData(comboData->listBox, (void *)mData2, (Int)mData1 );
+			}
+			break;
+		}
+		// ------------------------------------------------------------------------
+		// Get the user Data for the specified listbox element
+		case 0x4029:
+		{
+			if(comboData->listBox)
+			{
+				*(void **)mData2 = GadgetListBoxGetItemData(comboData->listBox, (Int) mData1, 0);
+			}
+			break;
+		}
+		// ------------------------------------------------------------------------
+		// Pass onto the parent window the selection the listbox just made
+		case 0x4014:
+		{
+				if((GameWindow *) mData1 == comboData->listBox)
+				{
+					if( comboData->dontHide == TRUE )
+					{
+						comboData->dontHide = FALSE;
+					}
+					else
+						HideListBox(window);
+					// Nothing was actually selected, so we just want to 
+					if( mData2 == -1)
+					{
+						break;
+					}
+					//Grab the text that was selected
+					UnicodeString tempUString;
+					Color color;
+					tempUString = GadgetListBoxGetTextAndColor( comboData->listBox, &color, mData2, 0 );
+					GadgetTextEntrySetTextColor(comboData->editBox, color);
+					GadgetTextEntrySetText(comboData->editBox, tempUString);
+					TheWindowManager->winSendSystemMsg( window->winGetOwner(),
+																		GCM_SELECTED,
+																		(WindowMsgData)window,
+																		0 );
+				}
+			break;
+		}
+		// ------------------------------------------------------------------------
+		case 0x4000:
+		{
+			break;
+		}  // end left drag
+		// ------------------------------------------------------------------------
+		case 0x4024:
+		{
+			if ( comboData->listBox )
+				GadgetListBoxReset(comboData->listBox);
+			if ( comboData->editBox )
+				GadgetTextEntrySetText(comboData->editBox, UnicodeString::TheEmptyString );
+			comboData->entryCount = 0;
+			//HideListBox(window);	
+            comboData->dropDownButton->winEnable(false);
+			break;
+		}  // end delete all
+        // ------------------------------------------------------------------------
+        case 0x4023:
+            break;  // end delete entry
+		// ------------------------------------------------------------------------
+		case 0x4005:
+		{
+			HideListBox(window);
+			break;
+		}  // end delete entry
+		// ------------------------------------------------------------------------
+		case 0x4022:
+		{
+			GameWindow *listBox = GadgetComboBoxGetListBox(window);
+			Rva004B42F0ListboxData *listData = (Rva004B42F0ListboxData *)listBox->winGetUserData();
+			Int addedIndex = -1;
+			if( listBox )
+			{
+				//Increase our internal entry count
+				comboData->entryCount++;
+				//If we've exceeded the set listlength, resize it to twice the size
+				if(comboData->entryCount >= listData->listLength)
+					GadgetListBoxSetListLength(listBox,listData->listLength * 2);
+				//Add the entry to the Listbox
+				addedIndex = GadgetListBoxAddEntryText( listBox, *(UnicodeString*)mData1, mData2, -1, 0, true );
+				// Now resize the list box
+				ICoord2D winSize;
+				ICoord2D newSize;
+				ICoord2D editBoxSize;
+				Int listX;
+				Int multiplier;
+				WinInstanceData *listInstData = listBox->winGetInstanceData();
+				GameWindow *editBox = GadgetComboBoxGetEditBox(window);
+				window->winGetSize(&winSize.x, &winSize.y);
+				editBox->winGetSize(&editBoxSize.x, &editBoxSize.y);
+				// If the listbox has less entries then the MaxDisplay, size it smaller
+				if(comboData->entryCount <= comboData->maxDisplay)
+				{
+					multiplier = comboData->entryCount;
+					listX = winSize.x + 16;
+					if(listData->upButton)
+						listData->upButton->winHide(TRUE);
+					if(listData->downButton)
+						listData->downButton->winHide(TRUE);
+					if(listData->slider)
+						listData->slider->winHide(TRUE);
+				}
+				else
+				{
+					//Else size it to the MaxDisplay Size
+					listX = winSize.x;
+					multiplier = comboData->maxDisplay;
+					if(listData->upButton)
+						listData->upButton->winHide(FALSE);
+					if(listData->downButton)
+						listData->downButton->winHide(FALSE);
+					if(listData->slider)
+						listData->slider->winHide(FALSE);
+				}
+				newSize.y = (TheWindowManager->winFontHeight(listInstData->getFont()) + 2) * multiplier + 4;
+				listBox->winSetPosition(0, editBoxSize.y);
+				listBox->winSetSize(listX , newSize.y);
+                if (listBox->winGetStatus() & 8)
+                    comboData->dropDownButton->winEnable(comboData->entryCount > 1);
+			}
+			return( (WindowMsgHandledType) addedIndex );
+		}  // end add entry
+        case 0x1c:
+            if (mData1 && comboData->entryCount <= 1)
+                comboData->dropDownButton->winEnable(false);
+            break;
+        case 0x4003:
+        {
+            GameWindow *editBox = GadgetComboBoxGetEditBox(window);
+            if ((int)mData2 == editBox->winGetWindowId())
+            {
+                Rva004B42F0EntryData *entryData = (Rva004B42F0EntryData *)editBox->winGetUserData();
+                if (mData1) entryData->m_flag16 = false;
+                else entryData->m_flag16 = true;
+            }
+            break;
+        }
+		// ------------------------------------------------------------------------
+		case 1:
+			break;
+		// ------------------------------------------------------------------------
+		case 0x4004:
+		{
+			Int width = (Int)mData1;
+			Int height = (Int)mData2;
+			ICoord2D dropDownSize;
+			// get needed window sizes
+			comboData->dropDownButton->winGetSize( &dropDownSize.x, &dropDownSize.y );
+			GameWindow *listBox = GadgetComboBoxGetListBox(window);
+			if (listBox->winIsHidden())
+			{
+				if (listBox)
+					listBox->winSetSize(width,height);
+				if( comboData->dropDownButton )
+				{
+                    Rva004B42F0Image *image = comboData->dropDownButton->m_ptr48;
+                    if (image)
+                    {
+                        dropDownSize.x = image->m_imageSize.x;
+                        dropDownSize.y = image->m_imageSize.y;
+                        float ratio = (float)height / dropDownSize.y;
+                        dropDownSize.x = (int)(dropDownSize.x * ratio);
+                        dropDownSize.y = (int)(dropDownSize.y * ratio);
+                    }
+                    comboData->dropDownButton->winSetPosition(width - dropDownSize.x, 0);
+                    comboData->dropDownButton->winSetSize(dropDownSize.x, dropDownSize.y);
+				}
+				if( comboData->editBox )
+				{
+					comboData->editBox->winSetPosition(  0,  0 );
+					comboData->editBox->winSetSize( width - dropDownSize.x, height );
+				}
+			}
+			break;
+		}  // end resized
+		// ------------------------------------------------------------------------
+		// ------------------------------------------------------------------------
+		case 2:
+		{
+			if (TheWindowManager) TheWindowManager->winSetLoneWindow(0); // if we are transitioning screens, close all combo boxes
+			if (comboData)
+			{
+				delete(comboData);
+				comboData = 0;
+			}
+			break;
+		}  // end destroy
+		// ------------------------------------------------------------------------
+		case 0x17:
+		{
+			// If we're losing focus
+			if( mData1 == FALSE )
+			{
+				instData->m_state &= ~WIN_STATE_HILITED;
+			}
+			else
+			{
+				instData->m_state |= WIN_STATE_HILITED;
+			}
+			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
+																					GGM_FOCUS_CHANGE,
+																					mData1,
+																					window->winGetWindowId() );
+			Bool wantsFocus = FALSE;
+			GameWindow *editBox = GadgetComboBoxGetEditBox(window);
+			// we need to tell the text entry box to take the focus.
+			TheWindowManager->winSendSystemMsg( editBox, GWM_INPUT_FOCUS, mData1, (WindowMsgData)&wantsFocus );
+			*(Bool*)mData2 = TRUE;
+			break;
+		}  // end input focus
+		case 0x4008:
+        // See if the drop down button was selected
+        if ((GameWindow *)mData1 == comboData->dropDownButton)
+        {
+            if (TheAudioClientUpdate)
+            {
+                AudioEventRTS buttonClick("GUIComboBoxClick", 2);
+                TheAudioClientUpdate->addAudioEvent(&buttonClick);
+            }
+            Rva004B3E30(window);
+        }
+        break;
+		default:
+			return MSG_IGNORED;
+	}  // end switch( msg )
+	return MSG_HANDLED;
+}  // end GadgetListBoxSystem

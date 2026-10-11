@@ -295,11 +295,8 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 //=============================================================================
 // Retail HideListBox is defined in HideListBox_Thunk.cpp.
 
-// GadgetComboBoxSystem =======================================================
 // ?GadgetComboBoxSystem@@YA?AW4WindowMsgHandledType@@PAVGameWindow@@III@Z
-// Body in GadgetComboBoxSystem.asm (exact 2153B retail @ 0x004B42F0).
-// ZH C++ diverges at prologue stack frame (retail sub esp,0xA4 vs ZH 0x2C)
-// and compiled size 2352; identity proved via Ghidra ENTRY + thunk 0x43A887.
+// Body in GadgetComboBoxInput.cpp.
 
 // GadgetComboBoxSetColors ====================================================
 /** Set the colors for a Combo box, note that this will also automatically
