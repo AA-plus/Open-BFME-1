@@ -1,20 +1,9 @@
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
+#include "ascii_string.h"
 
 extern const char g_Rva0107301CEmptyString[];
 
-class BFMERetailAsciiString
-{
-public:
-	BFMERetailAsciiString(const char *text);
-
-	~BFMERetailAsciiString() { releaseBuffer(); }
-
-	void *m_bfmeBufDL;
-
-private:
-	void releaseBuffer();
-};
-
-extern "C" void *__cdecl bfmeFindDL(void *ctx, const BFMERetailAsciiString &name);
+int __cdecl Rva0046F910(int rank, AsciiString *side);
 
 void *__cdecl bfmeLookupDL(void *ctx, int side)
 {
@@ -44,8 +33,8 @@ void *__cdecl bfmeLookupDL(void *ctx, int side)
 	}
 
 	{
-		const BFMERetailAsciiString &text = BFMERetailAsciiString(name);
+		AsciiString text(name);
 
-		return bfmeFindDL(ctx, text);
+		return (void *)Rva0046F910((int)ctx, &text);
 	}
 }
