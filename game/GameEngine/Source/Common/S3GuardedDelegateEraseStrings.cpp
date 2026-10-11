@@ -17,7 +17,7 @@ public:
 				AsciiString *result = position;
 				while (count > 0)
 				{
-					result->set(*source);
+					result->StringBase<char>::set(*source);
 					++source;
 					++result;
 					--count;
