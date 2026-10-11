@@ -36132,7 +36132,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_00739d90@@YAXXZ,,0x00739D90,14,game/GameEngine/Source/Common/VirtualSlot5CallThunk.cpp,matched,object-symbol=?invokeAndSet@VirtualSlot3FlagThunk@@QAEXXZ;Open-BFME5 clean C++ virtual slot three invoke and flag
 ?d_0073a050@@YAXXZ,,0x0073A050,378,game/gen_asm/d_00734180.asm,matched,gen-dump;ghidra=FUN_00b3a050
 ?d_0073ad70@@YAXXZ,,0x0073AD70,277,game/gen_asm/d_00734180.asm,matched,gen-dump;ghidra=FUN_00b3ad70
-?d_0073aed0@@YAXXZ,,0x0073AED0,135,game/gen_asm/d_006f60e0.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_0073cb10@@YAXXZ,,0x0073CB10,1540,game/gen_asm/d_006e2ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00b3cb10
 ?d_0073d4c0@@YAXXZ,,0x0073D4C0,423,game/gen_asm/d_00734180.asm,matched,gen-dump;ghidra=FUN_00b3d4c0
 ?d_0073d6d0@@YAXXZ,,0x0073D6D0,306,game/gen_asm/d_00734180.asm,matched,gen-dump;ghidra=FUN_00b3d6d0
@@ -171984,3 +171983,4 @@ uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.c
 ?Rva009B3180FilterVert@@YAXPAXPAEHPBH@Z,,0x009B3180,989,game/GameEngine/Source/Common/Rva009B3180FilterVert.cpp,matched,Open BFME 2 donor FilterHorizSimple2.cpp at game.dat 0x001C3B70; no image caller references; void cdecl emission contract per coordinator; evidence=targets/game/reverse/identity_evidence/009b3180-noref-abi.md;model=gpt-6.1-sol;host=fleet
 ?Rva009B3F40Vp6Reconstruct@@YAXPAXPAF1E@Z,,0x009B3F40,555,game/GameEngine/Source/Common/Rva009B3F40Vp6Reconstruct.cpp,matched,Open BFME 2 donor QuantizeWmt.cpp at game.dat 0x001C4840; no image caller references; void cdecl emission contract per coordinator; evidence=targets/game/reverse/identity_evidence/009b3f40-noref-abi.md;model=gpt-6.1-sol;host=fleet
 ?Rva009B4170@@YAXPAXPAF1E@Z,,0x009B4170,539,game/GameEngine/Source/Common/Rva009B4170Quantize.cpp,matched,Open BFME 2 donor QuantizeMmx.cpp at game.dat 0x001C4A70; no image caller references; void cdecl emission contract per coordinator; evidence=targets/game/reverse/identity_evidence/009b4170-noref-abi.md;model=gpt-6.1-sol;host=fleet
+?drawablePostDraw@@YAXPAVDrawable@@PAX@Z,,0x0073AED0,135,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DViewDrawablePostDraw.cpp,matched,Open BFME 2 donor W3DViewDrawablePostDraw.cpp at game.dat 0x00085AB7; identity_evidence/0073aed0-bfme2-donor.md; complete draw caller callback ABI and View pitch slot;model=gpt-6.1-sol;host=fleet

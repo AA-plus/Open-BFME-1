@@ -90997,3 +90997,5 @@ _printf,0x009F7244,route=MSVCR71.dll!printf; IAT 0x01359464; CRT printf import j
 ?d_009b3180@@YAXXZ,0x009B3180,address-only compatibility for retired dump; complete leaf extent verified; evidence=targets/game/reverse/identity_evidence/009b3180-noref-abi.md
 ?d_009b3f40@@YAXXZ,0x009B3F40,address-only compatibility for retired dump; complete leaf extent verified; evidence=targets/game/reverse/identity_evidence/009b3f40-noref-abi.md
 ?d_009b4170@@YAXXZ,0x009B4170,address-only compatibility for retired dump; complete leaf extent verified; evidence=targets/game/reverse/identity_evidence/009b4170-noref-abi.md
+?method@Rva0073AD70@@QAEXXZ,0x0073AD70,address-only ABI from complete 277-byte receiver body and caller 0x0073AED0; identity_evidence/0073aed0-bfme2-donor.md
+?d_0073aed0@@YAXXZ,0x0073AED0,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_006f60e0.asm
