@@ -166814,7 +166814,7 @@ uw_00c5c4e0,,0x00C5C4E0,8,game/gen_small/uw_gen_011.cpp,matched,gen-funclet;obje
 uw_00c5c500,,0x00C5C500,8,game/gen_small/uw_gen_011.cpp,matched,gen-funclet;object-symbol=$L5859
 uw_00c5c520,,0x00C5C520,8,game/gen_small/uw_gen_011.cpp,matched,gen-funclet;object-symbol=$L5859
 uw_00c5c540,,0x00C5C540,8,game/gen_small/uw_gen_011.cpp,matched,gen-funclet;object-symbol=$L5859
-uw_00c5c600,,0x00C5C600,11,game/Libraries/Source/WWVegas/WW3D2/meshgeometry.cpp,matched,gen-funclet;parent=?Set_Name@MeshGeometryClass@@QAEXPBD@Z;object-symbol=$L18047
+uw_00c5c600,,0x00C5C600,11,game/Libraries/Source/WWVegas/WW3D2/meshgeometry.cpp,matched,gen-funclet;parent=?Set_Name@MeshGeometryClass@@QAEXPBD@Z;object-symbol=$L17997;eh-state-pin $L18047->$L18037: retail unwind map (?Set_Name@MeshGeometryClass@@QAEXPBD@Z states [0]) binds this address to $L18037;repin-model=gpt-6.1-sol;eh-state-pin $L18037->$L17997: retail unwind map (?Set_Name@MeshGeometryClass@@QAEXPBD@Z states [0]) binds this address to $L17997;repin-model=gpt-6.1-sol
 uw_00c5c640,,0x00C5C640,8,game/gen_small/uw_gen_007.cpp,matched,gen-funclet;object-symbol=$L12712
 uw_00c5c648,,0x00C5C648,11,game/gen_small/uw_gen_010.cpp,matched,gen-funclet;object-symbol=$L1332
 uw_00c5c6a0,,0x00C5C6A0,8,game/gen_small/uw_gen_011.cpp,matched,gen-funclet;object-symbol=$L5859
