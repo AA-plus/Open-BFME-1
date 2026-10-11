@@ -718,9 +718,6 @@ public:
 	virtual long __stdcall bfmeGetModeInfo(BfmeDisplayModeInfo *info) = 0;
 };
 
-extern int BfmeRenderWidth;
-extern int BfmeRenderHeight;
-extern bool BfmeRenderWindowed;
 
 void DX8Wrapper::Get_Render_Target_Resolution(int &width, int &height, int &bitDepth, bool &windowed)
 {
@@ -734,14 +731,14 @@ void DX8Wrapper::Get_Render_Target_Resolution(int &width, int &height, int &bitD
 		width = info.m_bfmeWidth;
 		height = info.m_bfmeHeight;
 		bitDepth = BitDepth;
-		windowed = BfmeRenderWindowed;
+		windowed = IsWindowed;
 	}
 	else
 	{
-		width = BfmeRenderWidth;
-		height = BfmeRenderHeight;
+		width = ResolutionWidth;
+		height = ResolutionHeight;
 		bitDepth = BitDepth;
-		windowed = BfmeRenderWindowed;
+		windowed = IsWindowed;
 	}
 }
 
