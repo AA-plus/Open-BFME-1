@@ -223,44 +223,8 @@ void UnicodeString::concat(const WideChar* s)
 }
 
 // -----------------------------------------------------
-// ?trim@UnicodeString@@ present-unmatched
-void UnicodeString::trim()
-{
-	validate();
-
-	if (m_data)
-	{
-		const WideChar *c = peek();
-
-		//	Strip leading white space from the string.
-		while (c && iswspace(*c))
-		{
-			c++;
-		}
-		if (c != peek())
-		{
-			set(c);
-		}
-
-		if (m_data) // another check, because the previous set() could erase m_data
-		{
-			//	Clip trailing white space from the string.
-			int len = wcslen(peek());
-			for (int index = len-1; index >= 0; index--)
-			{
-				if (iswspace(getCharAt(index)))
-				{
-					removeLastChar();
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-	}
-	validate();
-}
+// Retail wide trim is defined by StringBase<unsigned short> in
+// game/Libraries/Source/string/StringBase.cpp (0x00888ED0).
 
 // -----------------------------------------------------
 // ?removeLastChar@UnicodeString@@ present-unmatched
