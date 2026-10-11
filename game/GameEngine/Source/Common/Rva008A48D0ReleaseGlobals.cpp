@@ -7,12 +7,12 @@ public:
 	virtual void release();
 };
 
-extern Rva008A48D0Item *g_rva008A48D0_0;
-extern Rva008A48D0Item *g_rva008A48D0_1;
-extern Rva008A48D0Item *g_rva008A48D0_2;
-extern Rva008A48D0Item *g_rva008A48D0_3;
-extern Rva008A48D0Item *g_rva008A48D0_4;
-extern Rva008A48D0Item *g_rva008A48D0_5;
+Rva008A48D0Item *g_rva008A48D0_0;
+Rva008A48D0Item *g_rva008A48D0_1;
+Rva008A48D0Item *g_rva008A48D0_2;
+Rva008A48D0Item *g_rva008A48D0_3;
+Rva008A48D0Item *g_rva008A48D0_4;
+Rva008A48D0Item *g_rva008A48D0_5;
 
 void rva008A48D0ReleaseGlobals()
 {

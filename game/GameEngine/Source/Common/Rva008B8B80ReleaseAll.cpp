@@ -7,17 +7,17 @@ public:
 	virtual void release(void) = 0;
 };
 
-extern Rva008B8B80Releasable *g_rva008B8B80_0;
-extern Rva008B8B80Releasable *g_rva008B8B80_1;
-extern Rva008B8B80Releasable *g_rva008B8B80_2;
-extern Rva008B8B80Releasable *g_rva008B8B80_3;
-extern Rva008B8B80Releasable *g_rva008B8B80_4;
-extern Rva008B8B80Releasable *g_rva008B8B80_5;
-extern Rva008B8B80Releasable *g_rva008B8B80_6;
-extern Rva008B8B80Releasable *g_rva008B8B80_7;
-extern Rva008B8B80Releasable *g_rva008B8B80_8;
-extern Rva008B8B80Releasable *g_rva008B8B80_9;
-extern Rva008B8B80Releasable *g_rva008B8B80_10;
+Rva008B8B80Releasable *g_rva008B8B80_0;
+Rva008B8B80Releasable *g_rva008B8B80_1;
+Rva008B8B80Releasable *g_rva008B8B80_2;
+Rva008B8B80Releasable *g_rva008B8B80_3;
+Rva008B8B80Releasable *g_rva008B8B80_4;
+Rva008B8B80Releasable *g_rva008B8B80_5;
+Rva008B8B80Releasable *g_rva008B8B80_6;
+Rva008B8B80Releasable *g_rva008B8B80_7;
+Rva008B8B80Releasable *g_rva008B8B80_8;
+Rva008B8B80Releasable *g_rva008B8B80_9;
+Rva008B8B80Releasable *g_rva008B8B80_10;
 
 void rva008B8B80ReleaseAll(void)
 {
