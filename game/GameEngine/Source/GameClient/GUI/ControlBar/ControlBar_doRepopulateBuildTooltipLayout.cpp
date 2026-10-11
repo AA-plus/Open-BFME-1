@@ -1,21 +1,14 @@
 // cl: /O2 /Ob2 /GR- /EHsc /MD /DNDEBUG /DWIN32 /D_WINDOWS /Igame/Libraries/Source/WWVegas/WWLib
 // BFME-layout reconstruction of ControlBar::doRepopulateBuildTooltipLayout.
 
-#include "string_base.h"
+#include "unicode_string.h"
 
-class UnicodeString : private StringBase<unsigned short>
+inline UnicodeString::UnicodeString() : m_text(0) {}
+
+inline UnicodeString::~UnicodeString()
 {
-public:
-	UnicodeString() : StringBase<unsigned short>()
-	{
-		m_data = 0;
-	}
-
-	~UnicodeString()
-	{
-		((StringBase<unsigned short> *)this)->releaseBuffer();
-	}
-};
+	((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
 class BfmeTooltipWindow
 {
