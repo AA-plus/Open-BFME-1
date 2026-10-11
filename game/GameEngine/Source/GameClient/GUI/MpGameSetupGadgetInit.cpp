@@ -84,16 +84,8 @@ extern void j_0004529b();
 class AptMapPreview
 {
 public:
-    void initGadgets()
-    {
-        union
-        {
-            void (*raw)(void);
-            void (AptMapPreview::*member)(void);
-        } call;
-        call.raw = j_00021cfb;
-        (this->*call.member)();
-    }
+    // Retail ILT 0x00021CFB reaches the body in AptMapPreviewInitGadgets.cpp.
+    void initGadgets();
 };
 
 class MpGameSetup : public FunctorTargetSingle
