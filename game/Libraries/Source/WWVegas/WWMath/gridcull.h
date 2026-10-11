@@ -102,7 +102,7 @@ public:
 	virtual void		Load(ChunkLoadClass & cload);
 	virtual void		Save(ChunkSaveClass & csave);
 
-	virtual int			Get_Object_Count (void) const { return ObjCount; }
+	virtual int			Get_Object_Count (void) const;
 
 	/*
 	** Statistics
