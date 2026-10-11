@@ -36041,7 +36041,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_006a8970@@YAXXZ,,0x006A8970,875,game/gen_asm/d_006a0bb0.asm,matched,gen-dump;ghidra=FUN_00aa8970
 ?d_006a9200@@YAXXZ,,0x006A9200,1168,game/gen_asm/d_006a9200.asm,matched,gen-dump;ghidra=FUN_00aa9200
 ?d_006a9ce0@@YAXXZ,,0x006A9CE0,2393,game/gen_asm/d_00610140.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00aa9ce0
-?d_006acd70@@YAXXZ,,0x006ACD70,153,game/gen_asm/d_006a9200.asm,matched,gen-dump;ghidra=FUN_00aacd70
 ?d_006adae0@@YAXXZ,,0x006ADAE0,458,game/gen_asm/d_006a9200.asm,matched,gen-dump;ghidra=FUN_00aadae0
 ?d_006adee0@@YAXXZ,,0x006ADEE0,305,game/gen_asm/d_00610140.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00aadee0
 ?d_006aef20@@YAXXZ,,0x006AEF20,978,game/gen_asm/d_006a9200.asm,matched,gen-dump;ghidra=FUN_00aaef20
@@ -171984,3 +171983,4 @@ uw_00c221e0,,0x00C221E0,8,game/GameEngine/Source/GameClient/GameTextFetchAscii.c
 ?Rva009B4170@@YAXPAXPAF1E@Z,,0x009B4170,539,game/GameEngine/Source/Common/Rva009B4170Quantize.cpp,matched,Open BFME 2 donor QuantizeMmx.cpp at game.dat 0x001C4A70; no image caller references; void cdecl emission contract per coordinator; evidence=targets/game/reverse/identity_evidence/009b4170-noref-abi.md;model=gpt-6.1-sol;host=fleet
 ?drawablePostDraw@@YAXPAVDrawable@@PAX@Z,,0x0073AED0,135,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DViewDrawablePostDraw.cpp,matched,Open BFME 2 donor W3DViewDrawablePostDraw.cpp at game.dat 0x00085AB7; identity_evidence/0073aed0-bfme2-donor.md; complete draw caller callback ABI and View pitch slot;model=gpt-6.1-sol;host=fleet
 ?Peek_Texture@MeshLoadContextClass@@AAE?AVBfmeHandleCX@@H@Z,,0x0096D080,39,game/GameEngine/Source/Common/Bfme5FiftyEight.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/0096d080-MeshLoadContextClass-Peek_Texture.md;model=gpt-6.1-sol;host=fleet
+?adjust@Rva006AE150Entry@@QAEMPAVRva006AE150Argument@@@Z,,0x006ACD70,153,game/GameEngine/Source/Common/Rva006ACD70VolumeTable.cpp,matched,Complete caller and AsciiString payload construction prove ABI; address-derived owner and bank method retained; evidence=targets/game/reverse/identity_evidence/006acd70-fin-bind.md;model=gpt-6.1-sol;host=fleet

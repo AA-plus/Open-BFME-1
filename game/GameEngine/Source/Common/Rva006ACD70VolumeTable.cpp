@@ -1,5 +1,4 @@
 // ?adjust@Rva006AE150Entry@@QAEMPAVRva006AE150Argument@@@Z
-// partial score=1.0 date=2026-10-11
 // cl: /O2 /G7 /arch:SSE /EHsc /MD /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 #include <set>
