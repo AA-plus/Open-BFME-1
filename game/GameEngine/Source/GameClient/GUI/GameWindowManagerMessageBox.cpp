@@ -34,7 +34,8 @@
 
 #include <stddef.h>
 #include <string.h>
-#include "string_base.h"
+#include "ascii_string.h"
+#include "unicode_string.h"
 
 typedef int Int;
 typedef bool Bool;
@@ -54,75 +55,17 @@ enum {
 	MSG_BOX_OK     = 0x08
 };
 
-// Retail's AsciiString is the StringBase<char> shim: the assignment lands on
-// set(const StringBase<char> &) at 0x00887C90 and concat on the (str, len)
-// overload at 0x00887D60, with the const char * constructor at 0x00888BC0.
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString
+// Canonical UnicodeString lifetime delegates to the retail wide StringBase.
+inline UnicodeString::UnicodeString(const UnicodeString &that)
 {
-public:
-	AsciiString() { m_data = 0; }
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(
+        *(const StringBase<unsigned short> *)&that);
+}
 
-	AsciiString( const char *s )
-	{
-		((StringBase<char> *)this)->StringBase<char>::StringBase( s );
-	}
-
-	// Declared, not implicit: without it the class is trivially copyable and
-	// MSVC passes the 4-byte member by value and destroys the temporary in the
-	// caller. Retail constructs the temporary straight into the outgoing
-	// argument slot and leaves the destruction to the callee.
-	AsciiString( const AsciiString &that )
-	{
-		((StringBase<char> *)this)->StringBase<char>::StringBase(
-			*(const StringBase<char> *)&that );
-	}
-
-	~AsciiString() { ((StringBase<char> *)this)->releaseBuffer(); }
-
-	AsciiString &operator=( const AsciiString &that )
-	{
-		((StringBase<char> *)this)->set( *(const StringBase<char> *)&that );
-		return *this;
-	}
-
-	void set( const char *s, int len )
-	{
-		((StringBase<char> *)this)->set( s, len );
-	}
-
-	// Both inline: retail folds the literal's length into the (str, len)
-	// overload at 0x00887D60, and reads the text straight out of the buffer
-	// eight bytes past the header rather than calling str().
-	void concat( const char *s )
-	{
-		((StringBase<char> *)this)->concat( s, (int)strlen( s ) );
-	}
-
-	const char *str() const
-	{
-		return m_data ? (const char *)(m_data + 8) : "";
-	}
-
-private:
-	char *m_data;
-};
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/UnicodeString.h
-class UnicodeString
+inline UnicodeString::~UnicodeString()
 {
-public:
-	UnicodeString( const UnicodeString &that )
-	{
-		((StringBase<wchar_t> *)this)->StringBase<wchar_t>::StringBase(
-			*(const StringBase<wchar_t> *)&that );
-	}
-
-	~UnicodeString() { ((StringBase<wchar_t> *)this)->releaseBuffer(); }
-
-private:
-	wchar_t *m_data;
-};
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
 struct ICoord2D { Int x, y; };
 
@@ -239,15 +182,15 @@ GameWindow *GameWindowManager::gogoMessageBox( Int x, Int y, Int width, Int heig
 
 	AsciiString menuName;
 	if (useLogo)
-		menuName.set( "QuitMessageBox.wnd:", 19 );
+		menuName.StringBase<char>::set( "QuitMessageBox.wnd:", 19 );
 	else
-		menuName.set( "MessageBox.wnd:", 15 );
+		menuName.StringBase<char>::set( "MessageBox.wnd:", 15 );
 
 	AsciiString tempName;
 	GameWindow *parent = NULL;
 
 	tempName = menuName;
-	tempName.concat( "MessageBoxParent" );
+	tempName.StringBase<char>::concat( "MessageBoxParent", 16 );
 	// Nested here (unlike the button lookups below): retail loads
 	// TheWindowManager's vtable into edi before evaluating nameToKey and calls
 	// through the cached copy.
@@ -291,24 +234,24 @@ GameWindow *GameWindowManager::gogoMessageBox( Int x, Int y, Int width, Int heig
 	NameKeyType buttonOkID = NAMEKEY_INVALID;
 
 	tempName = menuName;
-	tempName.concat( "ButtonOk" );
+	tempName.StringBase<char>::concat( "ButtonOk", 8 );
 	buttonOkID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *buttonOk = TheWindowManager->winGetWindowFromId( parent, buttonOkID );
 	buttonOk->winGetPosition( &buttonX[0], &buttonY[0] );
 
 	tempName = menuName;
-	tempName.concat( "ButtonYes" );
+	tempName.StringBase<char>::concat( "ButtonYes", 9 );
 	NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *buttonYes = TheWindowManager->winGetWindowFromId( parent, buttonYesID );
 
 	tempName = menuName;
-	tempName.concat( "ButtonNo" );
+	tempName.StringBase<char>::concat( "ButtonNo", 8 );
 	NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *buttonNo = TheWindowManager->winGetWindowFromId( parent, buttonNoID );
 	buttonNo->winGetPosition( &buttonX[1], &buttonY[1] );
 
 	tempName = menuName;
-	tempName.concat( "ButtonCancel" );
+	tempName.StringBase<char>::concat( "ButtonCancel", 12 );
 	NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *buttonCancel = TheWindowManager->winGetWindowFromId( parent, buttonCancelID );
 	buttonCancel->winGetPosition( &buttonX[2], &buttonY[2] );
@@ -335,13 +278,13 @@ GameWindow *GameWindowManager::gogoMessageBox( Int x, Int y, Int width, Int heig
 	}
 
 	tempName = menuName;
-	tempName.concat( "StaticTextTitle" );
+	tempName.StringBase<char>::concat( "StaticTextTitle", 15 );
 	NameKeyType staticTextTitleID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *staticTextTitle = TheWindowManager->winGetWindowFromId( parent, staticTextTitleID );
 	GadgetStaticTextSetText( staticTextTitle, titleString );
 
 	tempName = menuName;
-	tempName.concat( "StaticTextMessage" );
+	tempName.StringBase<char>::concat( "StaticTextMessage", 17 );
 	NameKeyType staticTextMessageID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *staticTextMessage = TheWindowManager->winGetWindowFromId( parent, staticTextMessageID );
 	GadgetStaticTextSetText( staticTextMessage, bodyString );
