@@ -1,35 +1,25 @@
 // ??0DefaultPhysicsModuleInfo@FXParticleSystem@@QAE@XZ
-// partial score=0.89 date=2026-09-11
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
+// partial score=0.8462 date=2026-10-11
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/GameEngine/Source/Common/System
+
+#define SNAPSHOT_CPP
+#include "snapshot.h"
+
+inline Snapshot::Snapshot() {}
+
+#include "game_client_random_variable.h"
 
 namespace FXParticleSystem
 {
-
-class GameClientRandomVariable
-{
-public:
-	enum DistributionType { CONSTANT, UNIFORM };
-	GameClientRandomVariable()
-		: m_distribution(CONSTANT), m_minimum(0.0f), m_maximum(0.0f) {}
-	void setRange(float minimum, float maximum, DistributionType distribution);
-
-private:
-	DistributionType m_distribution;
-	float m_minimum;
-	float m_maximum;
-};
-
-class Snapshot
-{
-public:
-	virtual ~Snapshot();
-};
 
 class DefaultPhysicsModuleInfo : public Snapshot
 {
 public:
 	DefaultPhysicsModuleInfo();
 	virtual ~DefaultPhysicsModuleInfo();
+    virtual const char *GetSnapshotName();
+    virtual void LoadPostProcess();
+    virtual void DoXfer(Xfer &xfer);
 
 private:
 	float m_field0;
@@ -41,8 +31,8 @@ private:
 
 // ??0DefaultPhysicsModuleInfo@FXParticleSystem@@QAE@XZ
 DefaultPhysicsModuleInfo::DefaultPhysicsModuleInfo()
+    : m_field3(0)
 {
-	m_field3 = 0;
 	m_field0 = 0.0f;
 	m_field1 = 0.0f;
 	m_field2 = 0.0f;
