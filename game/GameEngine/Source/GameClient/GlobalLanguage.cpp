@@ -119,33 +119,8 @@ void INI::parseLanguageDefinition( INI *ini )
 	ini->initFromINI( TheGlobalLanguageData, TheGlobalLanguageDataFieldParseTable );
 }
 
-// ??0GlobalLanguage@@ present-unmatched
-GlobalLanguage::GlobalLanguage()
-{
-	m_unicodeFontName.clear();
-	//Added By Sadullah Nader
-	//Initializations missing and needed
-	m_unicodeFontFileName.clear();
-	m_unicodeFontName.clear();
-	m_militaryCaptionSpeed = 0;
-	m_useHardWrap = FALSE;
-	m_resolutionFontSizeAdjustment = 0.7f;
-	m_militaryCaptionDelayMS = 750;
-	//End Add
-}
-
-// ??1GlobalLanguage@@ present-unmatched
-GlobalLanguage::~GlobalLanguage()
-{
-	StringListIt it = m_localFonts.begin();
-	while( it != m_localFonts.end())
-	{
-		AsciiString font = *it;
-		RemoveFontResource(font.str());
-		//SendMessage( HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
-		++it;
-	}
-}
+// The BFME constructor and destructor are defined in
+// GlobalLanguageConstructor.cpp and GlobalLanguageDestructor.cpp.
 
 // ?init@GlobalLanguage@@ present-unmatched
 void GlobalLanguage::init( void ) 
