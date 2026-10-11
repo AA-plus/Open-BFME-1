@@ -121,14 +121,11 @@ public:
 };
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameClient/GameWindow.h
-// winHide and bfmeClose take the same argument and do the same job to the same
-// window; each body names the one its own call site pins, and nothing here
-// proves they are one function, so both stand.
+// Retail ILT 0x27F2A reaches winHide; ILT 0x4A1FB reaches winEnable.
 class GameWindow
 {
 public:
 	int winHide(bool hide);
-	void bfmeClose(Bool hide);
 	UnsignedInt winSetStatus(UnsignedInt status);
 	UnsignedInt winClearStatus(UnsignedInt status);
 	Int winSetEnabledImage(Int index, const Image *image);
@@ -517,12 +514,6 @@ struct PopulateInvButtonData
 	Object *transport;
 };
 
-class BfmeUnit1013
-{
-public:
-	void bfmeStop1013(char enable);
-};
-
 void GadgetButtonDrawOverlayImage(GameWindow *window, const Image *image);
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameClient/ControlBar.h
@@ -832,15 +823,15 @@ void ControlBar::doTransportInventoryUI(Object *transport, const CommandSet *com
 		if (m_commandWindows[i] == 0)
 			continue;
 
-		m_commandWindows[i]->bfmeClose(false);
-		((BfmeUnit1013 *)m_commandWindows[i])->bfmeStop1013(0);
+		m_commandWindows[i]->winHide(false);
+		m_commandWindows[i]->winEnable(false);
 		GadgetButtonDrawOverlayImage(m_commandWindows[i], 0);
 
 		if (transport->isDisabledByType(5))
-			m_commandWindows[i]->bfmeClose(true);
+			m_commandWindows[i]->winHide(true);
 
 		if (inventoryCommandCount > transportMax)
-			m_commandWindows[i]->bfmeClose(true);
+			m_commandWindows[i]->winHide(true);
 
 		setControlCommand(m_commandWindows[i], commandButton);
 		if (commandButton->hasOverlayStatus())
