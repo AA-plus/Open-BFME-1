@@ -7,6 +7,7 @@
 // ahead of the pristine copy W3DBufferManager.h would otherwise pull in.
 #define BFME_DYNAMIC_IB_UINT_CTOR_ABI
 #include "../../../../../Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.h"
+#include "../../../../../Libraries/Source/WWVegas/WW3D2/dx8vertexbuffer.h"
 // stlport
 /*
 **	Command & Conquer Generals Zero Hour(tm)
@@ -230,18 +231,6 @@ void W3DBufferManager::ReleaseResources(void)
 	}
 }
 
-class BfmeDX8VertexBuffer
-{
-public:
-	enum UsageType { USAGE_DEFAULT = 0 };
-
-	BfmeDX8VertexBuffer(unsigned fvf, unsigned short count,
-		UsageType usage, unsigned vertexSize);
-
-private:
-	unsigned char m_storage[0x20];
-};
-
 struct BFMEReAcquireBufferManagerView
 {
 	unsigned char m_beforeVertexBuffers[0x9000];
@@ -262,10 +251,9 @@ Bool W3DBufferManager::ReAcquireResources(void)
 		W3DVertexBuffer *vb = self->m_vertexBuffers[i];
 		while (vb)
 		{
-			vb->m_DX8VertexBuffer = (DX8VertexBufferClass *)
-				::new BfmeDX8VertexBuffer(
+			vb->m_DX8VertexBuffer = ::new DX8VertexBufferClass(
 					FVFTypeIndexList[vb->m_format], vb->m_size,
-					BfmeDX8VertexBuffer::USAGE_DEFAULT, 0);
+					DX8VertexBufferClass::USAGE_DEFAULT, 0);
 			if (!vb->m_DX8VertexBuffer)
 				return FALSE;
 			vb = vb->m_nextVB;
