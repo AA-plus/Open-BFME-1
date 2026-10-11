@@ -25,8 +25,7 @@
 // declares that allocator dllimport and the constructor's node allocation comes
 // out as `call [__imp_...]` instead of `call`. Changing that TU's flags would
 // re-open every row it already byte-verifies, so the constructor lives here
-// with the static-lib define instead. FileSystem.cpp keeps its own copy and its
-// present-unmatched marker.
+// with the static-lib define instead. FileSystem.cpp uses this definition.
 
 #include "PreRTS.h"
 #include "Common/FileSystem.h"

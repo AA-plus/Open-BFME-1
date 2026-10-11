@@ -126,12 +126,7 @@ FileSystem	*TheFileSystem = NULL;
 // FileSystem::FileSystem
 //============================================================================
 
-// byte-exact reconstruction: game/GameEngine/Source/Common/System/FileSystemCtor.cpp
-// ??0FileSystem@@ present-unmatched
-FileSystem::FileSystem()
-{
-
-}
+// The retail constructor is defined in FileSystemCtor.cpp.
 
 //============================================================================
 // FileSystem::~FileSystem
