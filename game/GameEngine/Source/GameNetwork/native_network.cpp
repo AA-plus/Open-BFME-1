@@ -303,7 +303,7 @@ struct BFMENetworkPayloadList
 {
 	BFMENetworkPayloadList() : head(0)
 	{
-		head = static_cast<BFMENetworkListNode *>(BFMENetworkAllocate(0x1d8));
+		head = static_cast<BFMENetworkListNode *>(::operator new(0x1d8));
 		size = 0;
 		head->flag = false;
 		head->value = 0;
