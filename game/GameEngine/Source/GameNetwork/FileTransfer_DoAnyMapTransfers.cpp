@@ -43,17 +43,27 @@ private:
 	bool m_hasMap;
 };
 
+// No authored GameInfo header covers this measured BFME layout. Keep the
+// local accessor out of the external GameInfo COMDAT contract.
+class GameInfo;
+static __forceinline int getMapContentsMask(const GameInfo *game);
+
 class GameInfo
 {
 public:
 	const GameSlot *getConstSlot(int slot) const;
 	AsciiString getMap() const;
-	int getMapContentsMask() const { return m_mapContentsMask; }
+	friend int getMapContentsMask(const GameInfo *game);
 
 private:
 	char m_pad[0x48];
 	int m_mapContentsMask;
 };
+
+static __forceinline int getMapContentsMask(const GameInfo *game)
+{
+	return game->m_mapContentsMask;
+}
 
 extern GameInfo *TheGameInfo;
 
@@ -89,24 +99,24 @@ bool DoAnyMapTransfers(GameInfo *game)
 
 	_bfme_showMapTransferLoadScreen(game);
 	bool ok = true;
-	if (TheGameInfo->getMapContentsMask() & 0x200)
+	if (getMapContentsMask(TheGameInfo) & 0x200)
 		ok = false;
 
-	if (ok && (TheGameInfo->getMapContentsMask() & 2))
+	if (ok && (getMapContentsMask(TheGameInfo) & 2))
 		ok = doFileTransfer(GetPreviewFromMap(game->getMap()), mask);
-	if (ok && (TheGameInfo->getMapContentsMask() & 4))
+	if (ok && (getMapContentsMask(TheGameInfo) & 4))
 		ok = doFileTransfer(GetINIFromMap(game->getMap()), mask);
-	if (ok && (TheGameInfo->getMapContentsMask() & 8))
+	if (ok && (getMapContentsMask(TheGameInfo) & 8))
 		ok = doFileTransfer(GetStrFileFromMap(game->getMap()), mask);
-	if (ok && (TheGameInfo->getMapContentsMask() & 16))
+	if (ok && (getMapContentsMask(TheGameInfo) & 16))
 		ok = doFileTransfer(GetSoloINIFromMap(game->getMap()), mask);
-	if (ok && (TheGameInfo->getMapContentsMask() & 32))
+	if (ok && (getMapContentsMask(TheGameInfo) & 32))
 		ok = doFileTransfer(GetAssetUsageFromMap(game->getMap()), mask);
-	if (ok && (TheGameInfo->getMapContentsMask() & 64))
+	if (ok && (getMapContentsMask(TheGameInfo) & 64))
 		ok = doFileTransfer(GetReadmeFromMap(game->getMap()), mask);
-	if (ok && (TheGameInfo->getMapContentsMask() & 128))
+	if (ok && (getMapContentsMask(TheGameInfo) & 128))
 		ok = doFileTransfer(GetArtPreviewFromMap(game->getMap()), mask);
-	if (ok && (TheGameInfo->getMapContentsMask() & 256))
+	if (ok && (getMapContentsMask(TheGameInfo) & 256))
 		ok = doFileTransfer(GetPicPreviewFromMap(game->getMap()), mask);
 	if (ok)
 		ok = doFileTransfer(game->getMap(), mask);
