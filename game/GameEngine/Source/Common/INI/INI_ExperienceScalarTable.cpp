@@ -90,6 +90,14 @@ void parseExperienceScalarTableScalars(INI *ini, void *, void *store, const void
 	}
 }
 
+// Complete retail field table at VA 0x010EA91C, including its terminator.
+extern const char g_Va010EA910[] = "Scalars";
+const FieldParse ExperienceScalarTable::m_fieldParseTable[] =
+{
+	{ g_Va010EA910, parseExperienceScalarTableScalars, 0, 0 },
+	{ 0, 0, 0, 0 }
+};
+
 // ?parseExperienceScalarTable@@YAXPAVINI@@@Z
 void parseExperienceScalarTable( INI *ini )
 {

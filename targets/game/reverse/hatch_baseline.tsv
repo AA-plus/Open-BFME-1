@@ -507,6 +507,7 @@ address_global	game/GameEngine/Source/Common/GlobalFlagClearers_05.cpp	g_Va0134C
 address_global	game/GameEngine/Source/Common/GlobalFlagClearers_05.cpp	g_Va0134FB14	2
 address_global	game/GameEngine/Source/Common/HeaderedDeleteDestructors.cpp	g_Va01337830	3
 address_global	game/GameEngine/Source/Common/INI/INIWaterTextureList.cpp	g_Va012ED648	2	allow=865a0a3e28a7732ecf5b4e166e4645d7f3c2d829
+address_global	game/GameEngine/Source/Common/INI/INI_ExperienceScalarTable.cpp	g_Va010EA910	2	allow=55ba4d71276a585802a404c87bfc023bbdc5cd09
 address_global	game/GameEngine/Source/Common/Q2ScatteredFieldConstructor.cpp	g_Rva00789720Table	2
 address_global	game/GameEngine/Source/Common/R1GuardedPointerTailCalls.cpp	g_Rva005127A0InGameChat	5
 address_global	game/GameEngine/Source/Common/R2SmallMemberOps.cpp	g_Va012F9C54	2	allow=f379a9b98d4b4882e363587f9f8773c0ca65b1e6
