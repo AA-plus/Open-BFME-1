@@ -77,18 +77,7 @@ void ObjectTypes::addObjectType(const AsciiString &objectType)
 }
 
 //-------------------------------------------------------------------------------------------------
-// ?removeObjectType@ObjectTypes@@ present-unmatched
-void ObjectTypes::removeObjectType(const AsciiString &objectType)
-{
-	if (!isInSet(objectType)) {
-		DEBUG_CRASH(("Attempted to remove '%s' from '%s', but it wasn't there.", objectType.str(), m_listName.str()));
-		return;
-	}
-
-	AsciiStringVec::iterator it = std::find(m_objectTypes.begin(), m_objectTypes.end(), objectType);
-
-	m_objectTypes.erase(it);
-}
+// The BFME removeObjectType body is defined in ObjectTypesRemoveObjectType.cpp.
 
 //-------------------------------------------------------------------------------------------------
 // ?getListName@ObjectTypes@@ present-unmatched
