@@ -23,4 +23,8 @@ struct BfmeVecElem_000FAFF0
 	BfmeVecElem_000FAFF0 &operator=( const BfmeVecElem_000FAFF0 & );
 };
 
-template class _STL::vector<BfmeVecElem_000FAFF0>;
+// Emit the two ledger-owned erase overloads rather than the entire vector.
+template BfmeVecElem_000FAFF0 *_STL::vector<BfmeVecElem_000FAFF0>::erase(
+	BfmeVecElem_000FAFF0 *, BfmeVecElem_000FAFF0 *);
+template BfmeVecElem_000FAFF0 *_STL::vector<BfmeVecElem_000FAFF0>::erase(
+	BfmeVecElem_000FAFF0 *);
