@@ -43,10 +43,8 @@
 #include "meshmdl.h"
 #include "texture.h"
 
-// ??0MaterialInfoClass@@ present-unmatched
-MaterialInfoClass::MaterialInfoClass(void)
-{
-}
+// The default MaterialInfoClass constructor is supplied by
+// MaterialInfoClassCtor.cpp, retail RVA 0x00931220 (132 bytes).
 
 // ??0MaterialInfoClass@@ present-unmatched
 MaterialInfoClass::MaterialInfoClass(const MaterialInfoClass & src)
