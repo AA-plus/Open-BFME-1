@@ -1,6 +1,5 @@
 // ?rva0073a050@Rva00739C70@@QAE_NIIIII_N@Z
-// partial score=1.0 date=2026-10-09
-// cl: /DNDEBUG /MD /O2 /Ob2
+// cl: /DNDEBUG /MD /O2 /Ob2 /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWLib
 
 class TextureBaseClass;
 class VirtualReleaser00739E00
@@ -11,10 +10,12 @@ public:
     virtual unsigned long __stdcall Release();
 };
 
-enum WW3DFormat { WW3D_FORMAT_UNKNOWN_0073A050 };
+#include "ww3dformat.h"
+static const WW3DFormat WW3D_FORMAT_UNKNOWN_0073A050 = WW3D_FORMAT_UNKNOWN;
 enum _D3DPOOL { D3DPOOL_DEFAULT_0073A050 };
 
-// The private four-byte view is measured evidence. Shared-header adoption is unresolved.
+// The shared SurfaceClass is 16 bytes with its resource pointer at +8.
+// Retail owns one pointer at +0, so this TU uses its four-byte value view.
 class SurfaceClass
 {
 public:
@@ -88,7 +89,6 @@ public:
     int m_flags;
 };
 
-// ?rva0073a050@Rva00739C70@@QAE_NIIIII_N@Z present-unmatched
 bool Rva00739C70::rva0073a050(unsigned width, unsigned height,
     unsigned logicalWidth, unsigned logicalHeight, unsigned format, bool flag)
 {
