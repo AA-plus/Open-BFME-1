@@ -36,4 +36,7 @@ struct WeaponBarrelInfo
 	WeaponBarrelInfo &operator=( const WeaponBarrelInfo & );
 };
 
-template class _STL::vector<WeaponBarrelInfo>;
+// Emit only the owned assignment. The global versus nested element identity
+// remains a naming prerequisite; this change makes no new identity claim.
+template _STL::vector<WeaponBarrelInfo> &_STL::vector<WeaponBarrelInfo>::operator=(
+	const _STL::vector<WeaponBarrelInfo> &);
