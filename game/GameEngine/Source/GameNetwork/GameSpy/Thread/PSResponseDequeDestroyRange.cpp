@@ -13,4 +13,8 @@ private:
 	unsigned char m_data[0x1f0];
 };
 
-template class _STL::deque<PSResponse>;
+// Emit only the owned destroy-range helper; whole-container instantiation
+// also emits unrelated copying, growth and map operations.
+template void _STL::__destroy_aux<_STL::deque<PSResponse>::iterator>(
+	_STL::deque<PSResponse>::iterator, _STL::deque<PSResponse>::iterator,
+	const _STL::__false_type &);

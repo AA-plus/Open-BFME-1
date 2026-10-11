@@ -13,4 +13,8 @@ private:
 	unsigned char m_data[0x330];
 };
 
-template class _STL::deque<PeerResponse>;
+// Emit only the owned destroy-range helper; whole-container instantiation
+// also emits unrelated copying, growth and map operations.
+template void _STL::__destroy_aux<_STL::deque<PeerResponse>::iterator>(
+	_STL::deque<PeerResponse>::iterator, _STL::deque<PeerResponse>::iterator,
+	const _STL::__false_type &);
