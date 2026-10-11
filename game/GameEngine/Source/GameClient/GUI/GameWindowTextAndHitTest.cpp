@@ -15,15 +15,6 @@
 //
 //   +0x04 callback   +0x08 status   +0x0c size   +0x14 region
 //   +0x30 instance data              +0x1f8 next/prev/parent/child
-//
-// GameWindowDestructorThunk.cpp, the third body in this run (0x00479CD0), does
-// NOT join them, and the reason is the stand-in-name rule again: it reaches the
-// instance data at +0x30 through a destructor thunk pinned as
-// ??1Gen_uw_00021431@@QAE@XZ at 0x00021431, while winSetText reaches the SAME
-// member through a setter thunk pinned as
-// ?setText@WinInstanceDataShim@@QAEXVUnicodeString@@@Z at 0x00004205. One TU
-// can give that member one type name, so one of the two pins would stop
-// existing. Same member, two thunks, two stand-in names, each one load-bearing.
 
 typedef int Int;
 typedef bool Bool;
@@ -86,9 +77,8 @@ public:
 	~UnicodeString() {}
 };
 
-// Shim so the call keeps retail's ILT thunk at 0x00004205 rather than resolving
-// to the matched WinInstanceData::setText body directly.
-class WinInstanceDataShim
+// The matched setter resolves through retail's ILT thunk at RVA 0x00004205.
+class WinInstanceData
 {
 public:
 	void setText(UnicodeString text);
@@ -120,7 +110,7 @@ public:
 	Int m_regionHiX;					// this+0x1c
 	Int m_regionHiY;					// this+0x20
 	char m_pad24[0x30 - 0x24];
-	WinInstanceDataShim m_instData;				// this+0x30
+	WinInstanceData m_instData;				// this+0x30
 	char m_pad34[0x1F8 - 0x34];
 	GameWindow *m_next;					// this+0x1f8
 	GameWindow *m_prev;					// this+0x1fc
