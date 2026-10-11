@@ -33,7 +33,7 @@ class AICommandInterface
 public:
 	void aiAttackObject(Object *object, int maxShots, CommandSourceType source);
 	// BFME command 0x39: what a giant bird does instead of a normal attack.
-	void aiBfmeAttackObject(Object *object, CommandSourceType source);
+	void aiBfmeCommand39(Object *object, CommandSourceType source);
 	void aiAttackTeam(const Team *team, int maxShots, CommandSourceType source);
 	void aiAttackArea(const PolygonTrigger *area, CommandSourceType source);
 	void aiEnter(Object *object, CommandSourceType source);
@@ -51,7 +51,7 @@ public:
 
 #define OBJECT_TU_MEMBERS \
 	void leaveGroup(); \
-	Bool bfmeIsGiantBird() const;
+	int bfmeIsGiantBird() const;
 #include "../Object/object.h"
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/ScriptEngine.h
@@ -105,9 +105,9 @@ void ScriptActions::doNamedAttack(const AsciiString &attackerName, const AsciiSt
 		if (ai)
 		{
 			attacker->leaveGroup();
-			if (attacker->bfmeIsGiantBird())
+			if (static_cast<unsigned char>(attacker->bfmeIsGiantBird()))
 			{
-				ai->m_command.aiBfmeAttackObject(victim, CMD_FROM_SCRIPT);
+				ai->m_command.aiBfmeCommand39(victim, CMD_FROM_SCRIPT);
 			}
 			else
 			{
