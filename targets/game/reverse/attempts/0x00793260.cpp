@@ -1,157 +1,93 @@
 // ?W3DGadgetProgressBarDraw@@YAXPAVGameWindow@@PAVWinInstanceData@@@Z
-// partial score=0.37 date=2026-09-21
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
-// W3DGadgetProgressBarDraw, retail 0x00793260 (553 bytes).
+// partial score=1.0 date=2026-10-11
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
+// stlport
+#define Matrix4x4 Matrix4  // BFME renamed it
+#define __PLACEMENT_VEC_NEW_INLINE  // always.h/GameMemory.h define array placement-new themselves
+// stlport
+/*
+**	Command & Conquer Generals Zero Hour(tm)
+**	Copyright 2025 Electronic Arts Inc.
+**
+**	This program is free software: you can redistribute it and/or modify
+**	it under the terms of the GNU General Public License as published by
+**	the Free Software Foundation, either version 3 of the License, or
+**	(at your option) any later version.
+**
+**	This program is distributed in the hope that it will be useful,
+**	but WITHOUT ANY WARRANTY; without even the implied warranty of
+**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**	GNU General Public License for more details.
+**
+**	You should have received a copy of the GNU General Public License
+**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+////////////////////////////////////////////////////////////////////////////////
+//																																						//
+//  (c) 2001-2003 Electronic Arts Inc.																				//
+//																																						//
+////////////////////////////////////////////////////////////////////////////////
+
+// FILE: W3DProgressBar.cpp ///////////////////////////////////////////////////
+//-----------------------------------------------------------------------------
+//                                                                          
+//                       Westwood Studios Pacific.                          
+//                                                                          
+//                       Confidential Information                           
+//                Copyright (C) 2001 - All Rights Reserved                  
+//                                                                          
+//-----------------------------------------------------------------------------
 //
-// This is the standard (non-image) ProgressBar body from the real
-// W3DProgressBar.cpp; the sibling image-draw variant W3DGadgetProgressBarImageDraw
-// is matched at 0x00793A60 from the same source file, which backs this body's
-// identity too. BFME's WinDrawData arrays are four bytes later than the
-// vendored Zero Hour slice used by the normal headers, so this TU keeps the
-// BFME ABI view local: enabled/disabled/hilite bases are +0x48/+0xB4/+0x120,
-// with { image, color, borderColor } entries and the bar data at index 4.
-// Retail's reads at +0x4C/+0x50, +0xB8/+0xBC, +0x124/+0x128, and the bar
-// entries at +0x7C/+0x80, +0xE8/+0xEC, +0x154/+0x158 establish that layout.
+// Project:   RTS3
 //
-// The manager's three rectangle/line calls are also kept in the local ABI
-// slice.  Their slots are +0xF8, +0xFC, and +0x100 in the BFME vtable.
+// File name: W3DProgressBar.cpp
 //
-// shape_search found that swapping the enabled-branch barColor/barBorder
-// assignment order (vs. the ZH source's natural order) closes the size gap
-// from 538B to 552B (retail 553B) -- shape_family_levers/shape_search
-// exhausted the mechanical choices after that. Remaining residue: retail
-// keeps `progress` live in ebx across the whole body; this candidate gets ebp
-// instead, cascading a register-allocation-driven offset shift through
-// every later instruction even though total size is within 1 byte.
+// Created:   Colin Day, June 2001
+//
+// Desc:      W3D implementation for the progress bar GUI control
+//
+//-----------------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////////////
 
-typedef int Int;
-typedef unsigned int UnsignedInt;
-typedef unsigned char UnsignedByte;
-typedef float Real;
-typedef int Color;
+// SYSTEM INCLUDES ////////////////////////////////////////////////////////////
+#include <stdlib.h>
 
-class Image;
+// USER INCLUDES //////////////////////////////////////////////////////////////
+#include "GameClient/GameWindowGlobal.h"
+#include "GameClient/GameWindowManager.h"
+#include "GameClient/GadgetProgressBar.h"
+#include "W3DDevice/GameClient/W3DGadget.h"
+#include "W3DDevice/GameClient/W3DDisplay.h"
 
-enum { WIN_STATUS_ENABLED = 0x00000008 };
-enum { WIN_STATE_HILITED = 0x00000002 };
-enum { WIN_COLOR_UNDEFINED = 0x00FFFFFF };
+// DEFINES ////////////////////////////////////////////////////////////////////
 
-struct ICoord2D
+// PRIVATE TYPES //////////////////////////////////////////////////////////////
+
+// PRIVATE DATA ///////////////////////////////////////////////////////////////
+
+// PUBLIC DATA ////////////////////////////////////////////////////////////////
+
+// PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
+
+// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+// W3DGadgetProgressBarDraw ===================================================
+/** Draw colored Progress Bar using standard graphics */
+//=============================================================================
+template <class Coord>
+struct DefaultConstructed00793260 : Coord
 {
-	Int x;
-	Int y;
+    DefaultConstructed00793260() {}
 };
 
-struct WinDrawData
-{
-	const Image *image;
-	Color color;
-	Color borderColor;
-};
-
-class WinInstanceData
-{
-public:
-	virtual ~WinInstanceData(void);
-	UnsignedInt getState(void) { return m_state; }
-
-	Int m_id;
-	UnsignedInt m_state;
-	UnsignedInt m_style;
-	UnsignedInt m_status;
-	void *m_owner;
-	WinDrawData m_enabledDrawData[9];
-	WinDrawData m_disabledDrawData[9];
-	WinDrawData m_hiliteDrawData[9];
-};
-
-class GameWindow
-{
-public:
-	virtual void winDrawBorder(void) = 0;
-	void *winGetUserData(void);
-	Int winGetScreenPosition(Int *x, Int *y);
-	Int winGetSize(Int *width, Int *height);
-	UnsignedInt winGetStatus(void);
-
-	Color winGetEnabledColor(Int index) { return m_instData.m_enabledDrawData[index].color; }
-	Color winGetEnabledBorderColor(Int index) { return m_instData.m_enabledDrawData[index].borderColor; }
-	Color winGetDisabledColor(Int index) { return m_instData.m_disabledDrawData[index].color; }
-	Color winGetDisabledBorderColor(Int index) { return m_instData.m_disabledDrawData[index].borderColor; }
-	Color winGetHiliteColor(Int index) { return m_instData.m_hiliteDrawData[index].color; }
-	Color winGetHiliteBorderColor(Int index) { return m_instData.m_hiliteDrawData[index].borderColor; }
-
-private:
-	unsigned char m_unreconstructed_00[0x2c];
-	WinInstanceData m_instData;
-};
-
-#define BFME_WINDOW_MANAGER_SLOT(n) virtual void unused##n(void);
-class GameWindowManager
-{
-public:
-	BFME_WINDOW_MANAGER_SLOT(00) BFME_WINDOW_MANAGER_SLOT(01) BFME_WINDOW_MANAGER_SLOT(02)
-	BFME_WINDOW_MANAGER_SLOT(03) BFME_WINDOW_MANAGER_SLOT(04) BFME_WINDOW_MANAGER_SLOT(05)
-	BFME_WINDOW_MANAGER_SLOT(06) BFME_WINDOW_MANAGER_SLOT(07) BFME_WINDOW_MANAGER_SLOT(08)
-	BFME_WINDOW_MANAGER_SLOT(09) BFME_WINDOW_MANAGER_SLOT(10) BFME_WINDOW_MANAGER_SLOT(11)
-	BFME_WINDOW_MANAGER_SLOT(12) BFME_WINDOW_MANAGER_SLOT(13) BFME_WINDOW_MANAGER_SLOT(14)
-	BFME_WINDOW_MANAGER_SLOT(15) BFME_WINDOW_MANAGER_SLOT(16) BFME_WINDOW_MANAGER_SLOT(17)
-	BFME_WINDOW_MANAGER_SLOT(18) BFME_WINDOW_MANAGER_SLOT(19) BFME_WINDOW_MANAGER_SLOT(20)
-	BFME_WINDOW_MANAGER_SLOT(21) BFME_WINDOW_MANAGER_SLOT(22) BFME_WINDOW_MANAGER_SLOT(23)
-	BFME_WINDOW_MANAGER_SLOT(24) BFME_WINDOW_MANAGER_SLOT(25) BFME_WINDOW_MANAGER_SLOT(26)
-	BFME_WINDOW_MANAGER_SLOT(27) BFME_WINDOW_MANAGER_SLOT(28) BFME_WINDOW_MANAGER_SLOT(29)
-	BFME_WINDOW_MANAGER_SLOT(30) BFME_WINDOW_MANAGER_SLOT(31) BFME_WINDOW_MANAGER_SLOT(32)
-	BFME_WINDOW_MANAGER_SLOT(33) BFME_WINDOW_MANAGER_SLOT(34) BFME_WINDOW_MANAGER_SLOT(35)
-	BFME_WINDOW_MANAGER_SLOT(36) BFME_WINDOW_MANAGER_SLOT(37) BFME_WINDOW_MANAGER_SLOT(38)
-	BFME_WINDOW_MANAGER_SLOT(39) BFME_WINDOW_MANAGER_SLOT(40) BFME_WINDOW_MANAGER_SLOT(41)
-	BFME_WINDOW_MANAGER_SLOT(42) BFME_WINDOW_MANAGER_SLOT(43) BFME_WINDOW_MANAGER_SLOT(44)
-	BFME_WINDOW_MANAGER_SLOT(45) BFME_WINDOW_MANAGER_SLOT(46) BFME_WINDOW_MANAGER_SLOT(47)
-	BFME_WINDOW_MANAGER_SLOT(48) BFME_WINDOW_MANAGER_SLOT(49) BFME_WINDOW_MANAGER_SLOT(50)
-	BFME_WINDOW_MANAGER_SLOT(51) BFME_WINDOW_MANAGER_SLOT(52) BFME_WINDOW_MANAGER_SLOT(53)
-	BFME_WINDOW_MANAGER_SLOT(54) BFME_WINDOW_MANAGER_SLOT(55) BFME_WINDOW_MANAGER_SLOT(56)
-	BFME_WINDOW_MANAGER_SLOT(57) BFME_WINDOW_MANAGER_SLOT(58) BFME_WINDOW_MANAGER_SLOT(59)
-	BFME_WINDOW_MANAGER_SLOT(60) BFME_WINDOW_MANAGER_SLOT(61)
-
-	virtual void winFillRect(Color color, Real width,
-									 Int startX, Int startY, Int endX, Int endY);
-	virtual void winOpenRect(Color color, Real width,
-									 Int startX, Int startY, Int endX, Int endY);
-	virtual void winDrawLine(Color color, Real width,
-									 Int startX, Int startY, Int endX, Int endY);
-};
-#undef BFME_WINDOW_MANAGER_SLOT
-
-extern GameWindowManager *TheWindowManager;
-
-#define FALSE 0
-#define BitTest(bits, mask) (((bits) & (mask)) != 0)
-
-inline Color GameMakeColor(UnsignedByte red, UnsignedByte green,
-												 UnsignedByte blue, UnsignedByte alpha)
-{
-	return ((Color)alpha << 24) | ((Color)red << 16) |
-			((Color)green << 8) | (Color)blue;
-}
-
-#define WIN_DRAW_LINE_WIDTH 1.0f
-
-inline Color GadgetProgressBarGetEnabledColor(GameWindow *g) { return g->winGetEnabledColor(0); }
-inline Color GadgetProgressBarGetEnabledBorderColor(GameWindow *g) { return g->winGetEnabledBorderColor(0); }
-inline Color GadgetProgressBarGetEnabledBarColor(GameWindow *g) { return g->winGetEnabledColor(4); }
-inline Color GadgetProgressBarGetEnabledBarBorderColor(GameWindow *g) { return g->winGetEnabledBorderColor(4); }
-inline Color GadgetProgressBarGetDisabledColor(GameWindow *g) { return g->winGetDisabledColor(0); }
-inline Color GadgetProgressBarGetDisabledBorderColor(GameWindow *g) { return g->winGetDisabledBorderColor(0); }
-inline Color GadgetProgressBarGetDisabledBarColor(GameWindow *g) { return g->winGetDisabledColor(4); }
-inline Color GadgetProgressBarGetDisabledBarBorderColor(GameWindow *g) { return g->winGetDisabledBorderColor(4); }
-inline Color GadgetProgressBarGetHiliteColor(GameWindow *g) { return g->winGetHiliteColor(0); }
-inline Color GadgetProgressBarGetHiliteBorderColor(GameWindow *g) { return g->winGetHiliteBorderColor(0); }
-inline Color GadgetProgressBarGetHiliteBarColor(GameWindow *g) { return g->winGetHiliteColor(4); }
-inline Color GadgetProgressBarGetHiliteBarBorderColor(GameWindow *g) { return g->winGetHiliteBorderColor(4); }
-
-// ?W3DGadgetProgressBarDraw@@YAXPAVGameWindow@@PAVWinInstanceData@@@Z
 void W3DGadgetProgressBarDraw(GameWindow *window, WinInstanceData *instData)
 {
-	ICoord2D origin, size, start, end;
+	DefaultConstructed00793260<ICoord2D> origin, size, start, end;
 	Color backColor, backBorder, barColor, barBorder;
 	Int progress = (Int)window->winGetUserData();
 
@@ -160,24 +96,24 @@ void W3DGadgetProgressBarDraw(GameWindow *window, WinInstanceData *instData)
 
 	if (BitTest(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 	{
-		backColor = GadgetProgressBarGetDisabledColor(window);
-		backBorder = GadgetProgressBarGetDisabledBorderColor(window);
-		barColor = GadgetProgressBarGetDisabledBarColor(window);
-		barBorder = GadgetProgressBarGetDisabledBarBorderColor(window);
+		backColor = GadgetProgressBarGetDisabledColor((GameWindow *)((char *)window + 4));
+		backBorder = GadgetProgressBarGetDisabledBorderColor((GameWindow *)((char *)window + 4));
+		barColor = GadgetProgressBarGetDisabledBarColor((GameWindow *)((char *)window + 4));
+		barBorder = GadgetProgressBarGetDisabledBarBorderColor((GameWindow *)((char *)window + 4));
 	}
 	else if (BitTest(instData->getState(), WIN_STATE_HILITED))
 	{
-		backColor = GadgetProgressBarGetHiliteColor(window);
-		backBorder = GadgetProgressBarGetHiliteBorderColor(window);
-		barColor = GadgetProgressBarGetHiliteBarColor(window);
-		barBorder = GadgetProgressBarGetHiliteBarBorderColor(window);
+		backColor = GadgetProgressBarGetHiliteColor((GameWindow *)((char *)window + 4));
+		backBorder = GadgetProgressBarGetHiliteBorderColor((GameWindow *)((char *)window + 4));
+		barColor = GadgetProgressBarGetHiliteBarColor((GameWindow *)((char *)window + 4));
+		barBorder = GadgetProgressBarGetHiliteBarBorderColor((GameWindow *)((char *)window + 4));
 	}
 	else
 	{
-		backColor = GadgetProgressBarGetEnabledColor(window);
-		backBorder = GadgetProgressBarGetEnabledBorderColor(window);
-		barBorder = GadgetProgressBarGetEnabledBarBorderColor(window);
-		barColor = GadgetProgressBarGetEnabledBarColor(window);
+		backColor = GadgetProgressBarGetEnabledColor((GameWindow *)((char *)window + 4));
+		backBorder = GadgetProgressBarGetEnabledBorderColor((GameWindow *)((char *)window + 4));
+		barColor = GadgetProgressBarGetEnabledBarColor((GameWindow *)((char *)window + 4));
+		barBorder = GadgetProgressBarGetEnabledBarBorderColor((GameWindow *)((char *)window + 4));
 	}
 
 	if (backBorder != WIN_COLOR_UNDEFINED)
@@ -232,4 +168,241 @@ void W3DGadgetProgressBarDraw(GameWindow *window, WinInstanceData *instData)
 			}
 		}
 	}
+}  // end W3DGadgetProgressBarDraw
+
+// W3DGadgetProgressBarImageDraw ==============================================
+/** Draw Progress Bar with user supplied images */
+//=============================================================================
+void W3DGadgetProgressBarImageDrawA( GameWindow *window, WinInstanceData *instData )
+{
+	ICoord2D origin, size;
+	const Image *barCenter, *barRight, *left, *right, *center;
+	Int progress = (Int)window->winGetUserData();
+	Int xOffset, yOffset;
+	Int i;
+	// get window size and position
+  window->winGetScreenPosition( &origin.x, &origin.y );
+	window->winGetSize( &size.x, &size.y );
+
+	// get offset
+	xOffset = instData->m_imageOffset.x;
+	yOffset = instData->m_imageOffset.y;
+
+	barCenter				= GadgetProgressBarGetEnabledBarImageCenter( window );
+	barRight				= GadgetProgressBarGetEnabledBarImageRight( window );
+	left						= GadgetProgressBarGetEnabledImageLeft( window );
+	right						= GadgetProgressBarGetEnabledImageRight( window );
+	center					= GadgetProgressBarGetEnabledImageCenter( window );
+
+	if(!barCenter || !barRight || !left || !right || !center)
+		return;
+
+	Int width = barCenter->getImageWidth();
+//	Int height = barCenter->getImageHeight();
+
+	Int drawWidth = (size.x * progress) / 100;
+	Int pieces = drawWidth / width;
+	Int x = origin.x;
+	for( i = 0; i < pieces; i ++)
+	{
+				
+				TheWindowManager->winDrawImage( barCenter,
+																				x, origin.y,
+																				x + width, origin.y + size.y );
+				x += width;
+	}
+
+
 }
+
+void W3DGadgetProgressBarImageDrawLocalCopy( GameWindow *window, WinInstanceData *instData )
+{
+	ICoord2D origin, size, start, end;
+	const Image *backLeft, *backRight, *backCenter, 
+				 *barRight, *barCenter;//*backSmallCenter,*barLeft,, *barSmallCenter;
+	Int progress = (Int)window->winGetUserData();
+	Int xOffset, yOffset;
+	Int i;
+
+	// get window size and position
+  window->winGetScreenPosition( &origin.x, &origin.y );
+	window->winGetSize( &size.x, &size.y );
+
+	// get offset
+	xOffset = instData->m_imageOffset.x;
+	yOffset = instData->m_imageOffset.y;
+
+	// get the right images to use
+	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	{
+
+		backLeft				= GadgetProgressBarGetDisabledImageLeft( window );
+		//barLeft					= GadgetProgressBarGetDisabledBarImageLeft( window );
+		backRight				= GadgetProgressBarGetDisabledImageRight( window );
+		barRight				= GadgetProgressBarGetDisabledBarImageRight( window );
+		backCenter			= GadgetProgressBarGetDisabledImageCenter( window );
+		barCenter				= GadgetProgressBarGetDisabledBarImageCenter( window );
+		//backSmallCenter	= GadgetProgressBarGetDisabledImageSmallCenter( window );
+		//barSmallCenter	= GadgetProgressBarGetDisabledBarImageSmallCenter( window );
+
+	}  // end if, disabled
+	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	{
+
+		backLeft				= GadgetProgressBarGetHiliteImageLeft( window );
+		//barLeft					= GadgetProgressBarGetHiliteBarImageLeft( window );
+		backRight				= GadgetProgressBarGetHiliteImageRight( window );
+		barRight				= GadgetProgressBarGetHiliteBarImageRight( window );
+		backCenter			= GadgetProgressBarGetHiliteImageCenter( window );
+		barCenter				= GadgetProgressBarGetHiliteBarImageCenter( window );
+		//backSmallCenter	= GadgetProgressBarGetHiliteImageSmallCenter( window );
+		//barSmallCenter	= GadgetProgressBarGetHiliteBarImageSmallCenter( window );
+
+	}  // end else if, hilited
+	else
+	{
+
+		backLeft				= GadgetProgressBarGetEnabledImageLeft( window );
+		//barLeft					= GadgetProgressBarGetEnabledBarImageLeft( window );
+		backRight				= GadgetProgressBarGetEnabledImageRight( window );
+		barRight				= GadgetProgressBarGetEnabledBarImageRight( window );
+		backCenter			= GadgetProgressBarGetEnabledImageCenter( window );
+		barCenter				= GadgetProgressBarGetEnabledBarImageCenter( window );
+		//backSmallCenter	= GadgetProgressBarGetEnabledImageSmallCenter( window );
+		//barSmallCenter	= GadgetProgressBarGetEnabledBarImageSmallCenter( window );
+
+	}  // end else, enabled
+
+	// sanity
+	if( backLeft == NULL || backRight == NULL ||
+			backCenter == NULL ||
+			barRight == NULL)
+			// backSmallCenter == NULL ||barLeft == NULL ||barCenter == NULL || barSmallCenter == NULL )
+		return;
+
+	// get image sizes for the ends
+	ICoord2D leftSize, rightSize;
+	leftSize.x = backLeft->getImageWidth();
+	leftSize.y = backLeft->getImageHeight();
+	rightSize.x = backRight->getImageWidth();
+	rightSize.y = backRight->getImageHeight();
+
+	// get two key points used in the end drawing
+	ICoord2D leftEnd, rightStart;
+	leftEnd.x = origin.x + leftSize.x + xOffset;
+	leftEnd.y = origin.y + size.y + yOffset;
+	rightStart.x = origin.x + size.x - rightSize.x + xOffset;
+	rightStart.y = origin.y + yOffset;
+
+	// draw the center repeating bar
+	Int centerWidth, pieces;
+
+	// get width we have to draw our repeating center in
+	centerWidth = rightStart.x - leftEnd.x;
+
+	// how many whole repeating pieces will fit in that width
+	pieces = centerWidth / backCenter->getImageWidth();
+
+	// draw the pieces
+	start.x = leftEnd.x;
+	start.y = origin.y + yOffset;
+	end.y = start.y + size.y;
+	for( i = 0; i < pieces; i++ )
+	{
+
+		end.x = start.x + backCenter->getImageWidth();
+		TheWindowManager->winDrawImage( backCenter, 
+																		start.x, start.y,
+																		end.x, end.y );
+		start.x += backCenter->getImageWidth();
+
+	}  // end for i
+
+	//
+	// how many small repeating pieces will fit in the gap from where the
+	// center repeating bar stopped and the right image, draw them
+	// and overlapping underneath where the right end will go
+	//
+//	centerWidth = rightStart.x - start.x;
+//	pieces = centerWidth / backCenter->getImageWidth() + 1;
+//	end.y = start.y + size.y;
+//	IRegion2D clipRegion;
+//	
+//	TheDisplay->setClipRegion()
+//	for( i = 0; i < pieces; i++ )
+//	{
+//
+//		end.x = start.x + backCenter->getImageWidth();
+//		TheWindowManager->winDrawImage( backCenter,
+//																		start.x, start.y,
+//																		end.x, end.y );
+//		start.x += backCenter->getImageWidth();
+//
+//	}  // end for i
+//
+	IRegion2D reg;
+	reg.lo.x = start.x;
+	reg.lo.y = start.y;
+	reg.hi.x = rightStart.x;
+	reg.hi.y = end.y;
+	centerWidth = rightStart.x - start.x;
+	if( centerWidth > 0)
+	{
+		TheDisplay->setClipRegion(&reg);
+		end.x = start.x + backCenter->getImageWidth();
+		TheWindowManager->winDrawImage( backCenter,
+																		start.x, start.y,
+																		end.x, end.y );
+		TheDisplay->enableClipping(FALSE);
+	}
+
+
+	// draw left end
+	start.x = origin.x + xOffset;
+	start.y = origin.y + yOffset;
+	end = leftEnd;
+	TheWindowManager->winDrawImage(backLeft, start.x, start.y, end.x, end.y);
+
+	// draw right end
+	start = rightStart;
+	end.x = start.x + rightSize.x;
+	end.y = start.y + size.y;
+	TheWindowManager->winDrawImage(backRight, start.x, start.y, end.x, end.y);
+
+	
+	ICoord2D barWindowSize;  // end point of bar from window origin
+
+	barWindowSize.x = ((size.x - 20) * progress) / 100;
+	barWindowSize.y = size.y;
+		
+	pieces = barWindowSize.x / barCenter->getImageWidth();
+ 	// draw the pieces
+	start.x = origin.x +10;
+	start.y = origin.y + yOffset +5;
+	end.y = start.y + size.y - 10;
+	for( i = 0; i < pieces; i++ )
+	{
+
+		end.x = start.x + barCenter->getImageWidth();
+		TheWindowManager->winDrawImage( barCenter, 
+																		start.x, start.y,
+																		end.x, end.y );
+		start.x += barCenter->getImageWidth();
+
+	}  // end for i
+	start.x = origin.x + 10 + barCenter->getImageWidth() * pieces;
+	//pieces = (size.x - barWindowSize.x -20) / barRight->getImageWidth();
+	//Changed By Saad for flashing grey piece
+	pieces = ((size.x - 20) / barCenter->getImageWidth()) - pieces;
+	for( i = 0; i < pieces; i++ )
+	{
+
+		end.x = start.x + barRight->getImageWidth();
+		TheWindowManager->winDrawImage( barRight, 
+																		start.x, start.y,
+																		end.x, end.y );
+		start.x += barRight->getImageWidth();
+
+	}  // end for i
+
+}  // end W3DGadgetProgressBarImageDraw

@@ -1,5 +1,14 @@
 # Shape levers: the checklist for "everything matches except..."
 
+At RVA 00793260, an empty default constructor on the four local ICoord2D
+views fixes the progress register home in the 553-byte draw callback.
+Restore the native enabled-color assignment order at the same time: the
+POD bank's reversed barBorder/barColor order was an obsolete workaround.
+Size construction alone restores the full body except one LEA SIB byte;
+constructing all four coordinates makes the canonical home-TU bank exact.
+This recovery remains banked because another callback prevents the home
+file from linking. See identity_evidence/00793260-empty-coordinate.md.
+
 Run `python3 tools/probe.py <file.cpp> "<symbol>" 0x<RVA>` first: it compiles, diffs against retail with relocations masked, and prints the symptom row below with its lever.
 
 Read this before banking a near-miss. Each lever below turned a 0.9+ partial into
