@@ -1,17 +1,8 @@
 // ?Rva00191110WritePolygonTriggersFiltered@@YAXPAVRva00191110Trigger@@AAVDataChunkOutput@@PAVRva00191110Filter@@@Z
-// partial score=0.30 date=2026-09-09
-// cl: /DNDEBUG /MD /EHsc
-// address-derived; no caller or emitter names this body
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
+// Filtered version-5 polygon writer; owner identities remain address-derived.
 
-class AsciiString
-{
-public:
-	void releaseBuffer(void);
-	~AsciiString(void) { releaseBuffer(); }
-
-private:
-	void *m_data;
-};
+#include "ascii_string.h"
 
 class DataChunkOutput
 {
@@ -24,18 +15,16 @@ public:
 	void writeReal(float value);
 };
 
-class BfmeOtherDOA;
-
-class BfmeThingDOA
+class Rva00190560
 {
 public:
-	BfmeOtherDOA *bfmeGoDOA(BfmeOtherDOA *other, int index);
+	AsciiString rva00190560(int index);
 };
 
 class Rva00191110Filter
 {
 public:
-	virtual ~Rva00191110Filter() {}
+	virtual ~Rva00191110Filter();
 	virtual bool bfmeTest(void *node) = 0;
 };
 
@@ -49,7 +38,16 @@ struct Rva00191110Point
 class Rva00191110Trigger
 {
 public:
+	// ?getNext@Rva00191110Trigger@@QBEPAV1@XZ absent-from-retail
 	Rva00191110Trigger *getNext() const { return m_next; }
+	// ?getField44@Rva00191110Trigger@@QBEHXZ absent-from-retail
+	int getField44() const { return m_field44; }
+	// ?getID@Rva00191110Trigger@@QBEHXZ absent-from-retail
+	int getID() const { return m_id; }
+	// ?getFlag32@Rva00191110Trigger@@QBE_NXZ absent-from-retail
+	bool getFlag32() const { return m_flag32; }
+	// ?getFlag40@Rva00191110Trigger@@QBE_NXZ absent-from-retail
+	bool getFlag40() const { return m_flag40; }
 
 private:
 	char m_head[4];
@@ -59,11 +57,11 @@ private:
 	Rva00191110Point *m_points;
 	int m_numPoints;
 	char m_gap18[0x1A];
-	char m_flag32;
+	bool m_flag32;
 	char m_gap33;
 	AsciiString m_layerName;
 	char m_gap38[8];
-	char m_flag40;
+	bool m_flag40;
 	char m_gap41[3];
 	int m_field44;
 	char m_itemsGap[0x18];
@@ -80,8 +78,8 @@ private:
 		Rva00191110Trigger *head, DataChunkOutput &output, Rva00191110Filter *filter);
 };
 
-void Rva00191110WritePolygonTriggersFiltered(
-	Rva00191110Trigger *head, DataChunkOutput &output, Rva00191110Filter *filter)
+// ?Rva00191110WritePolygonTriggersFiltered@@YAXPAVRva00191110Trigger@@AAVDataChunkOutput@@PAVRva00191110Filter@@@Z
+void Rva00191110WritePolygonTriggersFiltered(Rva00191110Trigger *head, DataChunkOutput &output, Rva00191110Filter *filter)
 {
 	output.openDataChunk("PolygonTriggers", 5);
 
@@ -100,18 +98,14 @@ void Rva00191110WritePolygonTriggersFiltered(
 
 		output.writeAsciiString(node->m_name);
 		output.writeAsciiString(node->m_layerName);
-		output.writeInt(node->m_id);
-		output.writeByte(node->m_flag32);
-		output.writeByte(node->m_flag40);
-		output.writeInt(node->m_field44);
+		output.writeInt(node->getID());
+		output.writeByte(node->getFlag32());
+		output.writeByte(node->getFlag40());
+		output.writeInt(node->getField44());
 
 		for (int i = 0; i < 6; i++)
 		{
-			BfmeOtherDOA *item;
-			AsciiString tmp;
-			item = reinterpret_cast<BfmeThingDOA *>(node)->bfmeGoDOA(
-				reinterpret_cast<BfmeOtherDOA *>(&tmp), i);
-			output.writeAsciiString(*reinterpret_cast<AsciiString *>(item));
+			output.writeAsciiString(reinterpret_cast<Rva00190560 *>(node)->rva00190560(i));
 		}
 
 		output.writeByte(node->m_flag60);
@@ -133,7 +127,7 @@ void Rva00191110WritePolygonTriggersFiltered(
 				ndx = 0;
 			if (ndx >= node->m_numPoints)
 				ndx = node->m_numPoints - 1;
-			Rva00191110Point &pt = node->m_points[ndx];
+			Rva00191110Point pt = node->m_points[ndx];
 			output.writeInt(pt.x);
 			output.writeInt(pt.y);
 			output.writeInt(pt.z);
