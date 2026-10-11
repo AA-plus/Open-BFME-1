@@ -12,5 +12,9 @@
 class Rva006BE480 { public: float method() const; };
 float Rva006BE480::method() const
 {
-    return TheTerrainRenderObject->getMap()->getBorderSizeInline() * 10.0f;
+    // Read the witnessed BFME fields directly; calling the header accessors
+    // emits externally selected copies from incompatible terrain layouts.
+    WorldHeightMap *map = *reinterpret_cast<WorldHeightMap **>(
+        reinterpret_cast<char *>(TheTerrainRenderObject) + 0x2FF4);
+    return *reinterpret_cast<const int *>(reinterpret_cast<const char *>(map) + 0x10) * 10.0f;
 }
