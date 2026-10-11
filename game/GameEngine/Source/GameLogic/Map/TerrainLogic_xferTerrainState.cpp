@@ -79,7 +79,8 @@ public:
 	virtual void xferBool(Bool *value);
 };
 
-extern "C" void __cdecl bfmeXferIntAX(Xfer *xfer, Int *value);
+class MidVirtualSlot90Receiver;
+void __cdecl Rva0010BE80(MidVirtualSlot90Receiver *receiver, void *context);
 // Rva001A1A30::s_value owns 0x012ACC30 in WaypointConstructor.cpp.
 class Rva001A1A30
 {
@@ -125,6 +126,13 @@ class Rva001A1E20CellState
 {
 public:
 	void reset(void);
+};
+
+// Existing matched Waypoint transfer body at RVA001A7020.
+class Waypoint
+{
+public:
+	void xfer(Xfer *xfer);
 };
 
 class Rva001A2D50Node
@@ -267,7 +275,7 @@ void TerrainLogic::xferTerrainState(Xfer *xfer)
 	}
 
 	Int globalValue = Rva001A1A30::s_value;
-	bfmeXferIntAX(xfer, &globalValue);
+	Rva0010BE80(reinterpret_cast<MidVirtualSlot90Receiver *>(xfer), &globalValue);
 	Rva001A1A30::s_value = globalValue;
 
 	if (xfer->isLoading())
@@ -282,7 +290,7 @@ void TerrainLogic::xferTerrainState(Xfer *xfer)
 				Rva001A2D50Node *node = new Rva001A2D50Node(0x7fffffff, AsciiString::TheEmptyString,
 					arg, AsciiString::TheEmptyString, AsciiString::TheEmptyString,
 					AsciiString::TheEmptyString, false, 0, AsciiString::TheEmptyString);
-				node->Rva001A7020(xfer);
+				reinterpret_cast<Waypoint *>(node)->xfer(xfer);
 				xfer->xferBool(&more);
 			} while (more);
 		}
@@ -296,7 +304,7 @@ void TerrainLogic::xferTerrainState(Xfer *xfer)
 		for (Rva001A2D50Node *node = reinterpret_cast<Rva001A2D50Node *>(g_waypointListHead); node; node = node->m_next)
 		{
 			xfer->xferBool(&more);
-			node->Rva001A7020(xfer);
+			reinterpret_cast<Waypoint *>(node)->xfer(xfer);
 		}
 		more = false;
 		xfer->xferBool(&more);
