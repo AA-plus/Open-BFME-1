@@ -3431,22 +3431,7 @@ void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 */
 }
 
-// byte-exact reconstruction: game/Libraries/Source/WWVegas/WW3D2/DX8Wrapper_Get_DX8_Front_Buffer.cpp
-// ?_Get_DX8_Front_Buffer@DX8Wrapper@@ present-unmatched
-IDirect3DSurface8 * DX8Wrapper::_Get_DX8_Front_Buffer()
-{
-	DX8_THREAD_ASSERT();
-	D3DDISPLAYMODE mode;
-
-	DX8CALL(GetDisplayMode(&mode));
-
-	IDirect3DSurface8 * fb=NULL;
-
-	DX8CALL(CreateImageSurface(mode.Width,mode.Height,D3DFMT_A8R8G8B8,&fb));
-
-	DX8CALL(GetFrontBuffer(fb));
-	return fb;
-}
+// _Get_DX8_Front_Buffer: the retail D3D9 implementation lives in DX8Wrapper_D3DCalls.cpp.
 
 // ?_Get_DX8_Back_Buffer@DX8Wrapper@@ present-unmatched
 SurfaceClass * DX8Wrapper::_Get_DX8_Back_Buffer(unsigned int num)

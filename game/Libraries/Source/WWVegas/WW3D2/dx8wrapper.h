@@ -106,6 +106,7 @@ class ZTextureClass;
 class LightClass;
 class SurfaceClass;
 class DX8Caps;
+class IDirect3DSurface9;
 
 #define DX8_RECORD_MATRIX_CHANGE()				matrix_changes++
 #define DX8_RECORD_MATERIAL_CHANGE()			material_changes++
@@ -415,7 +416,7 @@ public:
 
 	static IDirect3DSurface8 * _Create_DX8_Surface(unsigned int width, unsigned int height, WW3DFormat format);
 	static IDirect3DSurface8 * _Create_DX8_Surface(const char *filename);
-	static IDirect3DSurface8 * _Get_DX8_Front_Buffer();
+	static IDirect3DSurface9 * _Get_DX8_Front_Buffer();
 	static SurfaceClass * _Get_DX8_Back_Buffer(unsigned int num=0);
 
 	static void _Copy_DX8_Rects(
