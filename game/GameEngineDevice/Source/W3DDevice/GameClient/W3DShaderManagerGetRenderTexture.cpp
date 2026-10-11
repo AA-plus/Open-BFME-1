@@ -7,9 +7,10 @@ struct IDirect3DTexture8;
 
 class W3DShaderManager
 {
-public:
+protected:
 	// Retail 0x012F9D08: ?m_renderTexture@W3DShaderManager@@1PAUIDirect3DTexture8@@A
 	static IDirect3DTexture8 *m_renderTexture;
+public:
 	static IDirect3DTexture8 *getRenderTexture(void);
 };
 

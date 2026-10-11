@@ -3418,11 +3418,7 @@ void W3DShaderManager::startRenderToTexture(void)
 /**Returns texture containing the image that was last rendered using any of the effects requiring render target
 textures.  Used mostly for cross-fading effects that need an unmodified version of the view before the effect
 was applied.  NOTE: This texture does not survive device reset.. so quit effect on reset!*/
-// ?getRenderTexture@W3DShaderManager@@SAPAUIDirect3DTexture8@@XZ present-unmatched
-IDirect3DTexture8 *W3DShaderManager::getRenderTexture(void)
-{
-	return m_renderTexture;
-}
+// getRenderTexture: retail body matched in W3DShaderManagerGetRenderTexture.cpp.
 
 enum GraphicsVenderID
 {
