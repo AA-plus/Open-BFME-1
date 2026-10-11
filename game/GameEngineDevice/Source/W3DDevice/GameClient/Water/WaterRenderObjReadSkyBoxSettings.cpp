@@ -127,6 +127,13 @@ public:
 		const AsciiString &newTexture);
 };
 
+// Ledger owner of the setter reached through ILT 0x00005B0F.
+class WaterSkyBoxScaleOwner
+{
+public:
+	void setSkyBoxScale(const float *scale);
+};
+
 class WaterSkyBoxSettingsOwner
 {
 public:
@@ -135,7 +142,6 @@ public:
 		m_skyBox->setPosition(Vector3(x, y, z));
 	}
 
-	void setSkyBoxScale(const float *scale);
 	void setSkyBoxRotation007A15A0(const float *rotation);
 	void setSkyBoxTexture007A58C0(const AsciiString *texture);
 	void loadSkyBoxSettings007A6120(DataChunkInput &file);
@@ -202,7 +208,7 @@ bool parseSkyBoxSettings007A5BA0(DataChunkInput &file, DataChunkInfo *, void *)
 			->setSkyBoxPosition(position.X, position.Y, position.Z);
 	}
 
-	reinterpret_cast<WaterSkyBoxSettingsOwner *>(TheWaterRenderObj)
+	reinterpret_cast<WaterSkyBoxScaleOwner *>(TheWaterRenderObj)
 		->setSkyBoxScale(&scale);
 	reinterpret_cast<WaterSkyBoxSettingsOwner *>(TheWaterRenderObj)
 		->setSkyBoxRotation007A15A0(&rotation);
