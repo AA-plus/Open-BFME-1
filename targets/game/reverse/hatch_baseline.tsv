@@ -1074,6 +1074,7 @@ address_global	game/Libraries/Source/debug/Rva00889300DebugForwarders.cpp	g_Rva0
 address_global	game/Libraries/Source/debug/Rva00F36E5C.cpp	g_Rva00F36E5C	1
 address_global	game/Libraries/Source/debug/debug_internal.cpp	g_Rva00F36E5C	5
 address_global	game/Libraries/Source/debug/debug_purecall.cpp	g_Rva00F36E5C	3
+address_global	game/Libraries/Source/ini/INILoadBFMERetail.cpp	g_Va0130CE54	3	allow=0612850084ead10436a3de134c6fb13ebad0294b
 address_global	game/Libraries/Source/memorypool/memorypool_allocator.cpp	g_bfmeRva0130EA10Owner	2
 alternatename	game/GameEngine/Source/Common/Audio/MiscAudioDeletingDestructor.cpp	??1MiscAudio@@UAE@XZ	1
 alternatename	game/GameEngine/Source/Common/Bfme/Rva003A6F40CopyRecord.cpp	_bfmeVftRva003B7190Record	1
