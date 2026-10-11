@@ -1,4 +1,4 @@
-// cl: /DNDEBUG /MD /EHsc
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 // Open-BFME: copyReplay, retail 0x004E1090, 760 bytes; deleteReplay, retail
 // 0x004E2100, 623 bytes. Converted from gen-dump d_004e1090.asm. ZH twin is
 // ReplayMenu.cpp's copyReplay/deleteReplay; this TU keeps its own statics
@@ -13,94 +13,22 @@ typedef int Int;
 typedef bool Bool;
 typedef unsigned short WideChar;
 
-extern "C" __declspec(dllimport) unsigned int __cdecl wcslen( const WideChar *text );
-extern "C" unsigned int __cdecl strlen( const char *text );
+#include "ascii_string.h"
+#include "unicode_string.h"
+#include <string.h>
 
-// The shared empty AsciiString payload, retail 0x0107388B
-// (?Rva006A16B0Empty@@3PADA / ?g_bfmeEmptyAscii@@3QBDB).
-
-template <typename T> class StringBase
+// The retail wide lifetimes call StringBase directly, as the canonical
+// message-box caller does.
+inline UnicodeString::UnicodeString() : m_text(0) {}
+inline UnicodeString::UnicodeString(const UnicodeString &that)
 {
-	friend class AsciiString;
-	friend class UnicodeString;
-
-private:
-	struct Header
-	{
-		int m_refCount;
-		unsigned short m_length;
-		unsigned short m_capacity;
-		T m_text[1];
-	};
-
-	StringBase() : m_data( 0 ) {}
-	StringBase( const T *text );
-	StringBase( const StringBase<T> &other );
-	~StringBase();
-
-public:
-	void set( const StringBase<T> &other );
-	void set( const T *text, Int length );
-	void concat( const T *text, Int length );
-	void trim();
-
-private:
-	Header *m_data;
-};
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString : private StringBase<char>
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(
+        *(const StringBase<unsigned short> *)&that);
+}
+inline UnicodeString::~UnicodeString()
 {
-public:
-	AsciiString() : StringBase<char>() {}
-	AsciiString( const char *text ) : StringBase<char>( text ) {}
-	AsciiString( const AsciiString &other ) : StringBase<char>( other ) {}
-	~AsciiString() {}
-
-	AsciiString &operator=( const AsciiString &other )
-	{
-		StringBase<char>::set( other );
-		return *this;
-	}
-
-	void set( const char *text )
-	{
-		Int length = text ? (Int)strlen( text ) : 0;
-		StringBase<char>::set( text, length );
-	}
-
-	void concat( const char *text, Int length ) { StringBase<char>::concat( text, length ); }
-
-	void concat( const AsciiString &other )
-	{
-		const Int length = other.m_data ? other.m_data->m_length : 0;
-		const char *text = other.m_data ? other.m_data->m_text : "";
-		StringBase<char>::concat( text, length );
-	}
-
-	void translate( class UnicodeString const &src );
-
-	const char *str() const { return m_data ? m_data->m_text : ""; }
-};
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/UnicodeString.h
-class UnicodeString : private StringBase<WideChar>
-{
-public:
-	UnicodeString() : StringBase<WideChar>() {}
-	UnicodeString( const WideChar *text ) : StringBase<WideChar>( text ) {}
-	UnicodeString( const UnicodeString &other ) : StringBase<WideChar>( other ) {}
-	~UnicodeString() {}
-
-	void set( const WideChar *text )
-	{
-		StringBase<WideChar>::set( text, text ? (Int)wcslen( text ) : 0 );
-	}
-
-	void trim() { StringBase<WideChar>::trim(); }
-
-	void translate( const AsciiString &src );
-};
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
 class GameWindow;
 
@@ -179,24 +107,24 @@ void copyReplay( void )
 	AsciiString filename, translate;
 	filename = RecorderClass::getReplayDir();
 	translate.translate( GetReplayFilenameFromListbox( listboxReplayFiles, selected ) );
-	filename.concat( translate );
+	filename.StringBase<char>::concat( translate.str(), translate.StringBase<char>::getLength() );
 
 	char path[ 1024 ];
 	void *pidl;
 	SHGetSpecialFolderLocation( 0, CSIDL_DESKTOPDIRECTORY, &pidl );
 	SHGetPathFromIDListA( pidl, path );
 	AsciiString newFilename;
-	newFilename.set( path );
-	newFilename.concat( "\\", 1 );
-	newFilename.concat( translate );
+	newFilename.StringBase<char>::set( path, (Int)strlen(path) );
+	newFilename.StringBase<char>::concat( "\\", 1 );
+	newFilename.StringBase<char>::concat( translate.str(), translate.StringBase<char>::getLength() );
 
 	if ( CopyFileA( filename.str(), newFilename.str(), 0 ) == 0 )
 	{
 		WideChar buffer[ 1024 ];
 		FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, 0, GetLastError(), 0, buffer, sizeof( buffer ), 0 );
 		UnicodeString errorStr;
-		errorStr.set( buffer );
-		errorStr.trim();
+		((StringBase<unsigned short> *)&errorStr)->set( buffer, (Int)wcslen(buffer) );
+		((StringBase<unsigned short> *)&errorStr)->trim();
 		MessageBoxOk( TheGameText->fetch( "GUI:Error" ), errorStr, 0 );
 	}
 }
@@ -216,14 +144,14 @@ void deleteReplay( void )
 	AsciiString filename, translate;
 	filename = RecorderClass::getReplayDir();
 	translate.translate( GetReplayFilenameFromListbox( listboxReplayFiles, selected ) );
-	filename.concat( translate );
+	filename.StringBase<char>::concat( translate.str(), translate.StringBase<char>::getLength() );
 
 	if ( DeleteFileA( filename.str() ) == 0 )
 	{
 		char buffer[ 1024 ];
 		FormatMessageA( FORMAT_MESSAGE_FROM_SYSTEM, 0, GetLastError(), 0, buffer, sizeof( buffer ), 0 );
 		UnicodeString errorStr;
-		translate.set( buffer );
+		translate.StringBase<char>::set( buffer, (Int)strlen(buffer) );
 		errorStr.translate( translate );
 		MessageBoxOk( TheGameText->fetch( "GUI:Error" ), errorStr, 0 );
 	}
