@@ -1,49 +1,24 @@
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 
 #define NULL 0
 
 typedef unsigned short WideChar;
 
-class AsciiString;
+#include "ascii_string.h"
+#include "unicode_string.h"
 
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib/string_base.h
-template <typename T> class StringBase
+inline UnicodeString::UnicodeString() : m_text(0) {}
+
+inline UnicodeString::UnicodeString(const UnicodeString &other)
 {
-	friend class UnicodeString;
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(
+        *(const StringBase<unsigned short> *)&other);
+}
 
-public:
-	StringBase() : m_data(0) {}
-	StringBase(const StringBase<T> &other);
-	void set(const T *text, int length);
-
-private:
-	void releaseBuffer();
-
-	void *m_data;
-};
-
-// Keep these wrappers local to the body so the retail out-of-line string
-// helpers, rather than the full project headers, receive the same ABI.
-class UnicodeString : private StringBase<WideChar>
+inline UnicodeString::~UnicodeString()
 {
-public:
-	UnicodeString() : StringBase<WideChar>() {}
-	~UnicodeString() { releaseBuffer(); }
-
-	void translate(const AsciiString &name);
-	void set(const WideChar *text, int length) { StringBase<WideChar>::set(text, length); }
-};
-
-class BFMERetailAsciiString
-{
-public:
-	BFMERetailAsciiString(const char *text);
-	~BFMERetailAsciiString() { releaseBuffer(); }
-
-private:
-	void releaseBuffer();
-	char *m_data;
-};
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
 struct _SYSTEMTIME { unsigned short w[8]; };
 
@@ -82,8 +57,8 @@ UnicodeString getUnicodeDateBuffer(_SYSTEMTIME timeVal)
 			GetDateFormatA(LOCALE_SYSTEM_DEFAULT_, DATE_SHORTDATE_, &timeVal, NULL,
 							   dateBuffer, sizeof(dateBuffer));
 			{
-				BFMERetailAsciiString ansi(dateBuffer);
-				displayDateBuffer.translate(*(const AsciiString *)&ansi);
+				AsciiString ansi(dateBuffer);
+				displayDateBuffer.translate(ansi);
 			}
 			return displayDateBuffer;
 		}
@@ -91,6 +66,6 @@ UnicodeString getUnicodeDateBuffer(_SYSTEMTIME timeVal)
 	WideChar dateBuffer[DATE_BUFFER_SIZE_];
 	GetDateFormatW(LOCALE_SYSTEM_DEFAULT_, DATE_SHORTDATE_, &timeVal, NULL,
 					   dateBuffer, sizeof(dateBuffer));
-	displayDateBuffer.set(dateBuffer, wcslen(dateBuffer));
+	((StringBase<unsigned short> *)&displayDateBuffer)->set(dateBuffer, wcslen(dateBuffer));
 	return displayDateBuffer;
 }
