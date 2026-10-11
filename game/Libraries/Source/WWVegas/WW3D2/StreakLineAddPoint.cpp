@@ -4,6 +4,10 @@
 #include "vector4.h"
 #include "seglinerenderer.h"
 
+// Keep Add in its retail provider (part_buf.cpp, RVA 00701FB0). This TU's
+// /Ob0 copies of Add and its Grow dependency are not the retail bodies.
+template<> bool SimpleDynVecClass<Vector3>::Add(const Vector3 &, int);
+
 // BFME's RenderObjClass base places PointLocations at +0xd4, unlike Zero Hour.
 class StreakLineClass
 {
