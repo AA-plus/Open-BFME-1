@@ -565,13 +565,13 @@ address_global	game/GameEngine/Source/Common/Rva009A6780BuildQuantizers.cpp	g_Rv
 address_global	game/GameEngine/Source/Common/Rva009A6780BuildQuantizers.cpp	g_Rva01142208	3
 address_global	game/GameEngine/Source/Common/Rva009A6780BuildQuantizers.cpp	g_Rva01142608	2
 address_global	game/GameEngine/Source/Common/Rva009A6780BuildQuantizers.cpp	g_Rva01142610	5
-address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva01142B20	2
-address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva01142B60	2
-address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva0114336C	2
-address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva0114337C	2
-address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva0114338C	2
-address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva01143390	2
-address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva01143758	2
+address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva01142B20	3	allow=1d5e988e80d67fae02b63df50ec530a2aa41b65b
+address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva01142B60	3	allow=1d5e988e80d67fae02b63df50ec530a2aa41b65b
+address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva0114336C	3	allow=1d5e988e80d67fae02b63df50ec530a2aa41b65b
+address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva0114337C	3	allow=1d5e988e80d67fae02b63df50ec530a2aa41b65b
+address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva0114338C	3	allow=1d5e988e80d67fae02b63df50ec530a2aa41b65b
+address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva01143390	3	allow=1d5e988e80d67fae02b63df50ec530a2aa41b65b
+address_global	game/GameEngine/Source/Common/Rva009ABFC0DecodeFrame.cpp	g_Rva01143758	3	allow=1d5e988e80d67fae02b63df50ec530a2aa41b65b
 address_global	game/GameEngine/Source/Common/Rva00C62070PlacementCleanup.cpp	g_Va0135282C	2
 address_global	game/GameEngine/Source/Common/Rva00C6D830Init.cpp	g_bfmeRva0130B19CStatic	2
 address_global	game/GameEngine/Source/Common/Rva00C6D880VfptrInit.cpp	g_bfmeRva0130BCACStatic	2
