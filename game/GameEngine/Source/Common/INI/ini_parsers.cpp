@@ -317,12 +317,14 @@ void INI::parseColorInt( INI* ini, void * /*instance*/, void *store, const void*
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-// byte-exact reconstruction: game/GameEngine/Source/Common/INI_getNextQuotedAsciiString_Thunk.cpp
-// ?getNextQuotedAsciiString@INI@@QAE?AVAsciiString@@XZ present-unmatched
+// BFME-2 donor2a0f7acb06 INI_getNextQuotedAsciiString.cpp supplies bufferzero.
+// BFME-1 StringBase<char> setters receive explicit source lengths.
+// Native named callers and RET4 at8516CE ending8516D0 establish401B.
 AsciiString INI::getNextQuotedAsciiString()
 {
 	AsciiString result;
 	char buff[INI_MAX_CHARS_PER_LINE];
+	buff[0]=0;
 
 	const char *token = getNextTokenOrNull();	// if null, just leave an empty string
 	if (token != NULL)
@@ -330,7 +332,7 @@ AsciiString INI::getNextQuotedAsciiString()
 		if (token[0] != '\"') 
 		{	
 			// if token is simply "
-			result.set( token );	// Start following the "
+			((StringBase<char> *)&result)->set(token,strlen(token));	// Start following the "
 		}
 		else
 		{	int strLen=0;
@@ -360,7 +362,7 @@ AsciiString INI::getNextQuotedAsciiString()
 						buff[buflen-1]='\0';
 				}
 			}
-			result.set(buff);
+			((StringBase<char> *)&result)->set(buff,strlen(buff));
 		}
 	}
 	return result;
