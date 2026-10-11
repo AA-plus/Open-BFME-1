@@ -20,7 +20,7 @@ void Rva009AABB0CodecDispatch(Rva009AABB0Context *);
 struct Rva009AA8F0Context;
 struct Rva009AA8F0Block;
 void Rva009AA8F0Dispatch(Rva009AA8F0Context *, int, Rva009AA8F0Block *);
-extern void (__cdecl *g_rva01356EAC)(void *, unsigned, unsigned, unsigned, unsigned);
+void (__cdecl *g_rva01356EAC)(void *, unsigned, unsigned, unsigned, unsigned);
 extern void (__cdecl *g_bfmeToneReady)();
 #define CLAMP_LEVELS(p, b, w, s, d) g_rva01356EAC(p, b, w, (unsigned)s, (unsigned)d)
 

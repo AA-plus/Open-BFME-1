@@ -6,8 +6,8 @@ struct Rva009B64A0Coef
 	int m_bias;
 };
 
-extern Rva009B64A0Coef g_bfmeToneCoef[15];		// retail 0x011432D0
-extern void (__cdecl *g_bfmeToneReady)();			// retail 0x01356B48
+Rva009B64A0Coef g_bfmeToneCoef[15] = {{122, 133}, {133, 51}, {142, -16}, {0, 1}, {0, 1}, {0, 1}, {78, 171}, {169, 71}, {221, -30}, {139, 117}, {214, 44}, {246, -3}, {168, 79}, {210, 38}, {203, 17}};		// retail 0x011432D0
+void (__cdecl *g_bfmeToneReady)();			// retail 0x01356B48
 
 #define BFME_TONE(dstIndex, srcIndex, tap)						\
 	{															\
