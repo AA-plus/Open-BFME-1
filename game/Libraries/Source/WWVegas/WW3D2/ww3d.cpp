@@ -277,25 +277,8 @@ bool														WW3D::Lite = false;
 **
 ***********************************************************************************/
 
-// ?Set_NPatches_Gap_Filling_Mode@WW3D@@ present-unmatched
-void WW3D::Set_NPatches_Gap_Filling_Mode(NPatchesGapFillingModeEnum mode)
-{
-	if (NPatchesGapFillingMode!=mode) {
-		NPatchesGapFillingMode=mode;
-		TheDX8MeshRenderer.Invalidate();
-	}
-}
-
-// byte-exact reconstruction: game/Libraries/Source/WWVegas/WW3D2/WW3D_SetNPatchesLevelThunk.cpp
-// ?Set_NPatches_Level@WW3D@@ present-unmatched
-void WW3D::Set_NPatches_Level(unsigned level)
-{
-	if (level>8) level=8;
-	if (level<1) level=1;
-	if (NPatchesLevel==1 && level>1) TheDX8MeshRenderer.Invalidate();
-	if (NPatchesLevel>1 && level==1) TheDX8MeshRenderer.Invalidate();
-	NPatchesLevel = level;
-}
+// Retail N-patch setters are supplied by WW3D_SetNPatchesLevelThunk.cpp
+// and WW3D_SetNPatchesGapFillingModeThunk.cpp (RVAs 0x008FD080/0x008FD060).
 
 /***********************************************************************************************
  * WW3D::Init -- Initialize the WW3D Library                                                   *
@@ -2023,14 +2006,8 @@ void WW3D::Render_And_Clear_Static_Sort_Lists(RenderInfoClass & rinfo)
 	AreStaticSortListsEnabled = old_enable;
 }
 
-// ?Enable_Sorting@WW3D@@ present-unmatched
-void WW3D::Enable_Sorting(bool onoff)
-{
-	IsSortingEnabled = onoff;
-	// Have to invalidate mesh rendering system because
-	// meshes are put into different fvfs depending on their sort state
-	TheDX8MeshRenderer.Invalidate();
-}
+// Enable_Sorting is supplied by WW3D_SetNPatchesLevelThunk.cpp.
+// Retail RVA 0x008FD510 uses the BFME renderer pointer and Invalidate(false).
 
 void WW3D::Override_Current_Static_Sort_Lists(StaticSortListClass * sort_list)
 {
