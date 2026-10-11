@@ -221,9 +221,9 @@ private:
 	GameMessageArgument *m_argTail;
 };
 
-Bool DoesCommandRequireACommandID(NetCommandType type);
-Bool CommandRequiresDirectSend(NetCommandMsg *msg);
-Bool IsCommandSynchronized(NetCommandType type);
+int DoesCommandRequireACommandID(NetCommandType type);
+int CommandRequiresDirectSend(NetCommandMsg *msg);
+int IsCommandSynchronized(NetCommandType type);
 UnsignedShort GenerateNextCommandID();
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameNetwork/NetCommandRef.h
@@ -1015,7 +1015,7 @@ void BFMEConnectionManager::processInformPlayerLeaveFrameCommand(void *command)
 		request->setExecutionFrame(-1);
 		request->setFirstFrame(TheGameLogic->getFrame() + 1);
 		request->setLastFrame(leaveFrame);
-		if (DoesCommandRequireACommandID(request->getNetCommandType()))
+		if ((unsigned char)DoesCommandRequireACommandID(request->getNetCommandType()))
 			request->setID(GenerateNextCommandID());
 		if (msg->getPlayerID() < 8)
 			reinterpret_cast<ConnectionManager *>(this)->sendLocalCommandDirect(request, (unsigned char)1 << msg->getPlayerID());
@@ -1030,7 +1030,7 @@ void BFMEConnectionManager::sendFrameInfo()
 	msg->setFrame(TheGameLogic->getFrame());
 	msg->setPlayerFrame(TheGameClient->getFrame());
 	msg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 		msg->setID(GenerateNextCommandID());
 
 	if (m_frameData[m_localSlot] != 0 && m_localSlot == m_packetRouterSlot)
@@ -1246,7 +1246,7 @@ void BFMEConnectionManager::broadcastRouterFallbackPlan()
 			BFMENetRouterFallbackCommandMsg *msg = new BFMENetRouterFallbackCommandMsg;
 			msg->setPlayerOrder(players);
 			msg->setPlayerID(m_localSlot);
-			if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+			if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 				msg->setID(GenerateNextCommandID());
 			reinterpret_cast<ConnectionManager *>(this)->sendLocalCommand(msg, 0xFF);
 			msg->detach();
@@ -1269,7 +1269,7 @@ void ConnectionManager::sendLocalCommandDirect(NetCommandMsg *msg, unsigned char
 	}
 	int relayMask = relay;
 	if ((relayMask & (1 << m_localSlot)) != 0 &&
-		IsCommandSynchronized(msg->getNetCommandType()) &&
+		(unsigned char)IsCommandSynchronized(msg->getNetCommandType()) &&
 		m_localSlot < 8 && m_frameData[m_localSlot] != 0)
 		m_frameData[m_localSlot]->addNetCommandMsg(msg);
 
@@ -1283,7 +1283,7 @@ void ConnectionManager::sendLocalCommandDirect(NetCommandMsg *msg, unsigned char
 
 void ConnectionManager::sendLocalCommand(NetCommandMsg *msg, unsigned char relay)
 {
-	if (CommandRequiresDirectSend(msg) ||
+	if ((unsigned char)CommandRequiresDirectSend(msg) ||
 		m_packetRouterSlot >= 8 || m_connections[m_packetRouterSlot] == 0)
 	{
 		sendLocalCommandDirect(msg, relay);
@@ -1386,7 +1386,7 @@ void BFMEConnectionManager::relayCommand(void *ref)
 		return;
 
 	if (m_frameData[msg->getPlayerID()] == 0 ||
-		!IsCommandSynchronized(msg->getNetCommandType()))
+		!(unsigned char)IsCommandSynchronized(msg->getNetCommandType()))
 		return;
 
 	if (msg->getPlayerID() == (unsigned int)m_localSlot &&
@@ -1437,7 +1437,7 @@ void BFMEConnectionManager::resendFrameRangeToPlayer(int playerID, unsigned int 
 		} while (--slotsRemaining != 0);
 		NetFrameCommandMsg *msg = new NetFrameCommandMsg;
 		msg->setFrame(frame);
-		if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+		if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 			msg->setID(GenerateNextCommandID());
 		msg->setPlayerID(m_localSlot);
 		msg->setCommandCount(m_frameData[m_localSlot]->getFrameCommandCount(frame));
@@ -1925,13 +1925,13 @@ void BFMEConnectionManager::runRelayPass()
 				NetPlayerLeaveCommandMsg *leave = new NetPlayerLeaveCommandMsg;
 				leave->setLeavingPlayerID(player);
 				leave->setExecutionFrame(-1);
-				if (DoesCommandRequireACommandID(leave->getNetCommandType()))
+				if ((unsigned char)DoesCommandRequireACommandID(leave->getNetCommandType()))
 					leave->setID(GenerateNextCommandID());
 				leave->setPlayerID(m_localSlot);
 				reinterpret_cast<ConnectionManager *>(this)->sendLocalCommand(leave, 0xFF);
 				leave->detach();
 				NetDestroyPlayerCommandMsg *destroy = new NetDestroyPlayerCommandMsg;
-				if (DoesCommandRequireACommandID(destroy->getNetCommandType()))
+				if ((unsigned char)DoesCommandRequireACommandID(destroy->getNetCommandType()))
 					destroy->setID(GenerateNextCommandID());
 				destroy->setPlayerID(m_localSlot);
 				destroy->setPlayerIndex(player);
@@ -2579,7 +2579,7 @@ void BFMEConnectionManager::processWrappedCommand(NetCommandRef *ref)
 				NetFileProgressCommandMsg *msg = new NetFileProgressCommandMsg;
 				msg->setPlayerID(m_localSlot);
 				msg->setID(0);
-				if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+				if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 					msg->setID(GenerateNextCommandID());
 				msg->setFileID(commandID);
 				msg->setProgress(progress);
@@ -3805,7 +3805,7 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 	NetFileProgressCommandMsg *progress = new NetFileProgressCommandMsg;
 	progress->setPlayerID(m_localSlot);
 	progress->setID(0);
-	if (DoesCommandRequireACommandID(progress->getNetCommandType()))
+	if ((unsigned char)DoesCommandRequireACommandID(progress->getNetCommandType()))
 		progress->setID(GenerateNextCommandID());
 	progress->setFileID(commandID);
 	progress->setProgress(100);
@@ -3832,7 +3832,7 @@ unsigned short ConnectionManager::sendFileAnnounce(AsciiString path, unsigned ch
 	int relay = 0xFF ^ (1 << m_localSlot);
 	NetFileAnnounceCommandMsg *msg = new NetFileAnnounceCommandMsg;
 	msg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == true)
+	if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()) == true)
 		msg->setID(GenerateNextCommandID());
 	msg->setRealFilename(path);
 	msg->setPlayerMask(playerMask);
@@ -3877,7 +3877,7 @@ void BFMEConnectionManager::sendKeepAliveCommand()
 		{
 			NetKeepAliveCommandMsg *msg = new NetKeepAliveCommandMsg;
 			msg->setPlayerID(m_localSlot);
-			if (DoesCommandRequireACommandID(msg->getNetCommandType()) == true)
+			if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()) == true)
 				msg->setID(GenerateNextCommandID());
 			reinterpret_cast<ConnectionManager *>(this)->sendLocalCommandDirect(msg, (unsigned char)(1 << player));
 			msg->detach();
@@ -3891,7 +3891,7 @@ void BFMEConnectionManager::sendProgressCommand(int percent)
 	NetProgressCommandMsg *msg = new NetProgressCommandMsg;
 	msg->setPercentage((unsigned char)percent);
 	msg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == true)
+	if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()) == true)
 		msg->setID(GenerateNextCommandID());
 	TheGameLogic->processProgress(msg->getPlayerID(), msg->getPercentage());
 	reinterpret_cast<ConnectionManager *>(this)->sendLocalCommandDirect(msg,
@@ -3906,7 +3906,7 @@ void BFMEConnectionManager::sendDisconnectFrameCommand()
 	NetDisconnectFrameCommandMsg *msg = new NetDisconnectFrameCommandMsg;
 	msg->setPlayerID(m_localSlot);
 	msg->setDisconnectFrame(frame);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 		msg->setID(GenerateNextCommandID());
 	reinterpret_cast<ConnectionManager *>(this)->sendLocalCommandDirect(msg,
 		(unsigned char)~(unsigned char)(1 << m_localSlot));
@@ -3932,7 +3932,7 @@ void BFMEConnectionManager::sendDisconnectScreenOffCommand(int slot)
 	NetDisconnectScreenOffCommandMsg *msg = new NetDisconnectScreenOffCommandMsg;
 	msg->setPlayerID(m_localSlot);
 	msg->setNewFrame(slot);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 		msg->setID(GenerateNextCommandID());
 	reinterpret_cast<ConnectionManager *>(this)->sendLocalCommandDirect(msg,
 		(unsigned char)~(unsigned char)(1 << m_localSlot));
@@ -3953,7 +3953,7 @@ void BFMEConnectionManager::sendRequestPlayerLeaveCommand()
 	BFMENetRequestPlayerLeaveCommandMsg *msg = new BFMENetRequestPlayerLeaveCommandMsg;
 	msg->setRequestedPlayerID(m_localSlot);
 	msg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 		msg->setID(GenerateNextCommandID());
 	msg->setExecutionFrame(-1);
 	reinterpret_cast<ConnectionManager *>(this)->sendLocalCommandDirect(msg,
@@ -3969,7 +3969,7 @@ void BFMEConnectionManager::sendLoadCompleteCommand()
 	NetCommandMsg *msg = new NetCommandMsg;
 	msg->setNetCommandType(NETCOMMANDTYPE_LOADCOMPLETE);
 	msg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(NETCOMMANDTYPE_LOADCOMPLETE))
+	if ((unsigned char)DoesCommandRequireACommandID(NETCOMMANDTYPE_LOADCOMPLETE))
 	{
 		msg->setID(GenerateNextCommandID());
 	}
@@ -3986,7 +3986,7 @@ void BFMEConnectionManager::sendPlayerLeaveCommands()
 	NetPlayerLeaveCommandMsg *msg = new NetPlayerLeaveCommandMsg;
 	msg->setLeavingPlayerID((unsigned char)m_localSlot);
 	msg->setExecutionFrame(-1);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 		msg->setID(GenerateNextCommandID());
 	msg->setPlayerID(m_localSlot);
 	reinterpret_cast<ConnectionManager *>(this)->sendLocalCommand(msg, 0xFF);
@@ -4115,7 +4115,7 @@ void ConnectionManager::sendDisconnectChat(UnicodeString text)
 {
 	NetDisconnectChatCommandMsg *msg = new NetDisconnectChatCommandMsg;
 	msg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 		msg->setID(GenerateNextCommandID());
 	msg->setText(text);
 	sendLocalCommandDirect(msg, (unsigned char)~(unsigned char)(1 << m_localSlot));
@@ -4131,7 +4131,7 @@ void BFMEConnectionManager::sendChat(UnicodeString text, int playerMask)
 	msg->setText(text);
 	msg->setPlayerMask(playerMask);
 	msg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 		msg->setID(GenerateNextCommandID());
 	reinterpret_cast<ConnectionManager *>(this)->sendLocalCommandDirect(msg,
 		(unsigned char)~(unsigned char)(1 << m_localSlot));
@@ -4153,7 +4153,7 @@ void BFMEConnectionManager::sendGameSpyStatsAuthKey(void *command)
 	BFMENetGameSpyStatsAuthKeyCommandMsg *msg = new BFMENetGameSpyStatsAuthKeyCommandMsg;
 	msg->setPlayerID(m_localSlot);
 	msg->setExecutionFrame(-1);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	if ((unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 		msg->setID(GenerateNextCommandID());
 	msg->setText1C(AsciiString(response));
 	msg->setText20(AsciiString(TheGameSpyBuddyMessageQueue->getReplyIdentityText()));
@@ -4171,7 +4171,7 @@ void BFMEConnectionManager::sendGameCommand(void *msg)
 	NetCommandMsg *netmsg = new NetGameCommandMsg(static_cast<GameMessage *>(msg));
 	netmsg->setExecutionFrame((unsigned int)-1);
 	netmsg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(netmsg->getNetCommandType()))
+	if ((unsigned char)DoesCommandRequireACommandID(netmsg->getNetCommandType()))
 		netmsg->setID(GenerateNextCommandID());
 	reinterpret_cast<ConnectionManager *>(this)->sendLocalCommand(netmsg, 0xFF);
 	netmsg->detach();
@@ -4185,7 +4185,7 @@ Bool BFMEConnectionManager::isDuplicateCommand(NetCommandMsg *msg)
 	if (m_localSlot == m_packetRouterSlot)
 	{
 		if (msg->getPlayerID() != m_packetRouterSlot && msg->getPlayerID() < 8 &&
-			DoesCommandRequireACommandID(msg->getNetCommandType()))
+			(unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 		{
 			if (!m_commandHistory[msg->getPlayerID()].accept(msg->getID(), TheGameLogic->getFrame()))
 				return true;
@@ -4194,7 +4194,7 @@ Bool BFMEConnectionManager::isDuplicateCommand(NetCommandMsg *msg)
 	else
 	{
 		if (msg->getPlayerID() == m_packetRouterSlot &&
-			DoesCommandRequireACommandID(msg->getNetCommandType()))
+			(unsigned char)DoesCommandRequireACommandID(msg->getNetCommandType()))
 		{
 			if (!m_commandHistory[8].accept(msg->getID(), msg->getExecutionFrame()))
 				return true;
