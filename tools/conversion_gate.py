@@ -34,6 +34,7 @@ Rule C: game/gen_asm/ is machine output and stays that way. C1 every added
         expressible in this directory.
 """
 
+import collections
 import csv
 import io
 import re
@@ -82,18 +83,46 @@ def added_lift_lines(old, new, lines=None):
     # authors that tree, nine of its files already contain __emit upstream, and
     # scanning it would fire on the next re-vendor rather than on a regression.
     # Rule B below reads whatever path a row names, so it covers them.
-    bad, path = {}, None
+    # A naked declarator the same diff removes from the same file is a retyped
+    # existing lift, not a new one: re_attempts 59794 added a tick parameter to
+    # the unchanged naked CommUdpProcess so its C caller could pass it, and was
+    # charged with adding a naked body. Only a line naming the same function
+    # cancels; an __emit line names none and always counts.
+    removed, added, path = collections.Counter(), [], None
     for line in lines:
         if line.startswith("+++ b/"):
             path = line[6:]
-        elif line.startswith("+") and not line.startswith("+++"):
+        elif line.startswith("---") or line.startswith("+++"):
+            continue
+        elif line[:1] in "+-":
             if path is None or not path.startswith("game/") \
                     or path.startswith("game/gen_small/"):
                 continue
             if is_lift_line(line):
-                first, count = bad.get(path, (line[1:].strip()[:80], 0))
-                bad[path] = (first, count + 1)
+                name = declared_name(COMMENT_RE.sub(" ", line[1:]))
+                if line[0] == "-":
+                    if name:
+                        removed[(path, name)] += 1
+                else:
+                    added.append((path, name, line))
+    bad = {}
+    for path, name, line in added:
+        if name and removed[(path, name)]:
+            removed[(path, name)] -= 1
+            continue
+        first, count = bad.get(path, (line[1:].strip()[:80], 0))
+        bad[path] = (first, count + 1)
     return [(p, "%s  (%d such lines)" % (first, count)) for p, (first, count) in bad.items()]
+
+
+_DECLSPEC_RE = re.compile(r"__declspec\s*\([^)]*\)")
+_DECLARATOR_RE = re.compile(r"([~\w:]+)\s*\(")
+
+
+def declared_name(text):
+    """The function a declarator line or signature names, or None."""
+    match = _DECLARATOR_RE.search(_DECLSPEC_RE.sub(" ", text))
+    return match.group(1) if match else None
 
 
 def added_asm_only_bodies(old, new, lines=None):
@@ -117,8 +146,16 @@ def added_asm_only_bodies(old, new, lines=None):
                 return set()
             text = proc.stdout.decode("utf-8", errors="replace")
             return {b["signature"] for b in asm_only_bodies(text)} if "_asm" in text else set()
-        added = body_signatures("" if new == ":" else new) - body_signatures(old)
-        bad += [(path, signature) for signature in sorted(added)]
+        before, after = body_signatures(old), body_signatures("" if new == ":" else new)
+        # A retyped existing body (same function, new parameter list; 59794)
+        # replaces a signature the diff removes; it is not an added lift.
+        retyped = collections.Counter(declared_name(sig) for sig in before - after)
+        for signature in sorted(after - before):
+            name = declared_name(signature)
+            if name and retyped[name]:
+                retyped[name] -= 1
+                continue
+            bad.append((path, signature))
     return bad
 
 

@@ -52,3 +52,34 @@ def test_a_new_asm_body_after_a_pragma_is_still_refused(tmp_path):
     before = "void helper() {}\n"
     after = before + PRAGMA + "__declspec(naked) void Added()\n" + BODY
     assert [p for p, _ in _gate(tmp_path, before, after)] == ["game/a.cpp"]
+
+
+def _both_rules(tmp_path, before, after):
+    """(Rule A2 offences, Rule A offending paths) for one staged edit."""
+    asm_only = _gate(tmp_path, before, after)
+    here = os.getcwd()
+    os.chdir(tmp_path)
+    try:
+        lifts = conversion_gate.added_lift_lines("HEAD", ":")
+    finally:
+        os.chdir(here)
+    return [p for p, _ in asm_only], [p for p, _ in lifts]
+
+
+def test_retyping_an_existing_naked_body_adds_no_lift(tmp_path):
+    # re_attempts 59794: CommUdpProcess gained a tick parameter, body unchanged.
+    before = "void helper() {}\n__declspec(naked) int Process()\n" + BODY
+    after = "void helper() {}\n__declspec(naked) int Process(unsigned tick)\n" + BODY
+    assert _both_rules(tmp_path, before, after) == ([], [])
+
+
+def test_swapping_one_naked_body_for_another_is_still_refused(tmp_path):
+    before = "void helper() {}\n__declspec(naked) int Process()\n" + BODY
+    after = "void helper() {}\n__declspec(naked) int Other()\n" + BODY
+    assert _both_rules(tmp_path, before, after) == (["game/a.cpp"], ["game/a.cpp"])
+
+
+def test_a_second_naked_overload_is_still_refused(tmp_path):
+    before = "void helper() {}\n__declspec(naked) int Process()\n" + BODY
+    after = before + "__declspec(naked) int Process(unsigned tick)\n" + BODY
+    assert _both_rules(tmp_path, before, after) == (["game/a.cpp"], ["game/a.cpp"])
