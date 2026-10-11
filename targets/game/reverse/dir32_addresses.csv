@@ -13320,7 +13320,6 @@ _Vp6FilterConst88B0,0x012D88B0
 _Vp6FilterEdgeTagTable,0x012D8158
 _W3AtlParseLocaleAcp@0,0x0041B770
 _W3AtlThreadAcp@0,0x00402C34
-_W3DBuffDrawFieldParse,0x0041AB2C
 _W3DFloorDrawFieldParse,0x00414BAA
 _W3DHordeModelDrawFieldParse,0x00427179
 _W3DHordeModelDrawModuleData_vtbl,0x01122348
