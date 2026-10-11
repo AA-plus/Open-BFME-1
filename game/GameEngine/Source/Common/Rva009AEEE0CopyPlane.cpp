@@ -28,10 +28,11 @@ typedef void (__cdecl *Rva009AEEE0Operation)(Rva009AF200Context *, unsigned char
 struct Rva009ACC80Context;
 void __cdecl Rva009ACC80Filter(Rva009ACC80Context *, unsigned char *, unsigned char *,
 	unsigned int, unsigned int, int, const unsigned int *);
-void __cdecl Rva009AD750(Rva009AF200Context *, unsigned char *, unsigned char *, unsigned int, unsigned int, int, const unsigned int *);
+struct Rva009AD750Context;
+void __cdecl Rva009AD750Filter(Rva009AD750Context *, unsigned char *, unsigned char *, unsigned int, unsigned int, int, const unsigned int *);
 
-extern Rva009AEEE0Operation g_rva01356E88;
-extern Rva009AEEE0Operation g_rva01356E94;
+Rva009AEEE0Operation g_rva01356E88;	// retail .bss callback slot 0x01356E88
+Rva009AEEE0Operation g_rva01356E94;	// retail .bss callback slot 0x01356E94
 extern const unsigned int *g_rva01356AA0;
 extern const unsigned int *g_rva01356A98;
 extern const void *g_rva01356A88;
@@ -54,7 +55,7 @@ void copyPlane009AEEE0(Rva009AF200Context *ctx, int x, int y, int plane)
 
 	if (ctx->m_mode >= 2) {
 		operation = g_rva01356E94;
-		finalOperation = (Rva009AEEE0Operation)Rva009AD750;
+		finalOperation = (Rva009AEEE0Operation)Rva009AD750Filter;
 	} else {
 		operation = g_rva01356E88;
 		finalOperation = (Rva009AEEE0Operation)Rva009ACC80Filter;
