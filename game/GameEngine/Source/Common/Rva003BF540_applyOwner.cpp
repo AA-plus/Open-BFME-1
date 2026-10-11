@@ -128,11 +128,17 @@ public:
 
 extern GameTextInterface *TheGameText;
 
+// ILT 0x00025A77 targets the ledger-owned 0x003BED00 predicate.
+class Rva003BDEC0
+{
+public:
+	bool allowed();
+};
+
 class Rva003BF540
 {
 public:
 	void run(Rva003BF010Arg *arg);
-	bool allowed();
 	bool anyReady() const;
 	void applyOwner(Gen003BD7D0Node *owner);
 };
@@ -142,7 +148,7 @@ void Rva003BF540::applyOwner(Gen003BD7D0Node *owner)
 	run((Rva003BF010Arg *)owner);
 
 	if (owner == 0
-		|| !reinterpret_cast<Glo012F706CType *>(g_bfmeGameCW)->isOpen() || !allowed()
+		|| !reinterpret_cast<Glo012F706CType *>(g_bfmeGameCW)->isOpen() || !reinterpret_cast<Rva003BDEC0 *>(this)->allowed()
 		|| g_bfmeStateDF->bfmeDisabled() || anyReady() || TheControlBar == 0)
 		return;
 

@@ -191,7 +191,8 @@ public:
 
 extern Glo012F1028Type *Glo012F1028;
 
-class Rva003BF540
+// ILT 0x00025A77 targets the ledger-owned 0x003BED00 predicate.
+class Rva003BDEC0
 {
 public:
 	bool allowed();
@@ -360,7 +361,7 @@ void BfmeAptScreenQuitMenu::_bfme_onInitialized( const char * )
 			bfmeAptLevel00465CE0( (BfmeH1065 *)this ), "disableButton", 1, "Restart",
 			0, 0, 0, 0 );
 
-		if( !((Rva003BF540 *)Glo012F1028)->allowed() )
+		if( !((Rva003BDEC0 *)Glo012F1028)->allowed() )
 			goto disableSaveLoad;
 		if( g_bfmeStateDF->m_at04 )
 			return;

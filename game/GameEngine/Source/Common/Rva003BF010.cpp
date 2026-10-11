@@ -58,12 +58,18 @@ public:
 	AsciiString m_name;
 };
 
+// ILT 0x00025A77 targets the ledger-owned 0x003BED00 predicate.
+class Rva003BDEC0
+{
+public:
+	bool allowed();
+};
+
 class Rva003BF540
 {
 public:
 	void run(Rva003BF010Arg *arg);
 	bool anyReady() const;
-	bool allowed();
 
 private:
 	char m_pad00[0x48];
@@ -96,7 +102,7 @@ void Rva003BF540::run(Rva003BF010Arg *arg)
 		if (--m_at48 > 0)
 			return;
 	}
-	else if (reinterpret_cast<Glo012F706CType *>(g_bfmeGameCW)->isOpen() && allowed())
+	else if (reinterpret_cast<Glo012F706CType *>(g_bfmeGameCW)->isOpen() && reinterpret_cast<Rva003BDEC0 *>(this)->allowed())
 	{
 		if (!arg)
 			return;
