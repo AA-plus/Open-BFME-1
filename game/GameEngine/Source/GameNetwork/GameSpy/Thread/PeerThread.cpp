@@ -33,6 +33,10 @@
 // Author: Matthew D. Campbell, June 2002
 
 #define _STLP_USE_STATIC_LIB 1
+// Retail QRKeyListCallback calls the vendored __cdecl C export at RVA 00855330.
+// Establish its C linkage before the sweep header repeats the signature.
+extern "C" void qr2_keybuffer_add(void *keybuffer, int keyid);
+
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Registry.h"
