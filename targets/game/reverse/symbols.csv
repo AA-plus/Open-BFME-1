@@ -1,6 +1,8 @@
 name,address,notes
 ?$S103@?1??getClassMemoryPool@AIUpdateInterface@@CAPAVMemoryPool@@XZ@4IA,0x00EEFE34,pool-glue cascade static (back-solved)
 ?$S105@?1??getClassMemoryPool@PoisonedBehavior@@CAPAVMemoryPool@@XZ@4IA,0x00EEF830,pool-glue cascade static (back-solved)
+?d_009ab530@@YAXXZ,0x009AB530,Address-only compatibility for withdrawn dump; native Rva009AB530BuildProbabilityTables body; landed Rva009ABFC0DecodeFrame still calls this name
+?d_009b65f0@@YAXXZ,0x009B65F0,Address-only compatibility for withdrawn dump; native Rva009B65F0Update body; landed Rva009ABFC0DecodeFrame still calls this name
 ?$S107@?1??getClassMemoryPool@SupplyWarehouseCripplingBehavior@@CAPAVMemoryPool@@XZ@4IA,0x00EEF91C,pool-glue cascade static (back-solved)
 ?$S112@?1??getClassMemoryPool@CreateCrateDie@@CAPAVMemoryPool@@XZ@4IA,0x00EEFBF8,pool-glue cascade static (back-solved)
 ?$S113@?1??getClassMemoryPool@CreateObjectDie@@CAPAVMemoryPool@@XZ@4IA,0x00EEFC00,pool-glue cascade static (back-solved)
@@ -90973,3 +90975,4 @@ _printf,0x009F7244,route=MSVCR71.dll!printf; IAT 0x01359464; CRT printf import j
 ?rva003A25A0@Rva003A35A0Element@@QAEPAU1@PBVWaypoint@@@Z,0x003A25A0,Existing-record assignment from Waypoint pointer; complete body returns receiver and pops one pointer; retained bank method name; proof=identity_evidence/003a3770-linked-record-rebuild.md
 ?d_009ad750@@YAXXZ,0x009AD750,Address-only compatibility for withdrawn dump; native Rva009AD750Filter body; caller game/gen_asm/d_009a5b80.asm still names it by DIR32 at decoded 0x009AEEE0+0x1D; no semantic identity claim
 ?d_009b0100@@YAXXZ,0x009B0100,Address-only compatibility pin for retired dump spelling retained in game/gen_asm/d_009af200.asm; complete cdecl body converted as _Rva009B0100Vp6BlockFilter; evidence=targets/game/reverse/identity_evidence/009b0100-bfme2-donor.md
+?d_009b60e0@@YAXXZ,0x009B60E0,Legacy address-only compatibility for typed caller Rva009AB320BuildTables; canonical three-argument ABI in identity_evidence/009b60e0-bfme2-donor.md

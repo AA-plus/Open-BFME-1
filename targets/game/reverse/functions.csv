@@ -36539,7 +36539,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_009a9980@@YAXXZ,,0x009A9980,155,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009a9a20@@YAXXZ,,0x009A9A20,98,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009aa4f0@@YAXXZ,,0x009AA4F0,606,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00daa4f0
-?d_009ab530@@YAXXZ,,0x009AB530,556,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00dab530
 ?d_009ab9d0@@YAXXZ,,0x009AB9D0,1509,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00dab9d0
 ?d_009acf90@@YAXXZ,,0x009ACF90,1976,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009adaa0@@YAXXZ,,0x009ADAA0,727,game/gen_asm/d_009a5b80.asm,matched,gen-dump;ghidra=FUN_00dadaa0
@@ -36559,10 +36558,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_009b5420@@YAXXZ,,0x009B5420,272,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0;ghidra=FUN_00db5420
 ?d_009b5530@@YAXXZ,,0x009B5530,768,game/gen_asm/d_009af200.asm,matched,gen-dump;ghidra=FUN_00db5530
 ?d_009b58f0@@YAXXZ,,0x009B58F0,511,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_00db58f0
-?d_009b6080@@YAXXZ,,0x009B6080,88,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
-?d_009b60e0@@YAXXZ,,0x009B60E0,435,game/gen_asm/d_009af200.asm,matched,gen-dump;ghidra=FUN_00db60e0
-?d_009b65f0@@YAXXZ,,0x009B65F0,331,game/gen_asm/d_009af200.asm,matched,gen-dump;ghidra=FUN_00db65f0
-?d_009b6740@@YAXXZ,,0x009B6740,514,game/gen_asm/d_009b6740.asm,matched,gen-dump;ghidra=FUN_00db6740
 ?d_009b6d80@@YAXXZ,,0x009B6D80,5028,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009b8130@@YAXXZ,,0x009B8130,5572,game/gen_asm/d_00968910.asm,matched,gen-dump;bounds=high
 ?d_009bebb0@@YAXXZ,,0x009BEBB0,3721,game/gen_asm/d_009b6740.asm,matched,gen-dump;ghidra=FUN_00dbebb0
@@ -171981,3 +171976,8 @@ uw_00c1a108,,0x00C1A108,17,game/GameEngine/Source/GameLogic/LivingWorld/LivingWo
 ?Rva009AD750Filter@@YAXPAURva009AD750Context@@PAE1IIHPBI@Z,,0x009AD750,848,game/GameEngine/Source/Common/Rva009AD750Filter.cpp,matched,address-derived seven-dword cdecl callback;complete caller and fields verified;Open BFME 2 donor Code/Libraries/Source/VP6/DeblockVerticalEdges.cpp at game.dat 0x001BE140;evidence=targets/game/reverse/identity_evidence/0x009ad750-donor-port.md;model=gpt-6.1-sol;host=fleet
 _Rva009B0100Vp6BlockFilter,,0x009B0100,1583,game/GameEngine/Source/Common/BfmeVp6LoopFilter.cpp,matched,Open BFME 2 donor Code/Libraries/Source/VP6/LoopFilter.cpp at game.dat 0x001C0AF0; opaque BFME 1 identity; evidence=targets/game/reverse/identity_evidence/009b0100-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
 _Rva009B0730,,0x009B0730,1583,game/GameEngine/Source/Common/BfmeVp6LoopFilter.cpp,matched,Open BFME 2 donor Code/Libraries/Source/VP6/LoopFilter.cpp at game.dat 0x001C1120; complete ret and INT3 delimited extent; opaque BFME 1 identity; evidence=targets/game/reverse/identity_evidence/009b0730-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
+?Rva009AB530BuildProbabilityTables@@YAXPAE_N@Z,,0x009AB530,556,game/GameEngine/Source/Common/Rva009AB530BuildProbabilityTables.cpp,matched,Decoded cdecl caller 009AC109 and four canonical callees; typed probability table extents; evidence=targets/game/reverse/identity_evidence/009ab530-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
+?Rva009B6740BuildTable@@YAXPAE@Z,,0x009B6740,514,game/GameEngine/Source/Common/Rva009B6740BuildTable.cpp,matched,Complete caller 009B6B98 and byte array table layout; evidence=targets/game/reverse/identity_evidence/009b6740-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
+?Rva009B60E0BuildTree@@YAXPAI0H@Z,,0x009B60E0,441,game/GameEngine/Source/Common/Rva009B60E0BuildTree.cpp,matched,Complete caller and packed edge consumers confirm cdecl ABI; evidence=targets/game/reverse/identity_evidence/009b60e0-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
+?Rva009B65F0Update@@YAXPAEE@Z,,0x009B65F0,331,game/GameEngine/Source/Common/Rva009B65F0Update.cpp,matched,Complete caller 009ABFF9 establishes two cdecl words; probability fields and table column induction; evidence=targets/game/reverse/identity_evidence/009b65f0-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
+?Rva009B6080InsertSorted@@YAXPAURva009B6080Record@@HPAH@Z,,0x009B6080,88,game/GameEngine/Source/Common/Rva009B6080InsertSorted.cpp,matched,Static C++ recreates decoded ESI and EDX private argument convention; two complete returns; evidence=targets/game/reverse/identity_evidence/009b6080-bfme2-donor.md;model=gpt-6.1-sol;host=fleet
