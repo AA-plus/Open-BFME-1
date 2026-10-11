@@ -30,22 +30,24 @@ struct Rva007E8AC0 { void run(); };
 // Retail 0x011298AC contains the NUL-terminated literal "TXN".
 
 
-extern int TheBfmeSetupValue_007E95A0;			// 0x0130A578
+// Six independent four-byte .data cells, zero in the retail image.
+// Their semantic identities remain unknown; each name preserves its address.
+int g_Va0130A578 = 0;			// 0x0130A578
 
-extern int TheBfmeSetupValue_007E95D0;			// 0x0130A494
+int g_Va0130A494 = 0;			// 0x0130A494
 
-extern int TheBfmeSetupValue_007E98A0;			// 0x0130A4C4
+int g_Va0130A4C4 = 0;			// 0x0130A4C4
 
-extern int TheBfmeSetupValue_007E98D0;			// 0x0130A53C
+int g_Va0130A53C = 0;			// 0x0130A53C
 
-extern int TheBfmeSetupValue_007E9990;			// 0x0130A4D0
+int g_Va0130A4D0 = 0;			// 0x0130A4D0
 
-extern int TheBfmeSetupValue_007E99C0;			// 0x0130A56C
+int g_Va0130A56C = 0;			// 0x0130A56C
 
 // ?bfmeSetup_007E95A0@@YGXPAUBfmeSetupTarget@@@Z
 void __stdcall bfmeSetup_007E95A0(BfmeSetupTarget *thing)
 {
-	int value = TheBfmeSetupValue_007E95A0;
+	int value = g_Va0130A578;
 
 	((Rva007E8AC0*)thing)->run();
 
@@ -58,7 +60,7 @@ void __stdcall bfmeSetup_007E95A0(BfmeSetupTarget *thing)
 // ?bfmeSetup_007E95D0@@YGXPAUBfmeSetupTarget@@@Z
 void __stdcall bfmeSetup_007E95D0(BfmeSetupTarget *thing)
 {
-	int value = TheBfmeSetupValue_007E95D0;
+	int value = g_Va0130A494;
 
 	((Rva007E8AC0*)thing)->run();
 
@@ -71,7 +73,7 @@ void __stdcall bfmeSetup_007E95D0(BfmeSetupTarget *thing)
 // ?bfmeSetup_007E98A0@@YGXPAUBfmeSetupTarget@@@Z
 void __stdcall bfmeSetup_007E98A0(BfmeSetupTarget *thing)
 {
-	int value = TheBfmeSetupValue_007E98A0;
+	int value = g_Va0130A4C4;
 
 	((Rva007E8AC0*)thing)->run();
 
@@ -84,7 +86,7 @@ void __stdcall bfmeSetup_007E98A0(BfmeSetupTarget *thing)
 // ?bfmeSetup_007E98D0@@YGXPAUBfmeSetupTarget@@@Z
 void __stdcall bfmeSetup_007E98D0(BfmeSetupTarget *thing)
 {
-	int value = TheBfmeSetupValue_007E98D0;
+	int value = g_Va0130A53C;
 
 	((Rva007E8AC0*)thing)->run();
 
@@ -97,7 +99,7 @@ void __stdcall bfmeSetup_007E98D0(BfmeSetupTarget *thing)
 // ?bfmeSetup_007E9990@@YGXPAUBfmeSetupTarget@@@Z
 void __stdcall bfmeSetup_007E9990(BfmeSetupTarget *thing)
 {
-	int value = TheBfmeSetupValue_007E9990;
+	int value = g_Va0130A4D0;
 
 	((Rva007E8AC0*)thing)->run();
 
@@ -110,7 +112,7 @@ void __stdcall bfmeSetup_007E9990(BfmeSetupTarget *thing)
 // ?bfmeSetup_007E99C0@@YGXPAUBfmeSetupTarget@@@Z
 void __stdcall bfmeSetup_007E99C0(BfmeSetupTarget *thing)
 {
-	int value = TheBfmeSetupValue_007E99C0;
+	int value = g_Va0130A56C;
 
 	((Rva007E8AC0*)thing)->run();
 

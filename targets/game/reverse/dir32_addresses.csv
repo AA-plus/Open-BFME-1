@@ -7080,12 +7080,6 @@ name,va
 ?TheBfmeSetupSecondText007F26E0@@3QBDB,0x0112ACA4
 ?TheBfmeSetupSecondText007F2720@@3QBDB,0x0112ACA4
 ?TheBfmeSetupText@@3QBDB,0x011298AC
-?TheBfmeSetupValue_007E95A0@@3HA,0x0130A578
-?TheBfmeSetupValue_007E95D0@@3HA,0x0130A494
-?TheBfmeSetupValue_007E98A0@@3HA,0x0130A4C4
-?TheBfmeSetupValue_007E98D0@@3HA,0x0130A53C
-?TheBfmeSetupValue_007E9990@@3HA,0x0130A4D0
-?TheBfmeSetupValue_007E99C0@@3HA,0x0130A56C
 ?TheBfmeShared012D6E2C@@3PAVBfmeShared012D6E2C@@A,0x012D6E2C
 ?TheBfmeSingletonHead@@3PAVBfmeLinkedSingleton@@A,0x012F3350
 ?TheBfmeSpecialPowerAllowanceStore@@3PAVBfmeSpecialPowerAllowanceStore@@A,0x012F0FF8
