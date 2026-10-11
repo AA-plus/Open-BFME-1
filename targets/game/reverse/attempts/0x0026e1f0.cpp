@@ -1,5 +1,5 @@
 // ?update@WoundArrowUpdate@@UAE?AW4UpdateSleepTime@@XZ
-// partial score=0.8645 date=2026-10-09
+// partial score=1.0 date=2026-10-11
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame
 // stlport
 #define _STLP_NO_EXCEPTIONS 1
@@ -124,7 +124,8 @@ UpdateSleepTime WoundArrowUpdate::update()
         return UPDATE_SLEEP_1;
     Object *owner = getObject();
     m_hasAppliedWound = false;
-    Object *target = TheGameLogic->findObjectByID(m_targetID);
+    int targetID = m_targetID;
+    Object *target = TheGameLogic->findObjectByID(targetID);
     if (target) {
         AIUpdateInterface *ai = target->m_ai;
         if (!ai)
@@ -134,9 +135,11 @@ UpdateSleepTime WoundArrowUpdate::update()
         float dx = target->m_cachedPos.x - owner->m_cachedPos.x;
         float dy = target->m_cachedPos.y - owner->m_cachedPos.y;
         float inverse = 1.0f / (float)sqrt(dx * dx + dy * dy);
+        float unitX = dx * inverse;
+        float unitY = dy * inverse;
         Coord3D position;
-        position.x = dx * inverse * data->m_field254;
-        position.y = dy * inverse * data->m_field254;
+        position.x = unitX * data->m_field254;
+        position.y = unitY * data->m_field254;
         position.x += target->m_cachedPos.x;
         position.y += target->m_cachedPos.y;
         (ai->*table->chooseLocomotorSet)(LOCOMOTORSET_0026E1F0);

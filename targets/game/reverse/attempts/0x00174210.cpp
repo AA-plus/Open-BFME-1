@@ -1,5 +1,5 @@
 // ?update@AICowerState@@UAE?AW4StateReturnType@@XZ
-// partial score=0.65 date=2026-09-19
+// partial score=0.9371 date=2026-10-11
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS
 // stlport
 
@@ -34,7 +34,6 @@ public:
     Object *m_owner;
 };
 
-#pragma comment(linker, "/alternatename:?getGoalObject@StateMachine@@QAEPAVObject@@XZ=?j_0000e570@@YAXXZ")
 
 class Gen_0026FD20
 {
@@ -42,7 +41,6 @@ public:
     Bool bfmeReady() const;
 };
 
-#pragma comment(linker, "/alternatename:?bfmeReady@Gen_0026FD20@@QBE_NXZ=?j_0004a057@@YAXXZ")
 
 class Object
 {
@@ -67,9 +65,6 @@ public:
     Gen_0026FD20 *m_ai;
 };
 
-#pragma comment(linker, "/alternatename:?bfmeDamageSourceCanCauseCower@Object@@QBE_NH@Z=?j_0000c838@@YAXXZ")
-#pragma comment(linker, "/alternatename:?bfmeGetRecentDamageSource@Object@@QBE_NPAII@Z=?j_000402d2@@YAXXZ")
-#pragma comment(linker, "/alternatename:?isKindOf@Object@@QBE_NW4KindOfType@@@Z=?j_0003251f@@YAXXZ")
 
 typedef _STL::list<Drawable *> DrawableList;
 
@@ -87,10 +82,6 @@ public:
 void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type messageType,
     PickAndPlayInfo *info );
 
-#pragma comment(linker, "/alternatename:?pickAndPlayUnitVoiceResponse@@YAXPBV?$list@PAVDrawable@@V?$allocator@PAVDrawable@@@_STL@@@_STL@@W4Type@GameMessage@@PAVPickAndPlayInfo@@@Z=?j_000196c8@@YAXXZ")
-#pragma comment(linker, "/alternatename:?push_back@?$list@PAVDrawable@@V?$allocator@PAVDrawable@@@_STL@@@_STL@@QAEXABQAVDrawable@@@Z=?j_0004a151@@YAXXZ")
-#pragma comment(linker, "/alternatename:??0?$list@PAVDrawable@@V?$allocator@PAVDrawable@@@_STL@@@_STL@@QAE@ABV?$allocator@PAVDrawable@@@1@@Z=?j_000263d2@@YAXXZ")
-#pragma comment(linker, "/alternatename:??1?$_List_base@PAVDrawable@@V?$allocator@PAVDrawable@@@_STL@@@_STL@@QAE@XZ=?j_00040863@@YAXXZ")
 
 class AICowerState
 {
@@ -134,7 +125,7 @@ StateReturnType AICowerState::update()
 
     Bool canCauseCower = false;
     if ( !slot44() )
-        return STATE_SUCCESS;
+        return STATE_CONTINUE;
 
     ObjectID sourceID;
     if ( owner->bfmeGetRecentDamageSource( &sourceID, 4 ) )
@@ -144,15 +135,12 @@ StateReturnType AICowerState::update()
     if ( ai == 0 )
         return STATE_FAILURE;
 
-    if ( !canCauseCower )
-        return STATE_CONTINUE;
-
-    if ( ai->bfmeReady() )
-        return STATE_CONTINUE;
-
+    if ( canCauseCower && !ai->bfmeReady() ) {
     DrawableList drawables;
     Drawable *drawable = owner->getDrawable();
     drawables.push_back( drawable );
     pickAndPlayUnitVoiceResponse( &drawables, GameMessage::MSG_COWER, 0 );
     return STATE_SUCCESS;
+    }
+    return STATE_CONTINUE;
 }
