@@ -33,7 +33,7 @@ public:
 		return D3DDevice;
 	}
 
-private:
+protected:
 	static IDirect3DDevice8 *D3DDevice;
 };
 
