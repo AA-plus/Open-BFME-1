@@ -209,3 +209,4 @@ def test_kind_of_columns():
     assert ep.kind_of({"ambiguous": False, "unique": True}) == "unique"
     assert ep.kind_of({"ambiguous": True, "unique": True}) == "twin-proven"
     assert ep.kind_of({"ambiguous": True, "unique": False}) == "ambiguous"
+    assert ep.kind_of({"ambiguous": False, "unique": False}) == "unanchored"

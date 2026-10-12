@@ -144,7 +144,7 @@ void LANAPI::handleLobbyAnnounce( LANMessage *msg, UnsignedInt senderIP )
 // queue 0x9DAFF9 was a misplaced unit-tag dispatcher).
 
 // ?handleRequestJoin@LANAPI@@IAEXPAULANMessage@@I@Z
-// Body in LANAPIhandlers_handleRequestJoin.asm (exact 1119B retail).
+// Retail body 0x0068C400 (2248B; LANAPI::update ILT 0x00006A87), not yet converted.
 
 // UpdateRemoteIPList (0x004D2D80) lives in the direct-connect menu TU.
 
