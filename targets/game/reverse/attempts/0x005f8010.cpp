@@ -1,5 +1,5 @@
 // ?d_005f8010@@YAXXZ
-// partial score=0.9959016393 date=2026-09-26
+// partial score=0.9959 date=2026-09-26
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WW3D2
 #include "vector3.h"
 #include "vector4.h"
