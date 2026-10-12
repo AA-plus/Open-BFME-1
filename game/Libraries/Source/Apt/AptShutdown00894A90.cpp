@@ -29,7 +29,7 @@ static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
 {
 	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
 }
-extern BfmeStringPool3AF0 *g_bfmeStringPool1284;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 extern char *Rva008A5380Holder;
 extern Rva00893030Manager *g_rva00893030Manager;
 extern Rva00899560Pool *g_rva8CD130IdleHook;
@@ -123,7 +123,7 @@ void dup_00894A90(int mode)
 	g_registry01337814 = 0;
 	--data->m_refCount;
 	if (data->m_refCount == 0) {
-		g_bfmeStringPool1284->free(data);
+		g_rva01337A30AllocPair->free(data);
 	}
 	++sharedEmptyString012D5298()->m_refCount;
 	g_String012D5140.m_data = sharedEmptyString012D5298();
@@ -133,7 +133,7 @@ void dup_00894A90(int mode)
 	delete (Rva008A30A0Delete *)g_rva8CD130IdleHook;
 
 	g_rva8CD130IdleHook = 0;
-	g_bfmeStringPool1284 = 0;
+	g_rva01337A30AllocPair = 0;
 	((Rva008C6220ScoreBuffers *)&g_stack01338748)->clear();
 	g_bfme1017H = 0;
 }

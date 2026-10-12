@@ -17,7 +17,8 @@ struct Rva008AE600StringPool
 	void (__cdecl *free)(void *);
 };
 
-extern Rva008AE600StringPool *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 
 // 0x012D5298: the shared empty EA string block, defined once in
 // game/GameEngine/Source/Common/Data/Rva012D5298.cpp.  This TU keeps its own
@@ -53,7 +54,7 @@ public:
 	{
 		Rva008AE600StringData *data = m_data;
 		if (--data->m_refCount == 0)
-			g_bfmeStringPool1284->free(data);
+			(*(Rva008AE600StringPool **)&g_rva01337A30AllocPair)->free(data);
 	}
 
 	Rva8CD130String &operator=(const Rva8CD130String &other)
@@ -61,7 +62,7 @@ public:
 		++other.m_data->m_refCount;
 		Rva008AE600StringData *old = m_data;
 		if (--old->m_refCount == 0)
-			g_bfmeStringPool1284->free(old);
+			(*(Rva008AE600StringPool **)&g_rva01337A30AllocPair)->free(old);
 		m_data = other.m_data;
 		return *this;
 	}

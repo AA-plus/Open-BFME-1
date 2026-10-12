@@ -28,7 +28,8 @@ struct Rva00891B80Pool
 	void (__cdecl *free)(void *);
 };
 
-extern Rva00891B80Pool *g_pool01337A30;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 extern void *(*Rva008C5D70Alloc)(unsigned int bytes);
 
 class BfmeUtf8String008A01F0
@@ -44,7 +45,7 @@ public:
 	{
 		Rva00891B80Block *block = m_block;
 		if (--block->m_ref == 0)
-			g_pool01337A30->free(block);
+			(*(Rva00891B80Pool **)&g_rva01337A30AllocPair)->free(block);
 	}
 
 	BfmeUtf8String008A01F0 &map();

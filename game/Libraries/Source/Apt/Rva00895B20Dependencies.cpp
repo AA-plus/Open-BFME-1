@@ -11,13 +11,14 @@ public:
 };
 extern void (*TheBfmeFree)(void *,unsigned);
 struct BfmeStringPoolVKI { void *unused; void (__cdecl *free)(void *); };
-extern BfmeStringPoolVKI *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class BfmeStrVKI { public: void __declspec(nothrow) bfmeSetVKI(const char *); };
 struct EAStringData { unsigned short refs, length, capacity, flags; };
 class Rva00895B20StringBase {
 protected:
     EAStringData *data;
-    void releaseBuffer() { EAStringData *p=data; if(--p->refs==0) g_bfmeStringPool1284->free(p); }
+    void releaseBuffer() { EAStringData *p=data; if(--p->refs==0) (*(BfmeStringPoolVKI **)&g_rva01337A30AllocPair)->free(p); }
     ~Rva00895B20StringBase() { releaseBuffer(); }
 };
 class EAStringC : private Rva00895B20StringBase {

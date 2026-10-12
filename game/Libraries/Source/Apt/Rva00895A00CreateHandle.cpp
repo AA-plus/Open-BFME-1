@@ -15,7 +15,8 @@ struct BfmeStringPoolVKI
 	void (__cdecl *free)(void *);
 };
 
-extern BfmeStringPoolVKI *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 
 class BfmeStrVKI
 {
@@ -29,7 +30,7 @@ public:
 	{
 		BfmeHdrVKI *data = m_data;
 		if (--data->m_refCount == 0)
-			g_bfmeStringPool1284->free(data);
+			(*(BfmeStringPoolVKI **)&g_rva01337A30AllocPair)->free(data);
 	}
 
 	BfmeHdrVKI *m_data;

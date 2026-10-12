@@ -15,7 +15,8 @@ struct BfmeStringPool1286
 	void (__cdecl *free)(void *storage);
 };
 
-extern BfmeStringPool1286 *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 extern char g_bfmeDerived1286Vtable;
 extern char g_bfmeSpecialBlock1286;
 extern void (__cdecl *g_bfmeFreePair1286)(void *storage, int count);
@@ -30,7 +31,7 @@ public:
 	{
 		BfmeStringData1286 *data = m_data;
 		if (--data->m_refCount == 0)
-			g_bfmeStringPool1284->free(data);
+			(*(BfmeStringPool1286 **)&g_rva01337A30AllocPair)->free(data);
 	}
 
 private:

@@ -6,12 +6,13 @@ extern void *(*Rva008C5D70Alloc)(unsigned int);
 extern "C" void (*TheBfmeFree)(void *, unsigned int);
 struct Rva008D32B0Block { unsigned short refs; };
 struct Rva008D32B0Release { void *m_00; void (__cdecl *free)(void *); };
-extern Rva008D32B0Release *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class BfmeStrVKI {
 public:
     BfmeStrVKI(const char *p) { bfmeSetVKI(p); }
     void bfmeSetVKI(const char *);
-    ~BfmeStrVKI() { Rva008D32B0Block *old = m_00; if (--old->refs == 0) g_bfmeStringPool1284->free(old); }
+    ~BfmeStrVKI() { Rva008D32B0Block *old = m_00; if (--old->refs == 0) (*(Rva008D32B0Release **)&g_rva01337A30AllocPair)->free(old); }
     Rva008D32B0Block *m_00;
 };
 // Shared address-based sized-delete view, also used by matched 00899800.

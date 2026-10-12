@@ -18,7 +18,8 @@
 
 struct Rva00893410Block { unsigned short refs, length, capacity, flags; };
 struct Rva00893410Pool { void *unused; void (__cdecl *free)(void *); };
-extern Rva00893410Pool *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 // The shared empty EA string block at 0x012D5298 is one global, EA's
 // EAStringC::StringDataC g_rva012D5298Empty (defined in
 // game/GameEngine/Source/Common/Data/Rva012D5298.cpp).  MSVC mangles the type
@@ -31,7 +32,7 @@ class BfmeStrVKI {
 public:
     BfmeStrVKI(const char *p) { bfmeSetVKI(p); }
     void __declspec(nothrow) bfmeSetVKI(const char *p);
-    ~BfmeStrVKI() { Rva00893410Block *p = block; if (--p->refs == 0) g_bfmeStringPool1284->free(p); }
+    ~BfmeStrVKI() { Rva00893410Block *p = block; if (--p->refs == 0) (*(Rva00893410Pool **)&g_rva01337A30AllocPair)->free(p); }
     Rva00893410Block *block;
 };
 class BfmeStrVKK { public: void bfmeTruncVKK(unsigned n); };

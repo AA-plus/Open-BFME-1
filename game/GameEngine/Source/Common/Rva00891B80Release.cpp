@@ -6,7 +6,8 @@ struct Rva00891B80Pool
 	void (__cdecl *free)(void *);
 };
 
-extern Rva00891B80Pool *g_pool01337A30;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 
 struct Rva00891B80Block
 {
@@ -25,7 +26,7 @@ void Rva00891B80::release()
 {
 	Rva00891B80Block *block = m_block;
 	if (--block->m_ref == 0)
-		g_pool01337A30->free(block);
+		(*(Rva00891B80Pool **)&g_rva01337A30AllocPair)->free(block);
 }
 
 class Rva00892890
@@ -40,7 +41,7 @@ void Rva00892890::release()
 {
 	Rva00891B80Block *block = m_block;
 	if (--block->m_ref == 0)
-		g_pool01337A30->free(block);
+		(*(Rva00891B80Pool **)&g_rva01337A30AllocPair)->free(block);
 }
 
 class Rva008AD330
@@ -55,7 +56,7 @@ void Rva008AD330::release()
 {
 	Rva00891B80Block *block = m_block;
 	if (--block->m_ref == 0)
-		g_pool01337A30->free(block);
+		(*(Rva00891B80Pool **)&g_rva01337A30AllocPair)->free(block);
 }
 
 extern Rva00891B80Block g_default012D5298;
@@ -86,7 +87,7 @@ void Rva00891C10::clear()
 {
 	Rva00891B80Block *block = m_block;
 	if (--block->m_ref == 0)
-		g_pool01337A30->free(block);
+		(*(Rva00891B80Pool **)&g_rva01337A30AllocPair)->free(block);
 	m_block = &g_default012D5298;
 	++g_default012D5298.m_ref;
 }

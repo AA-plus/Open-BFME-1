@@ -13,7 +13,8 @@ struct Rva008CF3C0Pool
 	void (__cdecl *free)(void *);
 };
 
-extern Rva008CF3C0Pool *g_pool01337A30;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 extern void *(*Rva008C5D70Alloc)(unsigned int bytes);
 extern char *(__cdecl *g_rva01337860Empty)(void);
 extern char *(__cdecl *g_rva0133785CDuplicate)(const char *);
@@ -38,7 +39,7 @@ public:
 	{
 		Rva008CF3C0Block *block = m_block;
 		if (--block->m_ref == 0)
-			g_pool01337A30->free(block);
+			(*(Rva008CF3C0Pool **)&g_rva01337A30AllocPair)->free(block);
 	}
 
 	Rva008CF3C0Block *m_block;
@@ -140,7 +141,7 @@ void Rva008CF3C0State::parseAndAppend(void *owner, void *scope,
 			++value.m_block->m_ref;
 			Rva008CF3C0Block *outgoing = node->m_block;
 			if (--outgoing->m_ref == 0)
-				g_pool01337A30->free(outgoing);
+				(*(Rva008CF3C0Pool **)&g_rva01337A30AllocPair)->free(outgoing);
 			node->m_block = value.m_block;
 			(this->*appendThunk.call)(owner, scope, &name, node, 1, 1, 0);
 		}

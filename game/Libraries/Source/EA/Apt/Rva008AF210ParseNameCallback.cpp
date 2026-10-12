@@ -20,7 +20,8 @@ public:
 	class StringDataC;
 };
 extern EAStringC::StringDataC g_rva012D5298Empty;
-extern Rva008AF210StringPool *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class Rva8CD130String
 {
 public:
@@ -32,7 +33,7 @@ public:
 	{
 		Rva008AF210StringData *data = m_data;
 		if (--data->m_refCount == 0)
-			g_bfmeStringPool1284->free(data);
+			(*(Rva008AF210StringPool **)&g_rva01337A30AllocPair)->free(data);
 	}
 	Rva008AF210StringData *m_data;
 };

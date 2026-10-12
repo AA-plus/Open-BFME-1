@@ -17,7 +17,7 @@ static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
 {
 	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
 }
-extern BfmeStringPool3AF0 *g_bfmeStringPool1284;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 
 struct Rva00892640Item
 {
@@ -43,7 +43,7 @@ Rva00892640Item &Rva00892640Item::operator=(const Rva00892640Item &other)
 	BfmeStringData3AF0 *old = m_handle;
 	--old->m_refs;
 	if (old->m_refs == 0)
-		g_bfmeStringPool1284->m_destroy(old);
+		g_rva01337A30AllocPair->m_destroy(old);
 	m_handle = other.m_handle;
 	m_extra = other.m_extra;
 	return *this;
@@ -54,7 +54,7 @@ Rva00892640Item::~Rva00892640Item()
 	BfmeStringData3AF0 *old = m_handle;
 	--old->m_refs;
 	if (old->m_refs == 0)
-		g_bfmeStringPool1284->m_destroy(old);
+		g_rva01337A30AllocPair->m_destroy(old);
 }
 
 extern Rva00892640Item *Rva00893B30ResizeItems(

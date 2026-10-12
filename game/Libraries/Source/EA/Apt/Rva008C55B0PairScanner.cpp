@@ -15,7 +15,8 @@ struct Rva008CF3C0Pool
 	void(__cdecl *free)(void *);
 };
 
-extern Rva008CF3C0Pool *g_pool01337A30;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 
 class Rva008CF3C0String
 {
@@ -30,7 +31,7 @@ public:
 	{
 		Rva008CF3C0Block *block = m_block;
 		if (--block->m_ref == 0)
-			g_pool01337A30->free(block);
+			(*(Rva008CF3C0Pool **)&g_rva01337A30AllocPair)->free(block);
 	}
 
 	Rva008CF3C0Block *m_block;
@@ -57,13 +58,13 @@ char *Rva008CF3C0State::parse(char *cursor, Rva008CF3C0String *name, Rva008CF3C0
     char *p = cursor, *eq = 0;
     {
         Rva008CF3C0Block *nameBlock = name->m_block;
-        if (--nameBlock->m_ref == 0) g_pool01337A30->free(nameBlock);
+        if (--nameBlock->m_ref == 0) (*(Rva008CF3C0Pool **)&g_rva01337A30AllocPair)->free(nameBlock);
         name->m_block = &g_default012D5298;
         ++g_default012D5298.m_ref;
     }
     {
         Rva008CF3C0Block *valueBlock = value->m_block;
-        if (--valueBlock->m_ref == 0) g_pool01337A30->free(valueBlock);
+        if (--valueBlock->m_ref == 0) (*(Rva008CF3C0Pool **)&g_rva01337A30AllocPair)->free(valueBlock);
         value->m_block = &g_default012D5298;
         ++g_default012D5298.m_ref;
     }

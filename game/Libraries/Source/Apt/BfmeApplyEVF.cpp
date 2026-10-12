@@ -27,7 +27,8 @@ struct BfmeStringData3AF0
 	unsigned short m_flags;
 };
 
-extern BfmeStringPoolVKI *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class EAStringC { public: class StringDataC; };
 extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
 static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
@@ -57,7 +58,7 @@ public:
 	{
 		BfmeHdrVKI *data = m_data;
 		if (--data->m_refCount == 0)
-			g_bfmeStringPool1284->free(data);
+			(*(BfmeStringPoolVKI **)&g_rva01337A30AllocPair)->free(data);
 	}
 	BfmeStrVKI &operator=(const BfmeStrVKI &other)
 	{
@@ -65,7 +66,7 @@ public:
 
 		BfmeHdrVKI *old = m_data;
 		if (--old->m_refCount == 0)
-			g_bfmeStringPool1284->free(old);
+			(*(BfmeStringPoolVKI **)&g_rva01337A30AllocPair)->free(old);
 
 		m_data = other.m_data;
 		return *this;
