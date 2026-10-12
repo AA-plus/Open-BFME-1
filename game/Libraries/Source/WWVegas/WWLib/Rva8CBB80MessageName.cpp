@@ -22,7 +22,8 @@ struct Rva8CBB80StringPool
 	void (__cdecl *free)(void *);
 };
 
-extern Rva8CBB80StringPool *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 
 class EAStringC
 {
@@ -59,7 +60,7 @@ public:
 		Rva8CBB80StringData *data = m_data;
 		--data->m_refCount;
 		if (data->m_refCount == 0)
-			g_bfmeStringPool1284->free(data);
+			(*(Rva8CBB80StringPool **)&g_rva01337A30AllocPair)->free(data);
 	}
 
 	Rva8CBB80StringData *m_data;

@@ -33,7 +33,8 @@ struct Rva8CB820StringPool
 class EAStringC { public: class StringDataC; };
 extern EAStringC::StringDataC g_rva012D5298Empty;
 static __forceinline Rva8CB820StringData *localEmptyString1284() { return (Rva8CB820StringData *)&g_rva012D5298Empty; }
-extern Rva8CB820StringPool *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 
 class Rva8CD130String
 {
@@ -49,7 +50,7 @@ public:
 		Rva8CB820StringData *data = m_data;
 		--data->m_refCount;
 		if (data->m_refCount == 0)
-			g_bfmeStringPool1284->free(data);
+			(*(Rva8CB820StringPool **)&g_rva01337A30AllocPair)->free(data);
 	}
 
 	Rva8CB820StringData *m_data;
