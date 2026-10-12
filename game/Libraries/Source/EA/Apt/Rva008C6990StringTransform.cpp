@@ -36,6 +36,7 @@ public:
         if (--old->m_refCount == 0)
             g_rva01337A30AllocPair->free(old);
     }
+    Rva8CD130String &rva0089EA60Append(const char *text);
     BfmeStringData3AF0 *m_data;
 };
 class Rva8CD130Value
@@ -101,7 +102,12 @@ static __forceinline Rva008A9B00 *&rva01338478FreeHead() {
 // 0x01338748: the Apt stack depth global, defined in Rva00C6DCC0StaticInit.cpp.
 struct Rva008AE770Stack { int m_count; };
 extern Rva008AE770Stack Rva008AE770TheStack;
-extern void d_008c5360();
+extern "C" int __cdecl isalnum(int value);
+extern "C" int __cdecl sprintf(char *destination, const char *format, ...);
+namespace Rva008C5360
+{
+void method(Rva8CD130String *text);
+}
 
 Rva008A9B00 *rva008C6990StringTransform(void *unknown, int count)
 {
@@ -123,9 +129,45 @@ Rva008A9B00 *rva008C6990StringTransform(void *unknown, int count)
         {
             Rva8CD130String text;
             value->getName(&text);
-            ((void (__cdecl *)(Rva8CD130String *))d_008c5360)(&text);
+            Rva008C5360::method(&text);
             ((BfmeStrVKJ *)&result->m_data)->bfmeAssignVKJ(*(BfmeStrVKJ *)&text);
         }
     }
     return result;
+}
+
+namespace Rva008C5360
+{
+void method(Rva8CD130String *text)
+{
+    char escaped[6] = "";
+    char plain[2] = "";
+    Rva8CD130String output;
+    unsigned int size = text->m_data->m_length * 3;
+    ((BfmeStrVKK *)&output)->bfmeTruncVKK(size);
+
+    const char *source = (const char *)text->m_data + 8;
+    plain[1] = 0;
+    char current = *source++;
+    while (current)
+    {
+        if ((unsigned char)current < 0x80 && isalnum((unsigned char)current))
+        {
+            plain[0] = current;
+            output.rva0089EA60Append(plain);
+        }
+        else
+        {
+            sprintf(escaped, "%%%X", (unsigned char)current);
+            output.rva0089EA60Append(escaped);
+        }
+        current = *source++;
+    }
+
+    ++output.m_data->m_refCount;
+    BfmeStringData3AF0 *old = text->m_data;
+    if (--old->m_refCount == 0)
+        g_rva01337A30AllocPair->free(old);
+    text->m_data = output.m_data;
+}
 }
