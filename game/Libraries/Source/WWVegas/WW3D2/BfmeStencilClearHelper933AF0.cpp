@@ -6,7 +6,8 @@ public:
 	static bool Has_Stencil();
 	static void Clear(bool clear_color, bool clear_z_stencil, bool clear_stencil, const Vector3 &color, float dest_alpha, float z, unsigned int stencil);
 };
-extern char g_bfme911Flag;
+// VA 0x012D7188: byte flag, retail loader byte 01; byte stores here (+0003) and in BfmeConv911; next datum g_bfmeThirdEB at 0x012D718C.
+char g_bfme911Flag = 1;
 extern int g_bfmeBlendDst;
 // ?bfmeStencilClearHelper933AF0@@YAXXZ
 // Open BFME 2 donor Code/Libraries/Source/WWVegas/WW3D2/Rva00118AC0Finish.cpp.

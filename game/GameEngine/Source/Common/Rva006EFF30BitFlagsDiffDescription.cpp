@@ -4,7 +4,8 @@
 #include "../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 #include <bitset>
 
-extern const char *const ModelConditionNames[];
+// VA 0x012A6918: matched data row Rva00EA6918ModelConditionNames (dis_retail +00d0).
+extern const char *Rva00EA6918ModelConditionNames[];
 
 class Rva006EFF30
 {
@@ -41,17 +42,17 @@ void Rva006EFF30::buildDescription(AsciiString *str, const Rva006EFF30 &other, b
             }
             if (newSet && !oldSet)
             {
-                description.format(AsciiString("+%s"), ModelConditionNames[i]);
+                description.format(AsciiString("+%s"), Rva00EA6918ModelConditionNames[i]);
                 static_cast<StringBase<char> *>(str)->concat(description.str(), description.StringBase<char>::getLength());
             }
             else if (includeSame && newSet)
             {
-                description.format(AsciiString("%s"), ModelConditionNames[i]);
+                description.format(AsciiString("%s"), Rva00EA6918ModelConditionNames[i]);
                 static_cast<StringBase<char> *>(str)->concat(description.str(), description.StringBase<char>::getLength());
             }
             else
             {
-                description.format(AsciiString("-%s"), ModelConditionNames[i]);
+                description.format(AsciiString("-%s"), Rva00EA6918ModelConditionNames[i]);
                 static_cast<StringBase<char> *>(str)->concat(description.str(), description.StringBase<char>::getLength());
             }
             first = false;
