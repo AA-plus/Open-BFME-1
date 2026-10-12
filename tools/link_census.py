@@ -1715,17 +1715,21 @@ def main(argv=None):
     verify_data_objects()
     present, missing = objects(rows)
     sources = _object_sources(rows)
-    stale = stale_objects(present, sources)
+    why = {}
+    stale = stale_objects(present, sources, why)
     if stale:
-        raise SystemExit(f"link_census: {len(stale):,} source objects are stale, e.g. {stale[0].name}; rerun with --build")
+        raise SystemExit(f"link_census: {describe_stale(stale, why)}; rerun with --build")
     if missing:
         print(f"link_census: {len(missing):,} objects missing (run the full ./build.sh first); "
               f"linking the {len(present):,} present", file=sys.stderr)
     fresh_outputs(OUT / "census.exe")
     log, seconds, code = link(present)
     unexplained_exit(code, log, OUT / "census.exe")
-    if stale_objects(present, sources):
-        raise SystemExit("link_census: compiler inputs or objects changed during link; nothing recorded")
+    why = {}
+    stale = stale_objects(present, sources, why)
+    if stale:
+        raise SystemExit("link_census: compiler inputs or objects changed during link; nothing recorded "
+                         f"({describe_stale(stale, why)})")
     crashed = FATAL.search(log)
     if crashed:
         # A linker that dies prints no per-symbol errors, which would read as
@@ -1779,17 +1783,22 @@ def selected_main():
     if missing:
         raise SystemExit(f"link_census: {len(missing):,} objects missing")
     sources = _object_sources(rows)
-    stale = stale_objects(present, sources)
+    why = {}
+    stale = stale_objects(present, sources, why)
     if stale:
-        raise SystemExit(f"link_census: {len(stale):,} objects are not current for their source, "
-                         f"e.g. {stale[0].name}")
+        raise SystemExit(f"link_census: objects are not current for their source: {describe_stale(stale, why)}")
     log = final_log(None)  # the census's own link says which names nothing defines
     facts = read_facts(present, rows)
     map_text = selection_link(present, log)
     validate_fact_snapshots(present, facts)
     if subprocess.run(["git", "diff", "--quiet", history[-1]["commit"], "--", *CENSUS_INPUTS],
-                      cwd=ROOT).returncode or stale_objects(present, sources):
+                      cwd=ROOT).returncode:
         raise SystemExit("link_census: source inputs or objects changed during the selection link; rerun the census")
+    why = {}
+    stale = stale_objects(present, sources, why)
+    if stale:
+        raise SystemExit("link_census: source inputs or objects changed during the selection link; rerun the census "
+                         f"({describe_stale(stale, why)})")
     with STATUS.open(newline="", encoding="utf-8") as handle:
         clean = {row["source"] for row in csv.DictReader(handle) if row["linked"] == "yes"}
     clean_objects = {build.row_object(row).name for row in rows if row["source"] in clean}
@@ -2262,8 +2271,17 @@ def _refresh_missing_search_root_receipts(rows, source_outputs, receipts):
     build.compile_rows(rows, [source for source, _ in missing], input_proof=receipts)
 
 
-def stale_objects(present, sources):
-    """Check source objects, using fresh proofs across mutable broad roots."""
+def describe_stale(stale, why):
+    """Name up to 5 stale objects, the count, and why each one is stale."""
+    shown = ", ".join(f"{o.name} ({why.get(o, 'normal cache not current')})" for o in stale[:5])
+    return f"{len(stale):,} stale objects: {shown}"
+
+
+def stale_objects(present, sources, why=None):
+    """Check source objects, using fresh proofs across mutable broad roots.
+
+    why, when given, maps each stale object to the check that failed."""
+    why = {} if why is None else why
     receipts = input_receipts()
     if receipts is not None:
         import census_receipts
@@ -2282,16 +2300,23 @@ def stale_objects(present, sources):
     if not build._inventory_cache_still_current(inventory_cache):
         raise SystemExit("link_census: include search directories changed while checking objects; retry")
     if receipts is None:
+        for obj in uncached:
+            why[obj] = "normal cache not current"
         return uncached
     def check(obj):
-        return receipts.current(sources[obj], obj)
+        current = receipts.current(sources[obj], obj)
+        return current, getattr(receipts, "why", {}).get(str(obj)) or "receipt not current"
     # The fresh proof runs cl /E, so honor BUILD_POOL and bound Wine fanout.
     # Checkout-root and external-root receipts skip the broad inventory; all
     # other objects share one serial cache snapshot before receipt fallbacks.
     to_check = receipt_objects + uncached
     workers = min(8, build._pool_size(), max(1, len(to_check)))
     with concurrent.futures.ThreadPoolExecutor(workers) as pool:
-        stale = [obj for obj, current in zip(to_check, pool.map(check, to_check)) if not current]
+        stale = []
+        for obj, (current, reason) in zip(to_check, pool.map(check, to_check)):
+            if not current:
+                why[obj] = reason
+                stale.append(obj)
     if not build._inventory_cache_still_current(inventory_cache):
         raise SystemExit("link_census: include search directories changed while checking objects; retry")
     return stale
@@ -2328,10 +2353,11 @@ def record(census, rows, rerun=False, fresh=False):
         raise SystemExit(f"link_census: {len(missing):,} objects are missing now, e.g. {missing[0].name}; "
                          "nothing recorded")
     by_object = _object_sources(rows)
-    stale = stale_objects(present, by_object)
+    why = {}
+    stale = stale_objects(present, by_object, why)
     if stale:
-        raise SystemExit(f"link_census: {len(stale):,} objects are not current for their source (a failed compile?), "
-                         f"e.g. {stale[0].name}; nothing recorded")
+        raise SystemExit(f"link_census: objects are not current for their source (a failed compile?): "
+                         f"{describe_stale(stale, why)}; nothing recorded")
     history = read_history()
     commit = head()
     log = final_log(census)
@@ -2351,19 +2377,24 @@ def record(census, rows, rerun=False, fresh=False):
     facts = read_facts(present, rows)
     kept = selected_definitions(selection_link(present, log))
     validate_fact_snapshots(present, facts)
-    if subprocess.run(["git", "diff", "--quiet", commit, "--", *CENSUS_INPUTS], cwd=ROOT).returncode \
-            or stale_objects(present, by_object):
+    if subprocess.run(["git", "diff", "--quiet", commit, "--", *CENSUS_INPUTS], cwd=ROOT).returncode:
         raise SystemExit("link_census: source inputs or objects changed during the selection link; nothing recorded")
+    why = {}
+    stale = stale_objects(present, by_object, why)
+    if stale:
+        raise SystemExit("link_census: source inputs or objects changed during the selection link; nothing recorded "
+                         f"({describe_stale(stale, why)})")
     def currency_guard():
         if isinstance(rows, LedgerRows):
             rows.validate()
         changed = subprocess.run(["git", "diff", "--name-only", commit, "--", *CENSUS_INPUTS], cwd=ROOT,
                                  capture_output=True, text=True).stdout.split()
-        stale = [] if changed else stale_objects(present, by_object)
+        why = {}
+        stale = [] if changed else stale_objects(present, by_object, why)
         if changed or stale:
             # Name the input: a bare refusal cost several hour-long reruns (2026-10-02).
             what = (f"changed: {changed[:5]}" if changed
-                    else f"stale objects: {[o.name for o in stale[:5]]} ({len(stale)})")
+                    else describe_stale(stale, why))
             raise SystemExit(f"link_census: source inputs or objects changed during judgment; nothing recorded ({what})")
     clean, files, blocking, clean_prev, prepared = write_status(log, rows, present, {"date": census["when"], "commit": commit},
                                                          kept, publish=False, facts=facts, currency_guard=currency_guard)
@@ -2378,10 +2409,11 @@ def record(census, rows, rerun=False, fresh=False):
         history.append({**history_row(census, commit), **figure})
     changed = subprocess.run(["git", "diff", "--name-only", commit, "--", *CENSUS_INPUTS], cwd=ROOT,
                              capture_output=True, text=True).stdout.split()
-    stale = [] if changed else stale_objects(present, by_object)
+    why = {}
+    stale = [] if changed else stale_objects(present, by_object, why)
     if changed or stale:
         what = (f"changed: {changed[:5]}" if changed
-                else f"stale objects: {[o.name for o in stale[:5]]} ({len(stale)})")
+                else describe_stale(stale, why))
         raise SystemExit(f"link_census: source inputs or objects changed during judgment; nothing recorded ({what})")
     prepared["accept"]()
     write_history(history)

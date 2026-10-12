@@ -133,6 +133,11 @@ def preprocess_timeout():
     return seconds
 
 
+class ProofFailed(ValueError):
+    """The preprocessor proof did not run to completion (error, timeout, OS
+    failure): no evidence either way, unlike a proof that runs and differs."""
+
+
 def capture_preprocessor(command, env):
     # cl.exe -E can spin forever under Wine after reporting C1083. A fatal
     # error that does not end the process, or a process still running at the
@@ -153,9 +158,12 @@ def snapshot(source, command, env):
     if "-c" not in pp:
         raise ValueError("unrecognized compilation command")
     pp[pp.index("-c")] = "-E"
-    result = capture_preprocessor(pp + ["-showIncludes"], env)
+    try:
+        result = capture_preprocessor(pp + ["-showIncludes"], env)
+    except OSError as error:
+        raise ProofFailed(f"preprocessor did not run: {error}") from error
     if result.returncode:
-        raise ValueError("preprocessor failed: " + result.stderr.decode("latin-1")[-1200:])
+        raise ProofFailed("preprocessor failed: " + result.stderr.decode("latin-1")[-1200:])
     # MSVC 7.1 ignores /D and /U attempts to replace these reserved macros.
     # Token-pasting can construct their names without a literal source token.
     # Their expansion is a date/time string (also in #line/include operands),
@@ -198,6 +206,7 @@ class Receipts:
         self.path = Path(path)
         self.run = run or uuid.uuid4().hex
         self.entries = entries or {}
+        self.why = {}
 
     @classmethod
     def load(cls, path, run):
@@ -271,21 +280,42 @@ class Receipts:
                                                "command": command}
 
     def current(self, source, output):
+        current, reason = self.check(source, output)
+        self.why[str(output)] = reason  # link_census names it in refusals
+        return current
+
+    def check(self, source, output):
+        """(current, why). A proof that fails to run is retried once; one that
+        runs and differs is stale at once. The 2026-10-12 census at 0738eb73e6
+        refused after its link though a recheck found 0 stale objects."""
+        try:
+            return self._check(source, output)
+        except ProofFailed:
+            pass
+        try:
+            return self._check(source, output)
+        except ProofFailed as error:
+            return False, f"receipt proof failed twice: {str(error)[:200]}"
+
+    def _check(self, source, output):
         try:
             entry = self.entries[str(output.resolve())]
+        except KeyError:
+            return False, "normal cache not current, no receipt"
+        try:
             if entry["source"] != str(source.resolve()) or entry["object"] != digest(output):
-                return False
+                return False, "receipt inputs differ: source or object"
             command, env = build.compiler_command(source, output)
             # Retry flags are deterministic and stored only for this fresh
             # successful compile; require the base command to be its prefix.
             actual = entry["command"]
             if actual[:len(command)] != command:
-                return False
+                return False, "receipt inputs differ: compile command"
             if actual != command:
                 retry = actual[len(command):]
                 allowed = [f"-I{build.wine_path(d)}" for d in build._SWEEP_INCLUDE_DIRS if d.exists()]
                 if retry != allowed:
-                    return False
+                    return False, "receipt inputs differ: retry flags"
                 env = dict(env)
                 env["INCLUDE"] += ";" + ";".join(build.wine_path(d) for d in build._SWEEP_INCLUDE_DIRS if d.exists())
             found = snapshot(source, actual, env)
@@ -294,6 +324,12 @@ class Receipts:
             # and the complete fresh PP stream, never timestamps as proof.
             found.pop("generations")
             expected = {k: v for k, v in entry["input"].items() if k != "generations"}
-            return found == expected and digest(output) == entry["object"]
-        except (OSError, ValueError, KeyError, TypeError):
-            return False
+            if found != expected:
+                return False, "receipt inputs differ: preprocessed inputs"
+            if digest(output) != entry["object"]:
+                return False, "receipt inputs differ: object"
+            return True, ""
+        except ProofFailed:
+            raise
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            return False, f"receipt proof failed: {str(error)[:200]}"
