@@ -11,3 +11,16 @@ int Rva0075D420::getField4()
 {
     return field4;
 }
+
+// RVA 0x00293180: same this+4 getter shape; owner unproven.
+struct Rva00293180
+{
+    int field0;
+    int field4;
+    int getField4();
+};
+
+int Rva00293180::getField4()
+{
+    return field4;
+}
