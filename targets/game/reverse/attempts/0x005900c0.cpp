@@ -7,11 +7,8 @@
 #include "unicode_string.h"
 
 extern const char g_bfmeEmptyUnicode[];
-template<class T> inline StringBase<T>::StringBase() : m_data(0) {}
 template<class T> inline bool StringBase<T>::isEmpty() const { return !m_data || !m_data->length; }
 template<class T> inline bool StringBase<T>::isNotEmpty() const { return m_data && m_data->length; }
-template<class T> inline const T *StringBase<T>::str() const { return m_data ? m_data->data : (const T *)g_bfmeEmptyUnicode; }
-template<class T> inline void StringBase<T>::swap(StringBase<T>& other) { Header *p=m_data; m_data=other.m_data; other.m_data=p; }
 inline UnicodeString::UnicodeString() { m_text=0; }
 inline UnicodeString::UnicodeString(const UnicodeString &s) { ((StringBase<unsigned short>*)this)->StringBase<unsigned short>::StringBase(*(const StringBase<unsigned short>*)&s); }
 inline UnicodeString::UnicodeString(const wchar_t *s) { ((StringBase<unsigned short>*)this)->StringBase<unsigned short>::StringBase((const unsigned short*)s); }

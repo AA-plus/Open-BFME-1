@@ -1,5 +1,5 @@
 // ?bfmeStep2@Gen_007892D0@@AAEXXZ
-// partial score=0.9933774834437086 date=2026-09-28
+// partial score=0.9934 date=2026-09-28
 // cl: /MD /Igame/Libraries/Source/WWVegas/WWLib
 // ?bfmeStep2@Gen_007892D0@@AAEXXZ
 // partial score=0.24 date=2026-09-09
