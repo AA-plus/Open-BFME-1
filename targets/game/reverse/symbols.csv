@@ -90609,6 +90609,7 @@ _invertjump,0x0099E580,decode_calls pin for _luaK_testgo callee
 _io_fromto,0x009933C0,pristine Lua 4.0.1 io_fromto target reached by io_readfrom wrapper at 0x009934D0
 _ioctlsocket@12,0x0081BE4A,vendored=gamespy-2004
 _isShuttingDown,0x00EF4844,Open-BFME7 retail REL32 target (ILT thunk) the body at 0x0050CA80 calls; autopin
+_isalnum,0x009F70A2,MSVCR71 isalnum import thunk; ledger gen-import ?ji_009f70a2 slot 0x01359404 target isalnum; called by the 0x008C5360 URL escape body
 _isdigit,0x009F7024,address-derived CRT import thunk called by the 0x008BA8B0 retail parser
 _isprint,0x009F7B8E,retail isprint import thunk; 0x007F91D0 passes four signed character values and consumes the integer result at each aligned call site
 _j_00007a63,0x00007A63,Open-BFME7 retail REL32 target (ILT thunk) the body at 0x003B22E0 calls; autopin
@@ -91100,3 +91101,6 @@ rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?d_008ff060@@YAXXZ,0x008FF060,Address-only compatibility for withdrawn dump; native Rva008FF060Method body (game/Libraries/Source/WWVegas/WW3D2/Rva008FF060WaterMaterialTextureSwap.cpp); game/gen_asm/d_008fa4b0.asm still calls this name
 ?allocatorValue@Rva001D9540@@QBE?AURva001D9540Alloc@@XZ,0x00044166,additive: retail ILT call target of the red row ??0Rva001D9540@@QAE@ABV0@@Z (thunk to the dumped body ?get_allocator at 0x001D95A0)
 ?initializeBase@Rva001D9540@@QAEXIABURva001D9540Alloc@@@Z,0x0001D949,additive: retail ILT call target of the red row ??0Rva001D9540@@QAE@ABV0@@Z (thunk to the dumped _Vector_base ctor body 0x001D95B0)
+?d_00112f30@@YAXXZ,0x00112F30,Address-only compatibility for withdrawn dump; native ?rva00112F30@@YAXABVAsciiString@@AAV1@@Z body (game/GameEngine/Source/Common/System/SaveGame/Rva00112F30WakName.cpp); game/gen_asm/d_000f93a0.asm still calls this name
+?d_004b2330@@YAXXZ,0x004B2330,Address-only compatibility for withdrawn dump; native ?Rva004B2330@@YAHPAVObject@@@Z body (game/GameEngine/Source/GameClient/GUI/Rva004B2330.cpp); game/gen_asm/d_004b2470.asm still calls this name
+?d_007921e0@@YAXXZ,0x007921E0,Address-only compatibility for withdrawn dump; native ?Rva007921E0@@YAXPBVImage@@00HHHH@Z body (game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/Rva007921E0.cpp); game/gen_asm/d_00776ac0.asm still calls this name

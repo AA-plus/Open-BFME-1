@@ -1580,17 +1580,133 @@ void W3DView::screenToTerrain( const ICoord2D *screen, Coord3D *world )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-// ?lookAt@W3DView@@ present-unmatched
+extern "C" void _ReadWriteBarrier(void);
+#pragma intrinsic(_ReadWriteBarrier)
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+class BfmeLookAtTerrainLogic
+{
+public:
+	virtual void slot00();
+	virtual void slot01();
+	virtual void slot02();
+	virtual void slot03();
+	virtual void slot04();
+	virtual void slot05();
+	virtual Real getGroundHeight(Real x, Real y, void *normal = 0) const;
+};
+
+class BfmeLookAtSlot27
+{
+public:
+	virtual void slot00();
+	virtual void slot01();
+	virtual void slot02();
+	virtual void slot03();
+	virtual void slot04();
+	virtual void slot05();
+	virtual void slot06();
+	virtual void slot07();
+	virtual void slot08();
+	virtual void slot09();
+	virtual void slot10();
+	virtual void slot11();
+	virtual void slot12();
+	virtual void slot13();
+	virtual void slot14();
+	virtual void slot15();
+	virtual void slot16();
+	virtual void slot17();
+	virtual void slot18();
+	virtual void slot19();
+	virtual void slot20();
+	virtual void slot21();
+	virtual void slot22();
+	virtual void slot23();
+	virtual void slot24();
+	virtual void slot25();
+	virtual void slot26();;
+	virtual void setInt23BC(int value);
+};
+
+class Rva0045A000
+{
+public:
+	char m_padding00[0x1c];
+	bool m_ready;
+	Real sample(Real x, Real y);
+};
+
+class BfmeLookAtResetFields
+{
+public:
+	char m_padding00[0x58];
+	int m_int58;
+	int m_int5c;
+	int m_int60;
+	int m_int64;
+	int m_int68;
+	char m_padding6c[0x1dc - 0x6c];
+	bool m_byte1dc;
+	char m_padding1dd[0x204 - 0x1dd];
+	bool m_byte204;
+	char m_padding205[0x228 - 0x205];
+	bool m_byte228;
+	char m_padding229[0x27c - 0x229];
+	bool m_byte27c;
+	bool m_byte27d;
+	char m_padding27e[0x2354 - 0x27e];
+	int m_int2354;
+	char m_padding2358[0x23b8 - 0x2358];
+	char m_byte23b8;
+	char m_padding23b9[3];
+	int m_int23bc;
+	char m_padding23c0[0x243c - 0x23c0];
+	int m_int243c;
+	int m_int2440;
+	int m_int2444;
+};
+
+class BfmeLookAtGroundState
+{
+public:
+	char m_padding00[0x23f8];
+	Real m_groundLevel;
+	char m_padding23fc[0x240c - 0x23fc];
+	bool m_cameraConstraintValid;
+};
+
+extern void j_00046fa1(void);
+
+class BfmeSubETH
+{
+public:
+	Real m_x;
+	Real m_y;
+};
+
+class BfmeViewETH
+{
+public:
+	void bfmeApplyETH(BfmeSubETH *position);
+};
+
+// ?lookAt@W3DView@@UAEXPBUCoord3D@@@Z
 void W3DView::lookAt( const Coord3D *o ) 
 {
-	Coord3D pos = *o;
+	Coord3D pos;
+	pos.x = o->x;
+	pos.y = o->y;
+	pos.z = o->z;
+	((BfmeViewETH *)this)->bfmeApplyETH((BfmeSubETH *)&pos);
 
 
 // no, don't call the super-lookAt, since it will munge our coords
 // as for a 2d view. just call setPosition.
 //View::lookAt(&pos);
 
-	if (o->z > PATHFIND_CELL_SIZE_F+TheTerrainLogic->getGroundHeight(pos.x, pos.y)) {
+	if (o->z > PATHFIND_CELL_SIZE_F+((BfmeLookAtTerrainLogic *)TheTerrainLogic)->getGroundHeight(pos.x, pos.y)) {
 		// Pos.z is not used, so if we want to look at something off the ground, 
 		// we have to look at the spot on the ground such that the object intersects
 		// with the look at vector in the center of the screen.  jba.
@@ -1599,11 +1715,11 @@ void W3DView::lookAt( const Coord3D *o )
 		CastResultStruct result;
 		Vector3 intersection(0,0,0);
 
-		rayStart = m_3DCamera->Get_Position();	//get camera location
-		m_3DCamera->Un_Project(rayEnd,Vector2(0.0f,0.0f));	//get world space point
+		rayStart = ((BfmeW3DViewCameraFields *)this)->m_3DCamera->Get_Position();	//get camera location
+		((BfmeW3DViewCameraFields *)this)->m_3DCamera->Un_Project(rayEnd,Vector2(0.0f,0.0f));	//get world space point
 		rayEnd -= rayStart;	//vector camera to world space point
 		rayEnd.Normalize();	//make unit vector
-		rayEnd *= m_3DCamera->Get_Depth();	//adjust length to reach far clip plane
+		rayEnd *= ((BfmeW3DViewCameraFields *)this)->m_3DCamera->Get_Depth();	//adjust length to reach far clip plane
 		rayStart.Set(pos.x, pos.y, pos.z);
 		rayEnd += rayStart;	//get point on far clip plane along ray from camera.
 		lineseg.Set(rayStart,rayEnd);
@@ -1618,13 +1734,45 @@ void W3DView::lookAt( const Coord3D *o )
 			
 		}  // end if
 	}			 
+	Coord3D *viewPos = (Coord3D *)((char *)this + 0x0c);
 	pos.z = 0;
-	setPosition(&pos); 
-	m_doingRotateCamera = false;
-	m_doingMoveCameraOnWaypointPath = false;
-	m_CameraArrivedAtWaypointOnPathFlag = false;
-	m_doingScriptedCameraLock = false;
+	*viewPos = pos;
+	BfmeLookAtResetFields *reset = (BfmeLookAtResetFields *)this;
+	reset->m_int2354 = 0;
+	reset->m_byte1dc = false;
+	reset->m_byte204 = false;
+	reset->m_byte228 = false;
+	reset->m_byte27d = false;
+	reset->m_byte27c = false;
+	reset->m_byte23b8 = 0;
+	reset->m_int243c = 0;
+	reset->m_int2440 = 0;
+	reset->m_int2444 = 0;
+	_ReadWriteBarrier();
+	reset->m_int58 = 0;
+	reset->m_int5c = 0;
+	reset->m_int68 = 0;
+	((BfmeLookAtSlot27 *)this)->setInt23BC(0);
 
+	Real groundHeight = getHeightAroundPos(viewPos->x, ((BfmeW3DViewCameraFields *)this)->m_pos.y);
+	BfmeLookAtGroundState *groundState = (BfmeLookAtGroundState *)this;
+	if (*((bool *)((char *)this + 0x2464)))
+	{
+		typedef Real (Rva0045A000::*Sample)(Real, Real);
+		union
+		{
+			void (*function)(void);
+			Sample member;
+		} thunk;
+		thunk.function = j_00046fa1;
+		groundHeight = (((Rva0045A000 *)((char *)this + 0x2448))->*thunk.member)(viewPos->x, ((BfmeW3DViewCameraFields *)this)->m_pos.y);
+	}
+	Real oldGroundLevel = groundState->m_groundLevel;
+	if (groundHeight != oldGroundLevel)
+	{
+		groundState->m_groundLevel = groundHeight;
+		groundState->m_cameraConstraintValid = false;
+	}
 	setCameraTransform();
 
 }

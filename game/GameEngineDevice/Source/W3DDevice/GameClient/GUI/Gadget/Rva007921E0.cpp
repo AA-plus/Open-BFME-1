@@ -1,5 +1,13 @@
-// ?drawHiliteBar@@YAXPBVImage@@00HHHH@Z
-// partial score=1.0 date=2026-10-11
+// Retail 0x007921E0, 293 bytes: draws a three-piece hilite bar for a list
+// gadget.  It takes the bar size from the start/end coordinates, tiles the
+// centre image across the gap through TheWindowManager, sets TheDisplay's clip
+// region over the tiled span, then draws the left and right caps.  Only the
+// un-converted body at 0x00792350 calls it, and the ZH twin drawHiliteBar
+// (W3DListBox.cpp) is a shape hypothesis, not proof, so identity stays
+// address-derived.
+// The virtual-slot stubs preserve the two singletons' witnessed offsets:
+// setClipRegion +0x88 / enableClipping +0x90 on Display, winDrawImage +0xF4 on
+// GameWindowManager (0x012F1270 / 0x012F1B40).
 typedef int Int;
 typedef int Color;
 typedef unsigned char Bool;
@@ -34,7 +42,7 @@ public:
 };
 
 #define BFME_DISPLAY_UNUSED(n) virtual void unused##n();
-class BfmeListDisplay
+class Display
 {
 public:
 	BFME_DISPLAY_UNUSED(00)
@@ -147,10 +155,11 @@ public:
 };
 #undef BFME_WINDOW_UNUSED
 
-extern BfmeListDisplay *TheDisplay;
+extern Display *TheDisplay;
 extern GameWindowManager *TheWindowManager;
 
-__declspec(noinline) static void drawHiliteBar(const Image *left, const Image *right,
+// ?Rva007921E0@@YAXPBVImage@@00HHHH@Z
+__declspec(noinline) static void Rva007921E0(const Image *left, const Image *right,
 	const Image *center, Int startX, Int startY, Int endX, Int endY)
 {
 	ICoord2D barWindowSize;
@@ -208,7 +217,11 @@ __declspec(noinline) static void drawHiliteBar(const Image *left, const Image *r
 	TheWindowManager->winDrawImage(right, start.x, start.y, end.x, end.y);
 }
 
-__declspec(noinline) void retainDrawHiliteBar(void)
+// This caller exists only to make the compiler emit the helper's private
+// convention, as retail's caller at 0x00792350 does.
+// ?Rva007921E0Caller@@YAXPBVImage@@00HHHH@Z absent-from-retail
+void Rva007921E0Caller(const Image *left, const Image *right, const Image *center,
+	Int startX, Int startY, Int endX, Int endY)
 {
-	drawHiliteBar(0, 0, 0, 0, 0, 0, 0);
+	Rva007921E0(left, right, center, startX, startY, endX, endY);
 }

@@ -1,5 +1,5 @@
 // ?getPreAttackDelay@Weapon@@QBEHPBVObject@@0PBUCoord3D@@@Z
-// partial score=0.92 date=2026-09-28
+// partial score=0.9164 date=2026-10-12
 // cl: /DNDEBUG /MD /EHsc /FAsc /Fabuild/luna_10_001e6f10.cod
 
 typedef unsigned int UnsignedInt;
@@ -96,19 +96,7 @@ extern GameLogic *TheGameLogic;
 
 struct WeaponBonus
 {
-	void clear()
-	{
-		float one = 1.0f;
-		volatile float *values = &m_bfmeA;
-		values[0] = one;
-		values[1] = one;
-		values[2] = one;
-		values[3] = one;
-		values[4] = one;
-		values[5] = one;
-	}
-
-	volatile float m_bfmeA, m_bfmeB, m_bfmeC, m_bfmeD, m_bfmeE, m_bfmeF;
+	float m_field[6];
 };
 
 struct WeaponTemplate
@@ -187,9 +175,15 @@ int Weapon::getPreAttackDelay(const Object *source, const Object *victim,
 
 	{
 		WeaponBonus bonus;
-		bonus.clear();
+		unsigned int one = 0x3f800000;
+		((unsigned int*)bonus.m_field)[0] = one;
+		((unsigned int*)bonus.m_field)[1] = one;
+		((unsigned int*)bonus.m_field)[2] = one;
+		((unsigned int*)bonus.m_field)[3] = one;
+		((unsigned int*)bonus.m_field)[4] = one;
+		((unsigned int*)bonus.m_field)[5] = one;
 		computeBonus(source, 0, bonus);
-		return static_cast<int>(m_template->m_preAttackDelay * bonus.m_bfmeE)
+		return static_cast<int>(m_template->m_preAttackDelay * bonus.m_field[4])
 			+ m_preAttackJitter;
 	}
 }
