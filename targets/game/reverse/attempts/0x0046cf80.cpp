@@ -1,5 +1,5 @@
 // ?format_0046CF80@Rva0046CF80Owner@@QAEPADPBD@Z
-// partial score=0.65 date=2026-09-24
+// partial score=0.8486 date=2026-10-11
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/stringinline /D_STLP_USE_STATIC_LIB
 // stlport
 //
@@ -138,6 +138,22 @@ public:
 typedef _STL::pair<const AsciiString, Rva0046C2A0Mapped> Rva0046CF80Pair;
 typedef _STL::_Hashtable_node<Rva0046CF80Pair> Rva0046CF80Node;
 extern const char *__cdecl bfmeSkipLevelPrefix(const char *text);
+struct BFMERetailKey
+{
+    BFMERetailKey(const char *t) : s(t) {}
+    operator const AsciiString &() const { return reinterpret_cast<const AsciiString &>(s); }
+    BFMERetailAsciiString s;
+};
+struct Rva0046CF80Slot
+{
+    void operator()(void *value, char *buffer, int flags) const
+    {
+        if (m_callback == 0)
+            throw FunctorNotSet();
+        m_callback->invoke(value, buffer, flags);
+    }
+    Rva0046CF80Callback *m_callback;
+};
 class Rva0046CF80Owner
 {
 public:
@@ -150,23 +166,18 @@ char *Rva0046CF80Owner::format_0046CF80(const char *name)
 {
     char *result = new char[255];
     result[0] = 0;
-    Rva0046CF80Node *found;
+    Rva0046C2A0Map::const_iterator it;
+    const Rva0046C2A0Map *map;
     {
         BFMERetailAsciiString key(name);
-        const Rva0046C2A0Map *map = &m_callbacks;
-        found = map->find(reinterpret_cast<const AsciiString &>(key))._M_cur;
+        map = &m_callbacks;
+        it._M_cur = map->find(reinterpret_cast<const AsciiString &>(key))._M_cur;
     }
-    if (found == 0) {
+    if (it._M_cur == 0) {
         BFMERetailAsciiString key(bfmeSkipLevelPrefix(name));
-        const Rva0046C2A0Map *map = &m_callbacks;
-        found = map->find(reinterpret_cast<const AsciiString &>(key))._M_cur;
+        it = map->find(reinterpret_cast<const AsciiString &>(key));
     }
-    if (found != 0) {
-        void *value = found->_M_val.second.m_value;
-        Rva0046CF80Callback *callback = reinterpret_cast<Rva0046CF80Callback *>(found->_M_val.second.m_ptr);
-        if (callback == 0)
-            throw FunctorNotSet();
-        callback->invoke(value, result, 0);
-    }
+    if (it._M_cur != 0)
+        reinterpret_cast<const Rva0046CF80Slot &>(it._M_cur->_M_val.second.m_ptr)(it._M_cur->_M_val.second.m_value, result, 0);
     return result;
 }
