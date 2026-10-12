@@ -1,6 +1,9 @@
-// ?_Init_Filters@TextureFilterClass@@SAXW4TextureFilterMode@1@@Z
-// partial score=0.9731 date=2026-10-12
 // cl: /DNDEBUG /MD /EHsc
+// TextureFilterClass::_Init_Filters (retail 0x00920D10, 446 bytes).
+// Identity: the matched caller DX8Wrapper::Do_Onetime_Device_Dependent_Inits
+// calls this address as TextureFilterClass::_Init_Filters, as in Zero Hour's
+// WW3D2/texturefilter.cpp. Kept in its own TU because texturefilter.cpp
+// carries a four-slot table type while retail strides five ints per stage.
 
 // BFME texture-filter table initialiser at retail 0x00920D10.  Retail widened
 // each per-stage table to five ints (NONE FAST BEST spare DEFAULT) over eight
@@ -52,7 +55,7 @@ public:
 extern unsigned int number_of_DX8_calls;
 extern unsigned int Rva01340568StageChanges;
 extern unsigned char *BfmeCurrentCaps;
-Rva00920AE0Slot g_bfmeOptionSlots0[8] = {};  // retail 0x01346BB0
+extern Rva00920AE0Slot g_bfmeOptionSlots0[8];  // retail 0x01346BB0 (_MinTextureFilters, defined in texturefilter.cpp)
 extern Rva00920AE0Slot g_bfmeOptionSlotsA[8];
 extern Rva00920AE0Slot g_bfmeOptionSlotsB[8];
 
@@ -74,9 +77,9 @@ public:
 	static void _Init_Filters(TextureFilterMode filter_type);
 };
 
+#define CAPS ((struct BfmeTextureCaps *)BfmeCurrentCaps)
 void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 {
-	struct BfmeTextureCaps *caps = (struct BfmeTextureCaps *)BfmeCurrentCaps;
 
 	g_bfmeOptionSlots0[0].m_options[0] = 1;
 	g_bfmeOptionSlotsA[0].m_options[0] = 1;
@@ -91,14 +94,15 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 	g_bfmeOptionSlotsA[0].m_options[3] = 1;
 	g_bfmeOptionSlotsB[0].m_options[3] = 0;
 
-	if (caps->m_textureFilterCaps & 0x2000000) g_bfmeOptionSlotsA[0].m_options[2] = 2;
-	if (caps->m_textureFilterCaps & 0x200) g_bfmeOptionSlots0[0].m_options[2] = 2;
+	if (CAPS->m_textureFilterCaps & 0x2000000) g_bfmeOptionSlotsA[0].m_options[2] = 2;
+	if (CAPS->m_textureFilterCaps & 0x200) g_bfmeOptionSlots0[0].m_options[2] = 2;
 
 	if (filter_type == TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC) {
-		if (caps->m_textureFilterCaps & 0x4000000) g_bfmeOptionSlotsA[0].m_options[2] = 3;
-		if (caps->m_textureFilterCaps & 0x400) g_bfmeOptionSlots0[0].m_options[2] = 3;
-	} else if (filter_type == TextureFilterClass::TEXTURE_FILTER_TRILINEAR) {
-		if (caps->m_textureFilterCaps & 0x20000) g_bfmeOptionSlotsB[0].m_options[2] = 2;
+		if (CAPS->m_textureFilterCaps & 0x4000000) g_bfmeOptionSlotsA[0].m_options[2] = 3;
+		if (CAPS->m_textureFilterCaps & 0x400) g_bfmeOptionSlots0[0].m_options[2] = 3;
+	}
+	if (filter_type == TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC || filter_type == TextureFilterClass::TEXTURE_FILTER_TRILINEAR) {
+		if (CAPS->m_textureFilterCaps & 0x20000) g_bfmeOptionSlotsB[0].m_options[2] = 2;
 	}
 
 	unsigned int i;
@@ -117,8 +121,8 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 	}
 
 	for (i = 0; i < 8; ++i) {
-		g_bfmeOptionSlotsA[i].m_selected = g_bfmeOptionSlotsA[i].m_options[2];
 		g_bfmeOptionSlots0[i].m_selected = g_bfmeOptionSlots0[i].m_options[2];
+		g_bfmeOptionSlotsA[i].m_selected = g_bfmeOptionSlotsA[i].m_options[2];
 		g_bfmeOptionSlotsB[i].m_selected = g_bfmeOptionSlotsB[i].m_options[2];
 		DX8Wrapper::D3DDevice->SetTextureStageState(i, 10, 2);
 		number_of_DX8_calls++;
