@@ -1,5 +1,5 @@
 // ?ParseObjectDataChunk@@YA_NAAVDataChunkInput@@PAUDataChunkInfo@@PAX@Z
-// partial score=0.82 date=2026-09-10
+// partial score=0.5455 date=2026-10-12
 // Clean reconstruction of the BFME map-object chunk parser.
 //
 // The callback is registered by MapUtil::ParseObjectsDataChunk.  Retail uses
@@ -104,7 +104,7 @@ class MapObject
 public:
 	virtual void deleteInstance(Bool keep);
 
-	MapObject(Coord3D location, AsciiString name, Real angle, Int flags,
+	MapObject(Coord3D location, const AsciiString &name, Real angle, Int flags,
 		const Dict *dict, const ThingTemplate *thing);
 
 	unsigned char m_padding[0x5c];
@@ -131,7 +131,7 @@ public:
 #pragma comment(linker, "/alternatename:?getType@Dict@@QBEHH@Z=?j_0001efd8@@YAXXZ")
 #pragma comment(linker, "/alternatename:?acceptsThingTemplateName@ThingNameRegistry@@QAE_NABVAsciiString@@@Z=?j_0002323b@@YAXXZ")
 #pragma comment(linker, "/alternatename:?findTemplate@ThingNameRegistry@@QAEPBVThingTemplate@@ABVAsciiString@@@Z=?j_00028560@@YAXXZ")
-#pragma comment(linker, "/alternatename:??0MapObject@@QAE@UCoord3D@@VAsciiString@@MHPBVDict@@PBVThingTemplate@@@Z=?j_0001230a@@YAXXZ")
+#pragma comment(linker, "/alternatename:??0MapObject@@QAE@UCoord3D@@ABVAsciiString@@MHPBVDict@@PBVThingTemplate@@@Z=?j_0001230a@@YAXXZ")
 #pragma comment(linker, "/alternatename:?getThingTemplate@MapObject@@QBEPBVThingTemplate@@XZ=?j_00012814@@YAXXZ")
 #pragma comment(linker, "/alternatename:?getWaypointName@MapObject@@QAE?AVAsciiString@@XZ=?j_00010f05@@YAXXZ")
 #pragma comment(linker, "/alternatename:?lookup@WaypointMap@@QAEAAUCoord3D@@ABVAsciiString@@@Z=?j_0000cd97@@YAXXZ")
