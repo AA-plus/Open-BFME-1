@@ -1,6 +1,12 @@
+// Open-BFME5 conversion of the FESL gamebrowser host-slot registration.
+//
 // ?bfmeGoVJT@BfmeThingVJT@@QAEXHH@Z
-// partial score=0.993 date=2026-09-24
-// EA FESL gamebrowser host-slot registration at retail 0x007F71B0.
+// Retail 0x007F71B0 size 286 (RET 8 at +0x11B, INT3 padding).
+// Identity: BfmeThingVJT host-slot method of the FESL gamebrowser family
+// (the adjacent VJP..VJU bodies pin the class and ABI); the decorated name
+// stays the census working name. Closed residue: the failure-path vcall
+// loads its vtable through EAX only when the failure send is guarded at the
+// top of the for(;;) loop - the while+goto spelling emits EDX at +0x29/+0x2E.
 // cl: /O2 /Ob0
 
 class BfmeMsgVJH
@@ -110,16 +116,21 @@ public:
 	virtual void send(BfmeMsgVJH *msg, int a1, int a2, int selected) throw();
 };
 
+class Rva007E8810Message;
+struct Rva007F5900Context;
+
 class BfmeNotifyVJT
 {
 public:
 	virtual void v00() throw();
 	virtual void v04() throw();
-	virtual void send(BfmeMsgVJH *msg, void (__stdcall *callback)(),
+	virtual void send(BfmeMsgVJH *msg,
+		void (__cdecl *callback)(Rva007E8810Message *, Rva007F5900Context *),
 		void *owner, int value) throw();
 };
 
-extern void __stdcall BfmeGameBrowserVJTCallback();
+void __cdecl rva007F5900QueueCallback(Rva007E8810Message *message,
+	Rva007F5900Context *context);
 
 struct BfmeHostMatchVJTVtable
 {
@@ -167,14 +178,17 @@ void BfmeThingVJT::bfmeGoVJT(volatile int a1, int a2) throw()
 		char value;
 	};
 	volatile Flag flag;
-	while (slot < end)
+	for (;;)
 	{
+		if (!(slot < end))
+		{
+			m_bfme1cFailure->send((BfmeHostVJT *)zero, -0x65);
+			return;
+		}
 		if (slot->m_08 == zero)
 			goto found;
 		++slot;
 	}
-	m_bfme1cFailure->send((BfmeHostVJT *)zero, -0x65);
-	return;
 
 found:
 	int key2 = a2;
@@ -210,5 +224,5 @@ found:
 	if (selected == 0)
 		selected = m_bfme28;
 	m_bfme10->send(&msg, a1, key2, selected);
-	m_bfme14->send(&msg, BfmeGameBrowserVJTCallback, slot, m_bfme6dc);
+	m_bfme14->send(&msg, rva007F5900QueueCallback, slot, m_bfme6dc);
 }
