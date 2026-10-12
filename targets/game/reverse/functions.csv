@@ -37015,7 +37015,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0022a860@@YAXXZ,,0x0022A860,739,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_0062a860
 ?d_0022ac00@@YAXXZ,,0x0022AC00,808,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062ac00
 ?d_0022c160@@YAXXZ,,0x0022C160,251,game/gen_asm/d_00218ee0.asm,matched,gen-dump;bounds=high
-?d_0022c2a0@@YAXXZ,,0x0022C2A0,559,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062c2a0
 ?d_0022c560@@YAXXZ,,0x0022C560,1253,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062c560
 ?d_0022dba0@@YAXXZ,,0x0022DBA0,285,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062dba0
 ?d_0022dd10@@YAXXZ,,0x0022DD10,865,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062dd10
@@ -37437,7 +37436,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_003dc780@@YAXXZ,,0x003DC780,105,game/gen_asm/d_00337280.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_003dce70@@YAXXZ,,0x003DCE70,1776,game/gen_asm/d_003d51a0.asm,matched,gen-dump;ghidra=FUN_007dce70
 ?d_003de940@@YAXXZ,,0x003DE940,284,game/gen_asm/d_003d5070.asm,matched,gen-dump;bounds=high
-?d_003df0c0@@YAXXZ,,0x003DF0C0,221,game/gen_asm/d_003dd7a0.asm,matched,gen-dump;ghidra=FUN_007df0c0
 ?d_003df580@@YAXXZ,,0x003DF580,2029,game/gen_asm/d_002e22f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_007df580
 ?d_003dff70@@YAXXZ,,0x003DFF70,808,game/gen_asm/d_003dd7a0.asm,matched,gen-dump;ghidra=FUN_007dff70
 ?d_003e05b0@@YAXXZ,,0x003E05B0,715,game/gen_asm/d_003dd7a0.asm,matched,gen-dump;ghidra=FUN_007e05b0
@@ -38132,7 +38130,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_006b9500@@YAXXZ,,0x006B9500,1071,game/gen_asm/d_006b9500.asm,matched,gen-dump;ghidra=FUN_00ab9500
 ?d_006b9c90@@YAXXZ,,0x006B9C90,588,game/gen_asm/d_006b9500.asm,matched,gen-dump;ghidra=FUN_00ab9c90
 ?d_006bba90@@YAXXZ,,0x006BBA90,7,game/gen_asm/d_006b9500.asm,matched,gen-dump;ghidra=FUN_00abba90
-?d_006bd6e0@@YAXXZ,,0x006BD6E0,840,game/gen_asm/d_006b9500.asm,matched,gen-dump;ghidra=FUN_00abd6e0
 ?d_006c1d00@@YAXXZ,,0x006C1D00,80,game/gen_asm/d_006c0fa0.asm,matched,gen-dump;ghidra=FUN_00ac1d00
 ?d_006c96b0@@YAXXZ,,0x006C96B0,1587,game/gen_asm/d_00610140.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00ac96b0
 ?d_006cf4f0@@YGXPAX00@Z,,0x006CF4F0,3,game/GameEngine/Source/Common/Rva006CF4F0ThreeArgVoid.cpp,matched,ILT 0x00006695 and retail ret 0x0C prove an address-derived stdcall helper with three pointer-sized arguments; no semantic owner is proven
@@ -172553,3 +172550,6 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?aiDoCommand@DozerAIUpdate@@UAEXPBUAICommandParms@@@Z,,0x002B9B80,330,game/masm_dumps/Rva002B9B80DozerAIDoCommand.asm,matched,model=inconnu;host=chalco.vps
 ?rva002A1F80@RespawnUpdate@@QAEXPAVObject@@@Z,,0x002A1F80,489,game/masm_dumps/Rva002A1F80RespawnUpdateApply.asm,matched,model=inconnu;host=chalco.vps
 ?method@Rva006C3500W3DRadar@@UAEXXZ,,0x006C3500,980,game/Libraries/Source/WWVegas/WW3D2/Rva006C3500W3DRadarShroudCopy.cpp,matched,model=inconnu;host=chalco.vps
+?Rva006BD6E0@@YAXXZ,,0x006BD6E0,840,game/masm_dumps/Rva006BD6E0Xfer.asm,matched,converted from the 0x006BD6E0 gen-dump row (game/gen_asm/d_006b9500.asm) to a MASM dump carrying a proven VC7.1 codegen wall; identity is not provable (tools/ilt_oracle.py CONTRADICTS both ?xfer@W3DGhostObject access variants at this address and also the landed sibling loadPostProcess) so the row keeps the placeholder name; bank targets/game/reverse/attempts/0x006bd6e0.cpp sha256 bc85bc3f8af9e44554ac5ebedbb90d251a12bd3b2d430df32758b6eb50db53d0 compiles 841B shape 0.996 with 8 non-reloc residue bytes +0xBB +0xC5 +0x219 +0x25F +0x2A9 +0x2AD +0x2B8 +0x2BC (index and cursor stack homes); evidence 006bd6e0-masm-codegen-blocker.md;model=openai-codex;host=chalco.vps
+?Rva003DF0C0@@YAXXZ,,0x003DF0C0,221,game/masm_dumps/Rva003DF0C0ObjectCell.asm,matched,converted from the 0x003DF0C0 gen-dump row (game/gen_asm/d_003dd7a0.asm) to a MASM dump carrying a proven VC7.1 codegen wall; identity is not provable (ilt_oracle CONTRADICTS both bfmeObjectCell access variants at this address) so the row keeps the placeholder name; bank targets/game/reverse/attempts/0x003df0c0.cpp sha256 c50752afb729897e237aa33ade8ee3863d52e07900f1ab5db66a5114e34387f5 scores 0.99 with 10 non-reloc residue bytes (first cell write EAX vs EDX and the cell.y store sunk behind the argument pushes); the byte-exact C++ needs the fast_float2long inline-asm floor which the shape search rejects; evidence 003df0c0-masm-codegen-blocker.md;model=openai-codex;host=chalco.vps
+?Rva0022C2A0@@YAXXZ,,0x0022C2A0,559,game/masm_dumps/Rva0022C2A0SeedAccept.asm,matched,MASM dump game/masm_dumps/Rva0022C2A0SeedAccept.asm; probe EXACT modulo 12 reloc slots (559/559); VC7.1 wall: bank score 0.9875 compiles 559/559 shape 1.000 with 7 non-reloc bytes +0x16D +0x171 +0x1D7 +0x1DF +0x1F0 +0x20A +0x21C (count/id stack-slot swap) across ~30 measured formulations; identity not provable (ilt_oracle CONTRADICTS ?bfmeAccept@Gen_0022A170@@AAEXPAVBfmeSeedTarget@@@Z p_false 3.26e-04) so the placeholder name carries the bytes; ILT 0x00016027 jmp 0x62c2a0 with landed caller 0x0022A170; evidence identity_evidence/0022c2a0-masm-codegen-blocker.md; add_match verified OK;model=openai-codex;host=chalco.vps
