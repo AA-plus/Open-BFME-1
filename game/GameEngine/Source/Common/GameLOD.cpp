@@ -735,3 +735,17 @@ static const FieldParse *const TheBFMEAudioLODFieldParseTable =
 		ini->initFromINI( lodInfo, TheBFMEAudioLODFieldParseTable );
 	}
 }
+
+// 0x00232AC0: carved thiscall getter of the dword at +4 (mov eax,[ecx+4]; ret).
+// One caller via ILT 0x000150A5; owning class unproven.
+struct Rva00232AC0Owner
+{
+    int getRva00232AC0() const;
+    int m_field0;
+    int m_field4;
+};
+
+int Rva00232AC0Owner::getRva00232AC0() const
+{
+    return m_field4;
+}
