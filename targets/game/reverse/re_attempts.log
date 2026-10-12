@@ -60769,3 +60769,27 @@ _rva009B1ED0	0x009B1ED0	701	blocked	Retail 0x009B1ED0 through 0x009B218D is a co
 ?b_00c1fb50@@YAXXZ	12712784	11	blocked	Not a function start. The first instruction reads an EBP-relative slot as INPUT (mov reg,[ebp-N]), then adds a member offset and tail-jumps; a true entry point has no frame to read, so these addresses sit inside a larger caller frame and the carve end-evidence (jmp-tail / ret-tail) is coincidental. Zero callers, Ghidra-start only, and the 0x00BF6F03-0x00C22656 range is data-section territory. Skip: there is no body here to reconstruct. blocker=boundary/mid-function-fragment-not-an-entry t=5min model=MiniMax-M3.1-Flash-Preview
 ?b_00c22360@@YAXXZ	12723040	11	blocked	Not a function start. The first instruction reads an EBP-relative slot as INPUT (mov reg,[ebp-N]), then adds a member offset and tail-jumps; a true entry point has no frame to read, so these addresses sit inside a larger caller frame and the carve end-evidence (jmp-tail / ret-tail) is coincidental. Zero callers, Ghidra-start only, and the 0x00BF6F03-0x00C22656 range is data-section territory. Skip: there is no body here to reconstruct. blocker=boundary/mid-function-fragment-not-an-entry t=5min model=MiniMax-M3.1-Flash-Preview
 ?b_00c5cda0@@YAXXZ	12963232	11	blocked	Not a function start. The first instruction reads an EBP-relative slot as INPUT (mov reg,[ebp-N]), then adds a member offset and tail-jumps; a true entry point has no frame to read, so these addresses sit inside a larger caller frame and the carve end-evidence (jmp-tail / ret-tail) is coincidental. Zero callers, Ghidra-start only, and the 0x00BF6F03-0x00C22656 range is data-section territory. Skip: there is no body here to reconstruct. blocker=boundary/mid-function-fragment-not-an-entry t=5min model=MiniMax-M3.1-Flash-Preview
+?Rva004729B0ReturnArgument@@YAPAXPAX@Z	0x004729B0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva0075E2E0ReturnArgument@@YAPAXPAX@Z	0x0075E2E0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva001B4DF0ReturnArgument@@YAPAXPAX@Z	0x001B4DF0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva00585100ReturnArgument@@YAPAXPAX@Z	0x00585100	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva006309E0ReturnArgument@@YAPAXPAX@Z	0x006309E0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva00663EA0ReturnArgument@@YAPAXPAX@Z	0x00663EA0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva004D4120ReturnArgument@@YAPAXPAX@Z	0x004D4120	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva0021A550ReturnArgument@@YAPAXPAX@Z	0x0021A550	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva0068DAD0ReturnArgument@@YAPAXPAX@Z	0x0068DAD0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva003D30F0ReturnArgument@@YAPAXPAX@Z	0x003D30F0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva00589F50ReturnArgument@@YAPAXPAX@Z	0x00589F50	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva0043C7E0ReturnArgument@@YAPAXPAX@Z	0x0043C7E0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva004E2AD0ReturnArgument@@YAPAXPAX@Z	0x004E2AD0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva0036C5B0ReturnArgument@@YAPAXPAX@Z	0x0036C5B0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva00537F00ReturnArgument@@YAPAXPAX@Z	0x00537F00	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva00422780ReturnArgument@@YAPAXPAX@Z	0x00422780	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva00663EB0ReturnArgument@@YAPAXPAX@Z	0x00663EB0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?Rva0037ABD0ReturnArgument@@YAPAXPAX@Z	0x0037ABD0	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?j_0003e130@@YAXXZ	0x0003E130	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?j_00015cbc@@YAXXZ	0x00015CBC	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?j_000101a9@@YAXXZ	0x000101A9	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?j_00026058@@YAXXZ	0x00026058	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?j_000340fe@@YAXXZ	0x000340FE	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
+?j_0003d875@@YAXXZ	0x0003D875	5	landed	salvaged carved row; verified add_match; t=20 model=claude-opus-5-5
