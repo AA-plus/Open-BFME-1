@@ -21,8 +21,13 @@ unwind state. This check decides the label from the EH tables instead:
           `split` when retail's states for F carry several distinct labels,
           `unprovable` when no parent with a ledgered address, matching
           tables and F among its actions exists in the object.
-A pin is `ambiguous` when another label in its section has the same bytes and
-the same relocation targets (what the byte gate alone cannot separate).
+A pin has `twins` when another label in its section has the same bytes and
+the same relocation targets (what the byte gate alone cannot separate). Twins
+are told apart by the unwind map alone: when the agreeing parents' retail
+states for F all carry one label (verdict proven, wrong or stale), that state
+index proves which twin is F's, so the pin is `twin-proven` and counts as
+unique (`unique` True). Otherwise (unprovable, split) a pin with twins stays
+`ambiguous`, and the unique-label ruling still refuses to repin it.
 
   python3 tools/eh_state_pins.py [--commit SHA | --source FILE ...] [--objects-root DIR]
       [--fix --model M]      # repoint wrong/stale rows' labels (apply_fixes)
@@ -227,12 +232,25 @@ def judge(obj, eh_tables, row, label):
     base = {"twins": twins, "ambiguous": bool(twins), "parents": found, "pin_defined": present}
     if not agreeing:
         why = "tables differ" if found else "no ledgered parent in this object reaches this address"
-        return {**base, "verdict": "unprovable", "why": why}
-    if labels == [label]:
-        return {**base, "verdict": "proven"}
+        return {**base, "verdict": "unprovable", "why": why, "unique": not twins}
     if len(labels) > 1:
-        return {**base, "verdict": "split", "labels": labels}
-    return {**base, "verdict": "wrong" if present else "stale", "correct": labels[0]}
+        return {**base, "verdict": "split", "labels": labels, "unique": False}
+    # exactly one label at F's retail states: the state index names it, so
+    # byte twins no longer leave the choice open
+    proof = {"unique": True, "twin_proof": "state-index" if twins else None}
+    if labels == [label]:
+        return {**base, **proof, "verdict": "proven"}
+    return {**base, **proof, "verdict": "wrong" if present else "stale", "correct": labels[0]}
+
+
+def kind_of(result):
+    """Report column: unique, twin-proven (byte twins told apart by state
+    index), ambiguous (twins nothing separates) or unknown (no object)."""
+    if result.get("ambiguous") is None:
+        return "unknown"
+    if not result.get("ambiguous"):
+        return "unique"
+    return "twin-proven" if result.get("unique") else "ambiguous"
 
 
 def apply_fixes(fixes, model):
@@ -349,15 +367,14 @@ def main(argv=None):
                         **verdict})
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "report.json").write_text(json.dumps(results, indent=1), encoding="utf-8")
-    table = collections.Counter((r["verdict"], "ambiguous" if r.get("ambiguous") else
-                                 ("unique" if r.get("ambiguous") is False else "unknown")) for r in results)
+    table = collections.Counter((r["verdict"], kind_of(r)) for r in results)
     print(f"{len(results)} funclet pin(s)")
     for (verdict, kind), n in sorted(table.items()):
         print(f"  {verdict:10} {kind:9} {n}")
     for r in results:
         if r["verdict"] in ("wrong", "split") or (r["verdict"] == "stale" and r.get("ambiguous")):
             print(f"  {r['verdict']}: {r['rva']} {r['name']} pinned {r['label']} -> "
-                  f"{r.get('correct') or r.get('labels')} ({r['source']})")
+                  f"{r.get('correct') or r.get('labels')} ({r['source']}) [{kind_of(r)}]")
     missing = sorted({r["source"] for r in results if r["verdict"] == "missing"})
     if missing:
         print(f"FAIL: {len(missing)} source(s) have no object, so their funclet pins are unchecked. "
@@ -370,7 +387,7 @@ def main(argv=None):
     if args.fix:
         fixes = {}
         for r in results:
-            if r["verdict"] in ("wrong", "stale"):
+            if r["verdict"] in ("wrong", "stale") and r.get("unique"):
                 states = "; ".join(f"{p['parent']} states {p['states']}" for p in r["parents"] if "states" in p)
                 fixes[(r["name"], int(r["rva"], 16))] = (r["label"], r["correct"], states)
         apply_fixes(fixes, args.model)
