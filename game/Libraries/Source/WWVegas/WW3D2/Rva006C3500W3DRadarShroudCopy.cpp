@@ -1,5 +1,14 @@
-// ?method@Rva006C3500W3DRadar@@UAEXXZ
-// partial score=0.9898 date=2026-10-09
+// ?method@Rva006C3500W3DRadar@@UAEXXZ  retail 0x006C3500, 980 bytes.
+// Boundary [0x006C3500, 0x006C38D4): sole normal return at +0x3A1, the cold
+// no-match clear block after it rejoins the unlock path at +0x2B2, and INT3
+// padding follows the final jump; receiver and ILT evidence: the constructor
+// at 0x006C1D70 installs vtable 0x0111D7B4, whose slot 8 ILT 0x00004E08 jumps
+// here without adjusting ECX (identity_evidence/006c3500-native-accessor.md).
+// Identity stays address-derived: the class has no proven official name.
+// Shape: the two SurfaceDescription locals must be one aggregate declared
+// destination-then-source to reproduce retail's slot pairing (destination low
+// at [esp+0x44], source high at [esp+0x50]); the copy width multiplies by the
+// destination descriptor's Width, which the preceding guard proves equal.
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/stringinline /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include
 
 #include <string.h>
@@ -254,11 +263,15 @@ void Rva006C3500W3DRadar::method()
 
 	W3DRadarResetSurface source = sourceTexture->getSurfaceLevel();
 	W3DRadarResetSurface destination = radar->m_shroudTexture.getSurfaceLevel();
-	SurfaceDescription destinationDescription;
-	SurfaceDescription sourceDescription;
-	((SurfaceClass *)&source)->Get_Description(sourceDescription);
-	((SurfaceClass *)&destination)->Get_Description(destinationDescription);
-	if (sourceDescription.Format == destinationDescription.Format)
+	struct SurfaceDescriptionPair
+	{
+		SurfaceDescription destination;
+		SurfaceDescription source;
+	};
+	SurfaceDescriptionPair descriptions;
+	((SurfaceClass *)&source)->Get_Description(descriptions.source);
+	((SurfaceClass *)&destination)->Get_Description(descriptions.destination);
+	if (descriptions.source.Format == descriptions.destination.Format)
 	{
 
 	Rva006C3500Lock lock;
@@ -275,33 +288,33 @@ void Rva006C3500W3DRadar::method()
 		lockResult = destinationSurface->LockRect(&destinationLocked, 0, 0);
 		recordSurfaceError(lockResult);
 
-		if (sourceDescription.Width == destinationDescription.Width &&
-			sourceDescription.Height == destinationDescription.Height)
+		if (descriptions.source.Width == descriptions.destination.Width &&
+			descriptions.source.Height == descriptions.destination.Height)
 		{
 			UnsignedInt bytesPerPixel;
-			if (sourceDescription.Format == 0x15)
+			if (descriptions.source.Format == 0x15)
 				bytesPerPixel = 4;
-			else if (sourceDescription.Format == 0x1a)
+			else if (descriptions.source.Format == 0x1a)
 				bytesPerPixel = 2;
 
-			if (sourceDescription.Format == 0x15 || sourceDescription.Format == 0x1a)
+			if (descriptions.source.Format == 0x15 || descriptions.source.Format == 0x1a)
 			{
 				char *sourceBits = (char *)sourceLocked.bits;
 				char *destinationBits = (char *)destinationLocked.bits;
-				for (int row = destinationDescription.Height - 1; row >= 0; --row)
+				for (int row = descriptions.destination.Height - 1; row >= 0; --row)
 				{
 					memcpy(destinationBits, sourceBits,
-						bytesPerPixel * sourceDescription.Width);
+						bytesPerPixel * descriptions.destination.Width);
 					sourceBits += sourceLocked.pitch;
 					destinationBits += destinationLocked.pitch;
 				}
 			}
 		}
-		else if (destinationDescription.Format == 0x15 ||
-			destinationDescription.Format == 0x1a)
+		else if (descriptions.destination.Format == 0x15 ||
+			descriptions.destination.Format == 0x1a)
 		{
 			memset(destinationLocked.bits, 0,
-				destinationLocked.pitch * destinationDescription.Height);
+				destinationLocked.pitch * descriptions.destination.Height);
 		}
 
 		recordSurfaceError(destinationSurface->UnlockRect());
