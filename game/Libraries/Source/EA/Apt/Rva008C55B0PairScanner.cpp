@@ -7,7 +7,21 @@ struct Rva008CF3C0Block
 	unsigned short m_ref;
 };
 
-extern Rva008CF3C0Block g_default012D5298;
+// The shared empty EA string block at 0x012D5298 is defined once, with its
+// proven type, in game/GameEngine/Source/Common/Data/Rva012D5298.cpp; this
+// file names it through a local view.
+class EAStringC
+{
+public:
+	class StringDataC;
+};
+
+extern EAStringC::StringDataC g_rva012D5298Empty;
+
+static inline Rva008CF3C0Block *rva012D5298Block()
+{
+	return (Rva008CF3C0Block *)&g_rva012D5298Empty;
+}
 
 struct Rva008CF3C0Pool
 {
@@ -23,8 +37,8 @@ class Rva008CF3C0String
 public:
 	Rva008CF3C0String()
 	{
-		m_block = &g_default012D5298;
-		++g_default012D5298.m_ref;
+		m_block = rva012D5298Block();
+		++rva012D5298Block()->m_ref;
 	}
 
 	~Rva008CF3C0String()
@@ -59,14 +73,14 @@ char *Rva008CF3C0State::parse(char *cursor, Rva008CF3C0String *name, Rva008CF3C0
     {
         Rva008CF3C0Block *nameBlock = name->m_block;
         if (--nameBlock->m_ref == 0) (*(Rva008CF3C0Pool **)&g_rva01337A30AllocPair)->free(nameBlock);
-        name->m_block = &g_default012D5298;
-        ++g_default012D5298.m_ref;
+        name->m_block = rva012D5298Block();
+        ++rva012D5298Block()->m_ref;
     }
     {
         Rva008CF3C0Block *valueBlock = value->m_block;
         if (--valueBlock->m_ref == 0) (*(Rva008CF3C0Pool **)&g_rva01337A30AllocPair)->free(valueBlock);
-        value->m_block = &g_default012D5298;
-        ++g_default012D5298.m_ref;
+        value->m_block = rva012D5298Block();
+        ++rva012D5298Block()->m_ref;
     }
     for (; p && *p && *p != '&'; ++p)
         if (*p == '=') eq = p;
