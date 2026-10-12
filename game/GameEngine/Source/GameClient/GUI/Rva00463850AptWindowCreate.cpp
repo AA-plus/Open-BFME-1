@@ -9,11 +9,13 @@
 #include "GameClient/GameWindow.h"
 #include "Common/NameKeyGenerator.h"
 #pragma intrinsic(strcmp)
-// Scratch BFME storage view. Special-member bindings need canonical header repair
-// before promotion; this is not a new WindowLayoutInfo identity.
-struct Rva00463850Layout {
-    Rva00463850Layout();
-    ~Rva00463850Layout();
+// The 0x2c-byte window-layout record constructed at 0x00463858 and destroyed at
+// 0x00463991/0x004639e3. Its special members are the matched WindowLayoutInfo
+// ctor/dtor bodies (0x004888A0/0x00460540), reached through their retail
+// incremental-link thunks 0x00025AB8/0x0001566D.
+struct WindowLayoutInfo {
+    WindowLayoutInfo();
+    ~WindowLayoutInfo();
     char storage[44];
 };
 class GameWindow;
@@ -44,7 +46,7 @@ BfmeMade_0045DC70 *__stdcall bfmeMake_0045DC70(void *);
 struct Rva00463850Manager {
 #define S(n) virtual void slot##n();
 S(0) S(1) S(2) S(3) S(4) S(5) S(6) S(7) S(8) S(9) S(10) S(11) S(12) S(13) S(14) S(15) S(16) S(17) S(18) S(19) S(20) S(21) S(22) S(23) S(24) S(25)
-    virtual GameWindow *slot26(AsciiString,Rva00463850Layout *,void *);
+    virtual GameWindow *slot26(AsciiString,WindowLayoutInfo *,void *);
 S(27) S(28)
     virtual GameWindow *slot29(Rva00463850Param *);
 };
@@ -52,8 +54,13 @@ namespace _STL { template<> struct less<AsciiString> { bool operator()(const Asc
 struct Rva004618B0Value { AsciiString m_key; };
 struct Rva004618B0KeyOfValue { const AsciiString &operator()(const Rva004618B0Value &x)const{return x.m_key;} };
 typedef _STL::_Rb_tree<AsciiString,Rva004618B0Value,Rva004618B0KeyOfValue,_STL::less<AsciiString>,_STL::allocator<Rva004618B0Value> > Rva004618B0Tree;
-extern Rva004618B0Tree Rva00463850Tree;
-extern void *Rva00463850Context;
+class Gen_00C70080Target;
+class Gen_00C700A0Target;
+extern Gen_00C70080Target TheBfmeObject_00C70080;
+extern Gen_00C700A0Target TheBfmeObject_00C700A0;
+extern void *g_Va012F198C;
+#define Rva00463850Tree (*(Rva004618B0Tree *)&TheBfmeObject_00C70080)
+#define Rva00463850Map (*(Rva00461BF0Map *)&TheBfmeObject_00C700A0)
 struct Rva00463850Node { char pad[0x14]; GameWindow *field14; };
 class Rva0045EF90Base { public: virtual ~Rva0045EF90Base(); unsigned m_value; };
 class Rva0045EF90Object:public Rva0045EF90Base {
@@ -63,14 +70,14 @@ public:
 };
 
 typedef _STL::hash_map<AsciiString,Rva0045EF90Object,rts::hash<AsciiString>,rts::equal_to<AsciiString> > Rva00461BF0Map;
-extern Rva00461BF0Map Rva00463850Map;
 struct Rva0045DD90FloatPair;
 struct Rva0045DD90Record;
 extern "C" void rva0045DD90UpdateCoordinatePairs(Rva0045DD90Record *,const Rva0045DD90FloatPair *,const Rva0045DD90FloatPair *);
 static __forceinline GameWindow *rva00463850Resolve(void *ctx,const char *params,AsciiString &filename)
 {
  GameWindow *window;
- if(bfmeGetParamVMZ(params,"_Load",(BfmeStrVMZ *)&filename)) {
+ char loaded=bfmeGetParamVMZ(params,"_Load",(BfmeStrVMZ *)&filename);
+ if(loaded!=0) {
   
   if(strcmp(filename.str(),"BinkGameWindow::Create")==0) {
    Rva00463850Param p;
@@ -81,12 +88,12 @@ static __forceinline GameWindow *rva00463850Resolve(void *ctx,const char *params
    filename.toLower();
    Rva00463850Node *entry=(Rva00463850Node *)Rva00463850Tree.find(filename)._M_node;
    if(entry==*(Rva00463850Node **)&Rva00463850Tree) {
-    Rva00463850Layout layout;
+    WindowLayoutInfo layout;
     window=((Rva00463850Manager *)TheWindowManager)->slot26(filename,&layout,ctx);
    } else {
     if(!entry->field14) {
-     Rva00463850Layout layout;
-     entry->field14=((Rva00463850Manager *)TheWindowManager)->slot26(filename,&layout,Rva00463850Context);
+     WindowLayoutInfo layout;
+     entry->field14=((Rva00463850Manager *)TheWindowManager)->slot26(filename,&layout,g_Va012F198C);
     }
     window=((Rva004879A0 *)TheWindowManager)->rva004879A0(entry->field14,ctx);
    }
@@ -127,11 +134,13 @@ Rva0045EF90Object *Rva00463850(const Rva0045DD90FloatPair *a,const Rva0045DD90Fl
 // success block precedes the failure epilogue (677 bytes/174 differences).
 // This form is 673 bytes, 42 relocation sites, only TEST AL,AL instead of
 // retail CMP AL,BL at +6D. A bool function-pointer return view does not help.
-// NOT READY TO PROMOTE: Rva00463850Layout special members are unbound.
-// The canonical WindowLayoutInfo header still has the old 32-byte layout;
-// the retail ctor 4888A0 and dtor 460540 both prove 44 bytes, strings at
-// +14/+18/+1C/+20/+24, and list at +28. Do not invent second callee pins.
-// Opaque globals still require binding review: tree VA12F19CC, map12F19A4,
-// context12F198C. Factory pointer is ILT438870 -> body45DC70; compare literal
+// The scratch WindowLayoutInfo view is 44 bytes: the retail ctor 4888A0 and
+// dtor 460540 both prove strings at +14/+18/+1C/+20/+24 and the list at +28.
+// The special members bind to those matched bodies through their thunks; no
+// second callee pin is invented.
+// The tree at VA12F19CC and map at VA12F19A4 are the recorded singleton
+// objects TheBfmeObject_00C70080 / TheBfmeObject_00C700A0 viewed through this
+// unit's layouts; VA12F198C is the unowned context slot read as g_Va012F198C.
+// Factory pointer is ILT438870 -> body45DC70; compare literal
 // BinkGameWindow::Create is 22 chars plus NUL (all 23 bytes were read).
 // Manager virtual +68 consumes string/layout/context, +74 one 52-byte record.

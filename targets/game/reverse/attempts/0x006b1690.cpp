@@ -1,6 +1,7 @@
 // ?d_006b1690@@YAXXZ
-// partial score=0.995 date=2026-09-27
+// partial score=0.7942 date=2026-10-13
 // cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib
+// measured 2026-10-13 (variant 431e3ccd): 695B like retail; 143 non-reloc bytes; 61 differing instructions; 2 structural; root residue is the global EBP/EBX mirror of kind/index (retail kind=EBP index=EBX; ours kind=EBX index=EBP) with cascades at +0x24..+0x2a +0x35 +0x39 +0x4c +0x59 and the +0xde driver-load hoist; invariant across 9 more spellings today (decl-order swaps; compare-order and equality flips; register; long; ev/req locals; casts)
 // stlport
 #define _STLP_NO_EXCEPTIONS 1
 #include <set>
@@ -61,7 +62,7 @@ class MusicStreamStarter006B1690 {
 public:
  char pad00[12]; Settings006B1690 *settings; char pad10[0x950]; void *driver; char pad964[0x160]; int indices[3];
  void start(Request006B1690 *request);
- void stop(int kind,int flag) { typedef void (MusicStreamStarter006B1690::*Fn)(int,int); (this->*member006B1690<Fn>(j_00021c1f))(kind,flag); }
+ void stop(int kind,int flag);
  PlayingRef006B1690 allocate() { typedef PlayingRef006B1690 (MusicStreamStarter006B1690::*Fn)(); return (this->*member006B1690<Fn>(j_000273a9))(); }
  void touch(const AsciiString &s) { typedef void (MusicStreamStarter006B1690::*Fn)(const AsciiString&); (this->*member006B1690<Fn>(j_00021ff3))(s); }
  void play(const PlayingRef006B1690 &r,float f) { typedef void (MusicStreamStarter006B1690::*Fn)(const PlayingRef006B1690&,float); (this->*member006B1690<Fn>(j_0004acaa))(r,f); }
