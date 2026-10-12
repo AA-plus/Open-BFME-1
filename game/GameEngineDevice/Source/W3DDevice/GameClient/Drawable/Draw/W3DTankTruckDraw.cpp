@@ -243,101 +243,16 @@ void W3DTankTruckDraw::setFullyObscuredByShroud(Bool fullyObscured)
 
  * Start creating debris from the tank treads
  */
-// ?createEmitters@W3DTankTruckDraw@@ present-unmatched
-void W3DTankTruckDraw::createEmitters( void )
-{
-	if (getDrawable()->isDrawableEffectivelyHidden())
-		return;
-	if (getW3DTankTruckDrawModuleData())
-	{
-		const ParticleSystemTemplate *sysTemplate;
-
-		if (!m_dustEffect) {
-
-			sysTemplate = TheParticleSystemManager->findTemplate(getW3DTankTruckDrawModuleData()->m_dustEffectName);
-			if (sysTemplate)
-			{
-				m_dustEffect = TheParticleSystemManager->createParticleSystem( sysTemplate );
-				m_dustEffect->attachToObject(getDrawable()->getObject());
-				// important: mark it as do-not-save, since we'll just re-create it when we reload.
-				m_dustEffect->setSaveable(FALSE);
-			}	else {
-				if (!getW3DTankTruckDrawModuleData()->m_dustEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'\n", 
-						getW3DTankTruckDrawModuleData()->m_dustEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
-				}
-			}
-
-		}	 
-		if (!m_dirtEffect) {
-			sysTemplate = TheParticleSystemManager->findTemplate(getW3DTankTruckDrawModuleData()->m_dirtEffectName);
-			if (sysTemplate)
-			{
-				m_dirtEffect = TheParticleSystemManager->createParticleSystem( sysTemplate );
-				m_dirtEffect->attachToObject(getDrawable()->getObject());
-				// important: mark it as do-not-save, since we'll just re-create it when we reload.
-				m_dirtEffect->setSaveable(FALSE);
-			}	else {
-				if (!getW3DTankTruckDrawModuleData()->m_dirtEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'\n", 
-						getW3DTankTruckDrawModuleData()->m_dirtEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
-				}
-			}
-		}
-		if (!m_powerslideEffect) {
-			sysTemplate = TheParticleSystemManager->findTemplate(getW3DTankTruckDrawModuleData()->m_powerslideEffectName);
-			if (sysTemplate)
-			{
-				m_powerslideEffect = TheParticleSystemManager->createParticleSystem( sysTemplate );
-				m_powerslideEffect->attachToObject(getDrawable()->getObject());
-				// important: mark it as do-not-save, since we'll just re-create it when we reload.
-				m_powerslideEffect->setSaveable(FALSE);
-			}	else {
-				if (!getW3DTankTruckDrawModuleData()->m_powerslideEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'\n", 
-						getW3DTankTruckDrawModuleData()->m_powerslideEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
-				}
-			}
-		}
-	}
-	
-}
+// W3DTankTruckDraw::createEmitters is defined byte-exact in
+// W3DTankTruckDrawCreateEmitters.cpp (0x0077FE70).
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 /**
  * Stop creating debris from the tank treads
  */
-// ?enableEmitters@W3DTankTruckDraw@@ present-unmatched
-void W3DTankTruckDraw::enableEmitters( Bool enable  )
-{
-	// don't check... if we are hidden the first time thru, then we'll never create the emitters.
-	// eg, if we are loading a game and the unit is in a tunnel, he'll never get emitteres even when he exits.
-	//if (!m_effectsInitialized) 
-	{
-		createEmitters();
-		m_effectsInitialized=true;
-	}
-	if (m_dustEffect)
-	{
-		if (enable) 
-			m_dustEffect->start();
-		else
-			m_dustEffect->stop();
-	}
-	if (m_dirtEffect)
-	{
-		if (enable) 
-			m_dirtEffect->start();
-		else
-			m_dirtEffect->stop();
-	}
-	if (m_powerslideEffect)
-	{
-		if (!enable) 
-			m_powerslideEffect->stop();
-	}
-}
+// W3DTankTruckDraw::enableEmitters is defined byte-exact in
+// W3DTankTruckDrawEnableEmitters.cpp (0x007800A0).
 //-------------------------------------------------------------------------------------------------
 // ?updateBones@W3DTankTruckDraw@@ present-unmatched
 void W3DTankTruckDraw::updateBones( void ) {

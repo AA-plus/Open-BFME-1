@@ -4026,37 +4026,8 @@ void Player::expressSpecialPowerReadyFrame( const SpecialPowerTemplate *temp, Un
 
 
 //-------------------------------------------------------------------------------------------------
-// ?getOrStartSpecialPowerReadyFrame@Player@@QAEIPBVSpecialPowerTemplate@@@Z present-unmatched
-UnsignedInt Player::getOrStartSpecialPowerReadyFrame( const SpecialPowerTemplate *temp)
-{
-
-	UnsignedInt lookupID = temp->getID();
-	UnsignedInt now = TheGameLogic->getFrame();
-
-	SpecialPowerReadyTimerType *timer;
-	SpecialPowerReadyTimerListIterator it;
-
-
-	UnsignedInt count = 0;
-	UnsignedInt timerID = 0xfacade;
-
-	for( it = m_specialPowerReadyTimerList.begin(); it != m_specialPowerReadyTimerList.end(); ++it )
-	{
-		timer = &(*it);
-		++count;
-
-		timerID = timer->m_templateID;
-
-		if ( timerID == lookupID )
-		{
-			return timer->m_readyFrame;
-		}
-	}
-
-	addNewSharedSpecialPowerTimer( temp, now );
-	return now;
-
-}
+// Player::getOrStartSpecialPowerReadyFrame is defined byte-exact in
+// Player_getOrStartSpecialPowerReadyFrame_headers.cpp (0x000D28F0).
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

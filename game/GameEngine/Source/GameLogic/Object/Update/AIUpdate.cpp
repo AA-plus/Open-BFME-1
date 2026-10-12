@@ -4313,33 +4313,8 @@ void AIUpdateInterface::privateMoveToAndEvacuateAndExit( const Coord3D *pos, Com
 /**
  * Enter idle state.
  */
-// ?privateIdle@AIUpdateInterface@@ present-unmatched
-void AIUpdateInterface::privateIdle(CommandSourceType cmdSource)
-{
-	if (getObject()->isKindOf(KINDOF_PROJECTILE))
-		return;
-
-	getStateMachine()->clear();
-	getStateMachine()->setState( AI_IDLE );
-	setLastCommandSource( cmdSource );
-
-	ContainModuleInterface *contain = getObject()->getContain();
-	if (contain)
-	{
-		const ContainedItemsList* items = contain->getContainedItemsList();
-		if (items)
-		{
-			for (ContainedItemsList::const_iterator it = items->begin(); it != items->end(); ++it)
-			{
-				Object* obj = *it;
-				AIUpdateInterface* ai = obj ? obj->getAI() : NULL;
-				if (ai)
-					ai->aiIdle(cmdSource);
-			}
-		}
-	}
-
-}
+// AIUpdateInterface::privateIdle is defined byte-exact in
+// AIUpdateInterfacePrivateIdle.cpp (0x0027D670).
 
 //----------------------------------------------------------------------------------------
 // isIdle is owned by AIUpdateInterfaceIsIdle.cpp (RVA 0x00278720).

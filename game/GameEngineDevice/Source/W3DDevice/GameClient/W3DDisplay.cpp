@@ -1424,11 +1424,7 @@ void W3DDisplay::calculateTerrainLOD( void )
 }
 
 
-// ?getAverageFPS@W3DDisplay@@UAEMXZ present-unmatched
-Real W3DDisplay::getAverageFPS()
-{
-	return m_averageFPS;
-}
+// W3DDisplay::getAverageFPS is defined byte-exact in W3DDisplayState.cpp (0x006E9140).
 
 // ?getLastFrameDrawCalls@W3DDisplay@@UAEHXZ present-unmatched
 Int W3DDisplay::getLastFrameDrawCalls()

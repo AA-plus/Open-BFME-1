@@ -2025,22 +2025,7 @@ void Team::setAttackPriorityName(AsciiString name)
 }
 
 // ------------------------------------------------------------------------
-// ?getTeamAsAIGroup@Team@@QAEXPAVAIGroup@@@Z present-unmatched
-void Team::getTeamAsAIGroup(AIGroup *pAIGroup)
-{
-	if (!pAIGroup) {
-		return;
-	}
-
-	// Should this clear out the pAIGroup that it receives? I don't think so, but that 
-	// would go here if so. jkmcd
-
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		if (iter.cur()) {
-			pAIGroup->add(iter.cur());
-		}
-	}
-}
+// Team::getTeamAsAIGroup is defined byte-exact in TeamMemberQueries.cpp (0x000F45A0).
 
 
 // ------------------------------------------------------------------------
