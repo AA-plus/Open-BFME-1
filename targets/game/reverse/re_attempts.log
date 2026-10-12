@@ -60703,3 +60703,10 @@ _rva009B1ED0	0x009B1ED0	701	blocked	Retail 0x009B1ED0 through 0x009B218D is a co
 ?get@Rva00748FB0Field@@QBEIXZ	0x00748FB0	4	landed	carved ret+int3 boundary; mov eax,[ecx+4] t=2 model=claude-opus-5-5
 ?get@Rva007838D0Field@@QBEIXZ	0x007838D0	4	landed	carved ret+int3 boundary; mov eax,[ecx+4] t=2 model=claude-opus-5-5
 ?Rva004729A0ReturnArg@@YAII@Z	0x4729A0	5	landed	carved ret+int3 boundary; mov eax,[esp+4] ret t=2 model=claude-opus-5-5
+?get@Rva000C9F50FieldDword@@QBEHXZ	0x000C9F50	4	landed	carved ret+int3 boundary t=3 model=claude-opus-5-5
+?get@Rva002D8290FieldDword@@QBEHXZ	0x002D8290	4	landed	carved ret+int3 boundary t=3 model=claude-opus-5-5
+?get@Rva00367A20FieldDword@@QBEHXZ	0x00367A20	4	landed	carved ret+int3 boundary t=3 model=claude-opus-5-5
+?get@Rva003B2E00FieldDword@@QBEHXZ	0x003B2E00	4	landed	carved ret+int3 boundary t=3 model=claude-opus-5-5
+?get@Rva003CBD90FieldDword@@QBEHXZ	0x003CBD90	4	landed	carved ret+int3 boundary t=3 model=claude-opus-5-5
+?get@Rva0044FBF0FieldDword@@QBEHXZ	0x0044FBF0	4	landed	carved ret+int3 boundary t=3 model=claude-opus-5-5
+?Rva006309C0ReturnArg@@YAHH@Z	0x006309C0	5	landed	carved ret+int3 boundary t=3 model=claude-opus-5-5
