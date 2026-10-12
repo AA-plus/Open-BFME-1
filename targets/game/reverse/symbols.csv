@@ -13589,7 +13589,7 @@ name,address,notes
 ?Record_Texture_End@@YAXXZ,0x00937900,Debug_Statistics::End_Statistics retail REL32 helper target
 ?RecvReply@Cftp@@QAEJPBDHPAH@Z,0x00885570,WWDownload FTP.CPP Cftp::RecvReply callee of LogoffFromServer
 ?RefreshGameInfoListBox@@YAXPAVGameWindow@@0@Z,0x0062C650,retail ILT0004059D; empty shipped LobbyUtils body and aligned WOLLobbyMenuSystem two-window call prove cdecl ABI; evidence=004fc7c0-lobby-system.md
-?RefreshGameListBox@@YAXPAVGameWindow@@_N@Z,0x0000FD1C
+?RefreshGameListBox@@YAXPAVGameWindow@@_N@Z,0x0062E2E0,retail ILT 0000FD1C; ZH LobbyUtils RefreshGameListBox twin and seven LobbyUtils call sites; body in LobbyUtilsInsertGame.cpp
 ?Register_Mesh_Type@DX8MeshRendererClass@@QAEXPAVMeshModelClass@@@Z,0x00947810,retail call target from MeshModelClass Register_For_Rendering
 ?Registry_Load_Render_Device@DX8Wrapper@@KA_NPBDPADHAAH2222@Z,0x00903FE0,pinharvest x1 (body)
 ?Registry_Save_Render_Device@DX8Wrapper@@KA_NPBDHHHH_NH@Z,0x00903ED0,pinharvest x1 (body)

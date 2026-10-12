@@ -1,3 +1,6 @@
+
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
+// stlport
 // ?insertGame@@YAHPAVGameWindow@@PAVGameSpyStagingRoom@@_N@Z
 // partial score=1.0 date=2026-10-11
 // BFME LobbyUtils::insertGame reconstruction, retail 0x0062DB90.
@@ -402,3 +405,111 @@ __declspec(noinline) static Int invoke_insertGame(GameWindow *win, GameSpyStagin
 }
 
 Int (__cdecl * volatile keep_insertGame)(GameWindow *, GameSpyStagingRoom *, Bool) = invoke_insertGame;
+
+// ---- RefreshGameListBox (0x0062E2E0) ----
+#include <set>
+#include <map>
+
+void GadgetListBoxGetSelected(GameWindow *win, Int *selection);
+void *GadgetListBoxGetItemData(GameWindow *win, Int row, Int column = 0);
+Int GadgetListBoxGetTopVisibleEntry(GameWindow *win);
+void GadgetListBoxReset(GameWindow *win);
+void GadgetListBoxSetSelected(GameWindow *win, Int row);
+void GadgetListBoxSetTopVisibleEntry(GameWindow *win, Int row);
+void populateBuddyGames(void);
+
+typedef std::set<GameSpyStagingRoom *> BuddyGameSet;
+static BuddyGameSet *theBuddyGames = 0;
+
+struct GameSortStruct
+{
+	bool operator()(GameSpyStagingRoom *g1, GameSpyStagingRoom *g2);
+};
+
+typedef std::map<Int, GameSpyStagingRoom *> StagingRoomMap;
+
+#define GSLOT(n) virtual void gslot##n() = 0
+class RefreshGameListBoxGameSpyInfoView
+{
+public:
+	GSLOT(0); GSLOT(1); GSLOT(2); GSLOT(3); GSLOT(4); GSLOT(5); GSLOT(6); GSLOT(7);
+	GSLOT(8); GSLOT(9); GSLOT(10); GSLOT(11); GSLOT(12); GSLOT(13); GSLOT(14); GSLOT(15);
+	GSLOT(16); GSLOT(17); GSLOT(18); GSLOT(19); GSLOT(20); GSLOT(21); GSLOT(22); GSLOT(23);
+	GSLOT(24); GSLOT(25); GSLOT(26); GSLOT(27); GSLOT(28); GSLOT(29); GSLOT(30); GSLOT(31);
+	GSLOT(32); GSLOT(33); GSLOT(34); GSLOT(35); GSLOT(36); GSLOT(37);
+	virtual StagingRoomMap *getStagingRoomList() = 0;
+};
+#undef GSLOT
+
+#define WSLOT(n) virtual void wslot##n() = 0
+class RefreshGameListBoxWindowManagerView
+{
+public:
+	WSLOT(0); WSLOT(1); WSLOT(2); WSLOT(3); WSLOT(4); WSLOT(5); WSLOT(6); WSLOT(7);
+	WSLOT(8); WSLOT(9); WSLOT(10); WSLOT(11); WSLOT(12); WSLOT(13); WSLOT(14); WSLOT(15);
+	WSLOT(16); WSLOT(17); WSLOT(18); WSLOT(19); WSLOT(20); WSLOT(21); WSLOT(22); WSLOT(23);
+	WSLOT(24); WSLOT(25); WSLOT(26); WSLOT(27); WSLOT(28); WSLOT(29); WSLOT(30); WSLOT(31);
+	WSLOT(32); WSLOT(33); WSLOT(34); WSLOT(35); WSLOT(36); WSLOT(37); WSLOT(38); WSLOT(39);
+	WSLOT(40); WSLOT(41); WSLOT(42); WSLOT(43); WSLOT(44); WSLOT(45); WSLOT(46);
+	virtual void winSetLoneWindow(GameWindow *window) = 0;
+};
+#undef WSLOT
+class GameWindowManager;
+extern GameWindowManager *TheWindowManager;
+
+static void clearBuddyGames(void)
+{
+	if (theBuddyGames)
+		delete theBuddyGames;
+	theBuddyGames = 0;
+}
+
+void RefreshGameListBox(GameWindow *win, Bool showMap)
+{
+	if (!win)
+		return;
+
+	Int selectedIndex = -1;
+	Int indexToSelect = -1;
+	Int selectedID = 0;
+	GadgetListBoxGetSelected(win, &selectedIndex);
+	if (selectedIndex != -1)
+	{
+		selectedID = (Int)GadgetListBoxGetItemData(win, selectedIndex);
+	}
+	int prevPos = GadgetListBoxGetTopVisibleEntry(win);
+
+	GadgetListBoxReset(win);
+
+	typedef std::multiset<GameSpyStagingRoom *, GameSortStruct> SortedGameList;
+	SortedGameList sgl;
+	StagingRoomMap *srm = ((RefreshGameListBoxGameSpyInfoView *)TheGameSpyInfo)->getStagingRoomList();
+	populateBuddyGames();
+	for (StagingRoomMap::iterator srmIt = srm->begin(); srmIt != srm->end(); ++srmIt)
+	{
+		sgl.insert(srmIt->second);
+	}
+
+	for (SortedGameList::iterator sglIt = sgl.begin(); sglIt != sgl.end(); ++sglIt)
+	{
+		GameSpyStagingRoom *game = *sglIt;
+		if (game)
+		{
+			Int index = insertGame(win, game, showMap);
+			if (*reinterpret_cast<const Int *>(reinterpret_cast<const char *>(game) + 0x41c) == selectedID)
+			{
+				indexToSelect = index;
+			}
+		}
+	}
+
+	clearBuddyGames();
+
+	GadgetListBoxSetSelected(win, indexToSelect);
+	GadgetListBoxSetTopVisibleEntry(win, prevPos);
+
+	if (indexToSelect < 0 && selectedID)
+	{
+		((RefreshGameListBoxWindowManagerView *)TheWindowManager)->winSetLoneWindow(0);
+	}
+}

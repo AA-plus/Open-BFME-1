@@ -2,7 +2,7 @@
 
 class GameWindow;
 
-void RefreshGameListBox(GameWindow *, bool);
+void j_0000fd1c(GameWindow *, bool);
 
 class RefreshGameListBoxShim
 {
@@ -10,7 +10,7 @@ public:
     static void run(GameWindow *window, bool flag);
 };
 
-void RefreshGameListBox(GameWindow *window, bool flag)
+void j_0000fd1c(GameWindow *window, bool flag)
 {
     RefreshGameListBoxShim::run(window, flag);
 }

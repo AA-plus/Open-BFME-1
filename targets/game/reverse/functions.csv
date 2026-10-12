@@ -18007,7 +18007,7 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?ReduceFaces@?$GXSimplifyMesh@I$0A@$0?0@@UAGJK@Z,,0x00A238EC,234,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\createmesh.obj
 ?ReduceVertices@?$GXSimplifyMesh@G$00$0PPPP@@@UAGJK@Z,,0x00A26B39,234,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\createmesh.obj
 ?ReduceVertices@?$GXSimplifyMesh@I$0A@$0?0@@UAGJK@Z,,0x00A25034,234,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\createmesh.obj
-?RefreshGameListBox@@YAXPAVGameWindow@@_N@Z,,0x0000FD1C,5,game/GameEngine/Source/GameClient/GUI/GUICallbacks/RefreshGameListBox.cpp,matched,5-byte incremental-link thunk converted from MASM dump to focused C++ source
+?j_0000fd1c@@YAXPAVGameWindow@@_N@Z,,0x0000FD1C,5,game/GameEngine/Source/GameClient/GUI/GUICallbacks/RefreshGameListBox.cpp,matched,5-byte incremental-link thunk converted from MASM dump to focused C++ source
 ?RefreshGameListBoxes@@YAXXZ,,0x0062E4F0,17,game/GameEngine/Source/GameNetwork/GameSpy/LobbyUtils.cpp,matched,
 ?RegReassign@CPSLegacyProgram@D3DXShader@@IAEIPAPAVCInstruction@2@IIIPAVCArgument@2@AAH@Z,,0x00A8B252,123,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\cpslegacyprogram.obj
 ?Register@SimpleSceneClass@@UAEXPAVRenderObjClass@@W4RegType@SceneClass@@@Z,,0x00943000,232,game/Libraries/Source/WWVegas/WW3D2/SimpleSceneClass_Register_Thunk.cpp,matched,five-case RegType switch adding via Internal_Add and addref; range includes the trailing jump table at 0x009430D4
@@ -38080,7 +38080,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0061e3e0@@YAXXZ,,0x0061E3E0,221,game/gen_asm/d_0061e080.asm,matched,gen-dump;ghidra=FUN_00a1e3e0
 ?d_00628330@@YAXXZ,,0x00628330,1,game/GameEngine/Source/GameClient/Rva00628330Noop.cpp,matched,carved one-byte ret body with no proven owner
 ?d_0062a210@@YAXXZ,,0x0062A210,1,game/GameEngine/Source/Common/Audio/Rva0062A210Noop.cpp,matched,carved one-byte ret body with no proven owner
-?d_0062e2e0@@YAXXZ,,0x0062E2E0,418,game/gen_asm/d_0061e080.asm,matched,gen-dump;ghidra=FUN_00a2e2e0
 ?d_0062fa20@@YAXXZ,,0x0062FA20,843,game/gen_asm/d_0061e080.asm,matched,gen-dump;ghidra=FUN_00a2fa20
 ?d_006304a0@@YAXXZ,,0x006304A0,218,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_00a304a0
 ?d_00630b00@@YAXXZ,,0x00630B00,1,game/GameEngine/Source/Common/Rva00630BE0TinyBodies.cpp,matched,opaque address-derived body with proven ret boundary
@@ -172548,3 +172547,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?dup_00C205D0@@YAXXZ,,0x00C205D0,19,game/GameEngine/Source/GameClient/BfmeOwnerRCRva0041EFD0.cpp,matched,authored C++ cleanup;gen-funclet;parent=?bfmeSendRC@BfmeOwnerRC@@QAEDPAVBfmeUnitRC@@PAVBfmeHolderRC@@PAX222@Z;object-symbol=$L1496;retail parent 0x00413A40 pushes handler stub 0x00C205E3 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
 ?dup_00C20148@@YAXXZ,,0x00C20148,22,game/GameEngine/Source/GameClient/BuffManagerLifecycle.cpp,matched,authored C++ cleanup;gen-funclet;parent=??0BuffManager@@QAE@H@Z;object-symbol=$L406;retail parent 0x0040AF50 pushes handler stub 0x00C2015E (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
 ?transition00409610@BuffEntry00409E20@@QAE_NHHPAX0H@Z,,0x00409610,226,game/GameEngine/Source/GameClient/BuffEntryTransition00409610.cpp,matched,Address-derived buff entry transition; BuffState00409E20 apply caller; volatile saved state gives retail stack home;model=claude-sonnet-5-5;host=vm
+?RefreshGameListBox@@YAXPAVGameWindow@@_N@Z,,0x0062E2E0,418,game/GameEngine/Source/GameNetwork/GameSpy/LobbyUtilsInsertGame.cpp,matched,same-TU static insertGame private ABI; ZH twin RefreshGameListBox; ILT 0xFD1C;model=claude-sonnet-5-5;host=vm
