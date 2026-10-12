@@ -2014,25 +2014,16 @@ static void Invalidate_FVF_Category_Container_List(FVFCategoryList& list)
 	}
 }
 
-// byte-exact reconstruction: game/Libraries/Source/WWVegas/WW3D2/DX8MeshRendererClass_Invalidate_Thunk.cpp
-// ?Invalidate@DX8MeshRendererClass@@QAEX_N@Z present-unmatched
-void DX8MeshRendererClass::Invalidate( bool shutdown)
+// Invalidate is defined by the byte-exact BFME reconstruction in
+// DX8MeshRendererClass_Invalidate_Thunk.cpp; the Zero Hour body differs from retail.
+// Retail still carries this TU's out-of-line copies of the list helpers the
+// Zero Hour Invalidate used; instantiate them explicitly.
+template void SimpleDynVecClass<FVFCategoryList *>::Delete_All(bool);
+template void MultiListClass<MeshModelClass>::Reset_List();
+
+// Source-only emission hook (same pattern as bfmeKeepFVFCategoryHelpers):
+// keeps the matched static helper with its VC7.1 internal calling convention.
+void bfmeKeepInvalidateFVFHelper(FVFCategoryList &list)
 {
-	WWMEMLOG(MEM_RENDERER);
-	_RegisteredMeshList.Reset_List();
-
-	for (int i=0;i<texture_category_container_lists_rigid.Count();++i) {
-		Invalidate_FVF_Category_Container_List(*texture_category_container_lists_rigid[i]);
-		delete texture_category_container_lists_rigid[i];
-	}
-	if (texture_category_container_list_skin) {
-		Invalidate_FVF_Category_Container_List(*texture_category_container_list_skin);
-		delete texture_category_container_list_skin;
-		texture_category_container_list_skin=NULL;
-	}
-
-	if (!shutdown)
-		texture_category_container_list_skin = W3DNEW FVFCategoryList;
-
-	texture_category_container_lists_rigid.Delete_All();
+	Invalidate_FVF_Category_Container_List(list);
 }
