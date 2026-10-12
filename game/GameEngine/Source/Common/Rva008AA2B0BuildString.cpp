@@ -93,8 +93,9 @@ class BfmeStrEAW
 public:
 	BfmeStrEAW()
 	{
+		sharedEmptyString012D5298()->m_refCount++;
+
 		m_data = sharedEmptyString012D5298();
-		++m_data->m_refCount;
 	}
 
 	~BfmeStrEAW()
