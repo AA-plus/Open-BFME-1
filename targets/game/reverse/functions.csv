@@ -13027,7 +13027,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Clamp_Color@DX8Wrapper@@SAXAAVVector4@@@Z,,0x0090F310,328,game/Libraries/Source/WWVegas/WW3D2/DX8WrapperClampColor.cpp,matched,Restore complete padding-separated entry and runtime CMOV dispatch; former 0x0090F3FA claim is internal branch at +234; donor DX8Wrapper name retained; x87 fallback and existing donor CMOV assembly;model=GPT-6
 ?Class_ID@AABoxRenderObjClass@@UBEHXZ,,0x00956A90,6,game/Libraries/Source/WWVegas/WWSaveLoad/parameter.cpp,matched,gen-alias;object-symbol=?Get_Type@?$SimpleParameterClass@VVector2@@$0BK@@@UBE?AW4Type@ParameterClass@@XZ;C++ alias
 ?Class_ID@HAnimClass@@UBEHXZ,,0x00959830,4,game/Libraries/Source/WWVegas/WW3D2/hrawanim.cpp,matched,
-?Class_ID@HLodClass@@UBEHXZ,,0x0097BC00,6,game/Libraries/Source/WWVegas/WW3D2/HLodClass_Class_ID_Thunk.cpp,matched,returns 0x19 which is CLASSID_HLOD by rendobj.h enum position; hlod.h declares it inline
 ?Class_ID@HRawAnimClass@@UBEHXZ,,0x006CF680,3,game/Libraries/Source/WWVegas/WW3D2/hrawanim.cpp,matched,icf-owner=?Get_Sort_Level@RenderObjClass@@UBEHXZ
 ?Class_ID@MeshClass@@UBEHXZ,,0x006CF680,3,game/Libraries/Source/WWVegas/WW3D2/mesh.cpp,matched,icf-owner=?Get_Sort_Level@RenderObjClass@@UBEHXZ
 ?Class_ID@Null3DObjClass@@UBEHXZ,,0x00972750,6,game/Libraries/Source/WWVegas/WW3D2/RenderObj_Class_ID_Overrides_Thunk.cpp,matched,returns 22 = CLASSID_NULL; slot follows the destructor and Clone@Null3DObjClass
@@ -13284,7 +13283,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Compute_Point@OBBoxClass@@QBEXQAMPAVVector3@@@Z,,0x008E2960,189,game/Libraries/Source/WWVegas/WWMath/colmathobbobb.cpp,matched,
 ?Compute_Point_Visibility@SimpleSceneClass@@UAEMAAVRenderInfoClass@@ABVVector3@@@Z,,0x009439B0,282,game/Libraries/Source/WWVegas/WW3D2/scene.cpp,matched,extent repaired through ret 8 at 0x00943AC7; int3 at 0x00943ACA; retail render list at this+0x60; gap-seat 2026-09-28;model=gpt-6-astra
 ?Compute_Projected_Sphere_Radius@CameraClass@@QAEMMM@Z,,0x00931920,89,game/Libraries/Source/WWVegas/WW3D2/camera.cpp,matched,RenderObjClass +0x34 (camera shim)
-?Compute_Ram_Size@AABTreeClass@@QAEHXZ,,0x0096A630,17,game/Libraries/Source/WWVegas/WW3D2/AABTreeClass_ComputeRamSize.cpp,matched,AABTreeClass ram-size formula; 32-byte nodes plus 4-byte polygon indices plus 0x1C-byte object
 ?Compute_Ram_Size@MeshGeometryClass@@QAEHXZ,,0x00925110,227,game/Libraries/Source/WWVegas/WW3D2/meshgeometry.cpp,matched,
 ?Compute_Ram_Size@MeshMatDescClass@@QAEHXZ,,0x00929BE0,349,game/Libraries/Source/WWVegas/WW3D2/MeshMatDescClass_ComputeRamSize.cpp,matched,
 ?Compute_Ram_Size@MeshModelClass@@QAEHXZ,,0x0096C9B0,67,game/Libraries/Source/WWVegas/WW3D2/MeshModelClass_ComputeRamSize.cpp,matched,MeshModel layout and exact helper calls
@@ -172548,3 +172546,5 @@ uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic_load
 ?onDie@CrushDie@@UAEXPBVDamageInfo@@@Z,,0x00254CF0,486,game/GameEngine/Source/GameLogic/Object/Die/CrushDieOnDie.cpp,matched,model=codex-cli;host=chalco.vps
 ?m@Rva00472000@@QAEXXZ,,0x00472000,387,game/GameEngine/Source/GameClient/GUI/Rva00472000Method.cpp,matched,clean C++ conversion of the gen-dump; class owner stays address-derived (vtable 0x010F760C slot 1 installed by matched ctor 0x00471EC0);model=codex-cli;host=chalco.vps
 ?resetCamera@View@@UAEXPBUCoord3D@@HMM@Z,,0x0045BC40,3,game/GameEngine/Source/GameClient/View.cpp,matched,View vtable slot 49 and doResetCamera caller prove the BFME four-argument base stub; View.h inline empty body; View.cpp COMDAT equals retail (census c1012a);model=claude-opus-5-5;host=GreatFaram
+?Compute_Ram_Size@AABTreeClass@@QAEHXZ,,0x0096A630,17,game/Libraries/Source/WWVegas/WW3D2/meshgeometry.cpp,matched,AABTreeClass ram-size formula; aabtree.h inline; meshgeometry.cpp COMDAT equals retail (census c1012a);model=claude-opus-5-5;host=GreatFaram
+?Class_ID@HLodClass@@UBEHXZ,,0x0097BC00,6,game/Libraries/Source/WWVegas/WW3D2/hlod.cpp,matched,returns CLASSID_HLOD; hlod.h declares it inline; hlod.cpp COMDAT equals retail (census c1012a);model=claude-opus-5-5;host=GreatFaram
