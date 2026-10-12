@@ -232,7 +232,7 @@ def judge(obj, eh_tables, row, label):
     base = {"twins": twins, "ambiguous": bool(twins), "parents": found, "pin_defined": present}
     if not agreeing:
         why = "tables differ" if found else "no ledgered parent in this object reaches this address"
-        return {**base, "verdict": "unprovable", "why": why, "unique": not twins}
+        return {**base, "verdict": "unprovable", "why": why, "unique": present and not twins}
     if len(labels) > 1:
         return {**base, "verdict": "split", "labels": labels, "unique": False}
     # exactly one label at F's retail states: the state index names it, so
@@ -245,12 +245,13 @@ def judge(obj, eh_tables, row, label):
 
 def kind_of(result):
     """Report column: unique, twin-proven (byte twins told apart by state
-    index), ambiguous (twins nothing separates) or unknown (no object)."""
+    index), ambiguous (twins nothing separates), unanchored (unprovable and
+    the pin is gone, so its twins cannot be looked for) or unknown (no object)."""
     if result.get("ambiguous") is None:
         return "unknown"
-    if not result.get("ambiguous"):
-        return "unique"
-    return "twin-proven" if result.get("unique") else "ambiguous"
+    if result.get("ambiguous"):
+        return "twin-proven" if result.get("unique") else "ambiguous"
+    return "unique" if result.get("unique", True) else "unanchored"
 
 
 def apply_fixes(fixes, model):
