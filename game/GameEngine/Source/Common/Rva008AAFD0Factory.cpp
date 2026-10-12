@@ -29,7 +29,7 @@ struct Rva00891B80Pool
 };
 
 extern Rva00891B80Pool *g_pool01337A30;
-extern void *(*WideAllocPtr)(unsigned int bytes);
+extern void *(*Rva008C5D70Alloc)(unsigned int bytes);
 
 class BfmeUtf8String008A01F0
 {
@@ -75,7 +75,7 @@ public:
 
 	void *operator new(unsigned int bytes)
 	{
-		return WideAllocPtr(bytes);
+		return Rva008C5D70Alloc(bytes);
 	}
 
 	__forceinline void clearRegistered()

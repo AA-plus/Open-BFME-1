@@ -52,11 +52,11 @@ class BfmeStrVKK { public: void bfmeTruncVKK(unsigned n); };
 extern AptValue **g_bfmeArr1233;
 struct Rva008AE770Stack { int field00; };
 extern Rva008AE770Stack Rva008AE770TheStack;
-extern void *(__cdecl *WideAllocPtr)(unsigned int);
+extern void *(__cdecl *Rva008C5D70Alloc)(unsigned int);
 class Rva008A9B00 {
 public:
     __declspec(nothrow) Rva008A9B00();
-    __forceinline void *operator new(unsigned int bytes) { return WideAllocPtr(bytes); }
+    __forceinline void *operator new(unsigned int bytes) { return Rva008C5D70Alloc(bytes); }
     void *m_unknown00;
     unsigned int m_flags;
     Rva8CD130String m_string;

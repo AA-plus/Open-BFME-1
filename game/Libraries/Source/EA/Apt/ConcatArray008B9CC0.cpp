@@ -3,7 +3,7 @@
 // Base size 20h and array fields 20h/24h/28h are witnessed by constructor and reserve.
 class BfmeItemDX;
 void bfmePush(BfmeItemDX *);
-extern void *(*WideAllocPtr)(unsigned);
+extern void *(*Rva008C5D70Alloc)(unsigned);
 extern "C" void *bfmeVft1030C[];
 class Rva00899F00Base {
 public:
@@ -34,7 +34,7 @@ public:
         m_capacity=0; m_elements=0; field28=0;
     }
     static void *operator new(unsigned n) {
-        void *raw=WideAllocPtr(n+8); void *p=(char *)raw+8;
+        void *raw=Rva008C5D70Alloc(n+8); void *p=(char *)raw+8;
         bfmePush((BfmeItemDX *)p);
         return p;
     }

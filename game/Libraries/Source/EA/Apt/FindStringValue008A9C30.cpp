@@ -35,7 +35,7 @@ class AptValue { public: int toInteger() const; };
 extern AptValue **g_bfmeArr1233;
 struct Rva008AE770Stack { int field00; };
 extern Rva008AE770Stack Rva008AE770TheStack;
-extern void *(__cdecl *WideAllocPtr)(unsigned int);
+extern void *(__cdecl *Rva008C5D70Alloc)(unsigned int);
 struct Rva00899560Value;
 struct Rva00899560Pool {
 	int m_capacity; int m_count; Rva00899560Value** m_items;
@@ -68,7 +68,7 @@ struct Rva00899560Value {
 };
 struct Rva008A1110Value : Rva00899560Value {
 	int m_value;
-	__forceinline void *operator new(unsigned int bytes) { return WideAllocPtr(bytes); }
+	__forceinline void *operator new(unsigned int bytes) { return Rva008C5D70Alloc(bytes); }
     __forceinline Rva008A1110Value(int value) : Rva00899560Value(7), m_value(value) {}
 };
 

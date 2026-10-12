@@ -18,7 +18,7 @@ static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
 	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
 }
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
-extern void *(__cdecl *WideAllocPtr)(unsigned);
+extern void *(__cdecl *Rva008C5D70Alloc)(unsigned);
 
 class Rva8CD130String
 {
@@ -77,7 +77,7 @@ class Rva008A9B00 : public Value008C9B70
 {
 public:
     Rva008A9B00();
-    void *operator new(unsigned bytes) { return WideAllocPtr(bytes); }
+    void *operator new(unsigned bytes) { return Rva008C5D70Alloc(bytes); }
     // Retail unwind states 0/2 call 00891A80(pointer, 16); caller pops 8.
     void operator delete(void *storage, unsigned bytes);
     Rva8CD130String m_string;

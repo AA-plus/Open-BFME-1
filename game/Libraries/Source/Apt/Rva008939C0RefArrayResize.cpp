@@ -1,6 +1,6 @@
 // cl: /O2 /DNDEBUG /MD /EHsc
 #include <new>
-extern void *(__cdecl *WideAllocPtr)(unsigned);
+extern void *(__cdecl *Rva008C5D70Alloc)(unsigned);
 extern void (__cdecl *g_bfmeFreeDWF)(void *);
 class Rva00894D90Accessor { public: static unsigned decrement(unsigned *); };
 class Rva00894D80Accessor { public: static unsigned increment(unsigned *); };
@@ -27,7 +27,7 @@ class Rva008947A0Elem : public BfmeElemCU {
 public:
     Rva008947A0Elem();
     ~Rva008947A0Elem();
-    static void *operator new[](unsigned bytes) throw() { return WideAllocPtr(bytes); }
+    static void *operator new[](unsigned bytes) throw() { return Rva008C5D70Alloc(bytes); }
     static void operator delete[](void *value) throw() { g_bfmeFreeDWF(value); }
 };
 // ?Rva008939C0@@YAPAXPAVBfmeElemCU@@HH@Z

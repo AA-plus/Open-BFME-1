@@ -6,14 +6,14 @@
 // path is the allocator returning nothing, with the null propagated into the
 // store.
 
-extern void * (*WideAllocPtr)(unsigned int bytes);
+extern void * (*Rva008C5D70Alloc)(unsigned int bytes);
 
 class BfmeThingBE
 {
 public:
 	void *operator new(unsigned int bytes)
 	{
-		return WideAllocPtr(bytes);
+		return Rva008C5D70Alloc(bytes);
 	}
 
 	void operator delete(void *block);
@@ -47,7 +47,7 @@ void __cdecl bfmeArenaReady(void);				// retail 0x00897050
 // ?bfmeArenaInit@@YAXI@Z
 void __cdecl bfmeArenaInit(unsigned int size)
 {
-	char *block = (char *)WideAllocPtr(0x4000);
+	char *block = (char *)Rva008C5D70Alloc(0x4000);
 
 	g_bfmeBufDWG = block;
 	g_bfmeArenaCursor = block;

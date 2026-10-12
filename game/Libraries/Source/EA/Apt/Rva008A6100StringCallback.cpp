@@ -15,7 +15,7 @@ static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
 	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
 }
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
-extern void *(*WideAllocPtr)(unsigned int bytes);
+extern void *(*Rva008C5D70Alloc)(unsigned int bytes);
 class Rva8CD130String
 {
 public:
@@ -46,7 +46,7 @@ class Rva008A9B00
 {
 public:
     Rva008A9B00();
-    void *operator new(unsigned int bytes) { return WideAllocPtr(bytes); }
+    void *operator new(unsigned int bytes) { return Rva008C5D70Alloc(bytes); }
     void operator delete(void *, unsigned int);
     __forceinline void clearRegistered() { m_flags &= ~0x40000000; }
     void *m_vptr;

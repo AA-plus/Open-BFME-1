@@ -2,7 +2,7 @@
 // cl: /O2 /Ob1 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 // Address-derived owner; constructor and sized-delete identities are pinned independently.
 
-extern "C" void *(*WideAllocPtr)(unsigned int bytes);
+extern void *(*Rva008C5D70Alloc)(unsigned int bytes);
 extern void *Rva00897640(unsigned int bytes);
 
 class Rva008A78D0VBase
@@ -59,7 +59,7 @@ public:
 
 	void *operator new(unsigned int bytes)
 	{
-		return WideAllocPtr(bytes);
+		return Rva008C5D70Alloc(bytes);
 	}
 
 	__forceinline void clearRegistered()
