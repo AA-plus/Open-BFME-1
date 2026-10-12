@@ -443,3 +443,153 @@ int Rva00069870::get(void)
 {
 	return m_value;
 }
+
+class Rva000E69A0
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva000E69A0@@QAEHXZ
+int Rva000E69A0::get(void)
+{
+	return m_value;
+}
+
+class Rva001223C0
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva001223C0@@QAEHXZ
+int Rva001223C0::get(void)
+{
+	return m_value;
+}
+
+class Rva0018B3B0
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva0018B3B0@@QAEHXZ
+int Rva0018B3B0::get(void)
+{
+	return m_value;
+}
+
+class Rva001A4210
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva001A4210@@QAEHXZ
+int Rva001A4210::get(void)
+{
+	return m_value;
+}
+
+class Rva001D5FA0
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva001D5FA0@@QAEHXZ
+int Rva001D5FA0::get(void)
+{
+	return m_value;
+}
+
+class Rva001DE480
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva001DE480@@QAEHXZ
+int Rva001DE480::get(void)
+{
+	return m_value;
+}
+
+class Rva001F86F0
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva001F86F0@@QAEHXZ
+int Rva001F86F0::get(void)
+{
+	return m_value;
+}
+
+class Rva00232710
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva00232710@@QAEHXZ
+int Rva00232710::get(void)
+{
+	return m_value;
+}
+
+class Rva00232A10
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva00232A10@@QAEHXZ
+int Rva00232A10::get(void)
+{
+	return m_value;
+}
+
+class Rva00232B40
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva00232B40@@QAEHXZ
+int Rva00232B40::get(void)
+{
+	return m_value;
+}
