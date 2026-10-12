@@ -172082,3 +172082,6 @@ uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic_load
 ?get@Rva00584E60Field@@QBEIXZ,,0x00584E60,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
 ?get@Rva005BFF50Field@@QBEIXZ,,0x005BFF50,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
 ?get@Rva0075D260Field@@QBEIXZ,,0x0075D260,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?body@Rva0039B870Body@@QBEHXZ,,0x0039B870,4,game/GameEngine/Source/Common/AddressTinyBodies.cpp,matched,opaque carved plus-4 load;model=claude-opus-5-5;host=GreatFaram
+?body@Rva00337550Body@@QBEHXZ,,0x00337550,4,game/GameEngine/Source/Common/AddressTinyBodies.cpp,matched,opaque carved plus-4 load;model=claude-opus-5-5;host=GreatFaram
+?body@Rva003AC790Body@@QBEHXZ,,0x003AC790,4,game/GameEngine/Source/Common/AddressTinyBodies.cpp,matched,opaque carved plus-4 load;model=claude-opus-5-5;host=GreatFaram

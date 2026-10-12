@@ -688,3 +688,51 @@ unsigned short Rva0083FEB0WordLoad(const unsigned short *value)
 {
 	return *value;
 }
+
+// 0x0039B870: carved thiscall load of the dword at +4; owner unproven.
+class Rva0039B870Body
+{
+	char m_padding[4];
+	int m_value;
+
+public:
+	int body() const;
+};
+
+// ?body@Rva0039B870Body@@QBEHXZ
+int Rva0039B870Body::body() const
+{
+	return m_value;
+}
+
+// 0x00337550: carved thiscall load of the dword at +4; owner unproven.
+class Rva00337550Body
+{
+	char m_padding[4];
+	int m_value;
+
+public:
+	int body() const;
+};
+
+// ?body@Rva00337550Body@@QBEHXZ
+int Rva00337550Body::body() const
+{
+	return m_value;
+}
+
+// 0x003AC790: carved thiscall load of the dword at +4; owner unproven.
+class Rva003AC790Body
+{
+	char m_padding[4];
+	int m_value;
+
+public:
+	int body() const;
+};
+
+// ?body@Rva003AC790Body@@QBEHXZ
+int Rva003AC790Body::body() const
+{
+	return m_value;
+}
