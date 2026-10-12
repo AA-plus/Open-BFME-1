@@ -180,10 +180,44 @@ def test_a_file_named_twice_counts_once(monkeypatch, tmp_path, capsys):
     assert "1 of 1 link cleanly; LINKED 0 -> 100 bytes" in capsys.readouterr().out
 
 
-def test_an_object_outside_the_census_is_refused(monkeypatch, tmp_path):
-    import pytest
-    with pytest.raises(SystemExit, match="not in census c.*new.cpp"):
-        _preview(monkeypatch, tmp_path, ["a.obj", "new.obj"])
+def test_a_file_new_since_the_census_is_previewed_after_every_census_object(monkeypatch, tmp_path, capsys):
+    assert _preview(monkeypatch, tmp_path, ["a.obj", "new.obj"]) == 0
+    out = capsys.readouterr().out
+    assert "new since census c, previewed as linked after every census object: new.cpp" in out
+    assert "new.cpp: LINKS  LINKED 0 -> 100 bytes" in out and "a.cpp: LINKS" in out
+    assert "2 of 2 link cleanly; LINKED 0 -> 200 bytes" in out
+
+
+def test_census_only_still_reads_a_new_file_s_own_object(monkeypatch, tmp_path, capsys):
+    refreshed = []
+    import link_census
+    ix = index()
+    monkeypatch.setattr(C, "load_index", lambda: ix)
+    monkeypatch.setattr(C, "resolve", lambda path, _: (path.replace(".obj", ".cpp"), tmp_path / path))
+    monkeypatch.setattr(link_census, "ledger", lambda: None)
+    monkeypatch.setattr(link_census, "RetailTruth", lambda _: None)
+    monkeypatch.setattr(C, "refresh", lambda index, objects, truth: refreshed.append([o.name for o in objects]))
+    monkeypatch.setattr(C, "source_bytes", lambda sources: {s: 1 for s in sources})
+    monkeypatch.setattr(C, "check_object", lambda *a: {k: [] for k in
+                        ("unresolved", "duplicates", "comdat", "addresses", "selected")})
+    C.main(["--census-only", "a.obj", "new.obj"])
+    assert refreshed == [["new.obj"]] and ix["objects"] == ["a.obj", "b.obj", "c.obj", "new.obj"]
+
+
+def test_two_new_files_defining_one_exclusive_symbol_collide(monkeypatch):
+    """The case the old refusal guarded: two new objects both looked clean
+    while link.exe fails LNK2005. Placed after the census, they collide."""
+    import link_census
+    from types import SimpleNamespace
+    ix = index(strong={"g": [0]})
+    ix["objects"] += ["n1.obj", "n2.obj"]
+    monkeypatch.setattr(link_census, "object_facts", lambda obj, truth, **kwargs: ([], ["f"], ["g"], []))
+    monkeypatch.setattr(link_census, "common_definitions", lambda obj, **kwargs: {})
+    objs = [SimpleNamespace(name=n, read_bytes=lambda: b"x") for n in ("n1.obj", "n2.obj")]
+    C.refresh(ix, objs, None)
+    assert ix["strong"]["f"] == [3, 4]
+    assert C.duplicate("f", 3, True, 3, ix) and C.duplicate("f", 4, True, 4, ix)
+    assert not C.duplicate("g", 0, True, 0, ix)
 
 
 # Prediction-only previews avoid building global weak-provider contexts.

@@ -1382,13 +1382,21 @@ def main(argv=None):
                      (resolve(path, index) for path in args.paths)}.values())  # a file named twice counts once
     outside = sorted(source or obj.name for source, obj in resolved if obj.name not in index["objects"])
     if outside:
-        # Its link position is unknown, so neither its own duplicates nor what
-        # it provides to others can be judged: two new objects defining one
-        # exclusive symbol both looked clean while link.exe fails LNK2005.
-        raise SystemExit(f"link_check: not in census {index['meta'].get('commit', '?')}, so not previewable "
-                         f"(the next census measures it): {', '.join(outside)}")
+        # A file added after the census: place its object after every census
+        # object (link order of a new file is unknown; appending keeps the
+        # census's own first-definition positions) and judge it like the
+        # others, so two new objects defining one exclusive symbol still
+        # collide (LNK2005) and its unresolved names meet the census's
+        # definitions.
+        index["objects"] = list(index["objects"]) + sorted(
+            {obj.name for _, obj in resolved if obj.name not in index["objects"]})
+        print(f"link_check: new since census {index['meta'].get('commit', '?')}, previewed as linked after "
+              f"every census object: {', '.join(outside)}")
     if not args.census_only:
         refresh(index, [obj for _, obj in resolved], truth)
+    elif outside:
+        # The census holds no definitions for a new file: its current object is all there is.
+        refresh(index, [obj for source, obj in resolved if (source or obj.name) in outside], truth)
     now = source_bytes({source for source, _ in resolved if source})
     clean, before, after = [], 0, 0
     for source, obj in resolved:
