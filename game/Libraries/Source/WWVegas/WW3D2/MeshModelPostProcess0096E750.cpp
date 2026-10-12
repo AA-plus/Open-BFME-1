@@ -23,8 +23,13 @@ public:
 
 class MeshMatDescClass
 {
+};
+
+// The matched row at 0x0096CF60 (MeshMatDescDisableBackfaceCullingBfme.cpp).
+class Rva0096CF60MatDesc : public MeshMatDescClass
+{
 public:
-	void Rva0096CF60ClearPassBit();
+	void disableBackfaceCullingBfme(void);
 };
 
 class WW3D
@@ -70,9 +75,9 @@ void MeshModelClass::post_process()
 	}
 
 	if (Get_Flag(BFME_MATDESC_PASS)) {
-		DefMatDesc->Rva0096CF60ClearPassBit();
+		static_cast<Rva0096CF60MatDesc *>(DefMatDesc)->disableBackfaceCullingBfme();
 		if (AlternateMatDesc) {
-			AlternateMatDesc->Rva0096CF60ClearPassBit();
+			static_cast<Rva0096CF60MatDesc *>(AlternateMatDesc)->disableBackfaceCullingBfme();
 		}
 	}
 
