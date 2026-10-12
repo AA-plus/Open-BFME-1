@@ -1,29 +1,15 @@
 // ?fillMapMask@Rva0055AE10QuickMatch@@QAEXPAURva0055AE10Request@@@Z
-// partial score=1.0 date=2026-09-30
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /DBFME_STLP_NODE_ALLOC /Iinputs/reference/shims/gamewindow /Iinputs/reference/shims/stlp_nodealloc /Iinputs/reference/shims/sweep /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
 // stlport
-// ?fillMapMask@Rva0055AE10QuickMatch@@QAEXPAURva0055AE10Request@@@Z
-// Retail 0x0055AE10, 800 bytes: BFME Apt quick-match request map mask
-// (caller _bfme_sendStartQuickMatchRequest 0x0055B200 passes the screen in
-// ECX and the request on the stack). Zero Hour's QM map selection reworked:
-// maps from the selected ladder (playersPerTeam*2) or the config QM list
-// ((numPlayers combo + 1) * 2), MapMetaData pointers collected, partitioned
-// with a 25-valued predicate, erased past the partition, std::sort, then one
-// qmMaps bit per map whose m_numPlayers equals numPlayers.
-// The reconstruction reuses list, MapCache, and configuration declarations
-// from WOLQuickMatchMenuUpdate.cpp. The selection locals end after the
-// ladder/config choice.
-// Probe matches all 800 bytes outside 31 relocation slots.
-// The object calls five STL helpers at these addresses: __introsort_loop
-// at 0x004567A0, __insertion_sort at 0x00453A80,
-// __unguarded_insertion_sort at 0x00453180, __partition at 0x00450B90, and
-// vector insert overflow at 0x00452300.
-// The ledger assigns those bodies incompatible template names or generated
-// placeholders. I need separate evidence to prove each helper's identity
-// before this body can land.
-// Native BFME quick-match update; full object-form callback at 00506720.
+// Retail 0x0055AE10, 800 bytes: BFME Apt quick-match request map mask. The
+// screen arrives in ECX and the request on the stack (ret 4; caller
+// _bfme_sendStartQuickMatchRequest 0x0055B200). Map list from the selected
+// ladder (playersPerTeam*2) or the config QM list ((numPlayers combo + 1)*2);
+// MapMetaData pointers collected through MapCache::findMap, partitioned with
+// a 25-valued predicate, erased past the partition, sorted, then one qmMaps
+// bit per map whose m_numPlayers equals numPlayers.
 // Derived from WOLQuickMatchMenu.cpp; Copyright 2025 Electronic Arts Inc.,
-// GPL-3.0-or-later. The original owner name is not established.
+// GPL-3.0-or-later. The identity is address-derived: Rva0055AE10QuickMatch.
 // Boundary, layout, ABI, and ownership evidence:
 // targets/game/reverse/identity_evidence/00506720-quickmatch-update.md.
 #define _STLP_NO_EXCEPTIONS 1
@@ -670,7 +656,7 @@ public:
 };
 class LadderList {
 public:
-  const Rva0055AE10LadderInfo *findLadderByIndex(int index);
+  const LadderInfo *findLadderByIndex(int index);
 };
 extern LadderList *TheLadderList;
 void GadgetComboBoxGetSelectedPos(GameWindow *combo, int *selected);
@@ -710,7 +696,8 @@ void Rva0055AE10QuickMatch::fillMapMask(Rva0055AE10Request *req) {
     int selected;
     GadgetComboBoxGetSelectedPos(ladderCombo, &selected);
     int index = (int)GadgetComboBoxGetItemData(ladderCombo, selected);
-    const Rva0055AE10LadderInfo *li = TheLadderList->findLadderByIndex(index);
+    const Rva0055AE10LadderInfo *li =
+        (const Rva0055AE10LadderInfo *)TheLadderList->findLadderByIndex(index);
     if (li) {
       numPlayers = li->playersPerTeam * 2;
       maps = li->validMaps;

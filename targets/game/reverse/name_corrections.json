@@ -10837,7 +10837,7 @@
   "before_sha256": "f7e5d09f1cbf930ac788454f477de0f8a34230a240809a07b39ad4de302464bb",
   "after_sha256": "d2b55bf8e53365558121bbc7b5b9e7ba359746f86886b4d7d44fffbbd6e4b1ec",
   "evidence": "targets/game/reverse/identity_evidence/00905140-gen-handle.md",
-  "reason": "The matched WaterRenderObjClass::ReAcquireResources source declares DX8Wrapper::Create_Render_Target as returning Gen_005D2040 and stores it in a Gen_005D2040 member. That signature refutes the bank’s RefCountPtr<TextureClass> return."
+  "reason": "The matched WaterRenderObjClass::ReAcquireResources source declares DX8Wrapper::Create_Render_Target as returning Gen_005D2040 and stores it in a Gen_005D2040 member. That signature refutes the bank\u2019s RefCountPtr<TextureClass> return."
  },
  {
   "old_path": "targets/game/reverse/attempts/0x00410f90.cpp",
@@ -19349,46 +19349,46 @@
   "evidence": "targets/game/reverse/identity_evidence/0000a984-thunk-call.md",
   "reason": "Retail's call relocation at 0x00096A60 lands on the packed ILT thunk at 0x0000A984 (jmp 0x00065250), not on the packet CRC body BFMEComputeCRC at 0x00065250; the call site must name the thunk so the object's relocation matches retail."
  },
-  {
- "old_path": "game/GameEngine/Source/GameLogic/Object/Update/AutoFindHealingUpdateScanClosestTarget.cpp",
- "new_path": "game/GameEngine/Source/GameLogic/Object/Update/AutoFindHealingUpdateScanClosestTarget.cpp",
- "old_name": "HealingEntry",
- "new_name": "BfmeIterEntry",
- "before_sha256": "4ad4e6c4e03872de547706b08e93cb32d99988e64dee23a6e0971e7b9798cea1",
- "after_sha256": "208c12ea7b599eda606c52da55ebc1926210b650ab312f959a70c00c26ea5efa",
- "evidence": "targets/game/reverse/link_queue.csv",
- "reason": "Private per-TU spelling of the shared refcounted partition wide-iterator entry; the emitted ??1BfmeWideResult@@QAE@XZ COMDAT must byte-match the copy link.exe keeps (first in link order), whose chain BfmeConv1845DoneXJ/TerrainLogicSetWaterHeight/BridgeBehaviorHandleObjectsOnDie already names BfmeIterEntry/BfmeObjectIterator (link_queue row 17, census 96123b2483). No retail identity existed to preserve; the mangled identity is fixed by the kept copy."
-},
-  {
- "old_path": "game/GameEngine/Source/GameLogic/Object/Update/AutoFindHealingUpdateScanClosestTarget.cpp",
- "new_path": "game/GameEngine/Source/GameLogic/Object/Update/AutoFindHealingUpdateScanClosestTarget.cpp",
- "old_name": "HealingResultData",
- "new_name": "BfmeObjectIterator",
- "before_sha256": "4ad4e6c4e03872de547706b08e93cb32d99988e64dee23a6e0971e7b9798cea1",
- "after_sha256": "208c12ea7b599eda606c52da55ebc1926210b650ab312f959a70c00c26ea5efa",
- "evidence": "targets/game/reverse/link_queue.csv",
- "reason": "Private per-TU spelling of the shared refcounted partition wide-iterator value struct; the emitted ??1BfmeWideResult@@QAE@XZ COMDAT must byte-match the copy link.exe keeps (first in link order), which calls ??1BfmeObjectIterator@@QAE@XZ (digest 9f7bf78dce02), the spelling BfmeConv1845DoneXJ/TerrainLogicSetWaterHeight/BridgeBehaviorHandleObjectsOnDie already established (link_queue row 17, census 96123b2483). No retail identity existed to preserve; the mangled identity is fixed by the kept copy."
-},
-  {
- "old_path": "game/GameEngine/Source/GameLogic/Object/WeaponEffects/MetaImpactNuggetShockWave.cpp",
- "new_path": "game/GameEngine/Source/GameLogic/Object/WeaponEffects/MetaImpactNuggetShockWave.cpp",
- "old_name": "ShockWaveEntry",
- "new_name": "BfmeIterEntry",
- "before_sha256": "1bbb48d2025021ba59e25accd17d499bc3da784a0b39b055ae697d032b3fa1e1",
- "after_sha256": "5f7bf42ae278002656b428bc045830bbe5bee398cc8d7338250d1f56c4d6623d",
- "evidence": "targets/game/reverse/link_queue.csv",
- "reason": "Private per-TU spelling of the shared refcounted partition wide-iterator entry; the emitted ??1BfmeWideResult@@QAE@XZ COMDAT must byte-match the copy link.exe keeps (first in link order), whose chain BfmeConv1845DoneXJ/TerrainLogicSetWaterHeight/BridgeBehaviorHandleObjectsOnDie already names BfmeIterEntry/BfmeObjectIterator (link_queue row 17, census 96123b2483). No retail identity existed to preserve; the mangled identity is fixed by the kept copy."
-},
-  {
- "old_path": "game/GameEngine/Source/GameLogic/Object/WeaponEffects/MetaImpactNuggetShockWave.cpp",
- "new_path": "game/GameEngine/Source/GameLogic/Object/WeaponEffects/MetaImpactNuggetShockWave.cpp",
- "old_name": "ShockWaveResultData",
- "new_name": "BfmeObjectIterator",
- "before_sha256": "1bbb48d2025021ba59e25accd17d499bc3da784a0b39b055ae697d032b3fa1e1",
- "after_sha256": "5f7bf42ae278002656b428bc045830bbe5bee398cc8d7338250d1f56c4d6623d",
- "evidence": "targets/game/reverse/link_queue.csv",
- "reason": "Private per-TU spelling of the shared refcounted partition wide-iterator value struct; the emitted ??1BfmeWideResult@@QAE@XZ COMDAT must byte-match the copy link.exe keeps (first in link order), which calls ??1BfmeObjectIterator@@QAE@XZ (digest 9f7bf78dce02), the spelling BfmeConv1845DoneXJ/TerrainLogicSetWaterHeight/BridgeBehaviorHandleObjectsOnDie already established (link_queue row 17, census 96123b2483). No retail identity existed to preserve; the mangled identity is fixed by the kept copy."
-},
+ {
+  "old_path": "game/GameEngine/Source/GameLogic/Object/Update/AutoFindHealingUpdateScanClosestTarget.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/AutoFindHealingUpdateScanClosestTarget.cpp",
+  "old_name": "HealingEntry",
+  "new_name": "BfmeIterEntry",
+  "before_sha256": "4ad4e6c4e03872de547706b08e93cb32d99988e64dee23a6e0971e7b9798cea1",
+  "after_sha256": "208c12ea7b599eda606c52da55ebc1926210b650ab312f959a70c00c26ea5efa",
+  "evidence": "targets/game/reverse/link_queue.csv",
+  "reason": "Private per-TU spelling of the shared refcounted partition wide-iterator entry; the emitted ??1BfmeWideResult@@QAE@XZ COMDAT must byte-match the copy link.exe keeps (first in link order), whose chain BfmeConv1845DoneXJ/TerrainLogicSetWaterHeight/BridgeBehaviorHandleObjectsOnDie already names BfmeIterEntry/BfmeObjectIterator (link_queue row 17, census 96123b2483). No retail identity existed to preserve; the mangled identity is fixed by the kept copy."
+ },
+ {
+  "old_path": "game/GameEngine/Source/GameLogic/Object/Update/AutoFindHealingUpdateScanClosestTarget.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/AutoFindHealingUpdateScanClosestTarget.cpp",
+  "old_name": "HealingResultData",
+  "new_name": "BfmeObjectIterator",
+  "before_sha256": "4ad4e6c4e03872de547706b08e93cb32d99988e64dee23a6e0971e7b9798cea1",
+  "after_sha256": "208c12ea7b599eda606c52da55ebc1926210b650ab312f959a70c00c26ea5efa",
+  "evidence": "targets/game/reverse/link_queue.csv",
+  "reason": "Private per-TU spelling of the shared refcounted partition wide-iterator value struct; the emitted ??1BfmeWideResult@@QAE@XZ COMDAT must byte-match the copy link.exe keeps (first in link order), which calls ??1BfmeObjectIterator@@QAE@XZ (digest 9f7bf78dce02), the spelling BfmeConv1845DoneXJ/TerrainLogicSetWaterHeight/BridgeBehaviorHandleObjectsOnDie already established (link_queue row 17, census 96123b2483). No retail identity existed to preserve; the mangled identity is fixed by the kept copy."
+ },
+ {
+  "old_path": "game/GameEngine/Source/GameLogic/Object/WeaponEffects/MetaImpactNuggetShockWave.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/WeaponEffects/MetaImpactNuggetShockWave.cpp",
+  "old_name": "ShockWaveEntry",
+  "new_name": "BfmeIterEntry",
+  "before_sha256": "1bbb48d2025021ba59e25accd17d499bc3da784a0b39b055ae697d032b3fa1e1",
+  "after_sha256": "5f7bf42ae278002656b428bc045830bbe5bee398cc8d7338250d1f56c4d6623d",
+  "evidence": "targets/game/reverse/link_queue.csv",
+  "reason": "Private per-TU spelling of the shared refcounted partition wide-iterator entry; the emitted ??1BfmeWideResult@@QAE@XZ COMDAT must byte-match the copy link.exe keeps (first in link order), whose chain BfmeConv1845DoneXJ/TerrainLogicSetWaterHeight/BridgeBehaviorHandleObjectsOnDie already names BfmeIterEntry/BfmeObjectIterator (link_queue row 17, census 96123b2483). No retail identity existed to preserve; the mangled identity is fixed by the kept copy."
+ },
+ {
+  "old_path": "game/GameEngine/Source/GameLogic/Object/WeaponEffects/MetaImpactNuggetShockWave.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/WeaponEffects/MetaImpactNuggetShockWave.cpp",
+  "old_name": "ShockWaveResultData",
+  "new_name": "BfmeObjectIterator",
+  "before_sha256": "1bbb48d2025021ba59e25accd17d499bc3da784a0b39b055ae697d032b3fa1e1",
+  "after_sha256": "5f7bf42ae278002656b428bc045830bbe5bee398cc8d7338250d1f56c4d6623d",
+  "evidence": "targets/game/reverse/link_queue.csv",
+  "reason": "Private per-TU spelling of the shared refcounted partition wide-iterator value struct; the emitted ??1BfmeWideResult@@QAE@XZ COMDAT must byte-match the copy link.exe keeps (first in link order), which calls ??1BfmeObjectIterator@@QAE@XZ (digest 9f7bf78dce02), the spelling BfmeConv1845DoneXJ/TerrainLogicSetWaterHeight/BridgeBehaviorHandleObjectsOnDie already established (link_queue row 17, census 96123b2483). No retail identity existed to preserve; the mangled identity is fixed by the kept copy."
+ },
  {
   "old_path": "targets/game/reverse/attempts/0x002fc570.cpp",
   "new_path": "game/GameEngine/Source/GameLogic/ScriptEngine/ScriptActions.cpp",
@@ -19419,86 +19419,86 @@
   "evidence": "targets/game/reverse/identity_evidence/0x002fc570-private-views.md",
   "reason": "Correct private bank view identities: target offsets and independent oracle absence/conflict documented; no EA field identity claimed."
  },
-{
- "old_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower_doSpecialPowerAtObject_Thunk.cpp",
- "new_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower.cpp",
- "old_name": "CashHackSpecialPower",
- "new_name": "Gen_000E8AF0",
- "before_sha256": "1f6241df2d0cda7db8b0f7805cb87440c62b20419c6dd39cc8f93c34689c87c4",
- "after_sha256": "c7eaa73a0732aeed751971615ce6acc5731359f16219865b37ee576e1a47c6c3",
- "evidence": "targets/game/reverse/identity_evidence/00258800-cashhack-source-home-name-pairing.md",
- "reason": "False source-home pairing: canonical CashHackSpecialPower declaration and doSpecialPowerAtObject definition remain; Gen_000E8AF0::bfmeAddCount is the separate existing E8B20 dependency called by the action."
-},
-{
- "old_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower_doSpecialPowerAtObject_Thunk.cpp",
- "new_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower.cpp",
- "old_name": "doSpecialPowerAtObject",
- "new_name": "bfmeAddCount",
- "before_sha256": "1f6241df2d0cda7db8b0f7805cb87440c62b20419c6dd39cc8f93c34689c87c4",
- "after_sha256": "c7eaa73a0732aeed751971615ce6acc5731359f16219865b37ee576e1a47c6c3",
- "evidence": "targets/game/reverse/identity_evidence/00258800-cashhack-source-home-name-pairing.md",
- "reason": "False source-home pairing: canonical CashHackSpecialPower declaration and doSpecialPowerAtObject definition remain; Gen_000E8AF0::bfmeAddCount is the separate existing E8B20 dependency called by the action."
-},
-  {
- "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
- "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
- "old_name": "GadgetProgressBarGetEnabledBarImageCenter",
- "new_name": "BfmeProgressImage",
- "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
- "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
- "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
- "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
-},
-  {
- "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
- "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
- "old_name": "GadgetProgressBarGetEnabledBarImageRight",
- "new_name": "BfmeProgressImage",
- "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
- "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
- "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
- "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
-},
-  {
- "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
- "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
- "old_name": "GadgetProgressBarGetEnabledImageCenter",
- "new_name": "BfmeProgressImage",
- "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
- "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
- "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
- "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
-},
-  {
- "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
- "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
- "old_name": "GadgetProgressBarGetEnabledImageLeft",
- "new_name": "BfmeProgressImage",
- "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
- "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
- "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
- "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
-},
-  {
- "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
- "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
- "old_name": "GadgetProgressBarGetEnabledImageRight",
- "new_name": "BfmeProgressImage",
- "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
- "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
- "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
- "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
-},
-  {
- "old_path": "targets/game/reverse/attempts/0x007d3d40.cpp",
- "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/ScreenCrossFadeFilterSet.cpp",
- "old_name": "ScreenCrossFadeFilter",
- "new_name": "Rva007D3D40CrossFadeFilter",
- "before_sha256": "a06454d4a3815580a7b5ec7b1b32297727e04ce253ff1d1221f0a85a849ddb37",
- "after_sha256": "3b4528592a4cbeb19afc8880e137003c4957ed25bf75f6a81728cb4d7ed4f907",
- "evidence": "targets/game/reverse/identity_evidence/007d3d40-class-spelling.md",
- "reason": "The class spelling ScreenCrossFadeFilter is a Zero Hour donor name whose decorated names retail's incremental-link thunk table contradicts for every member: init, preRender, reset, postRender, updateFadeLevel, setFadeParameters and this set each miss a different slot window and all seven already sit in the shrink-only ilt_contradicted_baseline.txt, so ilt_guard refuses an eighth key; a wrong class name moves every member's bucket at once, which is that signature. The operation is independently proven (vtable 0x01128A50 slot 5 -> ILT 0x0000FECF -> 0x007D3D40, caller postRender 0x007D38B0, ZH W3DShaderManager.cpp:860), so the landed row keeps an address-qualified class as docs/naming_evidence.md's address-named partial layout view; the class name is unknown and a search over the documented candidates fits none of the four 0x007D3xxx member windows."
-},
+ {
+  "old_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower_doSpecialPowerAtObject_Thunk.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower.cpp",
+  "old_name": "CashHackSpecialPower",
+  "new_name": "Gen_000E8AF0",
+  "before_sha256": "1f6241df2d0cda7db8b0f7805cb87440c62b20419c6dd39cc8f93c34689c87c4",
+  "after_sha256": "c7eaa73a0732aeed751971615ce6acc5731359f16219865b37ee576e1a47c6c3",
+  "evidence": "targets/game/reverse/identity_evidence/00258800-cashhack-source-home-name-pairing.md",
+  "reason": "False source-home pairing: canonical CashHackSpecialPower declaration and doSpecialPowerAtObject definition remain; Gen_000E8AF0::bfmeAddCount is the separate existing E8B20 dependency called by the action."
+ },
+ {
+  "old_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower_doSpecialPowerAtObject_Thunk.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/SpecialPower/CashHackSpecialPower.cpp",
+  "old_name": "doSpecialPowerAtObject",
+  "new_name": "bfmeAddCount",
+  "before_sha256": "1f6241df2d0cda7db8b0f7805cb87440c62b20419c6dd39cc8f93c34689c87c4",
+  "after_sha256": "c7eaa73a0732aeed751971615ce6acc5731359f16219865b37ee576e1a47c6c3",
+  "evidence": "targets/game/reverse/identity_evidence/00258800-cashhack-source-home-name-pairing.md",
+  "reason": "False source-home pairing: canonical CashHackSpecialPower declaration and doSpecialPowerAtObject definition remain; Gen_000E8AF0::bfmeAddCount is the separate existing E8B20 dependency called by the action."
+ },
+ {
+  "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+  "old_name": "GadgetProgressBarGetEnabledBarImageCenter",
+  "new_name": "BfmeProgressImage",
+  "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
+  "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
+  "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
+  "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
+ },
+ {
+  "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+  "old_name": "GadgetProgressBarGetEnabledBarImageRight",
+  "new_name": "BfmeProgressImage",
+  "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
+  "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
+  "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
+  "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
+ },
+ {
+  "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+  "old_name": "GadgetProgressBarGetEnabledImageCenter",
+  "new_name": "BfmeProgressImage",
+  "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
+  "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
+  "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
+  "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
+ },
+ {
+  "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+  "old_name": "GadgetProgressBarGetEnabledImageLeft",
+  "new_name": "BfmeProgressImage",
+  "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
+  "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
+  "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
+  "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
+ },
+ {
+  "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+  "old_name": "GadgetProgressBarGetEnabledImageRight",
+  "new_name": "BfmeProgressImage",
+  "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
+  "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
+  "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
+  "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x007d3d40.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/ScreenCrossFadeFilterSet.cpp",
+  "old_name": "ScreenCrossFadeFilter",
+  "new_name": "Rva007D3D40CrossFadeFilter",
+  "before_sha256": "a06454d4a3815580a7b5ec7b1b32297727e04ce253ff1d1221f0a85a849ddb37",
+  "after_sha256": "3b4528592a4cbeb19afc8880e137003c4957ed25bf75f6a81728cb4d7ed4f907",
+  "evidence": "targets/game/reverse/identity_evidence/007d3d40-class-spelling.md",
+  "reason": "The class spelling ScreenCrossFadeFilter is a Zero Hour donor name whose decorated names retail's incremental-link thunk table contradicts for every member: init, preRender, reset, postRender, updateFadeLevel, setFadeParameters and this set each miss a different slot window and all seven already sit in the shrink-only ilt_contradicted_baseline.txt, so ilt_guard refuses an eighth key; a wrong class name moves every member's bucket at once, which is that signature. The operation is independently proven (vtable 0x01128A50 slot 5 -> ILT 0x0000FECF -> 0x007D3D40, caller postRender 0x007D38B0, ZH W3DShaderManager.cpp:860), so the landed row keeps an address-qualified class as docs/naming_evidence.md's address-named partial layout view; the class name is unknown and a search over the documented candidates fits none of the four 0x007D3xxx member windows."
+ },
  {
   "old_path": "targets/game/reverse/attempts/0x00374cf0.cpp",
   "new_path": "game/GameEngine/Source/GameLogic/Object/Behavior/CastleBehaviorParseCastleToUnpackForFaction.cpp",
@@ -19508,8 +19508,7 @@
   "after_sha256": "00d0898b51a3aa995b239e974f94b497769b4e9e0fd47893c68b3c27baf8999e",
   "evidence": "targets/game/reverse/identity_evidence/00374cf0-stl46-ilt-review.md",
   "reason": "The bank's class CastleBehaviorModuleData is refuted by retail's incremental-link thunk table: ilt_oracle places the descriptive decoration ?parseCastleToUnpackForFaction@CastleBehaviorModuleData@@SAXPAVINI@@PAX1PBX@Z outside every window of the target's slots 5491:5760-5765, and all six public/protected/private static x class/struct INI combinations were contradicted; its landed sibling parseFactionDecal@@SAXPAVINI@@PAX1PBX@Z fails the same way at 0x003760C0. docs/naming_evidence.md keeps the address token when identity is unproven and warns that a plausible wrong name misleads every reader, so the 410 verified bytes land under the address-derived owner Rva00374CF0Owner with the field-table name CastleToUnpackForFaction kept as the method name."
- }
-,
+ },
  {
   "old_path": "targets/game/reverse/attempts/0x0051c2d0.cpp",
   "new_path": "game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/AptLoadScreenInit.cpp",
@@ -19599,5 +19598,15 @@
   "after_sha256": "c925f5d8c45d9147544a91b74eaec79e92dfa0e00358c7de61882bf2c5b2e250",
   "evidence": "targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md",
   "reason": "The bank named the 293 bytes after their Zero Hour twin drawHiliteBar (W3DListBox.cpp); the only BFME caller at 0x00792350 is an un-converted opaque body, so the ZH name is a shape hypothesis and not an identity (docs/naming_evidence.md). The row and the TU-local static keep the address-derived floor ?Rva007921E0@@YAXPBVImage@@00HHHH@Z. See targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x0035e3b0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/ScriptEngine/ScriptListCopyCtor0035E3B0.cpp",
+  "old_name": "DLinkAt4",
+  "new_name": "Rva003525E0Pair",
+  "before_sha256": "ba53922c3bfb7055222ac44ac08111fa3158b39ca82644fd4dc1a4d6dab7b54e",
+  "after_sha256": "9da147b565eda6ce7a1a69307cac83c396b987c6942b7c2bc5387b316712c073",
+  "evidence": "targets/game/reverse/identity_evidence/0035e3b0-donor-refuted-bank.md",
+  "reason": "The bank spelled the second-base copy thunk DLinkAt4 after a decorative reading of its single +0x04 link field; the ILT slot 0x00024C12 is already registered in symbols.csv as the Open-BFME5 fresh thiscall copy ctor ??0Rva003525E0Pair@@QAE@ABV0@@Z, and the landed TU declares its second base under that registered placeholder, retiring the malformed ???0DLinkAt4 spelling from the body's relocations (docs/naming_evidence.md identity floor). See targets/game/reverse/identity_evidence/0035e3b0-donor-refuted-bank.md."
  }
 ]
