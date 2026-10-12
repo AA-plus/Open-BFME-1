@@ -87196,6 +87196,7 @@ name,address,notes
 ?queueSend@NATProbeTransport@@QAEXABUNATProbeAddress@@PBEH@Z,0x00049F80,NAT sendAProbe transport queue ILT thunk
 ?queueSend@Transport@@QAE_NIGPBEH@Z,0x00049F80,ILT thunk; real body 0x683830 (from NAT::sendAProbe)
 ?queueSend@Transport@@QAE_NPAUNetPacketAddress@@PBEH@Z,0x00683830,BFME takes the address as a struct pointer, so three args where the reference has four; the ledger row for the four-arg name is the incremental-link thunk
+?queueSupplyTruck@AIPlayer@@IAEXXZ,0x00026EE5,ILT 0x00026EE5 jmp to the carved AIPlayer.cpp body 0x00165D50 (EA file evidence); AIPlayer::queueUnits 0x00167E80 (EA name direct) makes it its first call where Zero Hour queueUnits calls queueSupplyTruck()
 ?radarToWorld@Radar@@QAE_NPBUICoord2D@@PAUCoord3D@@@Z,0x00011513,screenPixelToWorld call target (incremental-link thunk)
 ?randnum@@YAJJ@Z,0x008790B0,SetupCPUEmFloatArrays call-site alias to the retail nbench random reset body
 ?randomize_wts@@YAXXZ,0x00875FD0,Open-BFME7 retail REL32 target (ILT thunk) the body at 0x00877960 calls; autopin
