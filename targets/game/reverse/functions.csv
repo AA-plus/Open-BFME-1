@@ -38893,7 +38893,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c3e7d7@@YAXXZ,,0x00C3E7D7,24,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@0103e7d7
 ?d_00c3e998@@YAXXZ,,0x00C3E998,39,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
 ?d_00c3e9d8@@YAXXZ,,0x00C3E9D8,24,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@0103e9d8
-?d_00c3eb03@@YAXXZ,,0x00C3EB03,22,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@0103eb03
 ?d_00c3eb58@@YAXXZ,,0x00C3EB58,39,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@0103eb58
 ?d_00c3f560@@YAXXZ,,0x00C3F560,25,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@0103f560
 ?d_00c40678@@YAXXZ,,0x00C40678,17,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01040678
@@ -38903,12 +38902,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c43a58@@YAXXZ,,0x00C43A58,17,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01043a58
 ?d_00c43f90@@YAXXZ,,0x00C43F90,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01043f90
 ?d_00c43f9b@@YAXXZ,,0x00C43F9B,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01043f9b
-?d_00c4407b@@YAXXZ,,0x00C4407B,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@0104407b
-?d_00c440a0@@YAXXZ,,0x00C440A0,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@010440a0
-?d_00c44140@@YAXXZ,,0x00C44140,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01044140
-?d_00c44200@@YAXXZ,,0x00C44200,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01044200
-?d_00c44670@@YAXXZ,,0x00C44670,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01044670
-?d_00c446cb@@YAXXZ,,0x00C446CB,8,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@010446cb
 ?d_00c44730@@YAXXZ,,0x00C44730,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01044730
 ?d_00c44750@@YAXXZ,,0x00C44750,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01044750
 ?d_00c447d0@@YAXXZ,,0x00C447D0,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@010447d0
@@ -38919,13 +38912,7 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c45400@@YAXXZ,,0x00C45400,25,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01045400
 ?d_00c45500@@YAXXZ,,0x00C45500,25,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01045500
 ?d_00c455c0@@YAXXZ,,0x00C455C0,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@010455c0
-?d_00c45640@@YAXXZ,,0x00C45640,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01045640
-?d_00c45920@@YAXXZ,,0x00C45920,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01045920
-?d_00c45940@@YAXXZ,,0x00C45940,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01045940
-?d_00c45960@@YAXXZ,,0x00C45960,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01045960
-?d_00c45ae0@@YAXXZ,,0x00C45AE0,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01045ae0
 ?d_00c45b20@@YAXXZ,,0x00C45B20,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01045b20
-?d_00c460d0@@YAXXZ,,0x00C460D0,25,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@010460d0
 ?d_00c46628@@YAXXZ,,0x00C46628,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
 ?d_00c46e56@@YAXXZ,,0x00C46E56,22,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01046e56
 ?d_00c471e8@@YAXXZ,,0x00C471E8,25,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@010471e8
@@ -172549,3 +172536,16 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?dup_00C45AA0@@YAXXZ,,0x00C45AA0,11,game/GameEngine/Source/GameNetwork/NetPacket_addCommandFamily.cpp,matched,authored C++ cleanup;gen-funclet;parent=?addKeepAliveCommand@NetPacket@@IAE_NPAVNetCommandRef@@@Z;object-symbol=$L935;retail parent 0x0067BC40 pushes handler stub 0x00C45AAB (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
 ?dup_00C45AC0@@YAXXZ,,0x00C45AC0,11,game/GameEngine/Source/GameNetwork/NetPacket_addCommandFamily.cpp,matched,authored C++ cleanup;gen-funclet;parent=?addDestroyPlayerCommand@NetPacket@@IAE_NPAVNetCommandRef@@@Z;object-symbol=$L1640;retail parent 0x0067BE60 pushes handler stub 0x00C45ACB (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
 ?dup_00C45B00@@YAXXZ,,0x00C45B00,11,game/GameEngine/Source/GameNetwork/NetPacket_addCommandFamily.cpp,matched,authored C++ cleanup;gen-funclet;parent=?addPlayerLeaveCommand@NetPacket@@IAE_NPAVNetCommandRef@@@Z;object-symbol=$L1385;retail parent 0x0067C410 pushes handler stub 0x00C45B0B (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C45640@@YAXXZ,,0x00C45640,11,game/GameEngine/Source/GameNetwork/NetPacket_addGameCommand.cpp,matched,authored C++ cleanup;gen-funclet;parent=?isRoomForGameMessage@NetPacket@@IAE_NPAVNetCommandRef@@PAVGameMessage@@@Z;object-symbol=$L718;retail parent 0x006785A0 pushes handler stub 0x00C4564B (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C45920@@YAXXZ,,0x00C45920,11,game/GameEngine/Source/GameNetwork/NetPacket_addRequestPlayerLeaveFamily.cpp,matched,authored C++ cleanup;gen-funclet;parent=?addInformPlayerLeaveFrameCommand@NetPacket@@IAE_NPAVNetCommandRef@@@Z;object-symbol=$L554;retail parent 0x00679B00 pushes handler stub 0x00C4592B (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C45940@@YAXXZ,,0x00C45940,11,game/GameEngine/Source/GameNetwork/NetPacket_addRequestPlayerLeaveFamily.cpp,matched,authored C++ cleanup;gen-funclet;parent=?addRequestPlayerLeaveCommand@NetPacket@@IAE_NPAVNetCommandRef@@@Z;object-symbol=$L728;retail parent 0x00679E10 pushes handler stub 0x00C4594B (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C45960@@YAXXZ,,0x00C45960,11,game/GameEngine/Source/GameNetwork/NetPacket_addRequestPlayerLeaveFamily.cpp,matched,authored C++ cleanup;gen-funclet;parent=?addRequestFrameDataCommand@NetPacket@@IAE_NPAVNetCommandRef@@@Z;object-symbol=$L643;retail parent 0x0067A100 pushes handler stub 0x00C4596B (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C45AE0@@YAXXZ,,0x00C45AE0,11,game/GameEngine/Source/GameNetwork/NetPacket_addRouterFallbackCommand.cpp,matched,authored C++ cleanup;gen-funclet;parent=?addRouterFallbackCommand@NetPacket@@IAE_NPAVNetCommandRef@@@Z;object-symbol=$L455;retail parent 0x0067C150 pushes handler stub 0x00C45AEB (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C460D0@@YAXXZ,,0x00C460D0,25,game/GameEngine/Source/GameNetwork/Network.cpp,matched,authored C++ cleanup;gen-funclet;parent=?getPlayerName@Network@@UAE?AVUnicodeString@@H@Z;object-symbol=$L61809;retail parent 0x006826C0 pushes handler stub 0x00C46102 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C3EB03@@YAXXZ,,0x00C3EB03,22,game/GameEngine/Source/GameNetwork/SinglePlayerSkirmishGameInfoCtor.cpp,matched,authored C++ cleanup;gen-funclet;parent=??0SinglePlayerSkirmishGameInfo@@QAE@XZ;object-symbol=$L386;retail parent 0x00619720 pushes handler stub 0x00C3EB19 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C4407B@@YAXXZ,,0x00C4407B,11,game/GameEngine/Source/GameNetwork/native_connection_timing.cpp,matched,authored C++ cleanup;gen-funclet;parent=?sendDisconnectScreenOffCommand@BFMEConnectionManager@@QAEXH@Z;object-symbol=$L8179;retail parent 0x00663A60 pushes handler stub 0x00C44086 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C440A0@@YAXXZ,,0x00C440A0,11,game/GameEngine/Source/GameNetwork/native_connection_timing.cpp,matched,authored C++ cleanup;gen-funclet;parent=?processInformPlayerLeaveFrameCommand@BFMEConnectionManager@@QAEXPAX@Z;object-symbol=$L8516;retail parent 0x00664430 pushes handler stub 0x00C440AB (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C44140@@YAXXZ,,0x00C44140,11,game/GameEngine/Source/GameNetwork/native_connection_timing.cpp,matched,authored C++ cleanup;gen-funclet;parent=?resendFrameRangeToPlayer@BFMEConnectionManager@@QAEXHII@Z;object-symbol=$L8702;retail parent 0x00664B40 pushes handler stub 0x00C4414B (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C44200@@YAXXZ,,0x00C44200,11,game/GameEngine/Source/GameNetwork/native_connection_timing.cpp,matched,authored C++ cleanup;gen-funclet;parent=?processAckCommand@BFMEConnectionManager@@QAEXPAX@Z;object-symbol=$L8777;retail parent 0x00665700 pushes handler stub 0x00C4420B (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C44670@@YAXXZ,,0x00C44670,11,game/GameEngine/Source/GameNetwork/native_connection_timing.cpp,matched,authored C++ cleanup;gen-funclet;parent=?processFile@ConnectionManager@@AAEXPAVNetFileCommandMsg@@@Z;object-symbol=$L10428;retail parent 0x00669E20 pushes handler stub 0x00C4467B (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C446CB@@YAXXZ,,0x00C446CB,8,game/GameEngine/Source/GameNetwork/native_connection_timing.cpp,matched,authored C++ cleanup;gen-funclet;parent=?sendFileAnnounce@ConnectionManager@@QAEGVAsciiString@@E@Z;object-symbol=$L8832;retail parent 0x0066A170 pushes handler stub 0x00C446D3 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
