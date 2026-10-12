@@ -824,3 +824,51 @@ unsigned int Rva004729A0ReturnArg(unsigned int value)
 {
 	return value;
 }
+
+class Rva002DF760Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva002DF760Field@@QBEIXZ
+unsigned int Rva002DF760Field::get() const
+{
+	return m_value;
+}
+
+class Rva00337470Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva00337470Field@@QBEIXZ
+unsigned int Rva00337470Field::get() const
+{
+	return m_value;
+}
+
+class Rva003AC710Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva003AC710Field@@QBEIXZ
+unsigned int Rva003AC710Field::get() const
+{
+	return m_value;
+}
