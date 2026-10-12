@@ -1,5 +1,4 @@
 // ?rva0056FD90@Rva56E070StateOwner@@QAEHXZ
-// partial score=1.0 date=2026-10-03
 // BANK ONLY: callback-holder cleanup identities remain UNBOUND at51E6E0/4C5790.
 // Full control flow and six-state outgoing-argument EH choreography are reconstructed.
 // cl: /O2 /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Igame/GameEngine/Source/GameClient
