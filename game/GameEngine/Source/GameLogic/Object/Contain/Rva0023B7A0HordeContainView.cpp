@@ -1,5 +1,4 @@
-// ?d_0023b7a0@@YAXXZ
-// partial score=0.9914 date=2026-10-01
+// ?rva0023B7A0@Rva0023B7A0HordeContainView@@QAEPAVObject@@PBVMatrix3DTN@@@Z
 // cl: /DNDEBUG /MD /EHsc
 // Open-BFME: HordeContain interface slot 87, retail 0x0023B7A0.
 //
@@ -26,12 +25,11 @@
 // Every interface here is opaque apart from the slots this body uses, so the
 // earlier slots are placeholders.
 //
-// The compiler emits retail's 465-byte extent. Four non-relocation bytes still
-// differ. Retail loads the replacement experience pointer into ecx at +0xD8
-// and the owner pointer into eax at +0xDE. The draft assigns those pointers to
-// eax and ecx in the opposite order. The level loads at +0xE4 and +0xE7 then
-// use the opposite registers. Copying the owner's logic tag before its call
-// fixed the earlier transform-argument mismatch at +0xAE.
+// The compiler emits retail's 465-byte extent byte-for-byte: naming both
+// counters pointers and accumulating the level difference into a delta keeps
+// the replacement counter and the owner counter in retail's registers through
+// the level loads at +0xD8..+0xE7. Copying the owner's logic tag before its
+// call fixed the earlier transform-argument mismatch at +0xAE.
 
 typedef bool Bool;
 typedef unsigned int UnsignedInt;
@@ -305,10 +303,10 @@ Object *Rva0023B7A0HordeContainView::rva0023B7A0( const Matrix3DTN *transform )
 
 			BfmeExperienceCounters *freshCounters = replacement->m_bfmeExperience;
 			BfmeExperienceCounters *heldCounters = owner->m_bfmeExperience;
-			int fresh = freshCounters->m_bfmeLevel;
-			int held = heldCounters->m_bfmeLevel;
+			int delta = heldCounters->m_bfmeLevel;
+			delta -= freshCounters->m_bfmeLevel;
 
-			TheExperienceLevelSystem->gainLevels( replacement, held - fresh, false );
+			TheExperienceLevelSystem->gainLevels( replacement, delta, false );
 
 			( (BfmeHordeContainView *)this )->bfmeApplyUpgrades( owner->m_bfmeUpgrades, false );
 
