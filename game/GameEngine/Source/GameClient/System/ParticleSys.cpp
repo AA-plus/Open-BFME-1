@@ -1238,17 +1238,7 @@ void ParticleSystem::getPosition( Coord3D *pos )
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-/** Set the position of the particle system */
-// ------------------------------------------------------------------------------------------------
-// ?setPosition@ParticleSystem@@QAEXPBUCoord3D@@@Z present-unmatched
-void ParticleSystem::setPosition( const Coord3D *pos )
-{
-	m_localTransform.Set_X_Translation( pos->x );
-	m_localTransform.Set_Y_Translation( pos->y );
-	m_localTransform.Set_Z_Translation( pos->z );
-	m_isLocalIdentity = false;
-}
+// ParticleSystem::setPosition (retail 0x005BDE00) lives in ParticleSystemSetPosition.cpp.
 
 // ------------------------------------------------------------------------------------------------
 /** Set the system's local transform */
