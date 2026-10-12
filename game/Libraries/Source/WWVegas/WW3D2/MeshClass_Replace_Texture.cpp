@@ -1,5 +1,4 @@
 // ?Replace_Texture@MeshClass@@QAEXABVBfmeHandleCX@@0@Z
-// partial score=1.0 date=2026-10-09
 // cl: /DNDEBUG /MD /O2 /Ob2
 
 class TextureClass

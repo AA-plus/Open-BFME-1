@@ -36441,7 +36441,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_00925860@@YAXXZ,,0x00925860,1190,game/gen_asm/d_0091cbf0.asm,matched,gen-dump;ghidra=FUN_00d25860
 ?d_00925d10@@YAXXZ,,0x00925D10,1634,game/gen_asm/d_00882630.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00d25d10
 ?d_00928820@@YAXXZ,,0x00928820,1727,game/gen_asm/d_00882630.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00d28820
-?d_0092de80@@YAXXZ,,0x0092DE80,194,game/gen_asm/d_008c3e70.asm,matched,gen-dump;bounds=high
 ?d_00934940@@YAXXZ,,0x00934940,8277,game/gen_asm/d_00930e00.asm,matched,gen-dump;ghidra=FUN_00d34940
 ?d_009369a0@@YAXXZ,,0x009369A0,773,game/gen_asm/d_00930e00.asm,matched,gen-dump;ghidra=FUN_00d369a0
 ?d_0093eb50@@YAXXZ,,0x0093EB50,1983,game/gen_asm/d_00939520.asm,matched,gen-dump;ghidra=FUN_00d3eb50
@@ -172528,3 +172527,4 @@ uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic_load
 ?j_00026058@@YAXXZ,,0x00026058,5,game/GameEngine/Source/GameClient/System/FXParticleSystem/SphereEmissionVolumeGetInstanceIltThunk.cpp,matched,ILT thunk jmp to FXParticleSystem getInstance; salvaged from codex-3 1e587031d4;model=claude-opus-5-5;host=GreatFaram
 ?j_000340fe@@YAXXZ,,0x000340FE,5,game/GameEngine/Source/GameClient/System/FXParticleSystem/LightningEmissionGetInstanceIltThunk.cpp,matched,ILT thunk jmp to FXParticleSystem getInstance; salvaged from codex-3 1e587031d4;model=claude-opus-5-5;host=GreatFaram
 ?j_0003d875@@YAXXZ,,0x0003D875,5,game/GameEngine/Source/GameClient/System/FXParticleSystem/CylindricalEmissionVelocityGetInstanceIltThunk.cpp,matched,ILT thunk jmp to FXParticleSystem getInstance; salvaged from codex-3 1e587031d4;model=claude-opus-5-5;host=GreatFaram
+?Replace_Texture@MeshClass@@QAEXABVBfmeHandleCX@@0@Z,,0x0092DE80,194,game/Libraries/Source/WWVegas/WW3D2/MeshClass_Replace_Texture.cpp,matched,converted from gen_asm bank to source-exact C++ using the handle-reference form; the canonical raw-pointer form emits only 11 bytes and cannot supply the target traversal; evidence targets/game/reverse/identity_evidence/0092de80-bfme2-donor.md;model=MiniMax-M3.1-Flash-Preview;host=GB-ACER-LAPTOP
