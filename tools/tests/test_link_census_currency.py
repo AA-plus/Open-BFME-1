@@ -151,3 +151,37 @@ def test_inventory_change_during_fresh_proof_is_refused(tmp_path, monkeypatch):
     monkeypatch.setattr(census.build, "_inventory_cache_still_current", lambda cache: next(stable))
     with pytest.raises(SystemExit, match="changed while checking"):
         census.stale_objects([obj], {obj: source})
+
+
+def test_post_link_refusal_names_objects_and_why(tmp_path, monkeypatch):
+    objs = [tmp_path / f"o{i}.obj" for i in range(7)]
+    sources = {o: tmp_path / f"{o.stem}.cpp" for o in objs}
+    receipts = SimpleNamespace(entries={}, why={str(o): "receipt inputs differ: preprocessed inputs" for o in objs[:2]})
+    receipts.current = lambda src, obj: obj not in objs
+    monkeypatch.setattr(census, "_INPUT_RECEIPTS", receipts)
+    monkeypatch.setattr(census, "ledger", lambda: [])
+    monkeypatch.setattr(census, "verify_data_objects", lambda: None)
+    monkeypatch.setattr(census, "objects", lambda rows: (objs, []))
+    monkeypatch.setattr(census, "_object_sources", lambda rows: sources)
+    monkeypatch.setattr(census, "fresh_outputs", lambda *a: None)
+    monkeypatch.setattr(census, "unexplained_exit", lambda *a: None)
+    monkeypatch.setattr(census, "link", lambda present: ("", 0, 0))
+    linked = []
+    monkeypatch.setattr(census, "link", lambda present: linked.append(1) or ("", 0, 0))
+    monkeypatch.setattr(census.build, "compile_is_current", lambda *a, **k: not linked)
+    with pytest.raises(SystemExit) as info:
+        census.main([])
+    text = str(info.value)
+    assert "changed during link" in text and "7 stale objects" in text
+    assert "o0.obj (receipt inputs differ: preprocessed inputs)" in text
+    assert "o2.obj (receipt not current)" in text and "o5.obj" not in text
+
+
+def test_stale_without_receipts_says_normal_cache(tmp_path, monkeypatch):
+    obj = tmp_path / "f.obj"
+    monkeypatch.setattr(census, "_INPUT_RECEIPTS", None)
+    monkeypatch.setattr(census, "input_receipts", lambda: None)
+    monkeypatch.setattr(census.build, "compile_is_current", lambda *a, **k: False)
+    why = {}
+    assert census.stale_objects([obj], {obj: tmp_path / "f.cpp"}, why) == [obj]
+    assert census.describe_stale([obj], why) == "1 stale objects: f.obj (normal cache not current)"

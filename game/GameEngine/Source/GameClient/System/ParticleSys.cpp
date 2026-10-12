@@ -1640,7 +1640,7 @@ Particle *ParticleSystem::createParticle( const ParticleInfo *info,
  * place. (jkmcd) */
 // ------------------------------------------------------------------------------------------------
 // ?generateParticleInfo@ParticleSystem@@IAEPBVParticleInfo@@HH@Z
-// Body in ParticleSys_generateParticleInfo.asm (exact 1257B retail).
+// Retail body 0x005D0530 (844B; ParticleSystem::DoXfer ILT 0x00019F6A), in ParticleSystem_generateParticleInfo_BFME.cpp.
 
 
 // ------------------------------------------------------------------------------------------------

@@ -3,12 +3,13 @@
 struct StringBlock008B3AA0 { unsigned short field00; };
 extern StringBlock008B3AA0 g_default012D5298;
 struct StringPool008B3AA0 { void *field00; void (__cdecl *free)(void *); };
-extern StringPool008B3AA0 *g_pool01337A30;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class Rva8CD130String {
 public:
     StringBlock008B3AA0 *field00;
     Rva8CD130String() { field00 = &g_default012D5298; ++g_default012D5298.field00; }
-    ~Rva8CD130String() { StringBlock008B3AA0 *p = field00; if (--p->field00 == 0) g_pool01337A30->free(p); }
+    ~Rva8CD130String() { StringBlock008B3AA0 *p = field00; if (--p->field00 == 0) (*(StringPool008B3AA0 **)&g_rva01337A30AllocPair)->free(p); }
 };
 struct NativeSlots008B3AA0 {
     virtual void slot00();

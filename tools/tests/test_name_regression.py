@@ -1408,3 +1408,18 @@ def test_short_rva_address_type_respelled_to_ledger_placeholder_passes():
 def test_rva_without_an_address_stays_descriptive():
     assert not N.opaque('RvaFace') and not N.opaque('Rva8CB82String')
     assert N.downgrade('StringPool', 'Rva8CB820StringPool')
+
+
+def test_trailing_address_type_respelled_to_ledger_placeholder_passes():
+    # re_attempts 0x008B09A0: address at the END is address-derived too.
+    for name in ('Pool008B09A0', 'Pool8C4DA0', 'StringPool008B3AA0'):
+        assert N.opaque(name), name
+    assert not N.downgrade('Pool008B09A0', 'BfmeStringPool3AF0')
+    assert not N.downgrade('StringPool008B3AA0', 'BfmeStringPool3AF0')
+
+
+def test_names_ending_in_hex_looking_text_stay_descriptive():
+    for name in ('Buffer00FF', 'Color0A', 'Matrix3D', 'Color123456', 'Table99999999', 'ABCDEF', 'Pool8C4DA'):
+        assert not N.opaque(name), name
+    assert N.downgrade('Matrix3D', 'BfmeMatrix')
+    assert N.downgrade('StringPool', 'StringPool008B3AA0')

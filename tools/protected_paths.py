@@ -242,7 +242,8 @@ def check_staged(message_file):
     grown = growth([head], ":", set(staged), set(staged) if why else set()) if head else []
     report_growth(grown)
     if not why:
-        print("commit-msg: this commit changes verifier code or a baseline without saying so.",
+        print("commit-msg: this commit changes verifier code or a baseline without saying so: "
+              "add a `Verifier-Change: <what changed and why>` line to the commit message.",
               file=sys.stderr)
         print(HOWTO, file=sys.stderr)
         return 1

@@ -83,6 +83,12 @@ def test_verifier_edit_needs_the_trailer(repo, capsys):
     assert "Verifier-Change: mask reloc type 7" in capsys.readouterr().err   # listed even when declared
 
 
+def test_the_refusal_names_the_trailer_to_add(repo, capsys):
+    assert staged(repo, "loosen", tools__build_py="x = 2\n") == 1
+    err = capsys.readouterr().err
+    assert "add a `Verifier-Change: <what changed and why>` line to the commit message" in err
+
+
 def test_a_token_reason_or_a_comment_line_does_not_count(repo):
     assert staged(repo, "x\n\nVerifier-Change: ok\n", tools__build_py="x = 3\n") == 1
     assert staged(repo, "x\n# Verifier-Change: commented out reason\n") == 1

@@ -466,3 +466,54 @@ def test_successful_sweep_retry_gets_its_actual_command_receipt(tmp_path, monkey
     assert build.try_compile_source(source, obj, input_proof=receipt)[0]
     assert receipt.entries[str(obj.resolve())]['command'] == command + ['-I' + str(sweep)]
     assert receipt.current(source, obj)
+
+
+def test_proof_that_fails_to_run_is_retried_once(tmp_path, monkeypatch):
+    """2026-10-12 census at 0738eb73e6 refused after its link; its own receipts
+    rechecked showed 0 stale objects. A proof that fails to run gets one retry."""
+    source, header, obj, command, env, _ = fixture(tmp_path, monkeypatch)
+    receipt = proofs.Receipts(tmp_path / 'inputs.json')
+    assert build.try_compile_source(source, obj, input_proof=receipt)[0]
+    real, calls = proofs.snapshot, []
+    def flaky(*args):
+        calls.append(1)
+        if len(calls) == 1:
+            raise proofs.ProofFailed('preprocessor failed: timed out')
+        return real(*args)
+    monkeypatch.setattr(proofs, 'snapshot', flaky)
+    assert receipt.current(source, obj) and len(calls) == 2
+
+
+def test_proof_failing_twice_is_stale_and_says_so(tmp_path, monkeypatch):
+    source, header, obj, command, env, _ = fixture(tmp_path, monkeypatch)
+    receipt = proofs.Receipts(tmp_path / 'inputs.json')
+    assert build.try_compile_source(source, obj, input_proof=receipt)[0]
+    calls = []
+    def broken(*args):
+        calls.append(1)
+        raise proofs.ProofFailed('preprocessor failed: C1083')
+    monkeypatch.setattr(proofs, 'snapshot', broken)
+    assert not receipt.current(source, obj) and len(calls) == 2
+    assert 'proof failed twice' in receipt.why[str(obj)]
+
+
+def test_proof_that_runs_and_differs_is_stale_without_retry(tmp_path, monkeypatch):
+    source, header, obj, command, env, _ = fixture(tmp_path, monkeypatch)
+    receipt = proofs.Receipts(tmp_path / 'inputs.json')
+    assert build.try_compile_source(source, obj, input_proof=receipt)[0]
+    real, calls = proofs.snapshot, []
+    def counted(*args):
+        calls.append(1)
+        return real(*args)
+    monkeypatch.setattr(proofs, 'snapshot', counted)
+    header.write_text('#define VALUE 99\n')
+    assert not receipt.current(source, obj) and len(calls) == 1
+    assert receipt.why[str(obj)] == 'receipt inputs differ: preprocessed inputs'
+
+
+def test_failed_preprocessor_raises_proof_failed(tmp_path, monkeypatch):
+    source, header, obj, command, env, _ = fixture(tmp_path, monkeypatch)
+    monkeypatch.setattr(proofs, 'capture_preprocessor',
+                        lambda cmd, env: SimpleNamespace(returncode=2, stdout=b'', stderr=b'C1083'))
+    with pytest.raises(proofs.ProofFailed, match='preprocessor failed'):
+        proofs.snapshot(source, command, env)
