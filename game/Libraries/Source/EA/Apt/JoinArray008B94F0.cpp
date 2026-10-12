@@ -122,7 +122,6 @@ public:
     unsigned flags;
     unsigned char isType(unsigned char t) const { unsigned f=flags; return (f & 0x3f)==t && !((unsigned char)(~(f>>15)) & 1); }
 };
-extern Rva8CD130Value **g_bfmeArr1233;
 struct Rva008AE770Stack { int m_count; };
 extern Rva008AE770Stack Rva008AE770TheStack;
 extern void *g_bfmeResult1233;
@@ -132,7 +131,7 @@ void *joinArray008B94F0(Value008B94F0 *src, int count)
         BfmeUtf8String008A01F0 output;
         BfmeUtf8String008A01F0 separator;
         if (count>0) {
-            Rva8CD130Value *arg=g_bfmeArr1233[Rva008AE770TheStack.m_count-1]; arg->getName((Rva8CD130String *)&separator);
+            Rva8CD130Value *arg=(*(Rva8CD130Value ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.m_count-1]; arg->getName((Rva8CD130String *)&separator);
             ((BfmeStringWriter1284 *)src)->bfmeBuildString1284((BfmeString1284 *)&output,(int)((char *)separator.m_block+8));
         } else {
             ((BfmeStringWriter1284 *)src)->bfmeBuildString1284((BfmeString1284 *)&output,(int)",");

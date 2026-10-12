@@ -31,7 +31,6 @@ struct State008B09A0 {
  Rva008AD2C0 *m_f68; unsigned m_f6C;
 };
 struct Owner008B09A0 { char pad00[0x50]; State008B09A0 *m_f50; };
-extern Value008B09A0 **g_bfmeArr1233;
 // 0x01338748: the Apt stack depth global, defined in Rva00C6DCC0StaticInit.cpp.
 struct Rva008AE770Stack { int m_count; };
 extern Rva008AE770Stack Rva008AE770TheStack;
@@ -41,7 +40,7 @@ class AptValue;
 extern AptValue *g_bfmeFallbackDB;
 void *aptApplyRecord008B09A0(Owner008B09A0 *self, int argc) {
  if(argc<=3) {
-  Value008B09A0 *v=g_bfmeArr1233[Rva008AE770TheStack.m_count-1];
+  Value008B09A0 *v=(*(Value008B09A0 ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.m_count-1];
   unsigned bits=v->m_flags;
   if (!(bits & 0x8000)) return g_bfmeFallbackDB;
   

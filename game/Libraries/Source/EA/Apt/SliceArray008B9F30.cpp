@@ -34,7 +34,6 @@ class ArrayValue008B9C60 : public AptValue, public Rva008A9120HeaderedDelete { p
  };
 // ArrayValue008B9C60 takes operator delete from Rva008A9120HeaderedDelete, so
 // the compiler's unwind funclet calls 0x008A9120 by that name directly.
-extern AptValue **g_bfmeArr1233;
 extern AptValue *g_bfmeFallbackDB;
 struct Rva008AE770Stack { int field00; };
 extern Rva008AE770Stack Rva008AE770TheStack;
@@ -45,11 +44,11 @@ AptValue *slice008B9F30(AptValue *value,int argc)
   int start=0;
   int end=array->field28;
   if(argc>0) {
-   start=g_bfmeArr1233[Rva008AE770TheStack.field00-1]->toInteger();
+   start=(*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.field00-1]->toInteger();
    if(start<0) start+=array->field28;
   }
   if(argc>1) {
-   end=g_bfmeArr1233[Rva008AE770TheStack.field00-2]->toInteger();
+   end=(*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.field00-2]->toInteger();
    if(end<0) end+=array->field28;
    else if(end>array->field28) end=array->field28;
   }

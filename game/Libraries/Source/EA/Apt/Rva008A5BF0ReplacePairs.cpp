@@ -62,7 +62,6 @@ struct Boolean008A58C0 {
  }
 
 };
-extern Rva8CD130Value **g_bfmeArr1233;
 // Retail's object at 0x01338748 is the Apt stack, defined by Rva00C6DCC0StaticInit.cpp
 // as `struct Rva008AE770Stack` and exported as ?Rva008AE770TheStack@@3U....  MSVC 7.1
 // mangles a global's class type 3V for `class` but 3U for `struct`; only the leading
@@ -87,13 +86,13 @@ struct Owner008A5BF0 {
 Boolean008A58C0 *aptReplacePairs008A5BF0(Owner008A5BF0 *self,int argc) {
  self->m_f20=0;
  if(argc>0 && argc<=3) {
-  Rva8CD130Value *v=g_bfmeArr1233[Rva008AE770TheStack.count-1];
+  Rva8CD130Value *v=(*(Rva8CD130Value ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.count-1];
   Rva8CD130String a; v->getName(&a);
   Rva8CD130Value *target=0;
   Rva8CD130String b;
-  if(argc>1) target=g_bfmeArr1233[Rva008AE770TheStack.count-2];
+  if(argc>1) target=(*(Rva8CD130Value ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.count-2];
   Rva8CD130String c;
-  if(argc>2) { Rva8CD130Value *v3=g_bfmeArr1233[Rva008AE770TheStack.count-3]; v3->getName(&c); }
+  if(argc>2) { Rva8CD130Value *v3=(*(Rva8CD130Value ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.count-3]; v3->getName(&c); }
   Rva8CD130String pairs=((KeyValuePairs00898D80*)self)->keyValuePairs00898D80();
   callback0133786C(a.text(),b.text(),c.text(),pairs.text(),1);
   BfmeIteratorList1285 *list=self->slot18();

@@ -6,7 +6,8 @@
 // cl: /DNDEBUG /MD /EHsc
 class AptValue { public: int toInteger() const; };
 extern AptValue* g_bfmeFallbackDB;
-extern AptValue** g_bfmeArr1233;
+struct Rva008AE770Stack;
+extern Rva008AE770Stack Rva008AE770TheStack;
 extern int g_bfmeCount1233;
 struct Rva008B6D70Obj {
 	char m_pad0[0x20];
@@ -20,7 +21,7 @@ AptValue* aptSetRectField008B6F90(Rva008B6D70Obj* self, int argc)
 {
 	if (argc < 1)
 		return g_bfmeFallbackDB;
-	int value = g_bfmeArr1233[g_bfmeCount1233 - 1]->toInteger();
+	int value = (*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[g_bfmeCount1233 - 1]->toInteger();
 	self->m_rect[0] = value;
 	self->refreshNeg(self->m_rect, self->m_extra, self->m_context);
 	return (AptValue*)AptInteger::Create(0);

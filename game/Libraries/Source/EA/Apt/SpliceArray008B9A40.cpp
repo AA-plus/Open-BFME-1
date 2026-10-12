@@ -24,7 +24,6 @@ class BfmeN1242 { public:
  }
  char field00[0x20]; unsigned *field20; int field24; int field28;
 };
-extern AptValue **g_bfmeArr1233;
 extern AptValue *g_bfmeFallbackDB;
 struct Rva008AE770Stack { int field00; };
 extern Rva008AE770Stack Rva008AE770TheStack;
@@ -35,10 +34,10 @@ AptValue *splice008B9A40(AptValue *value,int argc)
   if(argc>0) {
   BfmeN1242 *array=(BfmeN1242 *)value;
   int i;
-  int start=g_bfmeArr1233[Rva008AE770TheStack.field00-1]->toInteger();
+  int start=(*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.field00-1]->toInteger();
   if(start<0) start+=array->field28;
   int count=array->field28-start;
-  if(argc>1) count=g_bfmeArr1233[Rva008AE770TheStack.field00-2]->toInteger();
+  if(argc>1) count=(*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.field00-2]->toInteger();
   if(count>array->field28-start) count=array->field28-start;
   if(start>=array->field28) count=0;
   for(i=0;i<count;++i) {
@@ -55,7 +54,7 @@ AptValue *splice008B9A40(AptValue *value,int argc)
    array->field28+=add;
    for(int k=0;k<add;++k) {
     array->field20[start+k]=0;
-    AptValue *item=g_bfmeArr1233[Rva008AE770TheStack.field00-3-k];
+    AptValue *item=(*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.field00-3-k];
     array->set(start+k,item);
    }
   }

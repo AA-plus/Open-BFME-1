@@ -101,7 +101,6 @@ extern Rva008C3B60Node *g_rva01338478NodeHead;
 static __forceinline Rva008A9B00 *&rva01338478FreeHead() {
     return *(Rva008A9B00 **)&g_rva01338478NodeHead;
 }
-extern Rva8CD130Value **g_bfmeArr1233;
 struct Rva008AE770Stack { int field00; };
 extern Rva008AE770Stack Rva008AE770TheStack;
 extern "C" unsigned long strtoul(const char *text, char **end, int base);
@@ -123,7 +122,7 @@ Rva008A9B00 *rva008C6840StringTransform()
     else
         result = new Rva008A9B00;
     {
-        Rva8CD130Value *value = g_bfmeArr1233[Rva008AE770TheStack.field00 - 1];
+        Rva8CD130Value *value = (*(Rva8CD130Value ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.field00 - 1];
         unsigned type = value->m_flags & 0x3f;
         if ((type == 1 || type == 42) && !value->isUndefined())
         {

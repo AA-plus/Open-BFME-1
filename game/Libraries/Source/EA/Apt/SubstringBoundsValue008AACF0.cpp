@@ -49,7 +49,6 @@ static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
 	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
 }
 class BfmeStrVKK { public: void bfmeTruncVKK(unsigned n); };
-extern AptValue **g_bfmeArr1233;
 struct Rva008AE770Stack { int field00; };
 extern Rva008AE770Stack Rva008AE770TheStack;
 extern void *(__cdecl *Rva008C5D70Alloc)(unsigned int);
@@ -103,8 +102,8 @@ Rva008A9B00 *substringBoundsValue008AACF0(Rva8CD130Value *value, int count) {
     int start = -1;
     int length = 9999999;
     if (!count) return (Rva008A9B00 *)g_bfmeFallbackDB;
-    if (count >= 1) start = g_bfmeArr1233[Rva008AE770TheStack.field00 - 1]->toInteger();
-    if (count >= 2) length = g_bfmeArr1233[Rva008AE770TheStack.field00 - 2]->toInteger();
+    if (count >= 1) start = (*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.field00 - 1]->toInteger();
+    if (count >= 2) length = (*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.field00 - 2]->toInteger();
     if (start > length) { int swap = length; length = start; start = swap; }
     if (start < 0) start = 0;
     if (length < 0) length = 0;

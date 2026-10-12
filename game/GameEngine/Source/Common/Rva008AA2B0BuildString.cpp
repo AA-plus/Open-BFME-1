@@ -183,7 +183,6 @@ public:
 	int toInteger() const;
 };
 
-extern AptValue **g_bfmeArr1233;
 
 Rva008C3B60Node *rva008AA130(BfmeHostEAW *first, int count)
 {
@@ -196,7 +195,7 @@ Rva008C3B60Node *rva008AA130(BfmeHostEAW *first, int count)
 		{
 			{
 				BfmeStrEAW text;
-				AptValue *value = g_bfmeArr1233[
+				AptValue *value = (*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[
 					Rva008AE770TheStack.m_count - index - 1];
 				((Rva8CD130Value *)value)->getName((Rva8CD130String *)&text);
 				((BfmeStrVKJ *)&result)->bfmeAssignVKJ(
@@ -241,7 +240,7 @@ Rva008C3B60Node *rva008AA2B0(int unused, int count)
 	{
 		do
 		{
-			int value = g_bfmeArr1233[
+			int value = (*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[
 				Rva008AE770TheStack.m_count - index - 1]->toInteger();
 			{
 				Rva008A0320String text;

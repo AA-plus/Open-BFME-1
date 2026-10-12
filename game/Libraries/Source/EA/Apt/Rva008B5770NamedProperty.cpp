@@ -53,7 +53,6 @@ public:
 };
 
 class AptValue;
-extern AptValue **g_bfmeArr1233;				// 0x01338750
 // 0x01338748: the Apt stack depth global, defined in Rva00C6DCC0StaticInit.cpp.
 struct Rva008AE770Stack { int m_count; };
 extern Rva008AE770Stack Rva008AE770TheStack;
@@ -97,7 +96,7 @@ AptValue *rva008B5770NamedProperty(Rva008B5770Owner *owner)
 	unsigned int flags = owner->m_flags;
 	if ((flags & 63) == 0x15 && ((unsigned char)~(unsigned char)(flags >> 15) & 1) == 0)
 	{
-		Rva8CD130Value *value = (Rva8CD130Value *)g_bfmeArr1233[Rva008AE770TheStack.m_count - 1];
+		Rva8CD130Value *value = (Rva8CD130Value *)(*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.m_count - 1];
 		Rva8CD130String key;
 		Rva008B5770Scope *scope = (Rva008B5770Scope *)((char *)owner->m_scope + 8);
 		value->getName(&key);

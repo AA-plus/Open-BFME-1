@@ -57,14 +57,13 @@ public:
 	void parseAndAppend(void *owner, void *scope, Rva008CF3C0String *input);
 };
 extern Rva008AE770Stack Rva008AE770TheStack;
-extern Rva8CD130Value **g_bfmeArr1233;
 extern AptValue *g_bfmeFallbackDB;
 
 AptValue *rva008AF210ParseNameCallback(void *owner, int argc)
 {
 	if (argc > 0)
 	{
-		Rva8CD130Value *value = g_bfmeArr1233[Rva008AE770TheStack.m_count - 1];
+		Rva8CD130Value *value = (*(Rva8CD130Value ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.m_count - 1];
 		Rva8CD130String name;
 		value->getName(&name);
 		((Rva008CF3C0State *)&Rva008AE770TheStack)->parseAndAppend(

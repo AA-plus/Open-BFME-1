@@ -88,7 +88,6 @@ public:
 	void rva00896AF0(Rva8CD130String *input, Rva8CD130String text);
 };
 
-extern Rva8CD130Value **g_bfmeArr1233;
 struct Rva008AE770Stack { int m_count; };
 extern Rva008AE770Stack Rva008AE770TheStack;
 extern Rva00896AF0Tracker *g_bfmeTracker4310;
@@ -101,7 +100,7 @@ extern void bfmeResetEVF(void *context, BfmeStrVKI *text);
 
 Rva8CD130Value *rva008AE600(void *context)
 {
-	Rva8CD130Value *value = g_bfmeArr1233[Rva008AE770TheStack.m_count - 1];
+	Rva8CD130Value *value = (*(Rva8CD130Value ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.m_count - 1];
 	Rva8CD130String name;
 	value->getName(&name);
 	int length = name.m_data->m_length;
