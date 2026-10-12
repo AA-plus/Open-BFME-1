@@ -1,5 +1,4 @@
 // ?run@Rva001F9C60UpdateModule@@QAEXXZ
-// partial score=1.0 date=2026-10-09
 // cl: /O2 /Igame/Libraries/Source/WWVegas/WWLib /DNDEBUG /DWIN32 /D_WINDOWS /MD
 
 // Retail 0x001F9C60: an UpdateModule-interface method whose receiver is an
