@@ -59,10 +59,18 @@ public:
 };
 extern ScienceStore *TheScienceStore;
 
+// Retail 0x009D6220 uses the canonical cdecl formatter ABI.
+// Inline construction preserves the native exception type and throw graph.
+class XferException;
+extern "C" XferException *__cdecl bfmeFormatText(XferException *, int, const char *, ...);
+
 class XferException
 {
 public:
-    XferException(int tag, const char *format, ...);
+    __forceinline XferException(int tag, const char *format)
+    {
+        bfmeFormatText(this, tag, format);
+    }
     XferException(const XferException &that);
     ~XferException(void);
     char *text;

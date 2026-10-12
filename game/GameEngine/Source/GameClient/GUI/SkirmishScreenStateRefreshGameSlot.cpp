@@ -93,7 +93,9 @@ public:
 	GameSlot *getSlot(Int slotNum);
 };
 
-Bool WouldMapTransfer(GameInfo *game);
+// Retail calls the GameInfo overload through ILT 0x000393FB.
+extern void j_000393fb();
+typedef Bool (__cdecl *BfmeWouldMapTransfer)(GameInfo *);
 
 class SkirmishScreenOwner
 {
@@ -192,7 +194,7 @@ void SkirmishScreenState::refreshGameSlot(Int index)
 		}
 		else
 		{
-			Bool willTransfer = WouldMapTransfer(m_game);
+			Bool willTransfer = ((BfmeWouldMapTransfer)(void *)j_000393fb)(m_game);
 			((Rva00526660Body *)this)->run(*(int *)&willTransfer, -1);
 		}
 	}

@@ -16,7 +16,9 @@ typedef int Int;
 class DamageInfo;
 
 #define g_rva01075350 0.0f
-#define g_bfmeMul1 (*(const float *)0x01083b6c)
+// Name the existing pooled quarter constant so it relocates with the image.
+extern "C" const float __identifier("_real@3e800000");
+#define g_bfmeMul1 __identifier("_real@3e800000")
 #define g_bfmeMul2 0.75f
 #define g_bfmeDefaultBU 1.0f
 
@@ -110,7 +112,8 @@ void ActiveBody::internalChangeHealth(Real delta, DamageInfo *info)
 		}
 		else if (delta > g_rva01075350)
 		{
-			Real reduce = delta * g_bfmeMul1 * g_bfmeMul2;
+			// Preserve retail's parameter-first x87 load order with the named pool.
+			Real reduce = *(const volatile Real *)&delta * g_bfmeMul1 * g_bfmeMul2;
 
 			m_unreconstructed_9c -= reduce;
 			m_unreconstructed_9c = healthMax(0.0f,m_unreconstructed_9c);

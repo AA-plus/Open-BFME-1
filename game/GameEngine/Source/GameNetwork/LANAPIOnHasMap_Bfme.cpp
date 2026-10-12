@@ -177,7 +177,9 @@ extern MapCache *TheMapCache;
 extern GameTextInterface *TheGameText;
 class BfmeAptScreenLanLobby;
 extern BfmeAptScreenLanLobby *g_rva012F4998LanLobby;
-extern Bool __cdecl WouldMapTransfer(GameInfo *game);
+// Retail calls the GameInfo overload through ILT 0x000393FB.
+extern void j_000393fb();
+typedef Bool (__cdecl *BfmeWouldMapTransfer)(GameInfo *);
 extern void __cdecl lanUpdateSlotList004CAF70(void);
 
 inline const wchar_t *Rva00688CD0WideText(const UnicodeString &text)
@@ -219,7 +221,7 @@ void LANAPI::OnHasMap(BfmeNetAddress *sender, Bool status)
 	{
 		UnicodeString mapDisplayName;
 		const MapMetaData *mapData = TheMapCache->findMap(m_currentGame->getMap());
-		Bool willTransfer = WouldMapTransfer(m_currentGame);
+		Bool willTransfer = ((BfmeWouldMapTransfer)(void *)j_000393fb)(m_currentGame);
 		if (mapData != 0)
 		{
 			mapDisplayName.format(UnicodeString(L"%ls"),

@@ -23,6 +23,7 @@
 
 // FILE: W3DSnow.h /////////////////////////////////////////////////////////
 
+#include "../../../../Libraries/Source/WWVegas/WW3D2/texture.h"
 #include "W3DDevice/GameClient/W3DSnow.h"
 #include "W3DDevice/GameClient/heightmap.h"
 #include "GameClient/View.h"
@@ -129,12 +130,6 @@ public:
 };
 
 
-class BFMEWaterTrackTexture
-{
-public:
-	void Release_Ref(void);
-};
-
 class BFMEWaterTrackTextureHandle
 {
 public:
@@ -143,7 +138,7 @@ public:
 	~BFMEWaterTrackTextureHandle(void)
 	{
 		if (m_texture)
-			((BFMEWaterTrackTexture *)m_texture)->Release_Ref();
+			((TextureBaseClass *)m_texture)->Release_Ref();
 	}
 };
 
@@ -156,7 +151,7 @@ static inline void BFMEAssignSnowTexture(
 	if (texture.m_texture)
 		++*(unsigned short *)((char *)texture.m_texture + 4);
 	if (destination)
-		((BFMEWaterTrackTexture *)destination)->Release_Ref();
+		((TextureBaseClass *)destination)->Release_Ref();
 	destination = texture.m_texture;
 }
 

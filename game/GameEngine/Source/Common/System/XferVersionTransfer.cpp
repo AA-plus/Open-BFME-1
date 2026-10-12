@@ -46,10 +46,18 @@ public:
     virtual void transfer(void *context, const void *data, unsigned int size); // +94
 };
 
+// Retail 0x009D6220 uses the canonical cdecl formatter ABI.
+// Inline construction preserves the native exception type and throw graph.
+class XferException;
+extern "C" XferException *__cdecl bfmeFormatText(XferException *, int, const char *, ...);
+
 class XferException
 {
 public:
-    XferException(int tag, const char *format, ...);
+    __forceinline XferException(int tag, const char *format, int first, int second)
+    {
+        bfmeFormatText(this, tag, format, first, second);
+    }
     XferException(const XferException &that);
     ~XferException(void);
     char *text;

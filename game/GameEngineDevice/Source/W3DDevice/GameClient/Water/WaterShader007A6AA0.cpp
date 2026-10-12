@@ -4,6 +4,16 @@
 #include "game/Libraries/Source/WWVegas/WW3D2/dx8wrapper.h"
 #include <string.h>
 
+// Retail calls the ILT at 0x000261E3 twenty times. Bind that existing
+// symbol directly so this TU does not emit the header's snapshot-enabled
+// inline body under the same name as ExactStaticThunks.cpp's retail thunk.
+extern "C" void __cdecl __identifier("?Set_DX8_Texture_Stage_State@DX8Wrapper@@SAXIKI@Z")(unsigned, unsigned long, unsigned);
+
+static __forceinline void setTextureStageState(unsigned stage, D3DTEXTURESTAGESTATETYPE state, unsigned value)
+{
+    __identifier("?Set_DX8_Texture_Stage_State@DX8Wrapper@@SAXIKI@Z")(stage, state, value);
+}
+
 
 // File-local view that reaches the protected DX8Wrapper statistics counters.
 class DX8CounterAccess007A6AA0 : public DX8Wrapper
@@ -148,33 +158,33 @@ void WaterShader007A6AA0::setup(char *settings) {
     DX8Wrapper::Apply_Render_State_Changes();
     BoxSetTexture(0,*(TextureBaseClass **)(settings+0x34));
     BoxSetTexture(1,*(TextureBaseClass **)(settings+0x38));
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)1,22);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)2,2);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)3,0);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)4,3);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)5,2);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)6,1);
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)1,22);
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)2,2);
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)3,0);
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)4,3);
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)5,2);
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)6,1);
     addressState(0,1,1); addressState(0,2,1);
     WaterPhase01306D84+=0.0052359881810843945f;
     WaterPhase01306D84=fmodf(WaterPhase01306D84,2*WWMATH_PI);
     float c,s;
     c=WaterBumpScale012BBBE4*WWMath::Fast_Cos(WaterPhase01306D84);
     s=WaterBumpScale012BBBE4*WWMath::Fast_Sin(WaterPhase01306D84);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)7,floatBits(c));
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)8,floatBits(-s));
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)9,floatBits(s));
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)10,floatBits(c));
-    DX8Wrapper::Set_DX8_Texture_Stage_State(1,(D3DTEXTURESTAGESTATETYPE)1,2);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(1,(D3DTEXTURESTAGESTATETYPE)2,2);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(1,(D3DTEXTURESTAGESTATETYPE)3,1);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(1,(D3DTEXTURESTAGESTATETYPE)4,2);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(1,(D3DTEXTURESTAGESTATETYPE)5,2);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(1,(D3DTEXTURESTAGESTATETYPE)6,1);
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)7,floatBits(c));
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)8,floatBits(-s));
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)9,floatBits(s));
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)10,floatBits(c));
+    setTextureStageState(1,(D3DTEXTURESTAGESTATETYPE)1,2);
+    setTextureStageState(1,(D3DTEXTURESTAGESTATETYPE)2,2);
+    setTextureStageState(1,(D3DTEXTURESTAGESTATETYPE)3,1);
+    setTextureStageState(1,(D3DTEXTURESTAGESTATETYPE)4,2);
+    setTextureStageState(1,(D3DTEXTURESTAGESTATETYPE)5,2);
+    setTextureStageState(1,(D3DTEXTURESTAGESTATETYPE)6,1);
     addressState(1,1,1); addressState(1,2,1);
     DX8Wrapper::Apply_Render_State_Changes();
     waterDevice()->SetPixelShader(0);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)11,0x20000);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(0,(D3DTEXTURESTAGESTATETYPE)24,2);
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)11,0x20000);
+    setTextureStageState(0,(D3DTEXTURESTAGESTATETYPE)24,2);
     addressState(0,1,1); addressState(0,2,1);
     WaterMatrix007A6AA0 inv; float det; WaterMatrix007A6AA0 curView;
     waterDevice()->GetTransform(2,&curView); ++number_of_DX8_calls;
@@ -186,8 +196,8 @@ void WaterShader007A6AA0::setup(char *settings) {
     destMatrix=destMatrix*scale;
     ++DX8CounterAccess007A6AA0::matrixCount();
     waterDevice()->SetTransform(16,&destMatrix); ++number_of_DX8_calls;
-    DX8Wrapper::Set_DX8_Texture_Stage_State(1,(D3DTEXTURESTAGESTATETYPE)11,0x30000);
-    DX8Wrapper::Set_DX8_Texture_Stage_State(1,(D3DTEXTURESTAGESTATETYPE)24,2);
+    setTextureStageState(1,(D3DTEXTURESTAGESTATETYPE)11,0x30000);
+    setTextureStageState(1,(D3DTEXTURESTAGESTATETYPE)24,2);
     addressState(1,1,1); addressState(1,2,1);
     WaterMatrix007A6AA0 bias;
     bias.m[0]=0.5f; bias.m[1]=0; bias.m[2]=0; bias.m[3]=0.5f;
