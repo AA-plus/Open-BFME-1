@@ -1397,3 +1397,14 @@ def test_refused_respellings_is_check_on_a_rename_pair(tmp_path):
     assert N.refused_respellings([('destroy', 'j_00753450')], root=tmp_path) == set()
     assert N.refused_respellings([('destroy', 'j_00753454'), ('CodecState', 'BfmeThingJT')], root=tmp_path) == {
         ('destroy', 'j_00753454'), ('CodecState', 'BfmeThingJT')}
+
+
+def test_short_rva_address_type_respelled_to_ledger_placeholder_passes():
+    # owner-queue row 123: Rva8CB820StringPool -> BfmeStringPool3AF0 is placeholder to placeholder.
+    assert N.opaque('Rva8CB820StringPool') and N.opaque('Rva08CB820StringPool')
+    assert not N.downgrade('Rva8CB820StringPool', 'BfmeStringPool3AF0')
+
+
+def test_rva_without_an_address_stays_descriptive():
+    assert not N.opaque('RvaFace') and not N.opaque('Rva8CB82String')
+    assert N.downgrade('StringPool', 'Rva8CB820StringPool')
