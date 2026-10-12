@@ -1,8 +1,10 @@
-// ?rva0090CAD0@Rva0090C2F0Inner@@QAE_NXZ
-// partial score=0.9928 date=2026-10-10
 // cl: /DNDEBUG /MD /EHsc
-// The matched Rva0090CD00LoadFromMemory caller supplies this 0x48-byte owner.
-// D3D9 slots and explicit releases follow the complete retail body.
+// 0x0090CAD0: the D3D9 texture load plus alpha-buffer copy reached from the
+// matched 0x0090CD00 caller, which supplies this 0x48-byte owner. The owner
+// keeps its address-derived spelling Rva0090C2F0Inner::rva0090CAD0; the layout
+// and D3D9 slots follow the landed Rva0090C2F0InnerLoad.cpp and
+// Rva0090C2F0Go.cpp siblings. D3D9 slots and explicit releases follow the
+// complete retail body.
 
 struct IDirect3DDevice8;
 struct IDirect3DDevice9;
@@ -169,8 +171,8 @@ bool Rva0090C2F0Inner::rva0090CAD0()
                                 sourcePixel += alphaStride;
                                 destinationPixel += 4;
                             }
-                            alphaRow += alpha.Pitch;
                             destinationRow += destination.Pitch;
+                            alphaRow += alpha.Pitch;
                         }
                         alphaTexture->UnlockRect(0);
                     }
