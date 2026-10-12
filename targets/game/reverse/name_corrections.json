@@ -19618,5 +19618,35 @@
   "after_sha256": "62a82cc0a07ced47294ea1c13bfef387a4ec7ea1fccc587cb3b825e943126fca",
   "evidence": "targets/game/reverse/identity_evidence/001f0960-setTransformMatrix-shim-conflict.md",
   "reason": "The bank spelled the Thing matrix-copy callee setTransformMatrix, but that decorated name is already owned by the shim route (pin at 0x00023D49 follows to the 155-byte 0x001C16A0 body), and the pin-consistency guard rejects a second address whose thunk chain ends on a different body (one name, one function). The slot 0x000361CE and body 0x00132200 are recorded under the address-derived ?rva00132200@Thing@@QAEXPBVMatrix3D@@@Z, so the landed TU declares Thing::rva00132200 and keeps the identity floor (docs/naming_evidence.md). See targets/game/reverse/identity_evidence/001f0960-setTransformMatrix-shim-conflict.md."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00177320.cpp",
+  "new_path": "game/GameEngine/Source/Common/Rva00788460Step2.cpp",
+  "before_sha256": "9d9a88df77aaeed2b925033c15ffa998f79cfc4cc85ea3a0a2e6ce75cbc73cbd",
+  "after_sha256": "a459c1a1fa7a37ef6b40f7d7436ec759cad3588ac0282e47adb0dda4c4bf0e99",
+  "evidence": "targets/game/reverse/identity_evidence/00177320-masm-codegen-blocker.md",
+  "old_name": "AIGlobal",
+  "new_name": "BFMEWaterTrackTextureHandle",
+  "reason": "The 0x00177320 bank is withdrawn as a MASM-dump conversion (proven VC7.1 codegen wall: 3 register bytes at +0x15A +0x179 +0x17F, 40+ spellings over three sessions) and the landed row keeps the address-derived ?Rva00177320@@YAXXZ name because the body's identity is not provable (reached only through the StateMachine virtual update dispatch). The bank's speculative layout labels (AIGlobal/computePath/update) describe the same unlanded body and do not carry over; docs/naming_evidence.md keeps descriptive names out of unproven bodies."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00177320.cpp",
+  "new_path": "game/GameEngine/Source/Common/Rva00788460Step2.cpp",
+  "before_sha256": "9d9a88df77aaeed2b925033c15ffa998f79cfc4cc85ea3a0a2e6ce75cbc73cbd",
+  "after_sha256": "a459c1a1fa7a37ef6b40f7d7436ec759cad3588ac0282e47adb0dda4c4bf0e99",
+  "evidence": "targets/game/reverse/identity_evidence/00177320-masm-codegen-blocker.md",
+  "old_name": "computePath",
+  "new_name": "bfmeRun",
+  "reason": "The 0x00177320 bank is withdrawn as a MASM-dump conversion (proven VC7.1 codegen wall: 3 register bytes at +0x15A +0x179 +0x17F, 40+ spellings over three sessions) and the landed row keeps the address-derived ?Rva00177320@@YAXXZ name because the body's identity is not provable (reached only through the StateMachine virtual update dispatch). The bank's speculative layout labels (AIGlobal/computePath/update) describe the same unlanded body and do not carry over; docs/naming_evidence.md keeps descriptive names out of unproven bodies."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00177320.cpp",
+  "new_path": "game/GameEngine/Source/Common/Rva00788460Step2.cpp",
+  "before_sha256": "9d9a88df77aaeed2b925033c15ffa998f79cfc4cc85ea3a0a2e6ce75cbc73cbd",
+  "after_sha256": "a459c1a1fa7a37ef6b40f7d7436ec759cad3588ac0282e47adb0dda4c4bf0e99",
+  "evidence": "targets/game/reverse/identity_evidence/00177320-masm-codegen-blocker.md",
+  "old_name": "update",
+  "new_name": "bfmeStep3",
+  "reason": "The 0x00177320 bank is withdrawn as a MASM-dump conversion (proven VC7.1 codegen wall: 3 register bytes at +0x15A +0x179 +0x17F, 40+ spellings over three sessions) and the landed row keeps the address-derived ?Rva00177320@@YAXXZ name because the body's identity is not provable (reached only through the StateMachine virtual update dispatch). The bank's speculative layout labels (AIGlobal/computePath/update) describe the same unlanded body and do not carry over; docs/naming_evidence.md keeps descriptive names out of unproven bodies."
  }
 ]
