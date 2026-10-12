@@ -289,11 +289,13 @@ inline uint32 * MeshGeometryClass::get_shade_indices(bool create)
 
 inline uint16 * MeshGeometryClass::get_bone_links(bool create)
 {
-	if (create && !VertexBoneLink) {
-		VertexBoneLink = NEW_REF(ShareBufferClass<uint16>,(VertexCount, "MeshGeometryClass::VertexBoneLink"));
+	// BFME retail 0x009246B0: VertexCount at +0x28, VertexBoneLink at +0x58,
+	// four links per vertex (this inline COMDAT is the retail body)
+	if (create && !*reinterpret_cast<ShareBufferClass<uint16> **>(reinterpret_cast<char *>(this) + 0x58)) {
+		*reinterpret_cast<ShareBufferClass<uint16> **>(reinterpret_cast<char *>(this) + 0x58) = NEW_REF(ShareBufferClass<uint16>,(*reinterpret_cast<int *>(reinterpret_cast<char *>(this) + 0x28) * 4, "MeshGeometryClass::VertexBoneLink"));
 	}
-	if (VertexBoneLink) {
-		return VertexBoneLink->Get_Array();
+	if (*reinterpret_cast<ShareBufferClass<uint16> **>(reinterpret_cast<char *>(this) + 0x58)) {
+		return (*reinterpret_cast<ShareBufferClass<uint16> **>(reinterpret_cast<char *>(this) + 0x58))->Get_Array();
 	}
 	return NULL;
 }
