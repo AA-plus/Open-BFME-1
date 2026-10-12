@@ -1,6 +1,14 @@
-// ?Rva0053FF10@BfmeAptScreenOnlineCustomMatch@@QAEHPAXI00@Z
-// partial score=0.995 date=2026-10-08
-// ?Rva0053FF10@BfmeAptScreenOnlineCustomMatch@@QAEHPAXI00@Z
+// BfmeAptScreenOnlineCustomMatch::Rva0053FF10 — retail 0x0053FF10, 1209 bytes.
+// Identity: the class vtable at 0x01107484 (RTTI name "AptOnlineCustomMatch"
+// follows at 0x01107498) holds 0x004272EB in slot 4; the pinned ILT thunk
+// ?j_000272eb@@YAXXZ (target=0x0053FF10) lands on this body. Thiscall member
+// with RET 0x10, matching QAEHPAXI00 (four stack arguments). The body calls the
+// already matched siblings: the +0x40 screen-state dispatcher (?dispatch@
+// Rva00529EC0State, retail 0x00529EC0), the staging refresh
+// (?applyStagingRoomRefresh@BfmeAptScreenOnlineCustomMatch@@QAEXXZ, retail
+// 0x0053FC00 through ILT 0x00022999), and the GadgetListBox/ComboBox helpers;
+// message 0x4014 drives the game-list selection
+// and message 0x4031 mirrors the create-popup button state.
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/peerdefs /Iinputs/reference/shims/sweep /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source
 // stlport
 
@@ -31,6 +39,11 @@ class GameWindow;
 class GameInfo;
 class GameSpyStagingRoom;
 typedef _STL::map<int, GameSpyStagingRoom*> StagingRoomMap;
+
+static int field454(GameSpyStagingRoom *p) { return *(int*)((char*)p+0x454); }
+static int field458(GameSpyStagingRoom *p) { return *(int*)((char*)p+0x458); }
+
+
 
 void *GadgetListBoxGetItemData(GameWindow*, int, int);
 void GadgetComboBoxGetSelectedPos(GameWindow*, int*);
@@ -177,7 +190,7 @@ int BfmeAptScreenOnlineCustomMatch::Rva0053FF10(void *window, unsigned int messa
                 {
                     game = it->second;
                     ((MpGameSetup*)((char*)this+0x40))->bfmeSetSecondGame(game);
-                    if (game && *(int*)((char*)game+0x454) != *(int*)((char*)game+0x458))
+                    if (game && field454(game) != field458(game))
                     {
                         if (!field1D4)
                         {
