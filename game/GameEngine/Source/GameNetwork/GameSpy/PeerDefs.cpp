@@ -23,6 +23,8 @@
 // Generals GameSpy Peer (chat) definitions
 // Author: Matthew D. Campbell, June 2002
 
+// Retail _M_insert 0x00633AD0 has no EH region (stlport_rb_tree_int_grouproom_insert.cpp).
+#define _STLP_NO_EXCEPTIONS 1
 #define _BFME_RETAIL_TREE_INSERT_LAYOUT
 #define _BFME_RETAIL_PLAYER_INFO_LAYOUT
 #define __PLACEMENT_VEC_NEW_INLINE

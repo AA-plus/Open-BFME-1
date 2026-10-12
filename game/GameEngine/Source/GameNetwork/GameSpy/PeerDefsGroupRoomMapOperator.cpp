@@ -6,6 +6,8 @@
 // The existing insert_unique body at 0x00633BB0 and the 0x20-byte
 // GameSpyGroupRoom layout identify this STLport instantiation.
 
+// Retail _M_insert 0x00633AD0 has no EH region (stlport_rb_tree_int_grouproom_insert.cpp).
+#define _STLP_NO_EXCEPTIONS 1
 #define _BFME_RETAIL_TREE_INSERT_LAYOUT
 #define __PLACEMENT_VEC_NEW_INLINE
 #include <stl/_config.h>

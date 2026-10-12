@@ -5,6 +5,9 @@
 // retail 0x000EEE50, 192 bytes. Same tree as the already-matched _M_find at
 // 0x000EE500: key pair<int,int>, mapped TeamPrototype*.
 
+// Retail's tree _M_insert (0x000EED60) has no EH region; build this TU's
+// STL the same way so its COMDAT copy is retail's (TeamFactory_M_insert.cpp).
+#define _STLP_NO_EXCEPTIONS 1
 #define _BFME_RETAIL_TREE_INSERT_LAYOUT
 #include <map>
 
