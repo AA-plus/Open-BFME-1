@@ -172474,3 +172474,31 @@ uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic_load
 ?Get00@Rva00570590Owner@@QBEIXZ,,0x00570590,3,game/GameEngine/Source/Common/Rva00337400ThiscallGetters.cpp,matched,
 ?Get04@Rva00570590Owner@@QBEIXZ,,0x005705A0,4,game/GameEngine/Source/Common/Rva00337400ThiscallGetters.cpp,matched,
 ?Get00@Rva00570610Owner@@QBEIXZ,,0x00570610,3,game/GameEngine/Source/Common/Rva00337400ThiscallGetters.cpp,matched,
+?Rva002332E0ReturnArgument@@YAPAXPAX@Z,,0x002332E0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva0025B420ReturnArgument@@YAPAXPAX@Z,,0x0025B420,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva003382C0ReturnArgument@@YAPAXPAX@Z,,0x003382C0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00338360ReturnArgument@@YAPAXPAX@Z,,0x00338360,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva003383B0ReturnArgument@@YAPAXPAX@Z,,0x003383B0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva0036C630ReturnArgument@@YAPAXPAX@Z,,0x0036C630,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva003A5DE0ReturnArgument@@YAPAXPAX@Z,,0x003A5DE0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva003D6B50ReturnArgument@@YAPAXPAX@Z,,0x003D6B50,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva003D6BA0ReturnArgument@@YAPAXPAX@Z,,0x003D6BA0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00511680ReturnArgument@@YAPAXPAX@Z,,0x00511680,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva0052D1F0ReturnArgument@@YAPAXPAX@Z,,0x0052D1F0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00548F50ReturnArgument@@YAPAXPAX@Z,,0x00548F50,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00570AA0ReturnArgument@@YAPAXPAX@Z,,0x00570AA0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00570AB0ReturnArgument@@YAPAXPAX@Z,,0x00570AB0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00585110ReturnArgument@@YAPAXPAX@Z,,0x00585110,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva005B2530ReturnArgument@@YAPAXPAX@Z,,0x005B2530,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva005C0530ReturnArgument@@YAPAXPAX@Z,,0x005C0530,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00604D50ReturnArgument@@YAPAXPAX@Z,,0x00604D50,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva0060DF90ReturnArgument@@YAPAXPAX@Z,,0x0060DF90,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva0062C6B0ReturnArgument@@YAPAXPAX@Z,,0x0062C6B0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva006309B0ReturnArgument@@YAPAXPAX@Z,,0x006309B0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva006432E0ReturnArgument@@YAPAXPAX@Z,,0x006432E0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00651B30ReturnArgument@@YAPAXPAX@Z,,0x00651B30,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00651B40ReturnArgument@@YAPAXPAX@Z,,0x00651B40,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva006918A0ReturnArgument@@YAPAXPAX@Z,,0x006918A0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00697AB0ReturnArgument@@YAPAXPAX@Z,,0x00697AB0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva007239C0ReturnArgument@@YAPAXPAX@Z,,0x007239C0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
+?Rva00933850ReturnArgument@@YAPAXPAX@Z,,0x00933850,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name
