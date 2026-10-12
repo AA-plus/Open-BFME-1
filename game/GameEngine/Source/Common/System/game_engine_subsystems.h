@@ -89,7 +89,16 @@ class ParticleSystemManager : public SubsystemInterface {};	// 0x00073D90, ThePa
 class FXListStore : public SubsystemInterface {};	// 0x00073E50, TheFXListStore; name from ?findFXList@FXListStore@@QBEPBVFXList@@PBD@Z
 class LocomotorStore : public SubsystemInterface {};	// 0x00074090, TheLocomotorStore; name from ?findLocomotorTemplate@LocomotorStore@@QAEPAVLocomot
 class SpecialPowerStore : public SubsystemInterface {};	// 0x00074150, TheSpecialPowerStore; name from ?findSpecialPowerTemplateByID@SpecialPowerStore@@QAE
-class ThingFactory : public SubsystemInterface {};	// 0x00074510, TheThingFactory; name from ?findByTemplateID@ThingFactory@@QAEPBVThingTemplate@
+class Object;
+class ThingTemplate;
+class Team;
+template <int NUMBITS> class BitFlags;
+class ThingFactory : public SubsystemInterface
+{
+public:
+	// Matched row 0x00138520 (ThingFactory.cpp); called by 0x00259390.
+	Object *newObject(const ThingTemplate *tmplate, Team *team, const BitFlags<86> &statusBits, unsigned int flags);
+};	// 0x00074510, TheThingFactory; name from ?findByTemplateID@ThingFactory@@QAEPBVThingTemplate@
 class ScriptEngine : public SubsystemInterface {};	// 0x00074E10, TheScriptEngine; name from ?doFreezeTime@ScriptEngine@@QAEXXZ
 class GameLogic : public SubsystemInterface {};	// 0x000751D0, TheGameLogic; name from ?createGhostObjectManager@GameLogic@@EAEPAVGhostObje
 class RecorderClass : public SubsystemInterface {};	// 0x00075290, TheRecorder; name from ?appendNextCommand@RecorderClass@@IAEXXZ
