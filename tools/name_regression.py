@@ -51,6 +51,10 @@ OPAQUE = re.compile(
     # already use for a callee whose identity is unproven
     # (unidentified_00380ee0, re_attempts 59731).
     r'unidentified_[0-9a-f]{8}(?![0-9a-z])|'
+    # Rva<address> with the image-base leading zeros dropped, as Apt TUs
+    # name types after their class address (Rva8CB820StringPool for
+    # 0x008CB820; owner-queue row 123, re_attempts 0x008AD100).
+    r'Rva[0-9a-f]{6,7}(?![0-9a-f])|'
     # Owner ruling 2026-10-09: bfme*/Bfme* names are converter-invented
     # placeholders, as ilt_oracle, name_lane and ilt_guard already treat them.
     r'_?bfme)', re.I)

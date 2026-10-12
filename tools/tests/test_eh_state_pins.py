@@ -172,3 +172,40 @@ def test_fix_writes_nothing_while_an_object_is_missing(monkeypatch, tmp_path, ca
     code, applied = _missing_run(monkeypatch, tmp_path, ["--fix", "--model", "m"])
     assert code == 2 and applied == []
     assert "--fix refused" in capsys.readouterr().out
+
+
+def test_a_byte_twin_told_apart_by_state_index_counts_as_unique(linked):
+    # the unwind map names the action at each state index and the native
+    # compile emits the $L for that same index: that proof makes a twin unique
+    obj, tables = linked
+    ours, theirs = tables[0]["ours"], tables[0]["theirs"]
+    proven = 0
+    for (_, label), (_, address) in zip(ours, theirs):
+        if label is None:
+            continue
+        got = ep.judge(obj, tables, row(address), label)
+        if not got["twins"]:
+            continue
+        assert got["verdict"] == "proven" and got["unique"] and got["twin_proof"] == "state-index"
+        assert ep.kind_of(got) == "twin-proven"
+        stale = ep.judge(obj, tables, row(address), "$L999999")
+        assert stale["verdict"] == "stale" and stale["unique"] and stale["correct"] == label
+        proven += 1
+    assert proven > 0, "the fixture no longer produces byte-identical funclets"
+
+
+def test_a_byte_twin_no_state_proves_stays_ambiguous(linked):
+    obj, tables = linked
+    ours, theirs = tables[0]["ours"], tables[0]["theirs"]
+    label = next(lab for (_, lab), (_, a) in zip(ours, theirs)
+                 if lab and ep.judge(obj, tables, row(a), lab)["twins"])
+    got = ep.judge(obj, tables, row(0x10), label)
+    assert got["verdict"] == "unprovable" and got["ambiguous"] and not got["unique"]
+    assert ep.kind_of(got) == "ambiguous"
+
+
+def test_kind_of_columns():
+    assert ep.kind_of({"ambiguous": None}) == "unknown"
+    assert ep.kind_of({"ambiguous": False, "unique": True}) == "unique"
+    assert ep.kind_of({"ambiguous": True, "unique": True}) == "twin-proven"
+    assert ep.kind_of({"ambiguous": True, "unique": False}) == "ambiguous"
