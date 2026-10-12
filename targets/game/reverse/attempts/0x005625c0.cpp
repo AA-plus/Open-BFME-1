@@ -1,5 +1,5 @@
 // ?d_005625c0@@YAXXZ
-// partial score=0.996 date=2026-09-16
+// partial score=0.9957 date=2026-09-16
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 // BfmeAptScreenOptions::_bfme_onInitGadget, retail 0x005625C0, 2797 bytes.
 // The matched Options constructor at 0x00563370 pushes the selector string

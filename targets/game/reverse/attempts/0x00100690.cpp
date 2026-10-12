@@ -1,5 +1,5 @@
 // ?isLocationClearOfObjects00100690@BuildAssistant@@UAE_NPBUCoord3D@@PBVThingTemplate@@MPAVObject@@IPAVPlayer@@@Z
-// partial score=0.99 date=2026-09-28
+// partial score=0.5719 date=2026-09-28
 // Probe shape 0.994, 2484 B vs retail 2483 B, frame 0x224 exact. The only residue
 // is register assignment: retail holds build in EBP and worldPos in EDI, ours the
 // reverse ([ebp] encodes one byte longer), which moves the prologue pushes and

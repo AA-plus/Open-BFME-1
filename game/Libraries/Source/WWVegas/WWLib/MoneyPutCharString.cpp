@@ -1,21 +1,40 @@
-// ?do_put@?$money_put@DV?$ostreambuf_iterator@DV?$char_traits@D@_STL@@@_STL@@@_STL@@MBE?AV?$ostreambuf_iterator@DV?$char_traits@D@_STL@@@2@V32@_NAAVios_base@2@DABV?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@2@@Z
-// partial score=0.9922 date=2026-10-11
 // cl: /O2 /MD /D_STLP_USE_STATIC_LIB /EHsc
 // stlport
-
-
-
-
-
-
-
+// STLport 4.5.3 money_put<char, ostreambuf_iterator<char> >::do_put(
+// ostreambuf_iterator, bool, ios_base&, char, const string&), retail
+// 0x008379C0 (2708 bytes).  The canonical inline body lives in
+// stl/_monetary.c under _STLP_EXPOSE_STREAM_IMPLEMENTATION; this is the
+// narrow string overload of the same facet whose long-double overload is
+// landed in MoneyPutCharLongDouble.cpp at 0x00836050.
+//
+// Identity: RTTI type descriptor 0x012C7508 names money_put<char,
+// ostreambuf_iterator<char> >; vtable 0x0112E96C slot 0 is the matched
+// scalar-deleting destructor 0x00832330, slot 1 is this body, slot 2 is the
+// matched long-double do_put 0x00836050.  The body is byte-identical to
+// retail outside its relocation slots.
+//
+// BFME's locale release is inline at the end of this body.  STLport's public
+// header leaves _Locale_impl opaque, so complete its three-slot ABI here.
 #include "stlport_prefix.h"
 
+#include <string>
 #define private public
 #include <stl/_monetary.h>
 #undef private
 
+class Rva008384E0SlotForward { public: void* forward(void*); };
+class Rva00838500SlotForward { public: void* forward(void*); };
+class Rva00838520SlotForward { public: void* forward(void*); };
+class Rva00838540SlotForward { public: void* forward(void*); };
+class Rva00838460SlotForward { public: void* forward(void*); };
+class Rva00838480SlotForward { public: void* forward(void*); };
+class Rva008384A0SlotForward { public: void* forward(void*); };
+class Rva008384C0SlotForward { public: void* forward(void*); };
+
 _STLP_BEGIN_NAMESPACE
+
+extern locale::id g_Va012C7440;
+extern locale::id g_Va012C743C;
 
 
 
@@ -102,8 +121,8 @@ template <> inline BfmeNarrowPutIterator money_put<char, BfmeNarrowPutIterator>:
 
   locale __loc = __str.getloc();
   const _Ctype&      __c_type      = use_facet<_Ctype>(__loc) ;
-  const _Punct&      __punct      = use_facet<_Punct>(__loc) ;
-  const _Punct_intl& __punct_intl = use_facet<_Punct_intl>(__loc) ;
+  const _Punct&      __punct      = *static_cast<const _Punct*>(__loc._M_use_facet(g_Va012C7440)) ;
+  const _Punct_intl& __punct_intl = *static_cast<const _Punct_intl*>(__loc._M_use_facet(g_Va012C743C)) ;
 
   char_type __minus = __c_type.widen('-');
   char_type __plus  = __c_type.widen('+');
@@ -115,14 +134,14 @@ template <> inline BfmeNarrowPutIterator money_put<char, BfmeNarrowPutIterator>:
   char_type __sep = __intl ? __punct_intl.thousands_sep()
 			   : __punct     .thousands_sep();
 
-  string __grouping = __intl ? __punct_intl.grouping()
-		             : __punct     .grouping();
+  string __grouping = __intl ? ((*reinterpret_cast<const Rva00838460SlotForward*>(&__punct_intl)).*reinterpret_cast<string_type (Rva00838460SlotForward::*)() const>(&Rva00838460SlotForward::forward))()
+		             : ((*reinterpret_cast<const Rva008384E0SlotForward*>(&__punct)).*reinterpret_cast<string_type (Rva008384E0SlotForward::*)() const>(&Rva008384E0SlotForward::forward))();
 
   int __frac_digits      = __intl ? __punct_intl.frac_digits()
                                   : __punct.frac_digits();
 
-  string_type __curr_sym = __intl ? __punct_intl.curr_symbol()
-                                  : __punct.curr_symbol();
+  string_type __curr_sym = __intl ? ((*reinterpret_cast<const Rva00838480SlotForward*>(&__punct_intl)).*reinterpret_cast<string_type (Rva00838480SlotForward::*)() const>(&Rva00838480SlotForward::forward))()
+                                  : ((*reinterpret_cast<const Rva00838500SlotForward*>(&__punct)).*reinterpret_cast<string_type (Rva00838500SlotForward::*)() const>(&Rva00838500SlotForward::forward))();
 
   if (__digits.size() == 0)
     return __s;
@@ -136,11 +155,11 @@ template <> inline BfmeNarrowPutIterator money_put<char, BfmeNarrowPutIterator>:
     ++__digits_first;
 
   string_type __sign = __intl ?
-			 __sign_policy.negative ? __punct_intl.negative_sign()
-				       : __punct_intl.positive_sign()
+			 __sign_policy.negative ? ((*reinterpret_cast<const Rva008384C0SlotForward*>(&__punct_intl)).*reinterpret_cast<string_type (Rva008384C0SlotForward::*)() const>(&Rva008384C0SlotForward::forward))()
+				       : ((*reinterpret_cast<const Rva008384A0SlotForward*>(&__punct_intl)).*reinterpret_cast<string_type (Rva008384A0SlotForward::*)() const>(&Rva008384A0SlotForward::forward))()
 			      :
-			 __sign_policy.negative ? __punct.negative_sign()
-				       : __punct.positive_sign();
+			 __sign_policy.negative ? ((*reinterpret_cast<const Rva00838540SlotForward*>(&__punct)).*reinterpret_cast<string_type (Rva00838540SlotForward::*)() const>(&Rva00838540SlotForward::forward))()
+				       : ((*reinterpret_cast<const Rva00838520SlotForward*>(&__punct)).*reinterpret_cast<string_type (Rva00838520SlotForward::*)() const>(&Rva00838520SlotForward::forward))();
   string_type::const_iterator __cp = __digits_first;
   while (__cp != __digits_last && __c_type.is(ctype_base::digit, *__cp))
     ++__cp;
@@ -242,8 +261,10 @@ template <> inline BfmeNarrowPutIterator money_put<char, BfmeNarrowPutIterator>:
     }
   } 
 
-  if (__sign.size() > 1)
-    __s = __money_copy_symbol(static_cast<const string_type&>(__sign).begin() + 1, static_cast<const string_type&>(__sign).end(), __s, __sign_policy);
+  if (__sign.size() > 1) {
+    const char* __cp = __sign.begin() + 1;
+    __s = __money_copy_symbol(__cp, __sign.end(), __s, __sign_policy);
+  }
   if (!(__fill_pos & (ios_base::right | ios_base::internal)))
     __s = fill_n(__s, __fill_amt, __fill);
 
@@ -257,6 +278,7 @@ struct bfmeNarrowMoneyPutEmitter : money_put<char, BfmeNarrowPutIterator>
 };
 #pragma inline_depth(0)
 
+// ?emit@bfmeNarrowMoneyPutEmitter@@SAXPBV1@V?$ostreambuf_iterator@DV?$char_traits@D@_STL@@@_STL@@@_STL@@_NAAVios_base@2@DABV?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@2@@Z absent-from-retail
 void bfmeNarrowMoneyPutEmitter::emit(const bfmeNarrowMoneyPutEmitter *p, BfmeNarrowPutIterator a, bool b, ios_base &s,
 	char f, const string &d)
 {
