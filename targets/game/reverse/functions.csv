@@ -172099,3 +172099,4 @@ uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic_load
 ?self@Rva000FC6E0Self@@QAEPAV1@XZ,,0x000FC6E0,3,game/GameEngine/Source/Common/Rva000FC6E0ThisGetter.cpp,matched,carved ret+int3 boundary returns this address-derived identity;model=claude-opus-5-5;host=GreatFaram
 ?getValue4@Rva000B9270@@QBEHXZ,,0x000B9270,4,game/GameEngine/Source/Common/Rva000B9270DwordGetter.cpp,matched,carved boundary rel32 caller ret+int3 thiscall dword getter at +4 owner unproven;model=claude-opus-5-5;host=GreatFaram
 ?getField4@Rva00293180@@QAEHXZ,,0x00293180,4,game/GameEngine/Source/Common/Rva0075D420FieldGetter.cpp,matched,carved body mov eax [ecx+4] ret; owner unproven so address name;model=claude-opus-5-5;host=GreatFaram
+?Rva002A13F0ReturnArgument@@YAPAXPAX@Z,,0x002A13F0,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved body mov eax [esp+4] ret; identity unproven so address name;model=claude-opus-5-5;host=GreatFaram

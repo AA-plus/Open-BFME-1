@@ -60757,3 +60757,4 @@ _rva009B1ED0	0x009B1ED0	701	blocked	Retail 0x009B1ED0 through 0x009B218D is a co
 ?self@Rva000FC6E0Self@@QAEPAV1@XZ	0x000FC6E0	3	landed	carved ret+int3 boundary t=3 model=claude-opus-5-5
 ?getValue4@Rva000B9270@@QBEHXZ	0x000B9270	4	landed	carved boundary 0x000B9270 ret+int3 t=3 model=claude-opus-5-5
 ?getField4@Rva00293180@@QAEHXZ	0x00293180	4	landed	carved ret boundary t=2 model=claude-opus-5-5
+?Rva002A13F0ReturnArgument@@YAPAXPAX@Z	0x002A13F0	5	landed	carved ret+int3 t=2 model=claude-opus-5-5
