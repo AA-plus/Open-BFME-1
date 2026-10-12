@@ -526,6 +526,7 @@ public:
 	unsigned m_rva04;
 
 	unsigned Rva004D4080Get(void) const;
+	unsigned Rva004D4070Get0(void) const;
 };
 
 // Out of class so the definition keeps external linkage and the body survives: an
@@ -534,4 +535,13 @@ public:
 unsigned Rva004D4080::Rva004D4080Get(void) const
 {
 	return m_rva04;
+}
+
+// Rva004D4070 is the same shape one dword earlier: three bytes returning the
+// receiver dword at +0x00, carved boundary (rel32-call/jmp start, ret+int3 end)
+// immediately below the 0x004D4080 getter in the same unit. Same honest
+// address-derived naming: no caller names it.
+unsigned Rva004D4080::Rva004D4070Get0(void) const
+{
+	return (unsigned)m_rva00;
 }
