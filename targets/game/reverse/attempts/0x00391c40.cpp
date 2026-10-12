@@ -1,5 +1,9 @@
 // ?xfer@GameLogic@@MAEXPAVXfer@@@Z
 // partial score=0.995695 date=2026-09-25
+// compile fix 2026-10-12: string_base.h included before ascii_string.h carries the
+// str/isEmpty<char> specializations; duplicate ~AsciiString removed. Scratch compiles to
+// 2323B/79relocs/10 non-reloc diffs at +0x736..+0x740 (inlined STLport _Ht_iterator++
+// slow path; begin->ecx vs retail begin->eax; regalloc wall, shape_search exhausted).
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringbaseunicode /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Igame/GameEngine/Source/Common/System
 // stlport
 // GameLogic secondary Snapshot transfer, RVA00391C40,2323B.
@@ -11,6 +15,9 @@
 #include <vector>
 #include <bitset>
 typedef _STL::bitset<86> Rva00391C40StatusBits;
+#include "string_base.h"
+template<> inline const char *StringBase<char>::str() const {const char *text=&m_data->data[0];if(!m_data)text="";return text;}
+template<> inline bool StringBase<char>::isEmpty() const {return !m_data || m_data->length==0;}
 #include "ascii_string.h"
 template<> __declspec(nothrow) int StringBase<wchar_t>::compare(const StringBase<wchar_t>&) const;
 #include "Common/UnicodeString.h"
@@ -19,10 +26,7 @@ template<> __declspec(nothrow) int StringBase<wchar_t>::compare(const StringBase
 #include "snapshot.h"
 typedef bool Bool;
 #include "subsystem_interface.h"
-inline AsciiString::~AsciiString() { ((StringBase<char>*)this)->releaseBuffer(); }
 inline UnicodeString::~UnicodeString() { ((StringBase<wchar_t>*)this)->releaseBuffer(); }
-template<> inline const char *StringBase<char>::str() const {const char *text=&m_data->data[0];if(!m_data)text="";return text;}
-template<> inline bool StringBase<char>::isEmpty() const {return !m_data || m_data->length==0;}
 inline Coord3D::Coord3D() { }
 inline Coord3D::~Coord3D() { }
 inline Coord3D::Coord3D(int a,int b,int c) {x=(float)a;y=(float)b;z=(float)c;}
