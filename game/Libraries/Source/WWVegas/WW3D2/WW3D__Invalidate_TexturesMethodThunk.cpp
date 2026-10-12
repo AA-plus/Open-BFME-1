@@ -32,6 +32,13 @@ public:
 	virtual void Invalidate();
 };
 
+// Retail's AssetReference release calls TextureBaseClass::Release_Ref (0x009EB7A0).
+class TextureBaseClass
+{
+public:
+	void Release_Ref();
+};
+
 class DummyPtrType;
 
 class AssetReference
@@ -48,7 +55,7 @@ public:
 	~AssetReference()
 	{
 		if (m_object)
-			m_object->Release_Ref();
+			((TextureBaseClass *)m_object)->Release_Ref();
 	}
 
 	AssetReference &operator=(const AssetReference &that)
