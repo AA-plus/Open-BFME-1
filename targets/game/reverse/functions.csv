@@ -38650,7 +38650,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00bf276c@@YAXXZ,,0x00BF276C,8,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@00ff276c
 ?d_00bf28d0@@YAXXZ,,0x00BF28D0,8,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff28d0
 ?d_00bf2958@@YAXXZ,,0x00BF2958,17,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff2958
-?d_00bf298b@@YAXXZ,,0x00BF298B,23,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff298b
 ?d_00bf3b38@@YAXXZ,,0x00BF3B38,39,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff3b38
 ?d_00bf3f8d@@YAXXZ,,0x00BF3F8D,11,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff3f8d
 ?d_00bf3f98@@YAXXZ,,0x00BF3F98,11,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff3f98
@@ -38878,7 +38877,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c06abc@@YAXXZ,,0x00C06ABC,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01006abc
 ?d_00c06ac7@@YAXXZ,,0x00C06AC7,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01006ac7
 ?d_00c06b13@@YAXXZ,,0x00C06B13,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01006b13
-?d_00c06b76@@YAXXZ,,0x00C06B76,22,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01006b76
 ?d_00c06ca0@@YAXXZ,,0x00C06CA0,19,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01006ca0
 ?d_00c06d20@@YAXXZ,,0x00C06D20,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01006d20
 ?d_00c06d80@@YAXXZ,,0x00C06D80,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01006d80
@@ -38973,7 +38971,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c13a13@@YAXXZ,,0x00C13A13,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01013a13
 ?d_00c13a1e@@YAXXZ,,0x00C13A1E,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01013a1e
 ?d_00c13a29@@YAXXZ,,0x00C13A29,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01013a29
-?d_00c13b38@@YAXXZ,,0x00C13B38,22,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01013b38
 ?d_00c13ee8@@YAXXZ,,0x00C13EE8,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01013ee8
 ?d_00c13ef3@@YAXXZ,,0x00C13EF3,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01013ef3
 ?d_00c13efe@@YAXXZ,,0x00C13EFE,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01013efe
@@ -39024,7 +39021,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c1a13b@@YAXXZ,,0x00C1A13B,23,game/gen_asm/d_00c17e98.asm,matched,gen-dump;ghidra=Unwind@0101a13b
 ?d_00c1aef0@@YAXXZ,,0x00C1AEF0,11,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101aef0
 ?d_00c1b090@@YAXXZ,,0x00C1B090,11,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101b090
-?d_00c1b260@@YAXXZ,,0x00C1B260,11,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101b260
 ?d_00c1b7f1@@YAXXZ,,0x00C1B7F1,17,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101b7f1
 ?d_00c1b8c0@@YAXXZ,,0x00C1B8C0,11,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101b8c0
 ?d_00c1b8cb@@YAXXZ,,0x00C1B8CB,11,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101b8cb
@@ -39042,9 +39038,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c1c939@@YAXXZ,,0x00C1C939,31,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101c939
 ?d_00c1c958@@YAXXZ,,0x00C1C958,31,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101c958
 ?d_00c1ce50@@YAXXZ,,0x00C1CE50,22,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101ce50
-?d_00c1cf0b@@YAXXZ,,0x00C1CF0B,23,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101cf0b
-?d_00c1cf22@@YAXXZ,,0x00C1CF22,23,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101cf22
-?d_00c1cfab@@YAXXZ,,0x00C1CFAB,23,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101cfab
 ?d_00c1d178@@YAXXZ,,0x00C1D178,17,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101d178
 ?d_00c1eb38@@YAXXZ,,0x00C1EB38,17,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101eb38
 ?d_00c1ee88@@YAXXZ,,0x00C1EE88,17,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@0101ee88
@@ -39279,7 +39272,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c4d258@@YAXXZ,,0x00C4D258,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0104d258
 ?d_00c4d26b@@YAXXZ,,0x00C4D26B,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0104d26b
 ?d_00c4d2b0@@YAXXZ,,0x00C4D2B0,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0104d2b0
-?d_00c4d9a8@@YAXXZ,,0x00C4D9A8,22,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0104d9a8
 ?d_00c4dc38@@YAXXZ,,0x00C4DC38,41,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
 ?d_00c4dc61@@YAXXZ,,0x00C4DC61,41,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
 ?d_00c4ddab@@YAXXZ,,0x00C4DDAB,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0104ddab
@@ -39307,7 +39299,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c5002b@@YAXXZ,,0x00C5002B,34,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0105002b
 ?d_00c5028b@@YAXXZ,,0x00C5028B,24,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0105028b
 ?d_00c50305@@YAXXZ,,0x00C50305,24,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01050305
-?d_00c5039c@@YAXXZ,,0x00C5039C,8,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0105039c
 ?d_00c50746@@YAXXZ,,0x00C50746,23,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01050746
 ?d_00c5080b@@YAXXZ,,0x00C5080B,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0105080b
 ?d_00c51008@@YAXXZ,,0x00C51008,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail callers=0
@@ -39580,7 +39571,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c5ad68@@YAXXZ,,0x00C5AD68,17,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105ad68
 ?d_00c5b076@@YAXXZ,,0x00C5B076,23,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105b076
 ?d_00c5b098@@YAXXZ,,0x00C5B098,23,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105b098
-?d_00c5b200@@YAXXZ,,0x00C5B200,22,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105b200
 ?d_00c5b2f0@@YAXXZ,,0x00C5B2F0,25,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105b2f0
 ?d_00c5b370@@YAXXZ,,0x00C5B370,17,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105b370
 ?d_00c5b500@@YAXXZ,,0x00C5B500,17,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105b500
@@ -39588,7 +39578,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c5b730@@YAXXZ,,0x00C5B730,11,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105b730
 ?d_00c5b73b@@YAXXZ,,0x00C5B73B,17,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105b73b
 ?d_00c5b850@@YAXXZ,,0x00C5B850,11,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105b850
-?d_00c5bae0@@YAXXZ,,0x00C5BAE0,11,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105bae0
 ?d_00c5bb40@@YAXXZ,,0x00C5BB40,25,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105bb40
 ?d_00c5bc81@@YAXXZ,,0x00C5BC81,11,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105bc81
 ?d_00c5bcd0@@YAXXZ,,0x00C5BCD0,17,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105bcd0
@@ -39796,7 +39785,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c61ab0@@YAXXZ,,0x00C61AB0,25,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@01061ab0
 ?d_00c61cfc@@YAXXZ,,0x00C61CFC,22,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@01061cfc
 ?d_00c61e50@@YAXXZ,,0x00C61E50,11,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@01061e50
-?d_00c61e70@@YAXXZ,,0x00C61E70,22,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@01061e70
 ?d_00c61eb0@@YAXXZ,,0x00C61EB0,22,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@01061eb0
 ?d_00c61ef8@@YAXXZ,,0x00C61EF8,25,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@01061ef8
 ?d_00c61f28@@YAXXZ,,0x00C61F28,25,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@01061f28
@@ -172548,3 +172536,15 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?dup_00C23BD0@@YAXXZ,,0x00C23BD0,25,game/GameEngine/Source/Common/BfmeDisplayNameAP.cpp,matched,authored C++ cleanup;gen-funclet;parent=?bfme_getDisplayName@MapMetaData@@QAE?AVUnicodeString@@XZ;object-symbol=$L1589;retail parent 0x00451240 pushes handler stub 0x00C23BE9 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
 ?dup_00C57190@@YAXXZ,,0x00C57190,19,game/GameEngine/Source/Common/BfmeDropObjectAVectorSwap00895F30.cpp,matched,authored C++ cleanup;gen-funclet;parent=?swap@BfmeDropObjectAVector@@QAEXAAV1@@Z;object-symbol=$L529;retail parent 0x00895F30 pushes handler stub 0x00C571AB (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
 ?dup_00C5C990@@YAXXZ,,0x00C5C990,22,game/GameEngine/Source/Common/BfmeHolderDtorBY.cpp,matched,authored C++ cleanup;gen-funclet;parent=??1BfmeHolderBY@@QAE@XZ;object-symbol=$L12311;retail parent 0x0092A3D0 pushes handler stub 0x00C5C9A6 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C06B76@@YAXXZ,,0x00C06B76,22,game/GameEngine/Source/Common/BfmeOwnVVBConstructors.cpp,matched,authored C++ cleanup;gen-funclet;parent=??0BfmeOwnVVB@@QAE@PAX@Z;object-symbol=$L965;retail parent 0x00190340 pushes handler stub 0x00C06B8C (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C5B200@@YAXXZ,,0x00C5B200,22,game/GameEngine/Source/Common/BfmeOwnVVHDestructor.cpp,matched,authored C++ cleanup;gen-funclet;parent=??1BfmeOwnVVH@@QAE@XZ;object-symbol=$L335;retail parent 0x009035E0 pushes handler stub 0x00C5B216 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C4D9A8@@YAXXZ,,0x00C4D9A8,22,game/GameEngine/Source/Common/BfmeOwnerDtorCC.cpp,matched,authored C++ cleanup;gen-funclet;parent=??1BfmeOwnerCC@@UAE@XZ;object-symbol=$L367;retail parent 0x0073A4E0 pushes handler stub 0x00C4D9BE (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C5BAE0@@YAXXZ,,0x00C5BAE0,11,game/GameEngine/Source/Common/BfmeThingSJRegistration.cpp,matched,authored C++ cleanup;gen-funclet;parent=?rva0090e690RegisterSJThing@@YAXPBD@Z;object-symbol=$L1013;retail parent 0x0090E690 pushes handler stub 0x00C5BAEB (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00BF298B@@YAXXZ,,0x00BF298B,23,game/GameEngine/Source/Common/CRCParameterCheckLog.cpp,matched,authored C++ cleanup;gen-funclet;parent=_bfmeRetailCritterDesyncLog;object-symbol=$L4921;retail parent 0x00065C80 pushes handler stub 0x00BF29A2 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C1CF0B@@YAXXZ,,0x00C1CF0B,23,game/GameEngine/Source/Common/Containers/Rva003A3770LinkedRecords.cpp,matched,authored C++ cleanup;gen-funclet;parent=?method@Rva003A3770Obj@@QAEXPAX@Z;object-symbol=$L5852;retail parent 0x003A3770 pushes handler stub 0x00C1CF39 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C1CF22@@YAXXZ,,0x00C1CF22,23,game/GameEngine/Source/Common/Containers/Rva003A3770LinkedRecords.cpp,matched,authored C++ cleanup;gen-funclet;parent=?method@Rva003A3770Obj@@QAEXPAX@Z;object-symbol=$L5936;retail parent 0x003A3770 pushes handler stub 0x00C1CF39 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C1CFAB@@YAXXZ,,0x00C1CFAB,23,game/GameEngine/Source/Common/Containers/Rva003A3B50RecordAppend.cpp,matched,authored C++ cleanup;gen-funclet;parent=?append@Rva003A3B50Owner@@QAEXPBURva003A3B50Input@@@Z;object-symbol=$L4827;retail parent 0x003A3B50 pushes handler stub 0x00C1CFC2 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C5039C@@YAXXZ,,0x00C5039C,8,game/GameEngine/Source/Common/Containers/Rva007701C0Vector.cpp,matched,authored C++ cleanup;gen-funclet;parent=?findOrCreateRecord@Rva0077BC20Owner@@QAEPAURva007701C0Element@@ABVAsciiString@@@Z;object-symbol=$L7138;retail parent 0x0077BC20 pushes handler stub 0x00C503A4 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C61E70@@YAXXZ,,0x00C61E70,22,game/GameEngine/Source/Common/Gen_dtor_009f2600.cpp,matched,authored C++ cleanup;gen-funclet;parent=??1Gen_dtor_009f2600@@UAE@XZ;object-symbol=$L317;retail parent 0x009F5970 pushes handler stub 0x00C61E86 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C13B38@@YAXXZ,,0x00C13B38,22,game/GameEngine/Source/Common/GiantBirdNestedTailDestructor.cpp,matched,authored C++ cleanup;gen-funclet;parent=??1?$vector@VGiantBirdNestedRecord@@V?$allocator@VGiantBirdNestedRecord@@@_STL@@@_STL@@QAE@XZ;object-symbol=$L5392;retail parent 0x002C2280 pushes handler stub 0x00C13B4E (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?dup_00C1B260@@YAXXZ,,0x00C1B260,11,game/GameEngine/Source/Common/INI/EmotionSystem_createEmotion.cpp,matched,authored C++ cleanup;gen-funclet;parent=?createEmotion@EmotionSystem@@QAEPAVEmotion@@PAVEmotionTrackerUpdateEntry@@PAVObject@@@Z;object-symbol=$L312;retail parent 0x0037CAD0 pushes handler stub 0x00C1B26B (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
