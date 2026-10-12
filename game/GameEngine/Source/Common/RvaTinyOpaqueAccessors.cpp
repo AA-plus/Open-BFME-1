@@ -359,3 +359,18 @@ char *Rva000CA680::get(void)
 {
 	return m_value + 8;
 }
+
+class Rva000B9290
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva000B9290@@QAEHXZ
+int Rva000B9290::get(void)
+{
+	return m_value;
+}
