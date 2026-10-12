@@ -1,3 +1,80 @@
+# 0x008FEF60 material texture-slot swap -- MASM landing with a measured codegen blocker
+
+Target: RVA 0x008FEF60..0x008FF054, 244 bytes, name
+`?Rva008FEF60Method@@YA_NPAVRenderObjClass@@PAPAVTextureClass@@H@Z`
+(address-derived). Source: `game/masm_dumps/Rva008FEF60MaterialTextureSwap.asm`,
+converted from the gen-dump row `?d_008fef60@@YAXXZ` in
+`game/gen_asm/d_008fa4b0.asm` (notes: gen-dump;ghidra=FUN_00cfef60).
+
+## Identity
+
+Address-derived on purpose: no string or detected caller names the owner, so
+the class and the argument list keep the address token. The one non-local
+caller is the landed 0x008FF060 water-material body
+(`game/Libraries/Source/WWVegas/WW3D2/Rva008FF060WaterMaterialTextureSwap.cpp`),
+whose retail call at +0x9F reaches this body with the receiver in ECX, the
+`TextureClass**` in EBX and the index on the stack; its row byte-gated the
+additive pin in `targets/game/reverse/symbols.csv` (line 13958). The body
+matches retail through `RenderObjClass`'s proven vtable slot 0x150
+(`Get_Material_Info`), the `BfmeHandleCX` smart-pointer destructor shape and
+the landed `Bfme5TextureArray::bfmeSetSlot` store.
+
+## Body and ABI (first-hand)
+
+SEH frame `push -1; push g_Va0105AC08`. Null-checks receiver and source slot,
+fetches the material through vtable +0x150, rejects `material->+0x30 <= index`,
+then takes `Mesh_Self()` and pulls `Get_Texture(index)`; if the held texture
+already equals `*src` it releases one reference (deleting the material when the
+count hits zero) and returns false, otherwise it routes the handoff through
+the 0x0092C3E0 trampoline, stores the slot via `bfmeSetSlot`, releases the
+count and returns true.
+
+## Why this lands as a MASM dump (measured)
+
+The reconstructible C++ body (`targets/game/reverse/attempts/0x008fef60.cpp`,
+sha256 4c5cb625bc48126b78a94018bbcf3bcb52a59913b5c5e493033b2aeb3db45922,
+embedded at the end of this file) compiles to exactly 244 bytes with 11
+relocations and shape 1.000. Its whole residue is ONE non-relocation byte at
++0x7A:
+
+- +0x79 retail: `75 0a` (`jne` from the handle-test at +0x66 reaching +0x85;
+  ECX is still live from the +0x66 load)
+- +0x79 ours:  `75 06` (the C++ build's ECX reload joins earlier, at +0x81)
+
+The `!!` sequence at +0x91 is inside a relocation slot, not residue.
+
+Measured 2026-09-28..2026-10-13: ~30 formulations -- if/else and inverted
+orders, prefix/postfix decrement, named bool result, count local and count
+reference, explicit destructor bodies (accessor, early-return), five
+`_Read/WriteBarrier` placements around the handle stores -- plus the
+/G5 /G6 /G7 /Ob1 /Os /Ot /Oa /Ow /Og /Oy- /Gs /GF flag sweep all leave that
+single byte unchanged or worse: a block-merge / register-liveness choice, not
+source-spellable. Blocker class: branch-target join tie-break at the handle
+test (reload absorbed vs kept-live ECX).
+
+The dump body is byte-identical to retail outside its relocation slots
+(`tools/probe.py` on the bank prints `size ours=244 retail=244 relocs=11`,
+`diffs 1 non-reloc byte(s); first at +122` and `shape 1.000`; the retail call
+at +0x91 in the side-by-side is one of the slots). The 11 slots cover the SEH
+frame (`g_Va0105AC08` and the `__except_list` accesses) and the four calls
+`?j_000366dd@@YAXXZ`, `?Release_Ref@TextureClass@@QAEXXZ`,
+`?invoke@Rva0092C3E0@@QAEXXZ`,
+`?bfmeSetSlot@Bfme5TextureArray@@QAEXHPAPAVTextureClass@@@Z`; all scoped
+checks pass.
+
+The TU copy under `game/Libraries/Source/WWVegas/WW3D2/` used while measuring
+was scratch (never matched) and has been removed; the dump header's reference
+to it is historical, the bank below is the authoritative copy.
+
+## Reopen condition
+
+Only with a C++ reconstruction that compiles byte-identical, or a detected
+caller/string that names the owner class and proves the private EBX argument
+convention.
+
+## Banked C++ (sha256 4c5cb625bc48126b78a94018bbcf3bcb52a59913b5c5e493033b2aeb3db45922)
+
+```cpp
 // ?Rva008FEF60Method@@YA_NPAVRenderObjClass@@PAPAVTextureClass@@H@Z
 // partial score=0.9959016393442623 date=2026-09-28
 // ?Rva008FEF60Method@@YA_NPAVRenderObjClass@@PAPAVTextureClass@@H@Z
@@ -223,3 +300,4 @@ extern "C" bool __fastcall Rva008FEF60Caller(RenderObjClass *self, TextureClass 
 {
 	return Rva008FEF60Method(self, src, index);
 }
+```
