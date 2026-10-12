@@ -872,3 +872,195 @@ unsigned int Rva003AC710Field::get() const
 {
 	return m_value;
 }
+
+class Rva00065390Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva00065390Field@@QBEIXZ
+unsigned int Rva00065390Field::get() const
+{
+	return m_value;
+}
+
+class Rva000B92D0Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva000B92D0Field@@QBEIXZ
+unsigned int Rva000B92D0Field::get() const
+{
+	return m_value;
+}
+
+class Rva002329C0Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva002329C0Field@@QBEIXZ
+unsigned int Rva002329C0Field::get() const
+{
+	return m_value;
+}
+
+class Rva00251A10Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva00251A10Field@@QBEIXZ
+unsigned int Rva00251A10Field::get() const
+{
+	return m_value;
+}
+
+class Rva002606A0Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva002606A0Field@@QBEIXZ
+unsigned int Rva002606A0Field::get() const
+{
+	return m_value;
+}
+
+class Rva00282FB0Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva00282FB0Field@@QBEIXZ
+unsigned int Rva00282FB0Field::get() const
+{
+	return m_value;
+}
+
+class Rva00282FE0Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva00282FE0Field@@QBEIXZ
+unsigned int Rva00282FE0Field::get() const
+{
+	return m_value;
+}
+
+class Rva00570620Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva00570620Field@@QBEIXZ
+unsigned int Rva00570620Field::get() const
+{
+	return m_value;
+}
+
+class Rva005819D0Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva005819D0Field@@QBEIXZ
+unsigned int Rva005819D0Field::get() const
+{
+	return m_value;
+}
+
+class Rva00584E60Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva00584E60Field@@QBEIXZ
+unsigned int Rva00584E60Field::get() const
+{
+	return m_value;
+}
+
+class Rva005BFF50Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva005BFF50Field@@QBEIXZ
+unsigned int Rva005BFF50Field::get() const
+{
+	return m_value;
+}
+
+class Rva0075D260Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva0075D260Field@@QBEIXZ
+unsigned int Rva0075D260Field::get() const
+{
+	return m_value;
+}

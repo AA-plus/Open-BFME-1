@@ -172070,3 +172070,15 @@ uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic_load
 ?get@Rva0036BEB0@@QAEHXZ,,0x0036BEB0,4,game/GameEngine/Source/Common/RvaTinyOpaqueAccessors.cpp,matched,carved getter of dword at +4; ret then int3; opaque address name;model=claude-opus-5-5;host=GreatFaram
 ?get@Rva00383D70@@QAEHXZ,,0x00383D70,4,game/GameEngine/Source/Common/RvaTinyOpaqueAccessors.cpp,matched,carved getter of dword at +4; ret then int3; opaque address name;model=claude-opus-5-5;host=GreatFaram
 ?getValue4@Rva00752030@@QBEHXZ,,0x00752030,4,game/GameEngine/Source/Common/Rva00752030DwordGetter.cpp,matched,carved boundary rel32 caller ret+int3 thiscall dword getter at +4 owner unproven;model=claude-opus-5-5;host=GreatFaram
+?get@Rva00065390Field@@QBEIXZ,,0x00065390,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva000B92D0Field@@QBEIXZ,,0x000B92D0,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva002329C0Field@@QBEIXZ,,0x002329C0,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva00251A10Field@@QBEIXZ,,0x00251A10,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva002606A0Field@@QBEIXZ,,0x002606A0,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva00282FB0Field@@QBEIXZ,,0x00282FB0,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva00282FE0Field@@QBEIXZ,,0x00282FE0,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva00570620Field@@QBEIXZ,,0x00570620,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva005819D0Field@@QBEIXZ,,0x005819D0,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva00584E60Field@@QBEIXZ,,0x00584E60,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva005BFF50Field@@QBEIXZ,,0x005BFF50,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva0075D260Field@@QBEIXZ,,0x0075D260,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
