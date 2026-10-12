@@ -1,4 +1,4 @@
-// ?xfer@GameClient@@MAEXPAVXfer@@@Z
+// ?DoXfer@GameClient@@MAEXAAVXfer@@@Z
 // partial score=1.0 date=2026-10-09
 // cl: /O2 /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib /Igame/GameEngine/Source/Common/System
 // stlport
@@ -14,14 +14,14 @@ typedef unsigned short UnsignedShort;
 enum { INVALID_ID = 0, TRUE = 1, FALSE = 0 };
 enum DrawableStatus { DRAWABLE_STATUS_NONE = 0 };
 class Xfer;
-// Snapshot has the BFME destructor, loadPostProcess, name and xfer slots.
+// Snapshot has the BFME destructor, loadPostProcess, name and DoXfer slots.
 class Snapshot
 {
 public:
     virtual ~Snapshot();
     virtual void loadPostProcess();
     virtual const char *name() const;
-    virtual void xfer(Xfer *);
+    virtual void DoXfer(Xfer &);
 };
 class Overridable
 {
@@ -108,7 +108,7 @@ public:
     char m_padBE[0x32];
     DrawableTOCList m_drawableTOC;
 protected:
-    virtual void xfer(Xfer *);
+    virtual void DoXfer(Xfer &);
 
 private:
     void xferDrawableTOC(Xfer *);
@@ -243,11 +243,11 @@ struct BfmeXferException { char *text; int tag; };
 extern "C" BfmeXferException *__cdecl bfmeFormatText(BfmeXferException *, int, const char *, ...);
 extern "C" int g_xferExceptionThrowInfo;
 extern void __declspec(noreturn) __stdcall _CxxThrowException(void *, void *);
-// ?xfer@GameClient@@MAEXPAVXfer@@@Z
-void GameClient::xfer( Xfer *xfer )
+// ?DoXfer@GameClient@@MAEXAAVXfer@@@Z
+void GameClient::DoXfer( Xfer &xfer )
 {
-	RetailXferView *view = reinterpret_cast<RetailXferView *>(xfer);
-	if (xfer->IsLightCRC()) return;
+	RetailXferView *view = reinterpret_cast<RetailXferView *>(&xfer);
+	if (xfer.IsLightCRC()) return;
 
 	struct VersionPair00432010 : Xfer::Version
     {
@@ -258,25 +258,25 @@ void GameClient::xfer( Xfer *xfer )
         }
     };
 	VersionPair00432010 version(2);
-	*xfer == version;
+	xfer == version;
 
-	*xfer == m_frame;
+	xfer == m_frame;
 
-	xferDrawableTOC( xfer );
+	xferDrawableTOC( &xfer );
 
 	Drawable *draw;
 	UnsignedShort drawableCount = 0;
 	for( draw = reinterpret_cast<RetailGameClientView *>(this)->getDrawableList(); draw; draw = *(Drawable **)((char *)draw + 0x104) )
 	{
-		if (xfer->IsStoring() && !shouldSaveDrawable(draw))
+		if (xfer.IsStoring() && !shouldSaveDrawable(draw))
 			continue;
 		drawableCount++;
 	}
-	*xfer == drawableCount;
+	xfer == drawableCount;
 
 	DrawableTOCEntry *tocEntry;
 	ObjectID objectID;
-	if( xfer->IsStoring() )
+	if( xfer.IsStoring() )
 	{
 
 		for( draw = reinterpret_cast<RetailGameClientView *>(this)->getDrawableList(); draw; draw = *(Drawable **)((char *)draw + 0x104) )
@@ -292,12 +292,12 @@ void GameClient::xfer( Xfer *xfer )
 				_CxxThrowException(&error, &g_xferExceptionThrowInfo);
 			}
 
-			*xfer == tocEntry->id;
+			xfer == tocEntry->id;
 
 			view->beginBlock("Drawable");
 
 			objectID = *(Object **)((char *)draw + 0xfc) ? (*(Object **)((char *)draw + 0xfc))->getID() : INVALID_ID;
-			Rva0010C3C0( (MidVirtualSlot90Receiver *)xfer, &objectID );
+			Rva0010C3C0( (MidVirtualSlot90Receiver *)&xfer, &objectID );
 
 			view->Snapshot(draw ? (Snapshot *)((char *)draw + 0x60) : 0);
 
@@ -314,7 +314,7 @@ void GameClient::xfer( Xfer *xfer )
 		for( UnsignedShort i = 0; i < drawableCount; ++i )
 		{
 
-			*xfer == tocID;
+			xfer == tocID;
 
 			tocEntry = findTOCEntryById( tocID );
 			if( tocEntry == NULL )
@@ -334,7 +334,7 @@ void GameClient::xfer( Xfer *xfer )
 			dataSize = view->beginBlock("Drawable");
 			(void)dataSize;
 
-			Rva0010C3C0( (MidVirtualSlot90Receiver *)xfer, &objectID );
+			Rva0010C3C0( (MidVirtualSlot90Receiver *)&xfer, &objectID );
 
 			if( objectID != INVALID_ID )
 			{
@@ -383,28 +383,28 @@ void GameClient::xfer( Xfer *xfer )
 
 	}
 
-	if (!xfer->IsCRC())
+	if (!xfer.IsCRC())
 	{
-		if( xfer->IsStoring() )
+		if( xfer.IsStoring() )
 		{
 			BriefingList *bList = GetBriefingTextList();
 			Int numEntries = bList->size();
-			*xfer == numEntries;
+			xfer == numEntries;
 			for (BriefingList::const_iterator bIt = bList->begin(); bIt != bList->end(); ++bIt)
 			{
 				UnicodeString tempStr = *bIt;
-				*xfer == tempStr;
+				xfer == tempStr;
 			}
 		}
 		else
 		{
 			Int numEntries = 0;
-			*xfer == numEntries;
+			xfer == numEntries;
 			UpdateDiplomacyBriefingText(AsciiString::TheEmptyString, TRUE);
 			while (numEntries-- > 0)
 			{
 				UnicodeString tempStr;
-				*xfer == tempStr;
+				xfer == tempStr;
 				UpdateDiplomacyBriefingText(tempStr, FALSE);
 			}
 		}
@@ -412,19 +412,19 @@ void GameClient::xfer( Xfer *xfer )
 		{
 			Bool hasYaw;
 			Real yaw = MapObject::TheWorldDict.getReal(CameraYawAngleKey.key(), &hasYaw);
-			*xfer == hasYaw;
-			*xfer == yaw;
-			if (hasYaw && xfer->IsLoading()) {
+			xfer == hasYaw;
+			xfer == yaw;
+			if (hasYaw && xfer.IsLoading()) {
 				NameKeyType yawKey = CameraYawAngleKey.key();
 				MapObject::TheWorldDict.setReal(yawKey, yaw);
 			}
 		}
 	}
 
-	Rva0010C3C0((MidVirtualSlot90Receiver *)xfer, &m_rva00431380Field0B4);
+	Rva0010C3C0((MidVirtualSlot90Receiver *)&xfer, &m_rva00431380Field0B4);
 	void *evaSnapshot = TheEva ? (char *)TheEva + 8 : 0;
 	view->Snapshot((Snapshot *)evaSnapshot);
-	*xfer == m_rva00431380String0B8;
-	*xfer == m_rva00433340Flag0BC;
-	*xfer == m_rva00433340Flag0BD;
+	xfer == m_rva00431380String0B8;
+	xfer == m_rva00433340Flag0BC;
+	xfer == m_rva00433340Flag0BD;
 }
