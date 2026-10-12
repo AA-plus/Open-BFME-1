@@ -1931,32 +1931,6 @@ void DX8MeshRendererClass::Request_Log_Statistics()
 //
 // ---------------------------------------------------------------------------
 
-static void Render_FVF_Category_Container_List(FVFCategoryList& list)
-{
-	FVFCategoryListIterator it(&list);
-	while (!it.Is_Done()) {
-		it.Peek_Obj()->Render();
-		it.Next();
-	}
-}
-
-static void Render_FVF_Category_Container_List_Delayed_Passes(FVFCategoryList& list)
-{
-	FVFCategoryListIterator it(&list);
-	while (!it.Is_Done()) {
-		it.Peek_Obj()->Render_Delayed_Procedural_Material_Passes();
-		it.Next();
-	}
-}
-
-// Source-only emission hook: preserve the two matched static helpers and
-// their VC7.1 internal calling convention after removing the Zero Hour Flush.
-void bfmeKeepFVFCategoryHelpers(FVFCategoryList &list)
-{
-	Render_FVF_Category_Container_List(list);
-	Render_FVF_Category_Container_List_Delayed_Passes(list);
-}
-
 // Flush is defined by the byte-exact BFME reconstruction in
 // DX8MeshRendererClass_Flush.cpp; the Zero Hour body differs from retail.
 
@@ -2007,23 +1981,9 @@ void DX8MeshRendererClass::Log_Statistics_String(bool only_visible)
 
 }
 
-static void Invalidate_FVF_Category_Container_List(FVFCategoryList& list)
-{
-	while (DX8FVFCategoryContainer* fvf_category=list.Remove_Head()) {
-		delete fvf_category;
-	}
-}
-
 // Invalidate is defined by the byte-exact BFME reconstruction in
 // DX8MeshRendererClass_Invalidate_Thunk.cpp; the Zero Hour body differs from retail.
 // Retail still carries this TU's out-of-line copies of the list helpers the
 // Zero Hour Invalidate used; instantiate them explicitly.
 template void SimpleDynVecClass<FVFCategoryList *>::Delete_All(bool);
 template void MultiListClass<MeshModelClass>::Reset_List();
-
-// Source-only emission hook (same pattern as bfmeKeepFVFCategoryHelpers):
-// keeps the matched static helper with its VC7.1 internal calling convention.
-void bfmeKeepInvalidateFVFHelper(FVFCategoryList &list)
-{
-	Invalidate_FVF_Category_Container_List(list);
-}

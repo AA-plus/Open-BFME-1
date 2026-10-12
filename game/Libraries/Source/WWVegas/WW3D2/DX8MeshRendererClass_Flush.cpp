@@ -32,12 +32,39 @@ public:
 	DX8FVFCategoryContainer *Object;
 };
 
-class FVFCategoryList
+template <class ObjectType>
+class MultiListClass
 {
 public:
-	virtual ~FVFCategoryList();
+	virtual ~MultiListClass();
 	MultiListNodeClass Head;
 };
+
+typedef MultiListClass<DX8FVFCategoryContainer> FVFCategoryList;
+
+static void Render_FVF_Category_Container_List(FVFCategoryList &list)
+{
+	MultiListNodeClass *node = list.Head.Next;
+	MultiListNodeClass *head = &list.Head;
+	if (node != head) {
+		do {
+			node->Object->Render();
+			node = node->Next;
+		} while (node != head);
+	}
+}
+
+static void Render_FVF_Category_Container_List_Delayed_Passes(FVFCategoryList &list)
+{
+	MultiListNodeClass *node = list.Head.Next;
+	MultiListNodeClass *head = &list.Head;
+	if (node != head) {
+		do {
+			node->Object->Render_Delayed_Procedural_Material_Passes();
+			node = node->Next;
+		} while (node != head);
+	}
+}
 
 class SimpleDynVecFVFLists
 {
@@ -85,39 +112,11 @@ void DX8MeshRendererClass::Flush(void)
 	Log_Statistics_String(true);
 
 	for (i = 0; i < texture_category_container_lists_rigid.Count(); ++i) {
-		FVFCategoryList *p = texture_category_container_lists_rigid[i];
-		MultiListNodeClass *node = p->Head.Next;
-		MultiListNodeClass *head = &p->Head;
-		if (node != head) {
-			do {
-				node->Object->Render();
-				node = node->Next;
-			} while (node != head);
-		}
+		Render_FVF_Category_Container_List(*texture_category_container_lists_rigid[i]);
 	}
-
-	{
-		FVFCategoryList *p = texture_category_container_list_skin;
-		MultiListNodeClass *node = p->Head.Next;
-		MultiListNodeClass *head = &p->Head;
-		if (node != head) {
-			do {
-				node->Object->Render();
-				node = node->Next;
-			} while (node != head);
-		}
-	}
-
+	Render_FVF_Category_Container_List(*texture_category_container_list_skin);
 	for (i = 0; i < texture_category_container_lists_rigid.Count(); ++i) {
-		FVFCategoryList *p = texture_category_container_lists_rigid[i];
-		MultiListNodeClass *node = p->Head.Next;
-		MultiListNodeClass *head = &p->Head;
-		if (node != head) {
-			do {
-				node->Object->Render_Delayed_Procedural_Material_Passes();
-				node = node->Next;
-			} while (node != head);
-		}
+		Render_FVF_Category_Container_List_Delayed_Passes(*texture_category_container_lists_rigid[i]);
 	}
 
 	DX8Wrapper::Set_Vertex_Buffer(0, 0);
