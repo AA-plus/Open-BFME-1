@@ -81,14 +81,19 @@ public:
 	virtual ~DX8FVFCategoryContainer();
 };
 
-class FVFCategoryList : public GenericMultiListClass
+template <class ObjectType>
+class MultiListClass : public GenericMultiListClass
 {
 public:
-	DX8FVFCategoryContainer *Remove_Head()
+	virtual ~MultiListClass();
+	MultiListClass() {}
+	ObjectType *Remove_Head()
 	{
-		return static_cast<DX8FVFCategoryContainer *>(Internal_Remove_List_Head());
+		return static_cast<ObjectType *>(Internal_Remove_List_Head());
 	}
 };
+
+typedef MultiListClass<DX8FVFCategoryContainer> FVFCategoryList;
 
 class SimpleDynVecFVFLists
 {
@@ -133,7 +138,7 @@ protected:
 	FVFCategoryList *texture_category_container_list_skin;
 };
 
-static __forceinline void Invalidate_FVF_Category_Container_List(FVFCategoryList &list)
+static void Invalidate_FVF_Category_Container_List(FVFCategoryList &list)
 {
 	DX8FVFCategoryContainer *container;
 	while ((container = list.Remove_Head()) != 0) {
