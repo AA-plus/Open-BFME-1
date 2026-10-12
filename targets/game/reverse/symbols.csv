@@ -81457,6 +81457,7 @@ name,address,notes
 ?d_0088e970@@YAXXZ,0x0088E970,Legacy void-declared reference in matched DebugConstructor_00889370 ignores AL; same cdecl no-argument body now recovered as installDebugImportHook0088E970 returning bool
 ?d_00892a70@@YAXXZ,0x00892A70,legacy address-only alias of ?Rva00892A70@@YAHI@Z; game/gen_asm/d_0084de40.asm still names this symbol after the dump conversion
 ?d_008930c0@@YAPAXH@Z,0x008930C0,typed one-argument call alias for the address-derived Apt lookup helper
+?d_00893f10@@YAXXZ,0x00893F10,Address-only compatibility for withdrawn dump; native ?Rva00893F10@@YAXXZ body (game/masm_dumps/Rva00893F10VectorHelper.asm); game/gen_asm/d_0088a430.asm and d_00894a90.asm still call this name
 ?d_00894660@@YAXXZ,0x00894660,address-only legacy compatibility for elapsed-tick callers; one unsigned cdecl argument
 ?d_00894a90@@YAXXZ,0x00894A90,address-only legacy compatibility for cast callers; cdecl one int decoded in 00466610 and 0046D8E0
 ?d_00895950@@YAXXZ,0x00895950,legacy address-only alias of ?rva00895950@Rva00893030Manager@@QAE?AVRefHandle008958D0@@PAVBfmeStrVKI@@@Z; game/gen_asm/d_0088a430.asm still names this symbol after the dump conversion
