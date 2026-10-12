@@ -24,7 +24,7 @@ extern unsigned char g_bfmeFlagESP;
 class BfmeStrVKI
 {
 public:
-	BfmeStrVKI(const char *text);
+	BfmeStrVKI(const char *text) { bfmeSetVKI(text); }
 	BfmeStrVKI(const BfmeStrVKI &other)
 	{
 		m_data = other.m_data;
@@ -36,6 +36,8 @@ public:
 		if (--data->m_refCount == 0)
 			((BfmeStringPoolESP *)g_rva01337A30AllocPair)->free(data);
 	}
+
+	void bfmeSetVKI(const char *text);
 
 	BfmeHdrESP *m_data;
 };
