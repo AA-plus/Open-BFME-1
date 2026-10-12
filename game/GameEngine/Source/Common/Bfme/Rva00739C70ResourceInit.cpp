@@ -75,13 +75,6 @@ public:
     bool rva0073a050(unsigned, unsigned, unsigned, unsigned, unsigned, bool);
     void reset();
     TextureBaseClass *update(int);
-    void cleanup()
-    {
-        if (m_flags & 1) {
-            reinterpret_cast<SurfaceClass *>(&m_member0c)->Unlock();
-            m_flags &= ~1;
-        }
-    }
     int m_int0;
     int m_int4;
     TexturePtr m_ptr08;
@@ -102,7 +95,12 @@ bool Rva00739C70::rva0073a050(unsigned width, unsigned height,
             reset();
             return false;
         }
-        cleanup();
+        // Rva00739C70::cleanup (0x00739C70, Rva00739C70Cleanup.cpp), inlined
+        // here by retail; an inline member in this TU would emit a second copy.
+        if (m_flags & 1) {
+            reinterpret_cast<SurfaceClass *>(&m_member0c)->Unlock();
+            m_flags &= ~1;
+        }
         return true;
     } else {
         m_flags = 0;
@@ -111,7 +109,10 @@ bool Rva00739C70::rva0073a050(unsigned width, unsigned height,
             m_member0c = reinterpret_cast<W3DRadarResetTexture *>(&m_ptr08)->getSurfaceLevel();
             int pitch;
             if (update(reinterpret_cast<int>(&pitch))) {
-                cleanup();
+                if (m_flags & 1) {
+                    reinterpret_cast<SurfaceClass *>(&m_member0c)->Unlock();
+                    m_flags &= ~1;
+                }
                 return true;
             }
             reset();
