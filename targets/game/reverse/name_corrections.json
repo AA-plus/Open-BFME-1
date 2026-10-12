@@ -19539,5 +19539,65 @@
   "after_sha256": "1dfda4363a545f8d45d3f8eb2397aa21401492e7c8042163f5003b7efc2455f7",
   "evidence": "targets/game/reverse/identity_evidence/006f1ac0-native-setters.md",
   "reason": "dir32_addresses.csv records only Rva0109BF40ZeroRange at 0x0109BF40, so verify_dir32_addresses refuses the bank's unrecorded spelling; the source must carry the recorded name at that address."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x004b2330.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/GUI/Rva004B2330.cpp",
+  "old_name": "Iterator004B25D0",
+  "new_name": "Rva0037F220Iterator",
+  "before_sha256": "ff7eefe4e7355d015143254476b8407763cae0c6c84e7cebbc31a3e9d4236124",
+  "after_sha256": "013879779074dbcdff248657c0fbd31dbe94ddf543832e3f81f64ebd04541e22",
+  "evidence": "targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md",
+  "reason": "The bank modeled the level iterator as scratch struct Iterator004B25D0 beside the 0x004B25D0 builder reconstruction; the converted 252-byte helper declares the same 8-byte struct as Rva0037F220Iterator, named after the recorded body rva0037F220 (ILT 0x00031471) that returns it, so the type carries the recorded address token instead of the bank scratch suffix. See targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x004b2330.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/GUI/Rva004B2330.cpp",
+  "old_name": "RankLimit004B25D0",
+  "new_name": "Gen_001b2030",
+  "before_sha256": "ff7eefe4e7355d015143254476b8407763cae0c6c84e7cebbc31a3e9d4236124",
+  "after_sha256": "013879779074dbcdff248657c0fbd31dbe94ddf543832e3f81f64ebd04541e22",
+  "evidence": "targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md",
+  "reason": "The bank modeled the rank-limit getter as scratch class RankLimit004B25D0; the conversion reaches the body through ILT 0x000012A8 and spells it Gen_001b2030::m, the recorded name at 0x001B2030, as ilt_guard requires. See targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x004b2330.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/GUI/Rva004B2330.cpp",
+  "old_name": "UnicodeString",
+  "new_name": "Rva0037E810Binding",
+  "before_sha256": "ff7eefe4e7355d015143254476b8407763cae0c6c84e7cebbc31a3e9d4236124",
+  "after_sha256": "013879779074dbcdff248657c0fbd31dbe94ddf543832e3f81f64ebd04541e22",
+  "evidence": "targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md",
+  "reason": "The bank reproduced the builder inlined wide-string copy with the STLport UnicodeString helper set (WideCopy00888400 alternatename plus inline ctors); the 252-byte helper row needs none of it and types the flag gate at 0x0037E810 as the member-pointer union binding Rva0037E810Binding, so the helper set is dropped with its call site re-bound rather than renamed. See targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x004b2330.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/GUI/Rva004B2330.cpp",
+  "old_name": "__declspec",
+  "new_name": "Rva004B2330Caller",
+  "before_sha256": "ff7eefe4e7355d015143254476b8407763cae0c6c84e7cebbc31a3e9d4236124",
+  "after_sha256": "013879779074dbcdff248657c0fbd31dbe94ddf543832e3f81f64ebd04541e22",
+  "evidence": "targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md",
+  "reason": "Token-alignment artifact pairing a keyword with a declaration; the conversion new absent-from-retail caller anchor Rva004B2330Caller (?Rva004B2330Caller@@YAHPAVObject@@@Z absent-from-retail) exists only to force the helper private calling convention as retail caller at 0x004B25D0 does, and deliberately stays address-qualified. See targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x004b2330.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/GUI/Rva004B2330.cpp",
+  "old_name": "construct",
+  "new_name": "rva0037F190",
+  "before_sha256": "ff7eefe4e7355d015143254476b8407763cae0c6c84e7cebbc31a3e9d4236124",
+  "after_sha256": "013879779074dbcdff248657c0fbd31dbe94ddf543832e3f81f64ebd04541e22",
+  "evidence": "targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md",
+  "reason": "WideCopy00888400::construct falls with the bank UnicodeString wide-copy helper set; the conversion binds the iterator first call to rva0037F190, the recorded address-qualified name of the body at 0x0037F190 (ILT 0x0000EDC7). See targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x007921e0.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/Rva007921E0.cpp",
+  "old_name": "drawHiliteBar",
+  "new_name": "Rva007921E0",
+  "before_sha256": "df676226fe8bed0cf123d5ad2e04ea0726334c6f16178b7f407190e6dc001428",
+  "after_sha256": "c925f5d8c45d9147544a91b74eaec79e92dfa0e00358c7de61882bf2c5b2e250",
+  "evidence": "targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md",
+  "reason": "The bank named the 293 bytes after their Zero Hour twin drawHiliteBar (W3DListBox.cpp); the only BFME caller at 0x00792350 is an un-converted opaque body, so the ZH name is a shape hypothesis and not an identity (docs/naming_evidence.md). The row and the TU-local static keep the address-derived floor ?Rva007921E0@@YAXPBVImage@@00HHHH@Z. See targets/game/reverse/identity_evidence/004b2330-007921e0-bank-renames.md."
  }
 ]

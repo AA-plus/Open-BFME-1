@@ -36452,7 +36452,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00110992@@YAXXZ,,0x00110992,45,game/gen_asm/d_001107b0.asm,matched,gen-dump;ghidra=FUN_00510992
 ?d_001109bf@@YAXXZ,,0x001109BF,10,game/gen_asm/d_0010e580.asm,matched,gen-dump;ghidra=Catch@005109bf
 ?d_00112a40@@YAXXZ,,0x00112A40,5,game/GameEngine/Source/Common/Rva112A40VirtualDispatchThunk.cpp,matched,object-symbol=?dispatch@Rva112A40VirtualDispatchThunk@@QAEXXZ;Open-BFME5 clean C++ RVA 112A40 virtual slot 9 dispatch
-?d_00112f30@@YAXXZ,,0x00112F30,151,game/gen_asm/d_0010e580.asm,matched,gen-dump;ghidra=FUN_00512f30
 ?d_00113280@@YAXXZ,,0x00113280,1396,game/gen_asm/d_000f93a0.asm,matched,gen-dump;bounds=high
 ?d_00113fa0@@YAXXZ,,0x00113FA0,6,game/GameEngine/Source/Common/Rva113FA0ConstantOne.cpp,matched,object-symbol=?rva_113fa0_constant_one@@YAIXZ;Open-BFME5 clean C++ RVA 113FA0 constant one return
 ?d_001141d0@@YAXXZ,,0x001141D0,6,game/GameEngine/Source/Common/Rva1141D0ConstantFour.cpp,matched,object-symbol=?rva_1141d0_constant_four@@YAIXZ;Open-BFME5 clean C++ RVA 1141D0 constant four return
@@ -37810,7 +37809,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_004b0850@@YAXXZ,,0x004B0850,355,game/gen_asm/d_004a32e0.asm,matched,gen-dump;ghidra=FUN_008b0850
 ?d_004b0d40@@YAXXZ,,0x004B0D40,979,game/gen_asm/d_004a32e0.asm,matched,gen-dump;ghidra=FUN_008b0d40
 ?d_004b21c0@@YAXXZ,,0x004B21C0,23,game/gen_asm/d_004844f0.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
-?d_004b2330@@YAXXZ,,0x004B2330,252,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_008b2330
 ?d_004b2470@@YAXXZ,,0x004B2470,95,game/gen_asm/d_004b2470.asm,matched,gen-dump;ghidra=FUN_008b2470
 ?d_004b2560@@YAXXZ,,0x004B2560,88,game/gen_asm/d_004b2470.asm,matched,gen-dump;ghidra=FUN_008b2560
 ?d_004b25d0@@YAXXZ,,0x004B25D0,1365,game/gen_asm/d_004b2470.asm,matched,gen-dump;ghidra=FUN_008b25d0
@@ -38292,7 +38290,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0078d410@@YAXXZ,,0x0078D410,557,game/gen_asm/d_0078b310.asm,matched,gen-dump;ghidra=FUN_00b8d410
 ?d_00790ea0@@YAXXZ,,0x00790EA0,699,game/gen_asm/d_00776ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00b90ea0
 ?d_00791210@@YAXXZ,,0x00791210,998,game/gen_asm/d_0078b310.asm,matched,gen-dump;ghidra=FUN_00b91210
-?d_007921e0@@YAXXZ,,0x007921E0,293,game/gen_asm/d_0078b310.asm,matched,gen-dump;ghidra=FUN_00b921e0
 ?d_00792350@@YAXXZ,,0x00792350,1388,game/gen_asm/d_00776ac0.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00b92350
 ?d_00793620@@YAXXZ,,0x00793620,868,game/gen_asm/d_00776ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00b93620
 ?d_00794040@@YAXXZ,,0x00794040,170,game/gen_asm/d_00793520.asm,matched,gen-dump;ghidra=FUN_00b94040
@@ -172548,3 +172545,6 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?method@Rva008C5360@@YAXPAVRva8CD130String@@@Z,,0x008C5360,271,game/Libraries/Source/EA/Apt/Rva008C6990StringTransform.cpp,matched,address-derived name; URL-escape string transform called by 008C6990; sprintf and isalnum per branch Append;model=claude-sonnet-5-5;host=vm
 ?lookAt@W3DView@@UAEXPBUCoord3D@@@Z,,0x00743180,743,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DView.cpp,matched,W3DView vtable slot 21 (VA 0x011217A0); store as *viewPos=pos plus compiler write barrier between reset-field groups; ETH apply pin 0x00030846;model=claude-sonnet-5-5;host=vm
 ?rva002B2490@WallUpgradeUpdate@@QAEXXZ,,0x002B2490,210,game/GameEngine/Source/GameLogic/Object/Update/WallUpgradeUpdate_rva002B2490.cpp,matched,bit index 59 not 91 in KindOf accept mask; address-derived name;model=claude-sonnet-5-5;host=vm
+?rva00112F30@@YAXABVAsciiString@@AAV1@@Z,,0x00112F30,151,game/GameEngine/Source/Common/System/SaveGame/Rva00112F30WakName.cpp,matched,converted from the 0x00112F30 gen-dump row at this address; body byte-identical to retail outside its relocation slots; identity address-derived;model=openai-codex;host=chalco.vps
+?Rva004B2330@@YAHPAVObject@@@Z,,0x004B2330,252,game/GameEngine/Source/GameClient/GUI/Rva004B2330.cpp,matched,converted from the 0x004B2330 gen-dump row at this address; body byte-identical to retail outside its relocation slots; identity address-derived;model=openai-codex;host=chalco.vps
+?Rva007921E0@@YAXPBVImage@@00HHHH@Z,,0x007921E0,293,game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/Rva007921E0.cpp,matched,converted from the 0x007921E0 gen-dump row at this address; body byte-identical to retail outside its relocation slots; identity address-derived;model=openai-codex;host=chalco.vps
