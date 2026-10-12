@@ -37128,7 +37128,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_002a9000@@YAXXZ,,0x002A9000,833,game/gen_asm/d_002a7010.asm,matched,gen-dump;ghidra=FUN_006a9000
 ?d_002ad100@@YAXXZ,,0x002AD100,57,game/gen_asm/d_002a7010.asm,matched,gen-dump;ghidra=FUN_006ad100
 ?d_002ad670@@YAXXZ,,0x002AD670,1885,game/gen_asm/d_002a7010.asm,matched,gen-dump;ghidra=FUN_006ad670
-?d_002b2490@@YAXXZ,,0x002B2490,210,game/gen_asm/d_002afb20.asm,matched,gen-dump;ghidra=FUN_006b2490
 ?d_002b26c0@@YAXXZ,,0x002B26C0,756,game/gen_asm/d_002afb20.asm,matched,gen-dump;ghidra=FUN_006b26c0
 ?d_002b32a0@@YAXXZ,,0x002B32A0,3352,game/gen_asm/d_002afb20.asm,matched,gen-dump;ghidra=FUN_006b32a0
 ?d_002b7bb0@@YAXXZ,,0x002B7BB0,158,game/gen_asm/d_00299d30.asm,matched,gen-dump;bounds=high
@@ -172548,3 +172547,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?dup_00C05F38@@YAXXZ,,0x00C05F38,11,game/GameEngine/Source/GameLogic/AI/AttackStateMachineCtor.cpp,matched,authored C++ cleanup;gen-funclet;parent=??0AttackStateMachine@@QAE@PAVObject@@PAVAIAttackState@@VAsciiString@@_N33@Z;object-symbol=$L1019;retail parent 0x00180810 pushes handler stub 0x00C05F43 (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
 ?method@Rva008C5360@@YAXPAVRva8CD130String@@@Z,,0x008C5360,271,game/Libraries/Source/EA/Apt/Rva008C6990StringTransform.cpp,matched,address-derived name; URL-escape string transform called by 008C6990; sprintf and isalnum per branch Append;model=claude-sonnet-5-5;host=vm
 ?lookAt@W3DView@@UAEXPBUCoord3D@@@Z,,0x00743180,743,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DView.cpp,matched,W3DView vtable slot 21 (VA 0x011217A0); store as *viewPos=pos plus compiler write barrier between reset-field groups; ETH apply pin 0x00030846;model=claude-sonnet-5-5;host=vm
+?rva002B2490@WallUpgradeUpdate@@QAEXXZ,,0x002B2490,210,game/GameEngine/Source/GameLogic/Object/Update/WallUpgradeUpdate_rva002B2490.cpp,matched,bit index 59 not 91 in KindOf accept mask; address-derived name;model=claude-sonnet-5-5;host=vm
