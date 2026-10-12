@@ -374,3 +374,72 @@ int Rva000B9290::get(void)
 {
 	return m_value;
 }
+
+// ?Rva00338400ReturnFirstArg@@YAHH@Z
+int Rva00338400ReturnFirstArg(int value)
+{
+	return value;
+}
+
+// ?Rva0036C540ReturnFirstArg@@YAHH@Z
+int Rva0036C540ReturnFirstArg(int value)
+{
+	return value;
+}
+
+// ?Rva0043C690ReturnFirstArg@@YAHH@Z
+int Rva0043C690ReturnFirstArg(int value)
+{
+	return value;
+}
+
+// ?Rva0043C730ReturnFirstArg@@YAHH@Z
+int Rva0043C730ReturnFirstArg(int value)
+{
+	return value;
+}
+
+// ?Rva004AFBF0ReturnFirstArg@@YAHH@Z
+int Rva004AFBF0ReturnFirstArg(int value)
+{
+	return value;
+}
+
+// ?Rva0052D200ReturnFirstArg@@YAHH@Z
+int Rva0052D200ReturnFirstArg(int value)
+{
+	return value;
+}
+
+// ?Rva00630A00ReturnFirstArg@@YAHH@Z
+int Rva00630A00ReturnFirstArg(int value)
+{
+	return value;
+}
+
+// ?Rva006432F0ReturnFirstArg@@YAHH@Z
+int Rva006432F0ReturnFirstArg(int value)
+{
+	return value;
+}
+
+// ?Rva00663E90ReturnFirstArg@@YAHH@Z
+int Rva00663E90ReturnFirstArg(int value)
+{
+	return value;
+}
+
+class Rva00069870
+{
+public:
+	int get(void);
+
+	int m_pad0;
+	int m_value;
+};
+
+// ?get@Rva00069870@@QAEHXZ
+int Rva00069870::get(void)
+{
+	return m_value;
+}
