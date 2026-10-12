@@ -1,4 +1,4 @@
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS
 // stlport
 // Retail 0x00768A00: signed 32-bit identity-tree insert_unique, 145 bytes.
 // Its _M_insert callee at 0x00765440 constructs a 20-byte node (16-byte
