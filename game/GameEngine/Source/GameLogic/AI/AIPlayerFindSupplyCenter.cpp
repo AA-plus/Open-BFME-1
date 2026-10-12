@@ -14,8 +14,8 @@
 // filters are declared OnMap, Player, KindOf and live in their own block so
 // their destructors run before the supplyCenter test, PartitionFilter's
 // base ctor clears m_next, the center is copied member by member, and
-// Coord3D::zero/set store in field order. PartitionFilter::link is still the
-// dump ?d_009f2ae0@@YAXXZ and is called through a typed cast of it.
+// Coord3D::zero/set store in field order. PartitionFilter::link is the matched
+// out-of-line body 0x009F2AE0 in PartitionFilterLink.cpp.
 
 extern "C" void *__cdecl memset(void *, int, unsigned int);
 #pragma intrinsic(memset)
@@ -196,21 +196,13 @@ template <int NUMBITS>
 class BitFlags;
 extern const BitFlags<192> KINDOFMASK_NONE;
 
-extern void d_009f2ae0();
-
 class PartitionFilter
 {
 public:
 	PartitionFilter() : m_next(0) {}
 	virtual ~PartitionFilter() {}
-	PartitionFilter *link(PartitionFilter *next)
-	{
-		// Retail's PartitionFilter::link is still the dump ?d_009f2ae0@@YAXXZ.
-		typedef PartitionFilter *(PartitionFilter::*LinkFunc)(PartitionFilter *);
-		union { void (*raw)(); LinkFunc member; } call;
-		call.raw = d_009f2ae0;
-		return (this->*call.member)(next);
-	}
+	// Matched out-of-line body 0x009F2AE0 (PartitionFilterLink.cpp).
+	PartitionFilter *link(PartitionFilter *next);
 	PartitionFilter *m_next;
 };
 
