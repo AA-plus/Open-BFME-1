@@ -199,3 +199,111 @@ void *Rva00933850ReturnArgument(void *value)
 {
     return value;
 }
+
+// RVA 0x004729B0: cdecl body returning its first stack argument; identity unproven.
+void *Rva004729B0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x0075E2E0: cdecl body returning its first stack argument; identity unproven.
+void *Rva0075E2E0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x001B4DF0: cdecl body returning its first stack argument; identity unproven.
+void *Rva001B4DF0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x00585100: cdecl body returning its first stack argument; identity unproven.
+void *Rva00585100ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x006309E0: cdecl body returning its first stack argument; identity unproven.
+void *Rva006309E0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x00663EA0: cdecl body returning its first stack argument; identity unproven.
+void *Rva00663EA0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x004D4120: cdecl body returning its first stack argument; identity unproven.
+void *Rva004D4120ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x0021A550: cdecl body returning its first stack argument; identity unproven.
+void *Rva0021A550ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x0068DAD0: cdecl body returning its first stack argument; identity unproven.
+void *Rva0068DAD0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x003D30F0: cdecl body returning its first stack argument; identity unproven.
+void *Rva003D30F0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x00589F50: cdecl body returning its first stack argument; identity unproven.
+void *Rva00589F50ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x0043C7E0: cdecl body returning its first stack argument; identity unproven.
+void *Rva0043C7E0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x004E2AD0: cdecl body returning its first stack argument; identity unproven.
+void *Rva004E2AD0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x0036C5B0: cdecl body returning its first stack argument; identity unproven.
+void *Rva0036C5B0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x00537F00: cdecl body returning its first stack argument; identity unproven.
+void *Rva00537F00ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x00422780: cdecl body returning its first stack argument; identity unproven.
+void *Rva00422780ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x00663EB0: cdecl body returning its first stack argument; identity unproven.
+void *Rva00663EB0ReturnArgument(void *value)
+{
+    return value;
+}
+
+// RVA 0x0037ABD0: cdecl body returning its first stack argument; identity unproven.
+void *Rva0037ABD0ReturnArgument(void *value)
+{
+    return value;
+}
