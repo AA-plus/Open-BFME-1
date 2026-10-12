@@ -53,6 +53,7 @@
 // takes the count at full width; use the BFME declaration of DX8IndexBufferClass
 // rather than the Zero Hour one the include path would otherwise find.
 #define BFME_DYNAMIC_IB_UINT_CTOR_ABI
+#include "../../../../../Libraries/Source/WWVegas/WW3D2/texture.h"
 #include "../../../../../Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.h"
 
 #include "W3DDevice/GameClient/heightmap.h"
@@ -66,7 +67,6 @@
 #include "common/UnicodeString.h"
 #include "Common/File.h"
 #include "Common/FileSystem.h"
-#include "texture.h"
 #include "colmath.h"
 #include "coltest.h"
 #include "rinfo.h"
@@ -92,12 +92,6 @@ WaterTracksRenderSystem *TheWaterTracksRenderSystem=NULL;	///< singleton for tra
 
 static Bool pauseWaves=FALSE;
 
-class BFMEWaterTrackTexture
-{
-public:
-	void Release_Ref();
-};
-
 class Rva009EBCE0AssetReference
 {
 public:
@@ -105,7 +99,7 @@ public:
 	~Rva009EBCE0AssetReference(void)
 	{
 		if (m_object)
-			((BFMEWaterTrackTexture *)m_object)->Release_Ref();
+			((TextureBaseClass *)m_object)->Release_Ref();
 	}
 
 	void *m_object;
@@ -182,7 +176,7 @@ public:
 	~BFMEWaterTrackTextureHandle()
 	{
 		if (m_texture)
-			((BFMEWaterTrackTexture *)m_texture)->Release_Ref();
+			((TextureBaseClass *)m_texture)->Release_Ref();
 	}
 
 	void assign(const Rva009EBCE0AssetReference &source)
@@ -237,7 +231,7 @@ static inline void BFMEAssignWaterTrackTexture(
 	if (texture.m_texture)
 		++*(unsigned short *)((char *)texture.m_texture + 4);
 	if (destination)
-		((BFMEWaterTrackTexture *)destination)->Release_Ref();
+		((TextureBaseClass *)destination)->Release_Ref();
 	destination = texture.m_texture;
 }
 
