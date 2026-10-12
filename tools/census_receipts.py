@@ -74,6 +74,23 @@ def needs_fresh_receipt(output):
             or _has_checkout_root_search_root(output))
 
 
+def _command_needs_fresh_receipt(source, command, env):
+    """needs_fresh_receipt, asked of the command: no sidecar exists before a first compile."""
+    roots = build._include_search_roots(source, command, env)
+    if roots is None:
+        return True
+    checkout = build.ROOT.resolve()
+    for root in roots:
+        try:
+            resolved = root.resolve()
+            if resolved == checkout:
+                return True
+            resolved.relative_to(checkout)
+        except (OSError, RuntimeError, ValueError):
+            return True
+    return False
+
+
 def _normal_cache_current(source, output):
     try:
         return build.compile_is_current(source, output)
@@ -199,14 +216,19 @@ class Receipts:
         temporary.replace(self.path)
 
     def before(self, source, output, command, env):
-        # Header-free inputs can always prove their build with the normal
-        # cache. For all other stale TUs, capture before the actual compiler.
+        # Header-free inputs prove their build with the normal cache, unless
+        # their flags name a search root after() will not take that cache for
+        # (/I. or a directory outside the checkout): Rva004B24F0.cpp, no
+        # #include and `/I.`, stopped the 2026-10-12 census. For those and all
+        # other stale TUs, capture before the actual compiler.
         text = source.read_bytes()
         implicit = env.get("CL") or env.get("_CL_")
         forced = any(arg.lower().startswith(("-fi", "/fi", "-yu", "/yu", "-yc", "/yc", "@"))
                      for arg in command)
-        if source.suffix.lower() == ".asm" or (not re.search(rb'^\s*#', text, re.MULTILINE)
-                                               and not implicit and not forced):
+        if source.suffix.lower() == ".asm":
+            return None
+        if (not re.search(rb'^\s*#', text, re.MULTILINE) and not implicit and not forced
+                and not _command_needs_fresh_receipt(source, command, env)):
             return None
         try:
             return snapshot(source, command, env)

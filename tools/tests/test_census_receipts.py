@@ -1,4 +1,5 @@
 """One successful compile can prove an uncacheable census TU, never cache it."""
+import json
 import sys
 import os
 import subprocess
@@ -273,6 +274,49 @@ def test_actual_compile_receipt_does_not_enable_reusable_cache(tmp_path, monkeyp
     assert proofs.Receipts.load(receipt.path, 'different census') is None
     obj.write_bytes(b'last week object')
     assert not restored.current(source, obj)
+
+
+def header_free(tmp_path, monkeypatch, *flags):
+    source, header, obj, command, env, _ = fixture(tmp_path, monkeypatch)
+    source.write_text('int f(){return 17;}\n')
+    command[1:1] = flags
+    def run(cmd, **kwargs):
+        if '-E' in cmd:
+            return SimpleNamespace(returncode=0, stderr=b'',
+                                   stdout=f'#line 1 "{source}"\n'.encode() + source.read_bytes())
+        obj.write_bytes(b'compiled object')
+        return SimpleNamespace(returncode=0, stdout='')
+    monkeypatch.setattr(build.subprocess, 'run', run)
+    return source, obj, command, env
+
+
+def test_header_free_unit_searching_the_checkout_root_is_witnessed(tmp_path, monkeypatch):
+    """Rva004B24F0.cpp, no #include and `/I.`, stopped the 2026-10-12 census: before() took
+    no snapshot for a header-free unit and after() does not take the normal cache for /I. ."""
+    source, obj, command, env = header_free(tmp_path, monkeypatch, '-I' + str(tmp_path))
+    def sidecar(*args):
+        build._deps_sidecar(obj).write_text(json.dumps({'search_roots': ['.']}))
+    monkeypatch.setattr(build, '_write_deps_sidecar', sidecar)
+    receipt = proofs.Receipts(tmp_path / 'inputs.json')
+    assert build.try_compile_source(source, obj, input_proof=receipt)[0]
+    assert proofs.needs_fresh_receipt(obj)
+    assert list(receipt.entries) == [str(obj.resolve())]
+    assert receipt.current(source, obj)
+    source.write_text('int f(){return 18;}\n')
+    assert not receipt.current(source, obj)
+
+
+def test_header_free_unit_searching_outside_the_checkout_is_witnessed(tmp_path, monkeypatch):
+    source, obj, command, env = header_free(tmp_path, monkeypatch, '-I' + str(tmp_path.parent))
+    receipt = proofs.Receipts(tmp_path / 'inputs.json')
+    assert receipt.before(source, obj, command, env) is not None
+
+
+def test_header_free_unit_with_roots_inside_the_checkout_still_uses_the_normal_cache(tmp_path, monkeypatch):
+    source, obj, command, env = header_free(tmp_path, monkeypatch, '-I' + str(tmp_path / 'build'))
+    receipt = proofs.Receipts(tmp_path / 'inputs.json')
+    assert receipt.before(source, obj, command, env) is None
+    assert receipt.before(source, obj, command[:1] + command[2:], env) is None
 
 
 def test_input_changed_inside_actual_compile_refuses_receipt(tmp_path, monkeypatch):
