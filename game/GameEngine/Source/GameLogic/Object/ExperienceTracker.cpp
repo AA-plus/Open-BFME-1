@@ -81,12 +81,8 @@ Bool ExperienceTracker::isTrainable() const
 }
 
 //-------------------------------------------------------------------------------------------------
-// byte-exact reconstruction: game/GameEngine/Source/GameLogic/Object/ExperienceTrackerBFMEXfer.cpp
-// ?isAcceptingExperiencePoints@ExperienceTracker@@ present-unmatched
-Bool ExperienceTracker::isAcceptingExperiencePoints() const
-{
-	return isTrainable() || (m_experienceSink != INVALID_ID);
-}
+// ExperienceTracker::isAcceptingExperiencePoints is defined byte-exact in
+// game/GameEngine/Source/GameLogic/Object/ExperienceTrackerBFMEXfer.cpp (0x001B2800).
 
 //-------------------------------------------------------------------------------------------------
 // ?setExperienceSink@ExperienceTracker@@ present-unmatched
