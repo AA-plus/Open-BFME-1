@@ -61345,3 +61345,4 @@ Rva008C5360::method	0x008C5360	271	blocked	Stash 0.9668 re-measured unchanged: 2
 ?dup_00C5818D@@YAXXZ	0x00C5818D	15	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
 ?dup_00C5819C@@YAXXZ	0x00C5819C	15	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
 ?dup_00C581BA@@YAXXZ	0x00C581BA	15	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?showShellMap@Shell@@QAEX_N@Z	0x0057FB40	289	attempted	t=10min model=gpt-6.1-sol link task3: corrected WOLWelcomeMenuInitTwin to retail Bool callee proved by matched 0051D040 AL test; caller and canonical body scoped byte gates pass; before/after link_check refuses twin absent from available census5de5448900, linked gain unverified
