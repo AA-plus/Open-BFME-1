@@ -2677,30 +2677,8 @@ void ControlBar::postProcessCommands( void )
 	}
 }
 
-//-------------------------------------------------------------------------------------------------
-/** set the command for the button identified by the window name
-	* NOTE that parent may be NULL, it only helps to speed up the search for a particular
-	* window ID */
-//-------------------------------------------------------------------------------------------------
-// ?setControlCommand@ControlBar@@ present-unmatched
-void ControlBar::setControlCommand( const AsciiString& buttonWindowName, GameWindow *parent,
-																		const CommandButton *commandButton )
-{
-	UnsignedInt winID = TheNameKeyGenerator->nameToKey( buttonWindowName );
-	GameWindow *win = TheWindowManager->winGetWindowFromId( parent, winID );
-
-	if( win == NULL )
-	{
-
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Unable to find window '%s'\n", buttonWindowName.str()) );
-		return;
-
-	}  // end if
-
-	// call the workhorse
-	setControlCommand( win, commandButton );
-
-}  // end setControlCommand
+// ControlBar::setControlCommand(const AsciiString&, GameWindow*, const CommandButton*):
+// retail body (0x0049F0E0) in ControlBar_setControlCommand_Thunk.cpp.
 
 //-------------------------------------------------------------------------------------------------
 /** show/hide the portrait window image */
