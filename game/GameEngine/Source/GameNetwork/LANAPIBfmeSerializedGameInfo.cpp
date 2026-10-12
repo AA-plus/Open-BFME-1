@@ -1,19 +1,15 @@
-// ?d_00689170@@YAXXZ
-// partial score=0.99 date=2026-09-11
+// ?_bfme_onSerializedGameInfo_00689170@LANAPI@@UAE_NPAUTransportAddress@@HPADI@Z
 // cl: /DNDEBUG /MD /EHsc /Iinputs/reference/shims/stringinline
-// The two BFME-only LANAPI receive handlers that answer a peer by slot.
-//
-// _bfme_handleHasMap_0068ACF0 (retail 0x0068ACF0) and
-// _bfme_handleSerializedGameInfo_0068ADE0 (retail 0x0068ADE0) sit next to each
-// other in the image and do the same three things: refuse the message unless we
-// are past the lobby and in a game that has not started, walk the current
-// game's eight slots for the one whose transport address pair equals the
-// sender's, and forward the payload through a BFME-added vtable slot with that
-// slot number or byte.  Neither exists in Zero Hour, which is why both names
-// still carry the _bfme_ marker and their address.
-//
-// Zero Hour's own handlers take a bare sender IP; these take a pointer to the
-// address PAIR, which is what makes the slot walk a two-field compare.
+// LANAPI vtable slot 39 (vtable 0x0111AF50 + 0x9C).  The serialized
+// game-info receive handler _bfme_handleSerializedGameInfo_0068ADE0
+// (retail 0x0068ADE0, matched in LANAPIBfmeSlotHandlers.cpp) walks the current
+// game's eight slots and forwards a matching sender's serialized payload
+// through this slot.  The body refuses the message unless the sender matches
+// the addressed slot, the game has not started, the slot is the host's, and
+// the game-info guard at +0x00 accepts; a resident serialized block is then
+// re-parsed into the game, the slot's last-heard stamp at +0x39c is set, and
+// the retained global (or its no-global/fallback arm) is signalled through the
+// BFME-only thunks below.
 
 template <typename T>
 class StringBase
@@ -30,6 +26,10 @@ private:
 	void *m_data;
 };
 
+// class-gate: allow AsciiString this unit is a byte-proved reconstruction whose private
+// StringBase<char>/AsciiString pair reproduces retail's inlined string ABI at 0x00689170
+// (build.sh exact 480/480); adopting the canonical ascii_string.h is a separate
+// reconciliation, not a drop-in for this body.
 class AsciiString : private StringBase<char>
 {
 	public:
@@ -61,7 +61,8 @@ typedef unsigned short UnsignedShort;
 typedef unsigned char UnsignedByte;
 typedef bool Bool;
 
-extern Int g_bfmeCounter;
+extern Int g_Va012F7734;
+extern const char g_Rva0107301CEmptyString[];
 
 enum
 {
@@ -112,6 +113,11 @@ public:
 	Bool m_inProgress;					// +0x0d
 	UnsignedByte m_bfmeHeadB[0x88 - 0x0e];
 	BfmeLANSlot m_slot[LAN_MAX_SLOTS];			// +0x88
+
+	void setLastHeard(UnsignedInt time)
+	{
+		*(UnsignedInt *)((UnsignedByte *)this + 0x39c) = time;
+	}
 };
 
 class GameInfo;
@@ -121,22 +127,30 @@ class BfmeSerializedInfoGuard
 public:
 	char check(void);
 };
-#pragma comment(linker, "/alternatename:?check@BfmeSerializedInfoGuard@@QAEDXZ=?j_000329b1@@YAXXZ")
+
+union BfmeGuardCheckCall
+{
+	void *asVoid;
+	char (BfmeSerializedInfoGuard::*asMember)(void);
+};
 
 class Gen_000970a0
 {
 public:
 	int bfmeEquals(const Gen_000970a0 *other) const;
 };
-#pragma comment(linker, "/alternatename:?bfmeEquals@Gen_000970a0@@QBEHPBV1@@Z=?j_0002a72a@@YAXXZ")
+
+union BfmeEqualsCall
+{
+	void *asVoid;
+	int (Gen_000970a0::*asMember)(const Gen_000970a0 *) const;
+};
 
 extern AsciiString GameInfoToAsciiString(const GameInfo *game, Bool includeSlots);
-#pragma comment(linker, "/alternatename:?GameInfoToAsciiString@@YA?AVAsciiString@@PBVGameInfo@@_N@Z=?j_0000e70a@@YAXXZ")
 
 
 extern Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options,
 	char *buffer, UnsignedInt size);
-#pragma comment(linker, "/alternatename:?ParseGameOptionsString@@YA_NPAVLANGameInfo@@VAsciiString@@PADI@Z=?j_0003be85@@YAXXZ")
 
 struct BfmeObj935C
 {
@@ -145,15 +159,19 @@ struct BfmeObj935C
 	void bfmeSerializedInfoGlobal(void);
 };
 
+union BfmeGlobalCall
+{
+	void *asVoid;
+	void (BfmeObj935C::*asMember)(void);
+};
+
 extern BfmeObj935C *g_bfme935GlobC;
 
-extern void bfmeSerializedInfoNoGlobal(void);
-#pragma comment(linker, "/alternatename:?bfmeSerializedInfoNoGlobal@@YAXXZ=?j_00039202@@YAXXZ")
-
-extern void bfmeSerializedInfoFallback(void);
-#pragma comment(linker, "/alternatename:?bfmeSerializedInfoFallback@@YAXXZ=?j_0001c9d6@@YAXXZ")
-
-#pragma comment(linker, "/alternatename:?bfmeSerializedInfoGlobal@BfmeObj935C@@QAEXXZ=?j_000467bd@@YAXXZ")
+extern void j_000329b1(void);
+extern void j_0002a72a(void);
+extern void j_00039202(void);
+extern void j_0001c9d6(void);
+extern void j_000467bd(void);
 
 // upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameNetwork/LANAPI.h
 class LANAPI
@@ -247,35 +265,39 @@ Bool LANAPI::_bfme_onSerializedGameInfo_00689170(
 		m_currentGame->m_inProgress || playerSlot != 0)
 		return false;
 
-	if (reinterpret_cast<BfmeSerializedInfoGuard *>(m_currentGame)->check())
+	BfmeGuardCheckCall guardCheck;
+	guardCheck.asVoid = reinterpret_cast<void *>(j_000329b1);
+	if ((reinterpret_cast<BfmeSerializedInfoGuard *>(m_currentGame)
+		->*guardCheck.asMember)())
 		return false;
 
-	*(UnsignedInt *)((UnsignedByte *)m_currentGame + 0x39c) =
-		timeGetTime();
-	const GameInfo *info = (const GameInfo *)(UnsignedInt)m_currentGame;
+	m_currentGame->setLastHeard(timeGetTime());
 	char *bufferCopy = buffer;
 	UnsignedInt sizeCopy = size;
 	const AsciiString oldOptions(GameInfoToAsciiString(
-		info, true));
+		(const GameInfo *)(UnsignedInt)m_currentGame, true));
 	if (ParseGameOptionsString(m_currentGame,
-		AsciiString((const char *)0x0107301c), bufferCopy, sizeCopy))
+		AsciiString(g_Rva0107301CEmptyString), bufferCopy, sizeCopy))
 	{
 		for (Int offset = 0x68; offset < 0x340; offset += 0x68)
 		{
 			const char *slot = (const char *)
 				((UnsignedInt)m_currentGame + (UnsignedInt)offset + 0x88);
-			if ((UnsignedByte)((Gen_000970a0 *)slot)->bfmeEquals(
+			BfmeEqualsCall equalsCall;
+			equalsCall.asVoid = reinterpret_cast<void *>(j_0002a72a);
+			if ((UnsignedByte)(((Gen_000970a0 *)slot)
+				->*equalsCall.asMember)(
 				(const Gen_000970a0 *)_bfme_localAddress()))
 				goto accepted;
 		}
 	}
 
-	++g_bfmeCounter;
+	++g_Va012F7734;
 	ParseGameOptionsString(m_currentGame, oldOptions, 0, 0);
-	if (g_bfmeCounter > 0x10)
+	if (g_Va012F7734 > 0x10)
 	{
 		_bfme_afterAddress(m_name);
-		g_bfmeCounter = 0;
+		g_Va012F7734 = 0;
 	}
 	return false;
 
@@ -283,59 +305,17 @@ accepted:
 	if (g_bfme935GlobC)
 		g_bfme935GlobC->m_bfmeFlag = 1;
 	else
-		bfmeSerializedInfoNoGlobal();
+		j_00039202();
 
 	BfmeObj935C *global = g_bfme935GlobC;
 	if (!global)
-		bfmeSerializedInfoFallback();
+		j_0001c9d6();
 	else
-		global->bfmeSerializedInfoGlobal();
-	g_bfmeCounter = 0;
+	{
+		BfmeGlobalCall globalCall;
+		globalCall.asVoid = reinterpret_cast<void *>(j_000467bd);
+		(global->*globalCall.asMember)();
+	}
+	g_Va012F7734 = 0;
 	return true;
-}
-
-// ?_bfme_handleHasMap_0068ACF0@LANAPI@@IAEXPAULANMessage@@PBUTransportAddress@@@Z
-void LANAPI::_bfme_handleHasMap_0068ACF0(
-	LANMessage *message, const TransportAddress *sender)
-{
-	if (!m_currentGame)
-		return;
-	if (m_currentGame->m_inProgress)
-		return;
-	if (AmIHost())
-		return;
-	if (m_inLobby)
-		return;
-
-	Int player;
-	for (player = 0; player < 8; ++player)
-	{
-		TransportAddress *slot = &m_currentGame->m_slot[player].m_address;
-		if (slot->m_ip == sender->m_ip && slot->m_port == sender->m_port)
-		{
-			_bfme_forwardMapStatus(message->m_status);
-			break;
-		}
-	}
-}
-
-// ?_bfme_handleSerializedGameInfo_0068ADE0@LANAPI@@IAEXPAULANMessage@@PBUTransportAddress@@@Z
-void LANAPI::_bfme_handleSerializedGameInfo_0068ADE0(
-	LANMessage *message, const TransportAddress *sender)
-{
-	if (m_inLobby || !m_currentGame || m_currentGame->m_inProgress)
-		return;
-
-	Int playerSlot;
-	for (playerSlot = 0; playerSlot < LAN_MAX_SLOTS; ++playerSlot)
-	{
-		TransportAddress *slotAddress = &m_currentGame->m_slot[playerSlot].m_address;
-		if (slotAddress->m_ip == sender->m_ip &&
-			slotAddress->m_port == sender->m_port)
-		{
-			_bfme_onSerializedGameInfo_00689170((TransportAddress *)sender, playerSlot,
-				message->m_serializedGameInfo, LAN_SERIALIZED_GAME_INFO_LENGTH);
-			break;
-		}
-	}
 }

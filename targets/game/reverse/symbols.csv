@@ -81448,6 +81448,7 @@ name,address,notes
 ?d_008522a0@@YAXXZ,0x008522A0,existing address-derived provider; retail BeginScript FieldParse callback; evidence=identity_evidence/00ebb650-fieldparse-storage.md
 ?d_00861ed0@@YAXXZ,0x00861ED0,legacy address-only alias of _chatConnectDoit; Rva008622C0Forward and Rva00862320Forward cast this symbol to their explicit 21-argument cdecl type; preserve callers after dump conversion
 ?d_008790b0@@YAJJ@Z,0x008790B0,nbench randnum remap; same body as ?d_008790b0@@YAHH@Z (int32 is long)
+?d_0087f2f0@@YAXXZ,0x0087F2F0,Address-only compatibility for withdrawn dump; native ?bfmeIntersects@GeometryInfo@@QBE_NABUCoord3D@@MABV1@0M@Z body (game/masm_dumps/Rva0087F2F0GeometryIntersects.asm); game/gen_asm d_00096570 d_000fb610 d_0020eb40 d_001e7c30 still call this name
 ?d_00880af0@@YAXXZ,0x00880AF0,legacy address-only compatibility pin for retired generated name; referenced by game/gen_asm/d_0087af30.asm
 ?d_00881770@@YAXHHHUSomeStruct@@@Z,0x00881770,pin
 ?d_008859d0@Rva00886A20Class@@QAEXPBDPAD@Z,0x008859D0,pin

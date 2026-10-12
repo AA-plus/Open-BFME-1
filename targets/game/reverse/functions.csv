@@ -37043,7 +37043,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_002382d0@@YAXXZ,,0x002382D0,543,game/gen_asm/d_0022f960.asm,matched,gen-dump;ghidra=FUN_006382d0
 ?d_00238d10@@YAXXZ,,0x00238D10,1726,game/gen_asm/d_002310f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00638d10
 ?d_0023a550@@YAXXZ,,0x0023A550,383,game/gen_asm/d_0022f960.asm,matched,gen-dump;ghidra=FUN_0063a550
-?d_0023b7a0@@YAXXZ,,0x0023B7A0,465,game/gen_asm/d_0022f960.asm,matched,gen-dump;ghidra=FUN_0063b7a0
 ?d_0023b9f0@@YAXXZ,,0x0023B9F0,321,game/gen_asm/d_002310f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=jmp+int3 callers=1;ghidra=FUN_0063b9f0
 ?d_0023bb90@@YAXXZ,,0x0023BB90,567,game/gen_asm/d_0022f960.asm,matched,gen-dump;ghidra=FUN_0063bb90
 ?d_0023caa0@@YAXXZ,,0x0023CAA0,570,game/gen_asm/d_0023c310.asm,matched,gen-dump;ghidra=FUN_0063caa0
@@ -38096,7 +38095,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0065e7c0@@YAXXZ,,0x0065E7C0,1,game/GameEngine/Source/Common/Rva0065E7C0NoOp.cpp,matched,carved one-byte ret; address-derived identity
 ?d_0067ee40@@YAXXZ,,0x0067EE40,940,game/gen_asm/d_00610140.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00a7ee40
 ?d_00680980@@YAXXZ,,0x00680980,1380,game/gen_asm/d_00679730.asm,matched,gen-dump;ghidra=FUN_00a80980
-?d_00689170@@YAXXZ,,0x00689170,480,game/gen_asm/d_00689170.asm,matched,gen-dump;ghidra=FUN_00a89170
 ?d_00689bd0@@YAXXZ,,0x00689BD0,653,game/gen_asm/d_00689170.asm,matched,gen-dump;ghidra=FUN_00a89bd0
 ?d_00689f00@@YAXXZ,,0x00689F00,995,game/gen_asm/d_00610140.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=jmp+int3 callers=1;ghidra=FUN_00a89f00
 ?d_0068bac0@@YAXXZ,,0x0068BAC0,999,game/gen_asm/d_00689170.asm,matched,gen-dump;ghidra=FUN_00a8bac0
@@ -38363,7 +38361,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00879900@@YAXXZ,,0x00879900,893,game/gen_asm/d_0083c710.asm,matched,gen-dump;switch-carved start=int3-aligned end=switch-table+int3 refs=0
 ?d_00879c80@@YAXXZ,,0x00879C80,725,game/gen_asm/d_0084de40.asm,matched,gen-dump;switch-carved start=int3-aligned end=switch-table+int3 refs=0
 ?d_00879f60@@YAXXZ,,0x00879F60,736,game/gen_asm/d_00873370.asm,matched,gen-dump;ghidra=FUN_00c79f60
-?d_0087f2f0@@YAXXZ,,0x0087F2F0,480,game/gen_asm/d_0087af30.asm,matched,gen-dump;ghidra=FUN_00c7f2f0
 ?d_0087f590@@YAXXZ,,0x0087F590,1066,game/gen_asm/d_0087af30.asm,matched,gen-dump;ghidra=FUN_00c7f590
 ?d_00880020@@YAXXZ,,0x00880020,168,game/gen_asm/d_0087af30.asm,matched,gen-dump;ghidra=FUN_00c80020
 ?d_00880780@@YAXXZ,,0x00880780,468,game/gen_asm/d_0087af30.asm,matched,gen-dump;ghidra=FUN_00c80780
@@ -172552,3 +172549,6 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?dup_00C5FD41@@YAXXZ,,0x00C5FD41,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,authored C++ cleanup;gen-funclet;parent=??0ParticleBufferClass@@QAE@PAVParticleEmitterClass@@IAAU?$ParticlePropertyStruct@VVector3@@@@AAU?$ParticlePropertyStruct@M@@22M22VVector3@@MMPAVTextureClass@@VShaderClass@@_NHHPBUW3dEmitterLinePropertiesStruct@@@Z;object-symbol=$L30368;retail parent 0x00989130 pushes handler stub 0x00C5FD4C (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
 ?dup_00C5FD68@@YAXXZ,,0x00C5FD68,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,authored C++ cleanup;gen-funclet;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;object-symbol=$L27720;retail parent 0x00989A20 pushes handler stub 0x00C5FEBC (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
 ?dup_00C5FD73@@YAXXZ,,0x00C5FD73,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,authored C++ cleanup;gen-funclet;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;object-symbol=$L27721;retail parent 0x00989A20 pushes handler stub 0x00C5FEBC (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
+?_bfme_onSerializedGameInfo_00689170@LANAPI@@UAE_NPAUTransportAddress@@HPADI@Z,,0x00689170,480,game/GameEngine/Source/GameNetwork/LANAPIBfmeSerializedGameInfo.cpp,matched,LANAPI vtable slot 39 serialized game-info receive handler; caller 0x0068ADE0 matched in LANAPIBfmeSlotHandlers.cpp; guard and retained-global arm call BFME-only thunks j_000329b1 j_0002a72a j_00039202 j_0001c9d6 j_000467bd directly; slot last-heard stamp via inline setLastHeard; 480 of 480 bytes exact;model=openai-codex;host=chalco.vps
+?rva0023B7A0@Rva0023B7A0HordeContainView@@QAEPAVObject@@PBVMatrix3DTN@@@Z,,0x0023B7A0,465,game/GameEngine/Source/GameLogic/Object/Contain/Rva0023B7A0HordeContainView.cpp,matched,address-derived HordeContain view member; vtable 0x010AED58 slot 87 via ILT 0x00007A36; replacement-object spawn body; 465 of 465 bytes exact;model=openai-codex;host=chalco.vps
+?bfmeIntersects@GeometryInfo@@QBE_NABUCoord3D@@MABV1@0M@Z,,0x0087F2F0,480,game/masm_dumps/Rva0087F2F0GeometryIntersects.asm,matched,MASM dump of the gen-dump body; C++ bank compiles to 480 bytes/12 relocs/shape 0.993 with the whole residue two allocator reloads in the opposite order at +0x1BD and +0x1C1 (mov al [esp+0x13] / mov ecx [esp+0x14]); 30+ source spellings over three sessions plus /Ot /Ob2 /G7 /Os variants leave or reallocate it; dump body byte-identical to retail outside the 12 relocation slots; evidence targets/game/reverse/identity_evidence/0087f2f0-masm-codegen-blocker.md;model=openai-codex;host=chalco.vps
