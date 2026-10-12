@@ -28,7 +28,7 @@
 #include "w3d_util.h"
 #include "vector3.h"
 #include "d3d8.h"
-inline void W3dUtilityClass::Convert_Color(const W3dRGBStruct &rgb,Vector3 *set) { set->X=(float)rgb.R/255.0f; set->Y=(float)rgb.G/255.0f; set->Z=(float)rgb.B/255.0f; }
+static __forceinline void Convert_W3d_Color(const W3dRGBStruct &rgb,Vector3 *set) { set->X=(float)rgb.R/255.0f; set->Y=(float)rgb.G/255.0f; set->Z=(float)rgb.B/255.0f; }
 class ChunkLoadClass {
 public:
     bool Open_Chunk();
@@ -63,16 +63,16 @@ public:
 void VertexMaterialClass::Parse_W3dVertexMaterialStruct(const W3dVertexMaterialStruct & vmat)
 {
 	Vector3 tmp;
-	W3dUtilityClass::Convert_Color(vmat.Ambient,&tmp);
+	Convert_W3d_Color(vmat.Ambient,&tmp);
 	Set_Ambient(tmp);
 	
-	W3dUtilityClass::Convert_Color(vmat.Diffuse,&tmp);
+	Convert_W3d_Color(vmat.Diffuse,&tmp);
 	Set_Diffuse(tmp);
 	
-	W3dUtilityClass::Convert_Color(vmat.Specular,&tmp);
+	Convert_W3d_Color(vmat.Specular,&tmp);
 	Set_Specular(tmp);
 
-	W3dUtilityClass::Convert_Color(vmat.Emissive,&tmp);
+	Convert_W3d_Color(vmat.Emissive,&tmp);
 	Set_Emissive(tmp);
 
 	Set_Shininess(vmat.Shininess);
@@ -166,24 +166,24 @@ void VertexMaterialClass::Init_From_Material3(const W3dMaterial3Struct & mat3)
 {
 	Vector3 converted_rgb,converted_coefficient,modulated_rgb;
 	
-	W3dUtilityClass::Convert_Color(mat3.DiffuseColor,&converted_rgb);
-	W3dUtilityClass::Convert_Color(mat3.DiffuseCoefficients,&converted_coefficient);
+	Convert_W3d_Color(mat3.DiffuseColor,&converted_rgb);
+	Convert_W3d_Color(mat3.DiffuseCoefficients,&converted_coefficient);
 	modulated_rgb.X = converted_rgb.X * converted_coefficient.X;
 	modulated_rgb.Y = converted_rgb.Y * converted_coefficient.Y;
 	modulated_rgb.Z = converted_rgb.Z * converted_coefficient.Z;
 	Set_Diffuse(modulated_rgb);
 
-	W3dUtilityClass::Convert_Color(mat3.SpecularColor,&converted_rgb);
-	W3dUtilityClass::Convert_Color(mat3.SpecularCoefficients,&converted_coefficient);
+	Convert_W3d_Color(mat3.SpecularColor,&converted_rgb);
+	Convert_W3d_Color(mat3.SpecularCoefficients,&converted_coefficient);
 	modulated_rgb.X = converted_rgb.X * converted_coefficient.X;
 	modulated_rgb.Y = converted_rgb.Y * converted_coefficient.Y;
 	modulated_rgb.Z = converted_rgb.Z * converted_coefficient.Z;
 	Set_Specular(modulated_rgb);
 
-	W3dUtilityClass::Convert_Color(mat3.EmissiveCoefficients,&converted_rgb);
+	Convert_W3d_Color(mat3.EmissiveCoefficients,&converted_rgb);
 	Set_Emissive(converted_rgb);
 
-	W3dUtilityClass::Convert_Color(mat3.AmbientCoefficients,&converted_rgb);
+	Convert_W3d_Color(mat3.AmbientCoefficients,&converted_rgb);
 	Set_Ambient(converted_rgb);
 
 	Set_Shininess(mat3.Shininess);
