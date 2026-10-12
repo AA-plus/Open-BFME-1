@@ -91125,3 +91125,4 @@ rva00618600Names,0x012AA020,name table indexed by Rva00618600Poly constructor
 rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?doDamageFX@Rva00066780DamageFX@@QBE_NW4DamageType@@MPBVObject@@1@Z,0x0001F65E,ILT jmp to 0x00066780 (ledger DamageFX::doDamageFX whose decoration ilt_oracle contradicts); Rva0020F240Body::doDamageFX 0x0020F240+0x4E calls it with type amount source and owner as Zero Hour ActiveBody::doDamageFX does
 ?lookup@Rva00065F10Table@@QBEPAXHH@Z,0x000046F1,ILT jmp to 0x00065F10 the matched per-type throttle lookup; Rva0020F240Body::doDamageFX 0x0020F240+0x62 calls it on the current DamageFX with type and source where Zero Hour calls getDamageFXThrottleTime
+?d_0022c2a0@@YAXXZ,0x0022C2A0,address-only compatibility pin for the retired dump name; native body now in game/masm_dumps/Rva0022C2A0SeedAccept.asm (placeholder ?Rva0022C2A0@@YAXXZ); game/GameEngine/Source/Common/S3SeedPairsSweep.cpp still takes this name
