@@ -36,6 +36,7 @@ class ShareBufferClass : public RefCountClass
 {
 public:
 	ShareBufferClass(const ShareBufferClass &that);
+	~ShareBufferClass(void);	// defined with meshmatdesc.cpp (retail 0x0092B920)
 
 protected:
 	Type *RawBuffer;

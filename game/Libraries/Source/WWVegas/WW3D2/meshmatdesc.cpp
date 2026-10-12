@@ -65,6 +65,16 @@
 #include "dx8caps.h"
 #include "meshmdl.h"
 
+// Retail 0x0092B920: BFME's ShareBufferClass<ShaderClass> destructor is 29
+// bytes, an unconditional delete[] of RawBuffer with no null test and no EH
+// frame (unlike sharebuf.h's generic template body).
+void operator delete[](void *block) throw();
+template<>
+inline ShareBufferClass<ShaderClass>::~ShareBufferClass(void)
+{
+	delete[] RawBuffer;
+}
+
 
 /**************************************************************************************************
 **
