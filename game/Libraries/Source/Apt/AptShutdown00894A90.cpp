@@ -30,7 +30,8 @@ static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
 	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
 }
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
-extern char *Rva008A5380Holder;
+struct BfmePickWorld1284;
+extern BfmePickWorld1284 *g_bfmeHolderBU;
 extern Rva00893030Manager *g_rva00893030Manager;
 extern Rva00899560Pool *g_rva8CD130IdleHook;
 extern void (*TheBfmeFree)(void *, unsigned int);
@@ -84,7 +85,7 @@ class Rva008A30A0Delete { public: ~Rva008A30A0Delete() { ((Rva008A30A0Object *)t
 void dup_00894A90(int mode)
 {
 	bfmeGoDWG();
-	((AptAnimationPoolData *)Rva008A5380Holder)->PreDestroy();
+	((AptAnimationPoolData *)(*(char **)&g_bfmeHolderBU))->PreDestroy();
 	((IntCall)d_00893820)(1);
 
 	void *zero = 0;
@@ -115,8 +116,8 @@ void dup_00894A90(int mode)
 	IdleCall idleCall = idleTarget.memberFunction;
 	(((Rva008A30C0Call *)g_rva8CD130IdleHook)->*idleCall)();
 
-	delete (Rva008A2CF0Delete *)Rva008A5380Holder;
-	Rva008A5380Holder = 0;
+	delete (Rva008A2CF0Delete *)(*(char **)&g_bfmeHolderBU);
+	(*(char **)&g_bfmeHolderBU) = 0;
 	delete (Rva008A30A0Delete *)g_registry01337814;
 
 	BfmeStringData3AF0 *data = g_String012D5140.m_data;

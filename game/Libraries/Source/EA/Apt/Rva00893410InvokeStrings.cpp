@@ -87,14 +87,15 @@ struct Rva008AE770Stack {
 extern Rva008AE770Stack Rva008AE770TheStack;
 
 class Rva008A0C20DwordSlot { public: void set(int); };
-extern char *Rva008A5380Holder;
+struct BfmePickWorld1284;
+extern BfmePickWorld1284 *g_bfmeHolderBU;
 
 // Retail 00893670..0089379D; INT3 before entry and after final RET.
 // An optional name resolves an Apt value before setting the holder slot.
 bool Rva00893670(const char *name)
 {
     if (name == 0) {
-        ((Rva008A0C20DwordSlot *)Rva008A5380Holder)->set(0);
+        ((Rva008A0C20DwordSlot *)(*(char **)&g_bfmeHolderBU))->set(0);
         return true;
     }
     BfmeStrVKI value(name);
@@ -102,7 +103,7 @@ bool Rva00893670(const char *name)
         Rva008930C0AptLookup(0), 0, &value, 1, 1, 0);
     if (found == 0) return false;
     if (!found->Rva00893670Eligible()) return false;
-    ((Rva008A0C20DwordSlot *)Rva008A5380Holder)->set((int)found);
+    ((Rva008A0C20DwordSlot *)(*(char **)&g_bfmeHolderBU))->set((int)found);
     return true;
 }
 

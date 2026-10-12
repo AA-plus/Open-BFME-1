@@ -61,7 +61,8 @@ public:
 };
 struct Rva008AE770Stack { int m_count; };
 extern Rva008AE770Stack Rva008AE770TheStack;
-extern void *g_bfmeResult1233;
+class AptValue;
+extern AptValue *g_bfmeFallbackDB;
 void *nativeStringSlot80At008B3AA0(Rva8CD130Value *owner, int count) {
     if (count >= 1 && owner->getKind() == 0x21) {
         Rva8CD130Value *arg = (*(Rva8CD130Value ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.m_count - 1];
@@ -71,7 +72,7 @@ void *nativeStringSlot80At008B3AA0(Rva8CD130Value *owner, int count) {
             owner->field20->call80(text);
         }
     }
-    return g_bfmeResult1233;
+    return (*(void **)&g_bfmeFallbackDB);
 }
 void *nativeStringSlot88At008B3B70(Rva8CD130Value *owner, int count) {
     if (count >= 1 && owner->getKind() == 0x21) {
@@ -82,5 +83,5 @@ void *nativeStringSlot88At008B3B70(Rva8CD130Value *owner, int count) {
             owner->field20->call88(text);
         }
     }
-    return g_bfmeResult1233;
+    return (*(void **)&g_bfmeFallbackDB);
 }

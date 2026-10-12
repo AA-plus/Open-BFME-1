@@ -124,7 +124,8 @@ public:
 };
 struct Rva008AE770Stack { int m_count; };
 extern Rva008AE770Stack Rva008AE770TheStack;
-extern void *g_bfmeResult1233;
+class AptValue;
+extern AptValue *g_bfmeFallbackDB;
 void *joinArray008B94F0(Value008B94F0 *src, int count)
 {
     if (src->isType(0x16)) {
@@ -152,5 +153,5 @@ void *joinArray008B94F0(Value008B94F0 *src, int count)
         obj->m_block=output.m_block;
         return obj;
     }
-    return g_bfmeResult1233;
+    return (*(void **)&g_bfmeFallbackDB);
 }

@@ -138,7 +138,8 @@ class BfmePtrTable64_008A4B20 { public: void add(BfmeRef008A4B20 *); };
 class Rva008A4BD0 { public: unsigned char has(int); };
 class Rva008ACFC0RegisteredObject;
 class Rva008ACFC0PointerRegistry { public: void add(Rva008ACFC0RegisteredObject *); };
-extern char *Rva008A5380Holder;
+struct BfmePickWorld1284;
+extern BfmePickWorld1284 *g_bfmeHolderBU;
 
 class Rva008AF650Object : public Rva8CD130Value {
 public:
@@ -271,10 +272,10 @@ bool rva008AF650Implementation(Rva008AF650Object *object, BfmeStrVKI *key, AptVa
                 int enabled = value->toInteger();
                 text->m_bit3 = enabled;
                 if (enabled == 1) {
-                    Rva008A4BD0 *members = (Rva008A4BD0 *)(Rva008A5380Holder + 0x924);
+                    Rva008A4BD0 *members = (Rva008A4BD0 *)((*(char **)&g_bfmeHolderBU) + 0x924);
                     if (!members->has((int)object)) {
                         ((BfmePtrTable64_008A4B20 *)members)->add((BfmeRef008A4B20 *)object);
-                        ((Rva008ACFC0PointerRegistry *)(Rva008A5380Holder + 0xa28))->add((Rva008ACFC0RegisteredObject *)object);
+                        ((Rva008ACFC0PointerRegistry *)((*(char **)&g_bfmeHolderBU) + 0xa28))->add((Rva008ACFC0RegisteredObject *)object);
                     }
                 }
                 break;
