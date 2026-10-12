@@ -36033,7 +36033,7 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_006ee0c0@@YAXXZ,,0x006EE0C0,641,game/gen_asm/d_006e7d70.asm,matched,gen-dump;bounds=high
 ?d_006ee3f0@@YAXXZ,,0x006EE3F0,240,game/gen_asm/d_006ebf20.asm,matched,gen-dump;ghidra=FUN_00aee3f0
 ?d_006ee800@@YAXXZ,,0x006EE800,2784,game/gen_asm/d_006ebf20.asm,matched,gen-dump;ghidra=FUN_00aee800
-?d_006f1ac0@@YAXXZ,,0x006F1AC0,1416,game/gen_asm/d_006ebf20.asm,matched,gen-dump;ghidra=FUN_00af1ac0
+?draw@RadialImage006F1AC0@@QAEXPAVImage@@MMMMMK@Z,,0x006F1AC0,1416,game/GameEngineDevice/Source/W3DDevice/GameClient/RadialImage006F1AC0Draw.cpp,matched,converted from the 0x006F1AC0 gen-dump row at this address; bounds=high; ghidra=FUN_00af1ac0; body byte-identical to retail outside its 43 relocation slots; address-qualified RadialImage006F1AC0::draw keeps the banked identity
 ?d_006f21b0@@YAXXZ,,0x006F21B0,1285,game/gen_asm/d_006ebf20.asm,matched,gen-dump;ghidra=FUN_00af21b0
 ?d_006f2cc0@@YAXXZ,,0x006F2CC0,3881,game/gen_asm/d_006f2cc0.asm,matched,gen-dump;ghidra=FUN_00af2cc0
 ?d_006f3fc0@@YAXXZ,,0x006F3FC0,1184,game/gen_asm/d_006e2ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00af3fc0
