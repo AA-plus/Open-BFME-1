@@ -2,6 +2,7 @@
 // Open-BFME5: retail aligned ShareBufferClass<Vector3> copy constructor.
 
 void *operator new[](unsigned int size);
+void operator delete[](void *block);
 inline void *operator new(unsigned int, void *place) { return place; }
 
 class Vector3
@@ -43,6 +44,7 @@ class ShareBufferClass : public RefCountClass
 {
 public:
 	ShareBufferClass(const ShareBufferClass &);
+	~ShareBufferClass(void);
 
 protected:
 	Type *RawBuffer;
@@ -66,6 +68,17 @@ ShareBufferClass<Type>::ShareBufferClass(const ShareBufferClass<Type> &that) :
 	}
 	for (int index = 0; index < Count; ++index) {
 		Array[index] = that.Array[index];
+	}
+}
+
+// sharebuf.h's BFME destructor, so this TU's COMDAT copy is the shared one.
+template <class Type>
+ShareBufferClass<Type>::~ShareBufferClass(void)
+{
+	if (RawBuffer) {
+		delete[] RawBuffer;
+		RawBuffer = 0;
+		Array = 0;
 	}
 }
 
