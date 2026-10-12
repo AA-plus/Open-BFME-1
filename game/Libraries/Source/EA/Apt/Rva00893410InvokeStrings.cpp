@@ -35,7 +35,7 @@ public:
     Rva00893410Block *block;
 };
 class BfmeStrVKK { public: void bfmeTruncVKK(unsigned n); };
-extern void * (__cdecl *Rva01337828Allocate)(unsigned);
+extern void * (__cdecl *Rva008C5D70Alloc)(unsigned);
 class Rva008B2EA0Node { public: void append(void *); };
 class Rva00899770 { public: void exportString(char *); };
 class Rva008CF740Value;
@@ -54,7 +54,7 @@ public:
     Rva00893410Block *block;
     Rva008A9B00 *next;
     Rva008A9B00();
-    static void *operator new(unsigned n) { return Rva01337828Allocate(n); }
+    static void *operator new(unsigned n) { return Rva008C5D70Alloc(n); }
     static void operator delete(void *p, unsigned size);
 };
 struct Rva00893410Registry {

@@ -12,7 +12,8 @@ struct BfmeRegistryKindB
 	__forceinline int add(BfmeBaseKindB *obj);
 };
 
-extern "C" BfmeRegistryKindB *g_bfmeRegistryVNF;
+struct Rva00899560Pool;
+extern Rva00899560Pool *g_rva01337810GcRoots;
 
 class BfmeBaseKindB
 {
@@ -24,7 +25,7 @@ public:
 		flags |= 0x4000800b;
 		m_flags = flags;
 
-		if (!g_bfmeRegistryVNF->add(this))
+		if (!((BfmeRegistryKindB *)g_rva01337810GcRoots)->add(this))
 			return;
 	}
 

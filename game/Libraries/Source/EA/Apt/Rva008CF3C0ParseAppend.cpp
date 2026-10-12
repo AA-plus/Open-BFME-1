@@ -83,7 +83,8 @@ struct BfmeRegistryKind1
 	}
 };
 
-extern "C" BfmeRegistryKind1 *g_bfmeRegistryVNF;
+struct Rva00899560Pool;
+extern Rva00899560Pool *g_rva01337810GcRoots;
 extern Rva008A9B00 *g_rva008C3B60Free;
 
 class Rva008CF3C0State
@@ -126,7 +127,7 @@ void Rva008CF3C0State::parseAndAppend(void *owner, void *scope,
 			if (node != 0)
 			{
 				g_rva008C3B60Free = node->m_next;
-				g_bfmeRegistryVNF->addOrClear(node);
+				((BfmeRegistryKind1 *)g_rva01337810GcRoots)->addOrClear(node);
 				if (node->m_block != &g_default012D5298)
 					((BfmeStrVKK *)&node->m_block)->bfmeTruncVKK(0);
 			}

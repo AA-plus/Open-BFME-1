@@ -17,7 +17,8 @@ struct BfmeRegistryVNF
 	__forceinline int add(BfmeBaseVNF *obj);
 };
 
-extern "C" BfmeRegistryVNF *g_bfmeRegistryVNF;
+struct Rva00899560Pool;
+extern Rva00899560Pool *g_rva01337810GcRoots;
 
 class BfmeBaseVNF
 {
@@ -29,7 +30,7 @@ public:
 		flags |= 0x40008000 | kind;
 		m_flags = flags;
 
-		if (!g_bfmeRegistryVNF->add(this))
+		if (!((BfmeRegistryVNF *)g_rva01337810GcRoots)->add(this))
 			return;
 	}
 

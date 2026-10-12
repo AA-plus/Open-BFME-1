@@ -12,7 +12,8 @@ struct BfmeRegistryKind17
 	__forceinline void addOrClear(BfmeBaseKind17 *obj);
 };
 
-extern "C" BfmeRegistryKind17 *g_bfmeRegistryVNF;
+struct Rva00899560Pool;
+extern Rva00899560Pool *g_rva01337810GcRoots;
 
 class BfmeBaseKind17
 {
@@ -23,7 +24,7 @@ public:
 		flags &= 0xf0008017;
 		flags |= 0x40008017;
 		m_flags = flags;
-		g_bfmeRegistryVNF->addOrClear(this);
+		((BfmeRegistryKind17 *)g_rva01337810GcRoots)->addOrClear(this);
 	}
 
 	virtual ~BfmeBaseKind17() {}

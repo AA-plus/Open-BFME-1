@@ -98,7 +98,8 @@ struct BfmeRegistryKind1
 	}
 };
 
-extern "C" BfmeRegistryKind1 *g_bfmeRegistryVNF;
+struct Rva00899560Pool;
+extern Rva00899560Pool *g_rva01337810GcRoots;
 
 // The Apt global node free list at 0x01338478, defined once by
 // game/GameEngine/Source/Common/Data/Rva01338478.cpp.  This body keeps its own
@@ -138,7 +139,7 @@ void *joinArray008B94F0(Value008B94F0 *src, int count)
         Rva008A9B00 *obj = rva01338478FreeHead();
         if (obj) {
             rva01338478FreeHead() = obj->m_next;
-            g_bfmeRegistryVNF->addOrClear(obj);
+            ((BfmeRegistryKind1 *)g_rva01337810GcRoots)->addOrClear(obj);
             if (obj->m_block != &g_default012D5298)
                 ((BfmeStrVKK *)&obj->m_block)->bfmeTruncVKK(0);
         } else {

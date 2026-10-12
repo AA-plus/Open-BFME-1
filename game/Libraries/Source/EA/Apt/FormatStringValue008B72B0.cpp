@@ -113,7 +113,8 @@ struct BfmeRegistryKind1
 	}
 };
 
-extern "C" BfmeRegistryKind1 *g_bfmeRegistryVNF;
+struct Rva00899560Pool;
+extern Rva00899560Pool *g_rva01337810GcRoots;
 
 extern Rva008A9B00 *g_rva008AAFD0Free;
 
@@ -125,7 +126,7 @@ Rva008A9B00 *formatStringValue008B72B0(Rva008B6880 *src)
     Rva008A9B00 *obj = g_rva008AAFD0Free;
     if (obj) {
         g_rva008AAFD0Free = obj->m_next;
-        g_bfmeRegistryVNF->addOrClear(obj);
+        ((BfmeRegistryKind1 *)g_rva01337810GcRoots)->addOrClear(obj);
         if (obj->m_block != rva012D5298Block())
             ((BfmeStrVKK *)&obj->m_block)->bfmeTruncVKK(0);
     } else {

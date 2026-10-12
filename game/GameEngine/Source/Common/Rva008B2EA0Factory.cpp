@@ -7,14 +7,14 @@ struct AptStringBlock
 	unsigned short m_length;
 };
 
-extern void *(__cdecl *g_aptAllocate)(unsigned int);
+extern void *(__cdecl *Rva008C5D70Alloc)(unsigned int);
 
 class Rva008A9B00
 {
 public:
 	void *operator new(unsigned int bytes)
 	{
-		return g_aptAllocate(bytes);
+		return Rva008C5D70Alloc(bytes);
 	}
 
 	void operator delete(void *) {}

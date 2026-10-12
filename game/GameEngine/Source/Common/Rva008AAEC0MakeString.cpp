@@ -36,7 +36,7 @@ static inline AptStringBlock *rva012D5298Block()
 }
 extern AptStringPool *g_pool01337A30;
 extern AptValueRegistry *g_bfmeRegistryVNF;
-extern void *(__cdecl *g_aptAllocate)(unsigned int);
+extern void *(__cdecl *Rva008C5D70Alloc)(unsigned int);
 
 class BfmeUtf8String008A00C0
 {
@@ -130,7 +130,7 @@ Rva008A9B00 *rva8AAEC0MakeString(BfmeE1233 *source)
 	}
 	else
 	{
-		void *raw = g_aptAllocate(0x10);
+		void *raw = Rva008C5D70Alloc(0x10);
 		Rva008A9B00 *fresh;
 		if (raw)
 			fresh = new (raw) Rva008A9B00;

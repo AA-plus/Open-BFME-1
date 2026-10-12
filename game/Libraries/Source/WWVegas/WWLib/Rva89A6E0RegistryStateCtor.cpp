@@ -12,7 +12,8 @@ struct BfmeRegistryKind19
 	__forceinline void addOrClear(BfmeBaseKind19 *obj);
 };
 
-extern "C" BfmeRegistryKind19 *g_bfmeRegistryVNF;
+struct Rva00899560Pool;
+extern Rva00899560Pool *g_rva01337810GcRoots;
 
 class BfmeBaseKind19
 {
@@ -23,7 +24,7 @@ public:
 		flags &= 0xf0008019;
 		flags |= 0x40008019;
 		m_flags = flags;
-		g_bfmeRegistryVNF->addOrClear(this);
+		((BfmeRegistryKind19 *)g_rva01337810GcRoots)->addOrClear(this);
 	}
 
 	virtual ~BfmeBaseKind19() {}

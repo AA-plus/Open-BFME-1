@@ -97,7 +97,8 @@ struct BfmeRegistryKind1
         ++*pcount;
     }
 };
-extern "C" BfmeRegistryKind1 *g_bfmeRegistryVNF;
+struct Rva00899560Pool;
+extern Rva00899560Pool *g_rva01337810GcRoots;
 extern Rva008A9B00 *g_rva008AAFD0Free;
 struct Stack008C9B70
 {
@@ -121,7 +122,7 @@ __forceinline Rva008A9B00 *makeString008C9B70()
     if (result)
     {
         g_rva008AAFD0Free = result->m_next;
-        g_bfmeRegistryVNF->addOrClear(result);
+        ((BfmeRegistryKind1 *)g_rva01337810GcRoots)->addOrClear(result);
         if (result->m_string.m_data != sharedEmptyString012D5298())
             reinterpret_cast<BfmeStrVKK *>(&result->m_string)->bfmeTruncVKK(0);
     }
