@@ -60877,3 +60877,15 @@ _rva009B1ED0	0x009B1ED0	701	blocked	Retail 0x009B1ED0 through 0x009B218D is a co
 ?dup_00C60BC8@@YAXXZ	0x00C60BC8	8	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
 ?dup_00C606C0@@YAXXZ	0x00C606C0	11	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
 ?dup_00BFCEDF@@YAXXZ	0x00BFCEDF	22	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BFC408@@YAXXZ	0x00BFC408	17	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BF62C8@@YAXXZ	0x00BF62C8	25	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BFD098@@YAXXZ	0x00BFD098	8	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BFD0A0@@YAXXZ	0x00BFD0A0	8	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BFD0D8@@YAXXZ	0x00BFD0D8	8	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BFD0E0@@YAXXZ	0x00BFD0E0	8	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BFD118@@YAXXZ	0x00BFD118	8	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BFD120@@YAXXZ	0x00BFD120	8	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BFDC78@@YAXXZ	0x00BFDC78	39	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BFDBA0@@YAXXZ	0x00BFDBA0	8	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00BFDD20@@YAXXZ	0x00BFDD20	17	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
+?dup_00C60130@@YAXXZ	0x00C60130	17	landed	EH state action of its proven parent (handler push -> FuncInfo unwind map -> native $L by state index) t=2 model=claude-opus-5-5
