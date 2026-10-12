@@ -28,12 +28,12 @@ struct Rva009AB530ProbUpdate {
 extern "C" void *memset(void *, int, unsigned);
 extern "C" void *memcpy(void *, const void *, unsigned);
 #pragma intrinsic(memset, memcpy)
-extern int g_rva01143064[];
-#define g_011430B0 (*(const unsigned char (*)[2][11])((const unsigned char *)g_rva01143064 + 0x4c))
-#define g_011430C8 (*(const unsigned char (*)[64])((const unsigned char *)g_rva01143064 + 0x64))
-#define g_01143108 (*(const unsigned char (*)[2][14])((const unsigned char *)g_rva01143064 + 0xa4))
-#define g_01143124 (*(const unsigned char (*)[2][14])((const unsigned char *)g_rva01143064 + 0xc0))
-#define g_01143140 (*(const unsigned char (*)[3][2][6][11])((const unsigned char *)g_rva01143064 + 0xdc))
+extern int g_rva01142c68[256];
+#define g_011430B0 (*(const unsigned char (*)[2][11])((const unsigned char *)&g_rva01142c68[255] + 0x4c))
+#define g_011430C8 (*(const unsigned char (*)[64])((const unsigned char *)&g_rva01142c68[255] + 0x64))
+#define g_01143108 (*(const unsigned char (*)[2][14])((const unsigned char *)&g_rva01142c68[255] + 0xa4))
+#define g_01143124 (*(const unsigned char (*)[2][14])((const unsigned char *)&g_rva01142c68[255] + 0xc0))
+#define g_01143140 (*(const unsigned char (*)[3][2][6][11])((const unsigned char *)&g_rva01142c68[255] + 0xdc))
 // ?Rva009AB530BuildProbabilityTables@@YAXPAE_N@Z
 // Open BFME 2: Code/Libraries/Source/VP6/ConfigureEntropyDecoder.cpp.
 void Rva009AB530BuildProbabilityTables(unsigned char *ctx, bool reuse)

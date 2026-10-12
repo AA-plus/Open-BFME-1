@@ -11,8 +11,8 @@ struct Rva009B65F0Context {
 };
 int Rva009B4600DecodeBool(void *, int);
 int bfmeGoUSC(void *, int);
-extern int g_rva01143064[];
-#define g_bfmeProbUpdate (*(const unsigned char (*)[2][17])((const unsigned char *)g_rva01143064 + 0x2e4))
+extern int g_rva01142c68[256];
+#define g_bfmeProbUpdate (*(const unsigned char (*)[2][17])((const unsigned char *)&g_rva01142c68[255] + 0x2e4))
 #define pbi ((Rva009B65F0Context *)ctx)
 // ?Rva009B65F0Update@@YAXPAEE@Z
 // Open BFME 2: Code/Libraries/Source/VP6/ConfigureMvEntropyDecoder.cpp.
