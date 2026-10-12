@@ -2,7 +2,8 @@
 // RVA 0x008B09A0. Retail offsets; no semantic class identity asserted.
 struct RefBlock008B09A0 { unsigned short refs; };
 struct Pool008B09A0 { void *unused; void (__cdecl *free)(void *); };
-extern Pool008B09A0 *g_pool01337A30;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 // 0x012D5298: the shared empty EA string block, defined once in
 // game/GameEngine/Source/Common/Data/Rva012D5298.cpp.  This TU keeps its own
 // RefBlock008B09A0 view of it and casts at the use.
@@ -59,7 +60,7 @@ void *aptApplyRecord008B09A0(Owner008B09A0 *self, int argc) {
     Rva008AD2C0 *d=s->m_f68;
     ++v->m_f20.m_block->refs;
     RefBlock008B09A0 *old=d->m_block;
-    if(--old->refs==0) g_pool01337A30->free(old);
+    if(--old->refs==0) (*(Pool008B09A0 **)&g_rva01337A30AllocPair)->free(old);
     d->m_block=v->m_f20.m_block;
    }
    if(*(int *)&v->m_f20.m_f4 != (int)0xbf800000) {

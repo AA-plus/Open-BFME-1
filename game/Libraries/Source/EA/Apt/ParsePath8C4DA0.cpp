@@ -5,12 +5,13 @@ extern "C" char *strcpy(char *,const char *);
 #pragma intrinsic(strcpy)
 struct BfmeHdrVKI { unsigned short refs,len,capacity,flags; };
 struct Pool8C4DA0 { void *unused; void (__cdecl *free)(void *); };
-extern Pool8C4DA0 *g_bfmeStringPool1284;
+struct BfmeStringPool3AF0;
+extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class BfmeStrVKI { public:
  BfmeHdrVKI *data;
  BfmeStrVKI(const char *text) { bfmeSetVKI(text); }
  void bfmeSetVKI(const char *);
- ~BfmeStrVKI() { BfmeHdrVKI *p=data; if (--p->refs==0) g_bfmeStringPool1284->free(p); }
+ ~BfmeStrVKI() { BfmeHdrVKI *p=data; if (--p->refs==0) (*(Pool8C4DA0 **)&g_rva01337A30AllocPair)->free(p); }
  const char *str() const { return (const char *)data+8; }
 };
 class BfmeNode1220 { public: int bfmeTest1220(int *,int); };
