@@ -91031,3 +91031,4 @@ Rva01338454SortReceiver,0x01338454,callback-receiver+0x28 global stored beside R
 ?rva00044BFCTarget@@YAXXZ,0x005E0820,No-argument tail-thunk view of independently matched getInstance body
 ?rva0004B0F1Target@@YAXXZ,0x005E0E60,No-argument tail-thunk view of independently matched getInstance body
 ?rva00044E31Target@@YAXXZ,0x005DDFE0,No-argument tail-thunk view of independently matched LifeEventModuleTemplate destructor
+?rva00038410Target@@YAXXZ,0x005DE870,No-argument tail-thunk view of independently matched TerrainCollisionModuleTemplate destructor
