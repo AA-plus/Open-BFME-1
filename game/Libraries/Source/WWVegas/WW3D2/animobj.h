@@ -114,7 +114,7 @@ public:
 	virtual void					Release_Bone(int boneindex);
 	virtual bool					Is_Bone_Captured(int boneindex) const;
 	virtual void					Control_Bone(int bindex,const Matrix3D & objtm,bool world_space_translation = false);
-	virtual const HTreeClass *	Get_HTree(void) const { return HTree; }
+	virtual const HTreeClass *	Get_HTree(void) const;	// out of line: retail 0x0097BBF0 (Animatable3DObjClass_Get_HTree_Thunk.cpp)
 	
 	//
 	//	Simple bone evaluation methods for when the caller doesn't want

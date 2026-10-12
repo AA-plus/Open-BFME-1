@@ -183,10 +183,7 @@ class RawFileClass : public FileClass
  *   11/25/2001 Jani: Note that this is virtual function and thus can't be inlined. Is there a *
  *					 reason for it to be virtual?																	  *
  *=============================================================================================*/
-inline char const * RawFileClass::File_Name(void) const
-{
-	return(Filename);
-}
+// Defined out of line: retail 0x009E6A10 (RawFileClass_File_Name_Thunk.cpp).
 
 
 
