@@ -172009,3 +172009,10 @@ uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic_load
 ?Rva004A6670ReturnArg@@YAHH@Z,,0x004A6670,5,game/GameEngine/Source/Common/Rva004A6670ReturnArg.cpp,matched,carved ret+int3 boundary returns first cdecl argument address-derived identity;model=claude-opus-5-5;host=GreatFaram
 ?Rva0075DAA0ReturnArg@@YAHH@Z,,0x0075DAA0,5,game/GameEngine/Source/Common/Rva0075DAA0ReturnArg.cpp,matched,carved ret+int3 boundary returns first cdecl argument address-derived identity;model=claude-opus-5-5;host=GreatFaram
 ?getField4@Rva0075D420@@QAEHXZ,,0x0075D420,4,game/GameEngine/Source/Common/Rva0075D420FieldGetter.cpp,matched,carved body mov eax [ecx+4] ret; owner unproven so address name;model=claude-opus-5-5;host=GreatFaram
+?get@Rva005BFF30Field@@QBEIXZ,,0x005BFF30,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva000CA380Field@@QBEIXZ,,0x000CA380,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva00262970Field@@QBEIXZ,,0x00262970,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva006068E0Field@@QBEIXZ,,0x006068E0,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva00748FB0Field@@QBEIXZ,,0x00748FB0,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?get@Rva007838D0Field@@QBEIXZ,,0x007838D0,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
+?Rva004729A0ReturnArg@@YAII@Z,,0x004729A0,5,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved cdecl return of first arg;model=claude-opus-5-5;host=GreatFaram
