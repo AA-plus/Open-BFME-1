@@ -2627,3 +2627,10 @@ void Rva0045E470Noop()
 void Rva0045CFE0Noop()
 {
 }
+
+// 0x004729C0: carved cdecl body that returns its first stack argument
+// (mov eax,[esp+4]; ret). One caller via ILT 0x000106EF; identity unproven.
+void *__cdecl Rva004729C0ReturnFirstArgument(void *value)
+{
+    return value;
+}

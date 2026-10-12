@@ -171999,3 +171999,4 @@ uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic_load
 ?get@Rva0013A2B0FieldDword@@QBEHXZ,,0x0013A2B0,4,game/GameEngine/Source/Common/Rva0013A2B0FieldGetter.cpp,matched,carved ret+int3 boundary direct dword read at this+0x4 address-derived identity;model=claude-opus-5-5;host=GreatFaram
 ?get@Rva000E0BF0Field@@QBEIXZ,,0x000E0BF0,4,game/GameEngine/Source/Common/RvaTinyCarvedSet.cpp,matched,carved getter of dword at +4;model=claude-opus-5-5;host=GreatFaram
 ?Rva00338310ReturnFirstArg@@YAPAXPAX@Z,,0x00338310,5,game/GameEngine/Source/Common/AlternateIdentityWithArgumentThunk.cpp,matched,carved boundary rel32 caller ret+int3 returns first arg identity unproven;model=claude-opus-5-5;host=GreatFaram
+?Rva004729C0ReturnFirstArgument@@YAPAXPAX@Z,,0x004729C0,5,game/GameEngine/Source/Common/VirtualSlot5CallThunk.cpp,matched,carved cdecl return-first-argument body; identity unproven;model=claude-opus-5-5;host=GreatFaram
