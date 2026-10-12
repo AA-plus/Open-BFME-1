@@ -64,7 +64,7 @@ public:
 class AptValue
 {
 public:
-	virtual ~AptValue();
+	virtual ~AptValue() {}
 	unsigned int m_flags;
 	__forceinline AptValue(int type);
 };
