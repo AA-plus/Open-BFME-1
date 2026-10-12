@@ -10,17 +10,18 @@ struct BfmeStringPool3AF0 {
 };
 static inline BfmeStringData3AF0 *sharedEmptyString012D5298();
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
-class Rva8CD130String {
+class EAStringC {
 public:
-    __forceinline Rva8CD130String() {
+    class StringDataC;
+    __forceinline EAStringC() {
         m_data = sharedEmptyString012D5298();
         ++m_data->m_refCount;
     }
-    __forceinline ~Rva8CD130String() {
+    __forceinline ~EAStringC() {
         BfmeStringData3AF0 *old = m_data;
         if (--old->m_refCount == 0) g_rva01337A30AllocPair->free(old);
     }
-    __forceinline Rva8CD130String &operator=(const Rva8CD130String &source) {
+    __forceinline EAStringC &operator=(const EAStringC &source) {
         ++source.m_data->m_refCount;
         BfmeStringData3AF0 *old = m_data;
         if (--old->m_refCount == 0) g_rva01337A30AllocPair->free(old);
@@ -29,12 +30,13 @@ public:
     }
     // 0089FBC0: receiver is handle; hidden result + two signed indices;
     // +29 initializes [entry+4], returns that address in EAX; +3D ret12.
-    Rva8CD130String substring0089FBC0(int start, int count);
+    EAStringC utf8Mid0089FBC0(int start, int count) const;
+    int bfmeUtf8Length() const;
     BfmeStringData3AF0 *m_data;
 };
+class Rva8CD130String;
 class Rva8CD130Value { public: void getName(Rva8CD130String *output); };
 class AptValue { public: int toInteger() const; };
-class EAStringC { public: class StringDataC; int bfmeUtf8Length() const; };
 extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
 static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
 {
@@ -50,7 +52,7 @@ public:
     __forceinline void *operator new(unsigned int bytes) { return Rva008C5D70Alloc(bytes); }
     void *m_unknown00;
     unsigned int m_flags;
-    Rva8CD130String m_string;
+    EAStringC m_string;
     Rva008A9B00 *m_next;
 };
 // 0x01337810: the Apt GC-root registry vector pointer, defined in
@@ -90,22 +92,22 @@ __forceinline Rva008A9B00 *acquire008AA420() {
 }
 
 Rva008A9B00 *sliceValue008AA420(Rva8CD130Value *value, int count) {
-    Rva8CD130String text;
+    EAStringC text;
     int start = -1;
     int length = 9999999;
     if (!count) return (Rva008A9B00 *)g_bfmeFallbackDB;
     if (count >= 1) start = (*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.field00 - 1]->toInteger();
     if (count >= 2) length = (*(AptValue ***)((char *)&Rva008AE770TheStack + 8))[Rva008AE770TheStack.field00 - 2]->toInteger();
-    value->getName(&text);
-    int total = ((EAStringC *)&text)->bfmeUtf8Length();
+    value->getName((Rva8CD130String *)&text);
+    int total = text.bfmeUtf8Length();
     if (start < 0) start += total;
     if (length < 0) length += total;
     if (start < 0) start = 0;
     if (length < 0) length = 0;
     if (start >= total) start = total;
     if (length >= total) length = total;
-    Rva8CD130String result;
-    result = text.substring0089FBC0(start, length - start);
+    EAStringC result;
+    result = text.utf8Mid0089FBC0(start, length - start);
     Rva008A9B00 *obj = acquire008AA420();
     obj->m_string = result;
     return obj;
