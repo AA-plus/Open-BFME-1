@@ -49,6 +49,15 @@ protected:
     bool read_aabtree(ChunkLoadClass &cload);
 };
 
+// Chunk 0x28 dispatches to the matched 52-byte reader at 0x0096D2C0
+// (game/GameEngine/Source/Common/Rva0096D2C0ReadBlock.cpp); its row keeps an
+// address-derived owner, so the call spells that row.
+class BfmeChunkVFC;
+struct Rva0096D2C0Record;
+class Rva0096D2C0Owner {
+public:
+    bool readBlock(BfmeChunkVFC *loader, Rva0096D2C0Record *record);
+};
 class MeshModelClass : public MeshGeometryClass {
 protected:
     bool read_texcoords(ChunkLoadClass &cload, MeshLoadContextClass *context);
@@ -101,7 +110,9 @@ bool MeshModelClass::read_chunks(ChunkLoadClass &cload, MeshLoadContextClass *co
                 error = read_vertex_shade_indices(cload);
                 break;
             case W3D_CHUNK_MATERIAL_INFO:
-                error = read_material_info(cload, context);
+                error = reinterpret_cast<Rva0096D2C0Owner *>(this)->readBlock(
+                    reinterpret_cast<BfmeChunkVFC *>(&cload),
+                    reinterpret_cast<Rva0096D2C0Record *>(context));
                 break;
             case W3D_CHUNK_SHADERS:
                 error = read_shaders(cload, context);
