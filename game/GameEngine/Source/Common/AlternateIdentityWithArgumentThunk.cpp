@@ -19,3 +19,9 @@ void *Rva0036C610ReturnArgument(void *value)
 {
     return value;
 }
+
+// 0x00233270: cdecl body returning its first stack argument; identity unproven.
+void *Rva00233270ReturnFirstArg(void *value)
+{
+    return value;
+}
