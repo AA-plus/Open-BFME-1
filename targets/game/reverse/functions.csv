@@ -37129,7 +37129,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_002a19a0@@YAXXZ,,0x002A19A0,14,game/GameEngine/Source/Common/VtableSlot2StoreThunk.cpp,matched,object-symbol=?getEightieth@VtableSlot2StoreThunk@@QBE?AUVtableSlot2Result@@XZ;Open-BFME5 clean C++ vtable slot 2 value return
 ?d_002a1a80@@YAXXZ,,0x002A1A80,121,game/gen_asm/d_0029c7b0.asm,matched,gen-dump;ghidra=FUN_006a1a80
 ?d_002a1f80@@YAXXZ,,0x002A1F80,489,game/gen_asm/d_0029c7b0.asm,matched,gen-dump;ghidra=FUN_006a1f80
-?d_002a5500@@YAXXZ,,0x002A5500,858,game/gen_asm/d_0029c7b0.asm,matched,gen-dump;ghidra=FUN_006a5500
 ?d_002a5a30@@YAXXZ,,0x002A5A30,10,game/GameEngine/Source/Common/VirtualSlot5CallThunk.cpp,matched,object-symbol=?invokeZeroOne@VirtualSlot11CallThunk@@QAEXXZ;Open-BFME5 clean C++ virtual slot 11 call
 ?d_002a5fb0@@YAXXZ,,0x002A5FB0,367,game/gen_asm/d_0029c7b0.asm,matched,gen-dump;ghidra=FUN_006a5fb0
 ?d_002a8540@@YAXXZ,,0x002A8540,814,game/gen_asm/d_002a7010.asm,matched,gen-dump;ghidra=FUN_006a8540
@@ -37799,7 +37798,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0048e6b0@@YAXXZ,,0x0048E6B0,1,game/GameEngine/Source/Common/Rva0048E6B0Noop.cpp,matched,carved ret boundary; address-derived identity
 ?d_0048f5c0@@YAXXZ,,0x0048F5C0,571,game/gen_asm/d_0048a320.asm,matched,gen-dump;ghidra=FUN_0088f5c0
 ?d_0048f8c0@@YAXXZ,,0x0048F8C0,231,game/gen_asm/d_0048a320.asm,matched,gen-dump;ghidra=FUN_0088f8c0
-?d_0048fc90@@YAXXZ,,0x0048FC90,898,game/gen_asm/d_0048a320.asm,matched,gen-dump;ghidra=FUN_0088fc90
 ?d_00494110@@YAXXZ,,0x00494110,132,game/gen_asm/d_0048a320.asm,matched,gen-dump;ghidra=FUN_00894110
 ?d_00494fa0@@YAXXZ,,0x00494FA0,447,game/gen_asm/d_0048a320.asm,matched,gen-dump;ghidra=FUN_00894fa0
 ?d_00497E40@@YAXXZ,,0x00497E40,1,game/GameEngine/Source/Common/Rva00497E40.cpp,matched,opaque address-derived body with proven ret boundary
@@ -38126,7 +38124,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_006a28d0@@YAXXZ,,0x006A28D0,502,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_00aa28d0
 ?d_006a56a0@@YAXXZ,,0x006A56A0,237,game/gen_asm/d_006a0bb0.asm,matched,gen-dump;ghidra=FUN_00aa56a0
 ?d_006a59f0@@YAXXZ,,0x006A59F0,904,game/gen_asm/d_00685910.asm,matched,gen-dump;switch-carved start=int3-aligned end=switch-table+int3 refs=0
-?d_006a6080@@YAXXZ,,0x006A6080,865,game/gen_asm/d_006a0bb0.asm,matched,gen-dump;ghidra=FUN_00aa6080
 ?d_006a8540@@YAXXZ,,0x006A8540,852,game/gen_asm/d_006a0bb0.asm,matched,gen-dump;ghidra=FUN_00aa8540
 ?d_006a8970@@YAXXZ,,0x006A8970,875,game/gen_asm/d_006a0bb0.asm,matched,gen-dump;ghidra=FUN_00aa8970
 ?d_006a9200@@YAXXZ,,0x006A9200,1168,game/gen_asm/d_006a9200.asm,matched,gen-dump;ghidra=FUN_00aa9200
@@ -172549,3 +172546,6 @@ uw_00c62030,,0x00C62030,8,game/gen_small/uw_gen_008.cpp,matched,gen-funclet;obje
 uw_00c62050,,0x00C62050,8,game/gen_small/uw_gen_008.cpp,matched,gen-funclet;object-symbol=$L1165
 uw_00c62058,,0x00C62058,11,game/Libraries/Source/WWVegas/WWDebug/wwmemlog.cpp,matched,gen-funclet;parent=?Get_Log@WWMemoryLogClass@@KAPAVMemLogClass@@XZ;object-symbol=$L6477
 uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCleanup.cpp,matched,gen-funclet;object-symbol=$L305;placement cleanup;parent unknown - the emitting function in this source is a synthetic stub
+?update@SlavedUpdate@@UAE?AW4UpdateSleepTime@@XZ,,0x002A5500,858,game/masm_dumps/Rva002A5500SlavedUpdateUpdate.asm,matched,MASM dump of the gen-dump body; identity CONFIRMED by tools/ilt_oracle.py check at ILT 0x0002374F and by vtable 0x010C2BD4 slot 0 installed by ctor 0x002A4260; best C++ bank compiles to 858B with 31 relocs and shape 1.000 but its entire residue is 4 register-selection bytes at +0x280 +0x286 +0x289 +0x298 that 25 new spellings plus 36 earlier variants cannot move; dump body byte-identical to retail outside reloc slots; evidence targets/game/reverse/identity_evidence/002a5500-masm-codegen-blocker.md;model=openai-codex;host=chalco.vps
+?Rva006A6080@@YAXXZ,,0x006A6080,865,game/masm_dumps/Rva006A6080StreamBudget.asm,matched,MASM dump of the gen-dump body; identity not provable so the name stays address-derived; recoverable C++ bank compiles to 865B with 24 relocs and shape 0.996 but its residue is 5 register-selection bytes at +0x25B and +0x293..+0x297 in inlined STLport code; 9 fresh loop-2 spellings today plus 220+ earlier accessor grids cannot move it; dump body byte-identical to retail outside reloc slots; evidence targets/game/reverse/identity_evidence/006a6080-masm-codegen-blocker.md;model=openai-codex;host=chalco.vps
+?Rva0048FC90@@YAXXZ,,0x0048FC90,898,game/masm_dumps/Rva0048FC90TimedTextForward.asm,matched,MASM dump of the gen-dump body; identity not provable (ILT oracle CONTRADICTED at slot 0x000198B2) so the name stays address-derived; the recoverable C++ bank compiles to 898B with 33 relocs and shape 1.000 but its residue is one register swap in the placement loop: retail keeps the running offset in edx and the cursor in ecx while VC7.1 always picks them the other way; 8 non-relocation bytes at +0x2CE +0x2D3 +0x2D7 +0x2D9 +0x2DC +0x2DF +0x2E2 survive 30+ spellings measured on 2026-10-12 (for_each; named functor; E790-style two-argument functor helper; member and ctor order swaps; while and do/while rewrites; unsigned offsets; explicit begin/end locals) while plain loops reallocate the whole body; dump body byte-identical to retail outside reloc slots; evidence targets/game/reverse/identity_evidence/0048fc90-masm-codegen-blocker.md;model=openai-codex;host=chalco.vps
