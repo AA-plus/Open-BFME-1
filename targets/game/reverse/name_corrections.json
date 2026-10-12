@@ -19608,5 +19608,15 @@
   "after_sha256": "9da147b565eda6ce7a1a69307cac83c396b987c6942b7c2bc5387b316712c073",
   "evidence": "targets/game/reverse/identity_evidence/0035e3b0-donor-refuted-bank.md",
   "reason": "The bank spelled the second-base copy thunk DLinkAt4 after a decorative reading of its single +0x04 link field; the ILT slot 0x00024C12 is already registered in symbols.csv as the Open-BFME5 fresh thiscall copy ctor ??0Rva003525E0Pair@@QAE@ABV0@@Z, and the landed TU declares its second base under that registered placeholder, retiring the malformed ???0DLinkAt4 spelling from the body's relocations (docs/naming_evidence.md identity floor). See targets/game/reverse/identity_evidence/0035e3b0-donor-refuted-bank.md."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x001f0960.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Behavior/BezierProjectileBehavior_update.cpp",
+  "old_name": "setTransformMatrix",
+  "new_name": "rva00132200",
+  "before_sha256": "1d511a18aeb1e7766bb07ad5c1e3115465e65051560710cfd39188db41efe1f7",
+  "after_sha256": "62a82cc0a07ced47294ea1c13bfef387a4ec7ea1fccc587cb3b825e943126fca",
+  "evidence": "targets/game/reverse/identity_evidence/001f0960-setTransformMatrix-shim-conflict.md",
+  "reason": "The bank spelled the Thing matrix-copy callee setTransformMatrix, but that decorated name is already owned by the shim route (pin at 0x00023D49 follows to the 155-byte 0x001C16A0 body), and the pin-consistency guard rejects a second address whose thunk chain ends on a different body (one name, one function). The slot 0x000361CE and body 0x00132200 are recorded under the address-derived ?rva00132200@Thing@@QAEXPBVMatrix3D@@@Z, so the landed TU declares Thing::rva00132200 and keeps the identity floor (docs/naming_evidence.md). See targets/game/reverse/identity_evidence/001f0960-setTransformMatrix-shim-conflict.md."
  }
 ]

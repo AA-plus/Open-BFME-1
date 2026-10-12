@@ -1,5 +1,14 @@
-// ?method@BfmeRva64290@@QAEXXZ
-// partial score=0.9978 date=2026-10-11
+// Retail 0x00764290, 899 bytes: ?method@BfmeRva64290@@QAEXXZ, the BFME
+// W3DModelDraw sub-object visibility update (secondary-interface entry; the
+// row's pinned identity is ?updateSubObjects@W3DModelDraw@@UAEXXZ, vtable
+// 0x01123C68 slot 28).  The address-derived BfmeRva64290 view keeps the
+// witnessed secondary-interface layout; two 0x18-byte-element vectors at
+// +0x40 and +0x4C each drive a hide/show pass through Get_Sub_Object_By_Name,
+// and the second pass blends a burst value clamped to [0,1] and reports a
+// missing sub-object through the debug manager at 0x01336E5C.
+// The sum carries an explicit (Real) cast: without it MSVC 7.1 canonicalises
+// the commutative fadd to load the +0x08 operand first, while retail loads the
+// +0x0C accumulator first (bytes at +0x29D/+0x2A0).
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /D_STLP_USE_STATIC_LIB /DBFME_STLP_NODE_ALLOC /MD /EHsc /Iinputs/reference/shims/debugvtable /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/shims/stlp_nodealloc /Iinputs/reference/shims/w3dmodeldraw /Iinputs/reference/shims/asciistring8 /Iinputs/reference/shims/sweep /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
 #include "WW3D2/RendObj.h"
 #include "WW3D2/HTree.h"
@@ -15,7 +24,7 @@ extern Real g_bfmeDefaultBU;
 typedef RenderObjClass BfmeRva64290RenderObj;
 typedef RenderObjClass BfmeRva64290SubObj;
 
-class BfmeRva64290DebugStream
+class DebugStream00409E20
 {
 public:
 	virtual void slot00(); virtual void slot04(); virtual void slot08();
@@ -23,13 +32,13 @@ public:
 	virtual void slot18(); virtual void slot1c(); virtual void slot20();
 	virtual void slot24(); virtual void slot28(); virtual void slot2c();
 	virtual void slot30(); virtual void slot34();
-	virtual BfmeRva64290DebugStream *logFormat(const void *); // +0x38
+	virtual DebugStream00409E20 *Put_String(const void *); // +0x38
 	virtual void slot3c(); virtual void slot40(); virtual void slot44();
 	virtual void slot48();
-	virtual void flushCrash(int);                              // +0x4c
+	virtual void Finish(int);                              // +0x4c
 };
 
-class BfmeRva64290Debug
+class DebugView00409E20
 {
 public:
 	virtual void slot00(); virtual void slot04(); virtual void slot08();
@@ -40,12 +49,12 @@ public:
 	virtual void slot3c(); virtual void slot40(); virtual void slot44();
 	virtual void slot48(); virtual void slot4c(); virtual void slot50();
 	virtual void slot54(); virtual void slot58(); virtual void slot5c();
-	virtual void beginReport();                            // +0x60
+	virtual void Begin_Report();                            // +0x60
 	virtual void slot64(); virtual void slot68();
-	virtual BfmeRva64290DebugStream *getStream(void *, void *); // +0x6c
+	virtual DebugStream00409E20 *Get_Stream(void *, void *); // +0x6c
 };
 
-extern BfmeRva64290Debug *g_BFMEIndexBufferDebug;
+extern DebugView00409E20 *DebugGlobal00409E20;
 extern Bool __cdecl _bfme_debugReportingEnabled();
 extern void __cdecl _bfme_debugRecordCallsite(int);
 
@@ -156,7 +165,6 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-// ?method@BfmeRva64290@@QAEXXZ present-unmatched
 void BfmeRva64290::method()
 {
 	m_flag164 = 0;
@@ -197,19 +205,19 @@ void BfmeRva64290::method()
 					if (_bfme_debugReportingEnabled())
 					{
 						_bfme_debugRecordCallsite(1);
-						g_BFMEIndexBufferDebug->beginReport();
+						DebugGlobal00409E20->Begin_Report();
 						Rva00764290Drawable *drawable =
 							*(Rva00764290Drawable **)((char *)this - 4);
 						const Rva00764290Template *thing = drawable->getTemplate();
 						const char *templateName =
 							thing->m_name.str();
 						const char *entryName = entry->name();
-						BfmeRva64290DebugStream *stream =
-							g_BFMEIndexBufferDebug->getStream(0, 0);
+						DebugStream00409E20 *stream =
+							DebugGlobal00409E20->Get_Stream(0, 0);
 						((Debug *)stream)->Debug::operator<<(DebugFormat(
 							"*** ASSET ERROR: SubObject %s not found (%s)!\n",
 							entryName, templateName));
-						stream->flushCrash(2);
+						stream->Finish(2);
 					}
 				}
 			}
@@ -250,7 +258,7 @@ void BfmeRva64290::method()
 					}
 					else
 					{
-						entry->m_fc += entry->m_f8;
+						entry->m_fc = (Real)(entry->m_fc + entry->m_f8);
 						if (entry->m_fc > g_bfmeDefaultBU)
 							entry->m_fc = 1.0f;
 						else if (entry->m_fc < g_rva01075350)

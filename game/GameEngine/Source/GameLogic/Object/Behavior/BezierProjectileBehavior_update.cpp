@@ -1,5 +1,7 @@
 // ?update@BezierProjectileBehavior@@UAE?AW4UpdateSleepTime@@XZ
-// partial score=0.9965 date=2026-10-03
+// Retail 0x001F0960, 1733 bytes; row identity proven by the vtable slot and
+// callers (HISTORY verdict 13): the BFME BezierProjectileBehavior per-frame
+// update.  Body byte-identical to retail outside its relocation slots.
 // cl: /DNDEBUG /DWIN32 /MD /O2 /Ob2 /EHsc /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 // BezierProjectileBehavior::update, retail 0x001F0960, 1733 bytes.
@@ -51,6 +53,7 @@ enum IterOrderType
 	ITER_SORTED_NEAR_TO_FAR = 1
 };
 
+// class-gate: allow Coord3D the canonical header is the bare 12-byte layout without members; this body's proven codegen needs the inlined sub/scale/normalize/length spellings (our=0 bytes without them).
 struct Coord3D
 {
 	Real x, y, z;
@@ -68,10 +71,15 @@ public:
 	Real m_boundingSphereRadius;			// +0x10
 };
 
+class Thing
+{
+public:
+	void rva00132200(const Matrix3D *mtx);	// 0x00132200
+};
+
 class Object
 {
 public:
-	void setTransformMatrix(const Matrix3D *mtx);	// Thing 0x00132200
 	void setPosition(const Coord3D *pos);
 	Int getLayer() const;
 	void setLayer(PathfindLayerEnum layer);
@@ -283,8 +291,12 @@ class BezierProjectileBehavior
 {
 public:
 	virtual UpdateSleepTime update();
-	Bool calcFlightPath(Bool recalcNumSegments);
 	void projectileFire();
+
+private:
+	Bool calcFlightPath(Bool recalcNumSegments);
+
+private:
 
 	// 0x001EFCE0
 	UpdateSleepTime calcSleepTime() const
@@ -292,6 +304,7 @@ public:
 		return m_flightPath.size() > 0 ? UPDATE_SLEEP_NONE : UPDATE_SLEEP_FOREVER;
 	}
 
+public:
 	ObjectID m_launcherID;				// +0x28
 	Coord3D m_at2C;					// +0x2C
 	ObjectID m_victimID;				// +0x38
@@ -309,6 +322,25 @@ public:
 	Bool m_hasDetonated;				// +0x80
 	Real m_heightScale;				// +0x84
 };
+
+// The inlined normalize at retail +0x3F4..+0x463 accumulates its
+// length-squared products in X, Z, Y order (retail +0x408 loads the component
+// slots +0x20, +0x28, +0x24).  The shared WWMath vector3.h Length2() spelling
+// compiles to X, Y, Z from this TU, so keep the retail order in a local
+// force-inlined Normalize twin and leave the shared header untouched.
+static WWINLINE void BfmeRetailOrderNormalize(Vector3 &v)
+{
+	float len2 = v.X*v.X;
+	len2 += v.Z*v.Z;
+	len2 += v.Y*v.Y;
+	if (len2 != 0.0f)
+	{
+		float oolen = WWMath::Inv_Sqrt(len2);
+		v.X *= oolen;
+		v.Y *= oolen;
+		v.Z *= oolen;
+	}
+}
 
 // ?update@BezierProjectileBehavior@@UAE?AW4UpdateSleepTime@@XZ
 UpdateSleepTime BezierProjectileBehavior::update()
@@ -408,10 +440,10 @@ UpdateSleepTime BezierProjectileBehavior::update()
 			curPos.z -= drop;
 		}
 		Vector3 curDir(curPos.x - prevPos.x, curPos.y - prevPos.y, curPos.z - prevPos.z);
-		curDir.Normalize();
+		BfmeRetailOrderNormalize(curDir);
 		Matrix3D orientMtx;
 		orientMtx.buildTransformMatrix(Vector3(flightStep->x, flightStep->y, flightStep->z), curDir);
-		obj->setTransformMatrix(&orientMtx);
+		((Thing *)obj)->rva00132200(&orientMtx);
 	}
 	else
 	{
