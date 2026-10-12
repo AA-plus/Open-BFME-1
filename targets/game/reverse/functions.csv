@@ -37127,7 +37127,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_002a8540@@YAXXZ,,0x002A8540,814,game/gen_asm/d_002a7010.asm,matched,gen-dump;ghidra=FUN_006a8540
 ?d_002a9000@@YAXXZ,,0x002A9000,833,game/gen_asm/d_002a7010.asm,matched,gen-dump;ghidra=FUN_006a9000
 ?d_002ad100@@YAXXZ,,0x002AD100,57,game/gen_asm/d_002a7010.asm,matched,gen-dump;ghidra=FUN_006ad100
-?d_002ad250@@YAXXZ,,0x002AD250,238,game/gen_asm/d_002a7010.asm,matched,gen-dump;ghidra=FUN_006ad250
 ?d_002ad670@@YAXXZ,,0x002AD670,1885,game/gen_asm/d_002a7010.asm,matched,gen-dump;ghidra=FUN_006ad670
 ?d_002b2490@@YAXXZ,,0x002B2490,210,game/gen_asm/d_002afb20.asm,matched,gen-dump;ghidra=FUN_006b2490
 ?d_002b26c0@@YAXXZ,,0x002B26C0,756,game/gen_asm/d_002afb20.asm,matched,gen-dump;ghidra=FUN_006b26c0
@@ -172548,3 +172547,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?dup_00C20148@@YAXXZ,,0x00C20148,22,game/GameEngine/Source/GameClient/BuffManagerLifecycle.cpp,matched,authored C++ cleanup;gen-funclet;parent=??0BuffManager@@QAE@H@Z;object-symbol=$L406;retail parent 0x0040AF50 pushes handler stub 0x00C2015E (mov eax FuncInfo) whose unwind map names this action;label mapped by state index;model=claude-opus-5-5;host=GreatFaram
 ?transition00409610@BuffEntry00409E20@@QAE_NHHPAX0H@Z,,0x00409610,226,game/GameEngine/Source/GameClient/BuffEntryTransition00409610.cpp,matched,Address-derived buff entry transition; BuffState00409E20 apply caller; volatile saved state gives retail stack home;model=claude-sonnet-5-5;host=vm
 ?RefreshGameListBox@@YAXPAVGameWindow@@_N@Z,,0x0062E2E0,418,game/GameEngine/Source/GameNetwork/GameSpy/LobbyUtilsInsertGame.cpp,matched,same-TU static insertGame private ABI; ZH twin RefreshGameListBox; ILT 0xFD1C;model=claude-sonnet-5-5;host=vm
+?update002AD250@StealthUpdate@@QAEXXZ,,0x002AD250,238,game/GameEngine/Source/GameLogic/Object/Update/StealthUpdate_update002AD250.cpp,matched,address-derived name; ILT 0x272AF; caller groupStealthIdle; model-condition bit mask lever;model=claude-sonnet-5-5;host=vm

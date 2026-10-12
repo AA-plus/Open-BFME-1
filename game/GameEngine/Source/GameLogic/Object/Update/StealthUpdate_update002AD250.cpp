@@ -1,11 +1,15 @@
 // ?update002AD250@StealthUpdate@@QAEXXZ
-// partial score=0.82 date=2026-09-10
 // cl: /DNDEBUG /MD /EHsc
 //
 // StealthUpdate::update002AD250, retail RVA 0x002AD250 (238 bytes).
 // The ILT at 0x000272AF and the matched AIGroup::groupStealthIdle caller
 // establish this as a StealthUpdate member helper.  The neutral RVA-derived
 // method name is retained until a stronger retail symbol is recovered.
+// Model-condition bits 248 (cleared) and 242 (set) live in Object's 320-bit
+// array at +0x110 (word 7, +0x12C).  The flags' test() returns the masked WORD,
+// not a bool: that keeps retail's mask in a register for the test and the set
+// (docs/shape_levers.md, model-condition bit masks).  setDisabledUntil is
+// called on a fresh getObject() read, as retail reloads [this+8].
 
 typedef unsigned char Bool;
 typedef unsigned int UnsignedInt;
@@ -22,8 +26,24 @@ public:
 	void notifyModelConditionChanged();
 	void setDisabledUntil(DisabledType type, UnsignedInt frame);
 
-	unsigned char m_pad00[0x12C];
-	UnsignedInt m_status;
+	struct ModelConditionFlags
+	{
+		UnsignedInt test(int i) const { return m_bits[i >> 5] & (1u << (i & 31)); }
+		void set(int i) { m_bits[i >> 5] |= (1u << (i & 31)); }
+		void clear(int i) { m_bits[i >> 5] &= ~(1u << (i & 31)); }
+		UnsignedInt m_bits[10];
+	};
+
+	void bfmeSetModelConditionState(int bit)
+	{
+		if (!m_modelConditionFlags.test(bit))
+		{
+			m_modelConditionFlags.set(bit);
+			notifyModelConditionChanged();
+		}
+	}
+	unsigned char m_pad00[0x110];
+	ModelConditionFlags m_modelConditionFlags;
 };
 
 class BfmeItemRY
@@ -45,7 +65,7 @@ public:
 	UnsignedInt m_frame;
 };
 
-extern GameLogic *TheBfmeGameLogic;
+extern GameLogic *TheGameLogic;
 
 class StealthUpdateModuleData
 {
@@ -100,7 +120,7 @@ void StealthUpdate::update002AD250()
 {
 	Object *object = getObject();
 	const StealthUpdateModuleData *data = getStealthUpdateModuleData();
-	UnsignedInt now = TheBfmeGameLogic->m_frame;
+	UnsignedInt now = TheGameLogic->m_frame;
 
 	if (!data->m_enableState && !data->m_blackMarketCheckFrames)
 		return;
@@ -113,26 +133,21 @@ void StealthUpdate::update002AD250()
 		m_detectionExpiresFrame = 0;
 		object->clearModelConditionState(0x10);
 
-		if (object->m_status & 0x01000000)
+		if (object->m_modelConditionFlags.test(248))
 		{
-			object->m_status &= 0xFEFFFFFF;
+			object->m_modelConditionFlags.clear(248);
 			object->notifyModelConditionChanged();
 		}
-		if (!(object->m_status & 0x00040000))
-		{
-			object->m_status |= 0x00040000;
-			object->notifyModelConditionChanged();
-		}
+		object->bfmeSetModelConditionState(242);
 
 		((BfmeItemRY *)object)->bfmeDoRY(
 			(void *)0xF9, (void *)data->m_enableState);
-		object->setDisabledUntil(DisabledTypeStealth, m_stealthAllowedFrame);
+		getObject()->setDisabledUntil(DisabledTypeStealth, m_stealthAllowedFrame);
 		((BfmeObjE10 *)object)->actionA(0x1C);
 		m_xferRestoreDisguise = 1;
 		return;
 	}
 
-restore_state:
 	((BfmeItemRY *)object)->bfmeDoRY(
 		(void *)0xFA, (void *)data->m_disableState);
 	m_detectionExpiresFrame = data->m_detectionDelay + now;
