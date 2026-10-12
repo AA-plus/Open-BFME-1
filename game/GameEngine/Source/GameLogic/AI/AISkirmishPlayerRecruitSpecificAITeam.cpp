@@ -1,15 +1,44 @@
-// ?recruitSpecificAITeam@AISkirmishPlayer@@UAEXPAVTeamPrototype@@MPBUCoord3D@@@Z
-// partial score=1.0 date=2026-10-11
+// ?recruitSpecificAITeam@AISkirmishPlayer@@UAEXPAVTeamPrototype@@MPBVCoord3D@@@Z
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Include/Lib /Igame/GameEngine/Source/GameLogic
-// readable body of AISkirmishPlayer::recruitSpecificAITeam: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source/GameLogic/AI/AISkirmishPlayer.cpp
+//
+// Retail 0x001699C0 (1130 bytes, RET 0xC at +0x467, then INT3) is
+// AISkirmishPlayer's slot-10 override of AIPlayer::recruitSpecificAITeam.
+// BFME added a third argument to the Zero Hour two-argument signature: the
+// caller-supplied position replaces the template home location when it is
+// non-null (+0x1E6 tests it). The body resolves the team factory, refuses a
+// duplicate singleton, builds the ready-queue entry through the native
+// readiness-list helpers, walks the seven unit records, recruits through
+// Team::tryToRecruit and moves each new unit with the AI command interface.
+//
+// Identity: the matched constructor at 0x00168660 installs vtable 0x01096FB0
+// whose slot 10 thunk (ILT RVA 0x0003499B) jumps here; the matched
+// Player::recruitSpecificTeam at 0x000C9790 and its complete caller
+// ScriptActions::doRecruitTeam at 0x002F37E0 pass the same three arguments in
+// this order. ilt_oracle confirms the decorated name at 0x001699C0
+// (p_false=6.52e-05, an exact 1-bucket window between the anchors
+// ?winGetInstanceData@GameWindow@@ and ?WOLGameSetupMenuUpdate@@); the third
+// parameter must be spelled with the class key, so the Coord3D view below
+// carries `class`, not the canonical header's `struct`.
+//
 // Evidence: targets/game/reverse/identity_evidence/001699c2-recruit-specific-team.md
+// and targets/game/reverse/identity_evidence/001699c0-recruit-specific-team.md
 #include "ascii_string.h"
 
 typedef bool Bool;
 typedef int Int;
 typedef float Real;
 
-#include "Coord3D.h"
+// Coord3D is spelled with the class key here: retail's ILT slot for this body
+// names the third parameter PBVCoord3D@@, so the defining translation unit saw
+// a class-key Coord3D. The layout is the canonical 12-byte {Real x, y, z}; the
+// view is a layout view, not a claim about the shipped header's class key.
+// class-gate: allow Coord3D retail's ILT slot for this body spells the third parameter PBVCoord3D@@ (class key). The canonical header's struct spelling mangles PBUCoord3D@@ and does not compile against this body (our=0 bytes).
+class Coord3D
+{
+public:
+	Real x, y, z;
+};
+
 #include "command_source_type.h"
 
 extern const char Rva006A16B0Empty[];
