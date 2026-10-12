@@ -19438,5 +19438,55 @@
  "after_sha256": "c7eaa73a0732aeed751971615ce6acc5731359f16219865b37ee576e1a47c6c3",
  "evidence": "targets/game/reverse/identity_evidence/00258800-cashhack-source-home-name-pairing.md",
  "reason": "False source-home pairing: canonical CashHackSpecialPower declaration and doSpecialPowerAtObject definition remain; Gen_000E8AF0::bfmeAddCount is the separate existing E8B20 dependency called by the action."
+},
+  {
+ "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+ "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+ "old_name": "GadgetProgressBarGetEnabledBarImageCenter",
+ "new_name": "BfmeProgressImage",
+ "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
+ "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
+ "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
+ "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
+},
+  {
+ "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+ "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+ "old_name": "GadgetProgressBarGetEnabledBarImageRight",
+ "new_name": "BfmeProgressImage",
+ "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
+ "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
+ "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
+ "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
+},
+  {
+ "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+ "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+ "old_name": "GadgetProgressBarGetEnabledImageCenter",
+ "new_name": "BfmeProgressImage",
+ "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
+ "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
+ "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
+ "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
+},
+  {
+ "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+ "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+ "old_name": "GadgetProgressBarGetEnabledImageLeft",
+ "new_name": "BfmeProgressImage",
+ "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
+ "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
+ "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
+ "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
+},
+  {
+ "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+ "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBar.cpp",
+ "old_name": "GadgetProgressBarGetEnabledImageRight",
+ "new_name": "BfmeProgressImage",
+ "before_sha256": "1c86b694ab1c7432106b3f480421ec125147dfea299c29f9117106b3eb8b436d",
+ "after_sha256": "a41adcc3712494a39c3c464644ff98bd90315ce070e91b81d274d5b208c3f7ec",
+ "evidence": "targets/game/reverse/identity_evidence/00793520-empty-coordinate.md",
+ "reason": "The ZH accessor spellings name GameWindow image fields whose offsets sit four bytes lower than BFME: the independently decoded retail reads in this callback are +0x90/+0x84/+0x48/+0x54/+0x60, and name_oracle has no GameWindow+90 witness that would justify binding those accessor names to the BFME fields. The TU-local reader leaves the shared getters and their verified rows untouched, and every other call site of these accessors in this same file (W3DGadgetProgressBarImageDrawLocalCopy and the backColor accessor block) keeps the descriptive spelling. Retail ILT 0001CAA3 proves the callback identity at 0x00793520, and the converted body matches all 203 bytes with the scoped gate reporting Functions OK 34/34."
 }
 ]

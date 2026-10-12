@@ -184,29 +184,42 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 
 }  // end W3DGadgetProgressBarDraw
 
+// The five enabled-image reads inside W3DGadgetProgressBarImageDrawA below use
+// independently decoded BFME offsets, not the inherited ZH accessors: the ZH
+// accessor offsets sit four bytes lower, and name_oracle has no GameWindow+90
+// witness to attach a semantic member name to. This reader is TU-local so the
+// shared getters and their verified rows stay untouched. Evidence:
+// targets/game/reverse/identity_evidence/00793520-empty-coordinate.md
+static inline const Image *BfmeProgressImage(GameWindow *window, Int offset)
+{
+	return *(const Image **)((char *)window + offset);
+}
+
+// A source-shaping type, not an invented EA coordinate identity: the empty
+// inline constructor changes only VC7.1's allocation context, which is what
+// turns the bank's `mov ecx,[esp+14]; imul ecx,ebx` into retail's
+// `imul ebx,[esp+14]`.
+class Rva00793520Coord : public ICoord2D { public: Rva00793520Coord() {} };
+
 // W3DGadgetProgressBarImageDraw ==============================================
 /** Draw Progress Bar with user supplied images */
 //=============================================================================
 void W3DGadgetProgressBarImageDrawA( GameWindow *window, WinInstanceData *instData )
 {
-	ICoord2D origin, size;
+	ICoord2D origin;
+	Rva00793520Coord size;
 	const Image *barCenter, *barRight, *left, *right, *center;
 	Int progress = (Int)window->winGetUserData();
-	Int xOffset, yOffset;
 	Int i;
 	// get window size and position
   window->winGetScreenPosition( &origin.x, &origin.y );
 	window->winGetSize( &size.x, &size.y );
 
-	// get offset
-	xOffset = instData->m_imageOffset.x;
-	yOffset = instData->m_imageOffset.y;
-
-	barCenter				= GadgetProgressBarGetEnabledBarImageCenter( window );
-	barRight				= GadgetProgressBarGetEnabledBarImageRight( window );
-	left						= GadgetProgressBarGetEnabledImageLeft( window );
-	right						= GadgetProgressBarGetEnabledImageRight( window );
-	center					= GadgetProgressBarGetEnabledImageCenter( window );
+	barCenter				= BfmeProgressImage(window, 0x90);
+	barRight				= BfmeProgressImage(window, 0x84);
+	left						= BfmeProgressImage(window, 0x48);
+	right						= BfmeProgressImage(window, 0x54);
+	center					= BfmeProgressImage(window, 0x60);
 
 	if(!barCenter || !barRight || !left || !right || !center)
 		return;
@@ -214,7 +227,8 @@ void W3DGadgetProgressBarImageDrawA( GameWindow *window, WinInstanceData *instDa
 	Int width = barCenter->getImageWidth();
 //	Int height = barCenter->getImageHeight();
 
-	Int drawWidth = (size.x * progress) / 100;
+	progress *= size.x;
+	Int drawWidth = progress / 100;
 	Int pieces = drawWidth / width;
 	Int x = origin.x;
 	for( i = 0; i < pieces; i ++)
