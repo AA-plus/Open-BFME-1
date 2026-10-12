@@ -36,6 +36,9 @@
 // 2 Ints(0x08) = 0x20 total.
 //
 #define __PLACEMENT_VEC_NEW_INLINE
+// Retail's tree _M_insert (0x000EED60) has no EH region; build this TU's
+// STL the same way so its COMDAT copy is retail's (TeamFactory_M_insert.cpp).
+#define _STLP_NO_EXCEPTIONS 1
 #include <map>		// before PreRTS.h so STLport node_alloc is used (not NEWALLOC)
 
 // Modelled first base: only its ABI shape (vptr + one pointer-sized data
