@@ -62,7 +62,7 @@ public:
 	void bfmeTailA1044();	// 0x004B0850 via ILT 0x00006E83
 };
 
-extern Real g_rva004B0D40Duration;	// 0x012B6624 (650.0f)
+extern Real g_Va012B6624;	// 0x012B6624 (650.0f)
 
 // Window size; height stays in a register but keeps its frame slot.
 struct Rva004B0D40Size
@@ -95,8 +95,7 @@ __forceinline Coord2D &Coord2D::Rotate(float angle)
 	}
 
 	float new_x = cosine * x - sine * *(const volatile float *)&y;
-	float new_y = cosine * y;
-	new_y += sine * x;
+	float new_y = cosine * *(const volatile float *)&y + sine * x;
 	y = new_y;
 	x = new_x;
 	return *this;
@@ -139,8 +138,8 @@ void Gen_004B1720::rva004B0D40()
 	Coord2D dir(0.0f, (Real)(1 < count ? -1 : 0));
 	if (count > 1)
 	{
-		Real t = RVA004B0D40_MIN(g_rva004B0D40Duration, (Real)m_38);
-		dir.Rotate(1.0f - t / g_rva004B0D40Duration);
+		Real t = RVA004B0D40_MIN(g_Va012B6624, (Real)m_38);
+		dir.Rotate(1.0f - t / g_Va012B6624);
 	}
 
 	Coord2DBase lo;
@@ -201,6 +200,6 @@ void Gen_004B1720::rva004B0D40()
 			window->winClearStatus(0x200);
 	}
 
-	if ((Real)m_38 > g_rva004B0D40Duration)
+	if ((Real)m_38 > g_Va012B6624)
 		m_active = false;
 }
