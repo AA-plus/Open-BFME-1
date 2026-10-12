@@ -1,5 +1,7 @@
 // ?angle0075F210@AttachmentTransform007629F0@@QAE_NPAM@Z
-// partial score=0.924 date=2026-09-28
+// partial score=0.8854 date=2026-10-12
+// ?angle0075F210@AttachmentTransform007629F0@@QAE_NPAM@Z
+// partial score=0.92 compile-fixed: landed AttachmentTransform007629F0 TU + angle body; 349B, 40 diffs from +0x82 (target Vector3 stores/push 0 order)
 // cl: /O2 /Ob2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /Iinputs/reference/shims/sweep /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug
 // RVA 007629F0: thiscall(Matrix3D&), ret4, frame30. Hub0077B3F0+281
 // proves the writable matrix and primary receiver; see its analyst report.
@@ -11,9 +13,6 @@
 
 // Retail expands both accessors: the canonical Header has a 16-bit length
 // at +4 and its characters at +8. Keep the canonical class and layout.
-template <> inline const char *StringBase<char>::str() const {
-    return m_data ? m_data->data : "";
-}
 template <> inline bool StringBase<char>::isNotEmpty() const {
     return m_data && m_data->length != 0;
 }
@@ -54,9 +53,12 @@ struct ObjectFields007629F0 {
     float buildRate() { return reinterpret_cast<BfmeHostYA *>(this)->bfmeGetYA(); }
     const GeometryInfo &geometry() const { return *reinterpret_cast<const GeometryInfo *>((const char *)this + 0xAC); }
 };
-struct Engine007629F0 { char unknown00[0x30]; int mode30; int unknown34; float value38; };
-extern Client007629F0 *ClientGlobal007629F0;
-extern Engine007629F0 *EngineGlobal007629F0;
+// The 0x012ED524 global is EA's `GameEngine *TheGameEngine`; only this TU's
+// view of the pointee is declared here.
+class GameEngine { public: char unknown00[0x30]; int mode30; int unknown34; float value38; };
+class GameClient;
+extern GameClient *TheGameClient;
+extern GameEngine *TheGameEngine;
 extern int AttachmentFailures007629F0;
 void stepAngleToward(float *, float);
 struct State007629F0 { char unknown00[0x38]; unsigned flags38; };
@@ -89,7 +91,7 @@ typedef char AttachmentBoneOffset007629F0[offsetof(AttachmentTransform007629F0, 
 void AttachmentTransform007629F0::adjust(Matrix3D &mtx)
 {
     if (parentID88) {
-        Drawable *parent = ClientGlobal007629F0->slot2C(parentID88);
+        Drawable *parent = ((Client007629F0 *)TheGameClient)->slot2C(parentID88);
         if (parent) {
             ObjectFields007629F0 *object = parent->m_object;
             Matrix3D boneMtx;
@@ -115,8 +117,8 @@ void AttachmentTransform007629F0::adjust(Matrix3D &mtx)
             mtx = boneMtx;
     }
     if (blend264 < 1.0f) {
-        if (frame268 < ClientGlobal007629F0->slot68()) {
-            frame268 = ClientGlobal007629F0->slot68();
+        if (frame268 < ((Client007629F0 *)TheGameClient)->slot68()) {
+            frame268 = ((Client007629F0 *)TheGameClient)->slot68();
             blend264 += 1.0f / 30.0f;
             if (blend264 > 1.0f) blend264 = 1.0f;
         }
@@ -128,9 +130,9 @@ void AttachmentTransform007629F0::adjust(Matrix3D &mtx)
     if (m_curState && (m_curState->flags38 & 8)) {
         ObjectFields007629F0 *object = drawable08->m_object;
         if (object) {
-            if (EngineGlobal007629F0->mode30 == 1) value20C = object->value220;
+            if (TheGameEngine->mode30 == 1) value20C = object->value220;
             if (value20C >= 0.0f) {
-                float pct = object->buildRate() * EngineGlobal007629F0->value38 + value20C;
+                float pct = object->buildRate() * TheGameEngine->value38 + value20C;
                 float height = object->geometry().getMaxHeightAbovePosition();
                 mtx.Translate_Z(height * pct * 0.01f - height);
             }
