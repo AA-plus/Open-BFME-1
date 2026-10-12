@@ -1,10 +1,20 @@
-// ?checkQueuedTeams@AIPlayer@@MAEXXZ
-// partial score=0.9986 date=2026-10-02
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/objectdlink
-
-// BFME's AIPlayer::checkQueuedTeams, retail RVA 0x00161E20 (697 bytes).
-// The queue and prototype offsets are BFME witnesses; the Zero Hour twin is
-// reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source/GameLogic/AI/AIPlayer.cpp.
+// readable body of ?checkQueuedTeams@AIPlayer@@MAEXXZ: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source/GameLogic/AI/AIPlayer.cpp
+//
+// AIPlayer::checkQueuedTeams, 0x00161E20, 697 bytes (ret at +0x2B8).
+// Identity: slot 17 (+0x44) of the AIPlayer vtable 0x010968B0 routes through
+// ILT 0x0001E27C here, the slot Zero Hour's AIPlayer.h gives checkQueuedTeams
+// (checkReadyTeams 16, AIPlayerCheckReadyTeams.cpp). The body is the Zero Hour
+// twin: the expired-build pass (ready-queue move or disband plus the
+// isSkirmishAI clearTeamFlags), then the all-built pass and the idle-member
+// production-condition script.
+//
+// BFME differences: the team's +0xE7/+0xE6 flag setter at 0x000EC960 runs with
+// false before each ready-queue move; findScriptByName is ScriptEngine slot 53
+// taking the nullable team name (Team::getName, empty string 0x01336E50), the
+// condition name and an out name, and friend_executeAction is slot 25. The
+// build-queue iterator keeps its next getter (ILT 0x0002FEE6) in a frame slot
+// because the loops reset it.
 
 #include "ObjectDlinkPmf.h"
 
@@ -120,7 +130,7 @@ class TeamPrototype
 public:
 	void *m_vptr;
 	void *m_factory;
-	void *m_owner;
+	void *m_owningPlayer;
 	Int m_id;
 	BFMERetailAsciiString m_name;
 	unsigned char m_pad14[0x1a4 - 0x14];
@@ -163,6 +173,9 @@ private:
 	GetNextFunc m_getNext;
 };
 
+class AsciiString;
+extern const AsciiString Rva01336E50EmptyString;
+
 class Team
 {
 public:
@@ -172,6 +185,12 @@ public:
 	Object *m_head;
 
 	TeamPrototype *getPrototype() const { return m_proto; }
+	const BFMERetailAsciiString *getName() const
+	{
+		if (!m_proto)
+			return (const BFMERetailAsciiString *)&Rva01336E50EmptyString;
+		return &m_proto->m_name;
+	}
 
 	Rva00161E20ObjectIterator iterate_TeamMemberList() const
 	{
@@ -209,7 +228,7 @@ public:
 			(*pListHead)->m_prevReady = this;
 		*pListHead = this;
 	}
-	TeamInQueue *next();
+	TeamInQueue *dlink_next_TeamBuildQueue() const;
 
 	Bool isBuildTimeExpired()
 	{
@@ -276,18 +295,11 @@ public:
 class TeamInQueueIterator
 {
 public:
-	typedef TeamInQueue *(TeamInQueue::*GetNextFunc)();
+	typedef TeamInQueue *(TeamInQueue::*GetNextFunc)() const;
 
 	TeamInQueueIterator(TeamInQueue *cur, GetNextFunc getNext)
-		: m_cur(cur)
+		: m_cur(cur), m_getNext(getNext)
 	{
-		union
-		{
-			GetNextFunc pmf;
-			unsigned int raw;
-		} value;
-		value.raw = 0x0042FEE6;
-		m_getNext = value.pmf;
 	}
 
 	void advance()
@@ -377,7 +389,7 @@ public:
 
 	TeamInQueueIterator iterate_TeamBuildQueue() const
 	{
-		return TeamInQueueIterator(m_buildQueueHead, &TeamInQueue::next);
+		return TeamInQueueIterator(m_buildQueueHead, &TeamInQueue::dlink_next_TeamBuildQueue);
 	}
 
 	void removeFrom_TeamBuildQueue(TeamInQueue *team)
@@ -479,12 +491,10 @@ void AIPlayer::checkQueuedTeams()
 			{
 				if (team->m_team->getPrototype()->m_executeActions)
 				{
-                                        BFMERetailUnicodeString outName;
-                                        TeamPrototype *prototype = team->m_team->getPrototype();
-        TeamPrototype *conditionPrototype = prototype;
-        if (!prototype) prototype = (TeamPrototype *)0x01336e50;
-        else prototype = (TeamPrototype *)((char *)prototype + 0x10);
-        Script *script = TheScriptEngine->findScriptByName((BFMERetailAsciiString *)prototype, &conditionPrototype->m_productionCondition, &outName);
+					BFMERetailUnicodeString outName;
+				Script *script = TheScriptEngine->findScriptByName(
+					(BFMERetailAsciiString *)team->m_team->getName(),
+					&team->m_team->getPrototype()->m_productionCondition, &outName);
 				if (script)
 					TheScriptEngine->friend_executeAction(
 						&outName, script->getAction(), team->m_team);
