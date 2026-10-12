@@ -1,5 +1,5 @@
 // _Rva009B8130Vp6Reconstruct
-// partial score=0.993 date=2026-10-09
+// partial score=0.9941 date=2026-10-09
 // cl: /Z7
 extern int *g_rva01356A9C;
 extern "C" unsigned char Vp6WideAccumConst86D0[8];
@@ -79,25 +79,23 @@ extern "C" void __cdecl Rva009B8130Vp6Reconstruct(
 #define p3cur work.p3cur
 #define byteIdx work.byteIdx
 
-	__asm {
-		mov eax, dword ptr context
-		mov edx, dword ptr [eax + 0xc]
-		mov eax, dword ptr g_rva01356A9C
-		mov eax, dword ptr [eax + edx*4]
-		mov ecx, dword ptr blockCount
-		mov edx, dword ptr firstBlock
-		mov word ptr edgeBroadcast, ax
-		mov word ptr edgeBroadcast[2], ax
-		mov word ptr edgeBroadcast[4], ax
-		mov word ptr edgeBroadcast[6], ax
+	{
+		unsigned int edge = ((unsigned int *)g_rva01356A9C)[((Rva009B8130Vp6Context *)context)->m_plane];
+		unsigned short *edgeW = (unsigned short *)edgeBroadcast;
+		edgeW[0] = (unsigned short)edge;
+		edgeW[1] = (unsigned short)edge;
+		edgeW[2] = (unsigned short)edge;
+		edgeW[3] = (unsigned short)edge;
 	}
 
-	__asm {
-		lea eax, [edx + ecx]
-		cmp ecx, eax
-		mov dword ptr block, ecx
-		mov dword ptr endBlock, eax
-		jae label_15bb
+	{
+		unsigned int startBlock = firstBlock;
+		unsigned int count = blockCount;
+		unsigned int stopBlock = startBlock + count;
+		block = count;
+		endBlock = stopBlock;
+		if (count >= stopBlock)
+			goto label_15bb;
 	}
 
 	__asm {
