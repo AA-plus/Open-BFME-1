@@ -706,3 +706,19 @@ unsigned int Rva0026A810Field::get() const
 {
 	return m_value;
 }
+
+class Rva000E0BF0Field
+{
+public:
+	unsigned int get() const;
+
+private:
+	char m_prefix[ 4 ];
+	unsigned int m_value;
+};
+
+// ?get@Rva000E0BF0Field@@QBEIXZ
+unsigned int Rva000E0BF0Field::get() const
+{
+	return m_value;
+}
