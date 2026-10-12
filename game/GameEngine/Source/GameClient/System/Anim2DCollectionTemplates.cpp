@@ -4,36 +4,13 @@
 typedef int Int;
 extern "C" int __cdecl memcmp(const void *, const void *, unsigned int);
 
-class AsciiString;
-template <typename T> class StringBase
-{
-    friend class AsciiString;
-private:
-    StringBase(const StringBase<T> &);
-    ~StringBase();
-    struct Header
-    {
-        unsigned char m_unreconstructed_00[4];
-        unsigned short m_len;
-        unsigned char m_unreconstructed_06[2];
-    };
-    Header *m_data;
-};
+#include "../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
-class AsciiString : private StringBase<char>
+static inline bool templateNamesEqual(const StringBase<char> &left, const StringBase<char> &right)
 {
-public:
-    AsciiString(const AsciiString &other) : StringBase<char>(other) {}
-    ~AsciiString() {}
-    Int len() const { return m_data ? m_data->m_len : 0; }
-    const char *str() const { return m_data ? reinterpret_cast<const char *>(m_data + 1) : ""; }
-};
-
-inline bool operator==(const AsciiString &left, const AsciiString &right)
-{
-    Int rightLength = right.len();
+    Int rightLength = right.getLength();
     const char *rightChars = right.str();
-    Int leftLength = left.len();
+    Int leftLength = left.getLength();
     const char *leftChars = left.str();
     Int compareLength = (leftLength < rightLength) ? leftLength : rightLength;
     Int prefixOrder = memcmp(leftChars, rightChars, compareLength);
@@ -71,7 +48,7 @@ Anim2DTemplate *Anim2DCollection::findTemplate(const AsciiString &name)
          animTemplate;
          animTemplate = animTemplate->friend_getNextTemplate())
     {
-        if (animTemplate->getName() == name)
+        if (templateNamesEqual(animTemplate->getName(), name))
             return animTemplate;
     }
     return 0;

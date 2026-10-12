@@ -1949,45 +1949,16 @@ static void Render_FVF_Category_Container_List_Delayed_Passes(FVFCategoryList& l
 	}
 }
 
-// byte-exact reconstruction: game/Libraries/Source/WWVegas/WW3D2/DX8MeshRendererClass_Flush.cpp
-// ?Flush@DX8MeshRendererClass@@QAEXXZ present-unmatched
-void DX8MeshRendererClass::Flush(void)
+// Source-only emission hook: preserve the two matched static helpers and
+// their VC7.1 internal calling convention after removing the Zero Hour Flush.
+void bfmeKeepFVFCategoryHelpers(FVFCategoryList &list)
 {
-	int i;
-
-	WWPROFILE("DX8MeshRenderer::Flush");
-	if (!camera) return;
-	Log_Statistics_String(true);	
-
-	/*
-	** Render the FVF categories.  Note that it is critical that skins be 
-	** rendered *after* the rigid meshes.  This is caused by the fact that an object may
-	** have its base passes disabled and a translucent procedural material pass rendered
-	** instead.  In this case, technically we have to delay rendering of the material pass but
-	** for skins we just render these passes as we go because we can assume that the
-	** bulk of the meshes have already been drawn (there would be extra overhead involved
-	** in solving this for skins)
-	*/
-	for (i=0;i<texture_category_container_lists_rigid.Count();++i) {
-		Render_FVF_Category_Container_List(*texture_category_container_lists_rigid[i]);
-	}
-
-	Render_FVF_Category_Container_List(*texture_category_container_list_skin);
-
-	Render_Decal_Meshes();
-
-	/*
-	** Render the translucent procedural material passes that were applied to meshes that
-	** had their base passes disabled. 
-	*/
-	for (i=0;i<texture_category_container_lists_rigid.Count();++i) {
-		Render_FVF_Category_Container_List_Delayed_Passes(*texture_category_container_lists_rigid[i]);
-	}
-
-	DX8Wrapper::Set_Vertex_Buffer(NULL);
-	DX8Wrapper::Set_Index_Buffer(NULL,0);
+	Render_FVF_Category_Container_List(list);
+	Render_FVF_Category_Container_List_Delayed_Passes(list);
 }
 
+// Flush is defined by the byte-exact BFME reconstruction in
+// DX8MeshRendererClass_Flush.cpp; the Zero Hour body differs from retail.
 
 // ?Add_To_Render_List@DX8MeshRendererClass@@QAEXPAVDecalMeshClass@@@Z present-unmatched
 void DX8MeshRendererClass::Add_To_Render_List(DecalMeshClass * decalmesh)

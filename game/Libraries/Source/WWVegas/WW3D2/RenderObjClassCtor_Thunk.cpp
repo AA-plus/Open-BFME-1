@@ -120,6 +120,8 @@ class RenderObjClass : public RefCountClass, public MultiListObjectClass
 {
 public:
 	RenderObjClass(void);
+	// The retail destructor releases RenderHook; do not emit an empty implicit copy.
+	virtual ~RenderObjClass(void);
 
 	virtual int Class_ID(void) const;
 
