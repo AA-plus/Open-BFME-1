@@ -1,9 +1,14 @@
 // ?updateOptimalExtrusionPadding@W3DVolumetricShadow@@IAEXXZ
-// partial score=0.9974 date=2026-10-10
+// exact 2026-10-12 (Corner0 inline helper with qualified Extent.X read selects retail x87 operand order)
 // cl: /DNDEBUG /MD /EHsc /O2 /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Include
 #include "rendobj.h"
 
 typedef float Real;
+static __forceinline Vector3 Corner0(const Vector3 &center, const Vector3 &extent)
+{
+	return Vector3(((const volatile Vector3 &)extent).X + center.X, center.Y + extent.Y, center.Z + extent.Z);
+}
+
 struct Coord3D;
 
 class W3DShadowManager
@@ -74,7 +79,7 @@ void W3DVolumetricShadow::updateOptimalExtrusionPadding(void)
 		const AABoxClass &box = m_robj->Get_Bounding_Box();
 		Vector3 corners[4];
 
-		corners[0] = Vector3(((const volatile Vector3 &)box.Extent).X + box.Center.X, box.Center.Y + box.Extent.Y, box.Center.Z + box.Extent.Z);
+	corners[0] = Corner0(box.Center, box.Extent);
 		corners[1] = corners[0];
 		corners[1].X -= 2.0f * box.Extent.X;
 		corners[2] = corners[1];

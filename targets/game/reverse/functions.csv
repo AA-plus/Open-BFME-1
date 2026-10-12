@@ -38323,7 +38323,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_007b4fe0@@YAXXZ,,0x007B4FE0,4341,game/gen_asm/d_00776ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00bb4fe0
 ?d_007b6520@@YAXXZ,,0x007B6520,1640,game/gen_asm/d_00776ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00bb6520
 ?d_007b77e0@@YAXXZ,,0x007B77E0,12,game/GameEngine/Source/Common/VirtualSlot5CallThunk.cpp,matched,object-symbol=?invokeArgument@VirtualSlot2ArgumentCallOwner@@QAEXPAUVirtualSlot2ArgumentThunk@@@Z;Open-BFME5 clean C++ virtual slot 2 argument call
-?d_007ba590@@YAXXZ,,0x007BA590,760,game/gen_asm/d_007b14a0.asm,matched,gen-dump;ghidra=FUN_00bba590
 ?d_007bf3c0@@YAXXZ,,0x007BF3C0,824,game/gen_asm/d_007be000.asm,matched,gen-dump;ghidra=FUN_00bbf3c0
 ?d_007c05e0@@YAXXZ,,0x007C05E0,1729,game/gen_asm/d_00776ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00bc05e0
 ?d_007c1f30@@YAXXZ,,0x007C1F30,1089,game/gen_asm/d_007be000.asm,matched,gen-dump;ghidra=FUN_00bc1f30
@@ -172549,3 +172548,4 @@ uw_00c62030,,0x00C62030,8,game/gen_small/uw_gen_008.cpp,matched,gen-funclet;obje
 uw_00c62050,,0x00C62050,8,game/gen_small/uw_gen_008.cpp,matched,gen-funclet;object-symbol=$L1165
 uw_00c62058,,0x00C62058,11,game/Libraries/Source/WWVegas/WWDebug/wwmemlog.cpp,matched,gen-funclet;parent=?Get_Log@WWMemoryLogClass@@KAPAVMemLogClass@@XZ;object-symbol=$L6477
 uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCleanup.cpp,matched,gen-funclet;object-symbol=$L305;placement cleanup;parent unknown - the emitting function in this source is a synthetic stub
+?updateOptimalExtrusionPadding@W3DVolumetricShadow@@IAEXXZ,,0x007BA590,760,game/GameEngineDevice/Source/W3DDevice/GameClient/Shadow/W3DVolumetricShadowUpdateOptimalExtrusionPadding.cpp,matched,Corner0 inline helper with qualified Extent.X read; ilt CONFIRMED 0x42127; rebuilt from dump d_007b14a0;model=openai-codex;host=chalco.vps
