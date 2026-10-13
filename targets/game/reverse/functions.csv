@@ -38055,7 +38055,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0069ae40@@YAXXZ,,0x0069AE40,90,game/gen_asm/d_00693e20.asm,matched,gen-dump;ghidra=FUN_00a9ae40
 ?d_0069d620@@YAXXZ,,0x0069D620,285,game/gen_asm/d_00693e20.asm,matched,gen-dump;ghidra=FUN_00a9d620
 ?d_0069d920@@YAXXZ,,0x0069D920,277,game/gen_asm/d_00693e20.asm,matched,gen-dump;ghidra=FUN_00a9d920
-?d_0069f2f0@@YAXXZ,,0x0069F2F0,144,game/gen_asm/d_0069c4f0.asm,matched,gen-dump;bounds=high
 ?d_0069f3b0@@YAXXZ,,0x0069F3B0,181,game/gen_asm/d_00693e20.asm,matched,gen-dump;ghidra=FUN_00a9f3b0
 ?d_0069f540@@YAXXZ,,0x0069F540,106,game/gen_asm/d_00693e20.asm,matched,gen-dump;ghidra=FUN_00a9f540
 ?d_0069f5d0@@YAXXZ,,0x0069F5D0,295,game/gen_asm/d_00693e20.asm,matched,gen-dump;ghidra=FUN_00a9f5d0
@@ -172556,3 +172555,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?refreshAmbientSound0041AE50@Drawable@@AAEXXZ,,0x0041AE50,396,game/GameEngine/Source/GameClient/DrawableRefreshAmbientSound.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/0x0041ae50-refresh-ambient.md;Address-derived method after ILT contradiction of bank identity;complete 396-byte body and helper ABI;both EH cleanup actions verified;model=gpt-6.1-sol;host=fleet
 ?rva00299080@OneRingPenaltyUpdate@@QAEXXZ,,0x00299080,257,game/GameEngine/Source/GameLogic/Object/Update/OneRingPenaltyUpdateRva00299080.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/00299080-one-ring-penalty-spawn.md;OneRingPenaltyUpdate.cpp random-draw literal; spawns the module data object at a random angle and radius around the owner; replaces the refuted isPointOnWall naked lift; method name keeps the address;model=claude;host=vm
 ?rva001F8AB0@@YAPAVBehaviorModule@@PAVObject@@@Z,,0x001F8AB0,155,game/GameEngine/Source/GameLogic/Object/Behavior/DynamicPortalBehaviourRva001F8AB0.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/001f8ab0-dynamic-portal-lookup.md;cdecl DynamicPortalBehaviour module lookup over Object+0x1F0; called via ILT 0x0002FC7A; replaces the refuted getModuleNameKey naked lift; name keeps the address;model=claude;host=vm
+?removeByKey@Rva00699180Owner@@QAEXI@Z,,0x0069F2F0,144,game/GameEngine/Source/Common/Rva00699180Volume.cpp,matched,Native vector erase at owner+4C with authentic visible productClamp and refreshPair; opaque existing bank identity; RET4 boundary;model=gpt-6-astra;host=GreatFaram

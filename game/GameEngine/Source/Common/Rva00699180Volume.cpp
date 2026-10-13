@@ -1,4 +1,14 @@
-// cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD
+// cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /D_STLP_USE_STATIC_LIB
+// stlport
+#define _STLP_NO_EXCEPTIONS 1
+#include <vector>
+struct Rva00699180Pair
+{
+	float m_value;
+	unsigned int m_key;
+};
+
+
 // Product clamping and output-pair refresh share this receiver and translation unit.
 // Keeping both helper bodies visible preserves retail's ECX call sequence at 0x006994C0.
 class Rva00699430Owner {
@@ -40,6 +50,7 @@ extern unsigned char g_012BA144;
 class Rva00699180Owner
 {
 public:
+	void removeByKey(unsigned int key);
 	void refreshPair(int a, int b);
 	void refreshAll();
 	void setVolumes(float volume, unsigned char flags);
@@ -47,7 +58,7 @@ public:
 	char m_pad0[4];
 	float m_base[12];
 	float m_product[6];
-	char m_pad4c[0x94 - 0x4c];
+	_STL::vector<Rva00699180Pair> m_buckets[6];
 	float m_atten;
 	float m_vol;
 	float m_scale;
@@ -186,4 +197,32 @@ void Rva006994C0Owner::recomputeProductChannel(int index)
     for (int i = 0; i < 2; ++i) {
         ((Rva00699180Owner *)this)->refreshPair(index, i);
     }
+}
+
+// Retail 0069F2F0: erase matching eight-byte entries in all six vectors.
+// Both existing helper definitions must remain visible to preserve ECX.
+void Rva00699180Owner::removeByKey(unsigned int key)
+{
+	for (int i = 0; i < 6; ++i)
+	{
+		unsigned char removed = 0;
+		_STL::vector<Rva00699180Pair> &bucket = m_buckets[i];
+		_STL::vector<Rva00699180Pair>::iterator it = bucket.begin();
+		while (it != bucket.end())
+		{
+			if (it->m_key == key)
+			{
+				it = bucket.erase(it);
+				removed = 1;
+			}
+			else
+				++it;
+		}
+		if (removed)
+		{
+			((Rva00699430Owner *)this)->productClamp(i);
+			for (int j = 0; j < 2; ++j)
+				refreshPair(i, j);
+		}
+	}
 }

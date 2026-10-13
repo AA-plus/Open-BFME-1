@@ -1,4 +1,5 @@
-// cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /Igame/GameEngine/Source/Common
+// cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /D_STLP_USE_STATIC_LIB /Igame/GameEngine/Source/Common
+// stlport
 // Retail 0x00699B40 refreshes output side b of all six channels in each of
 // three 0x1C4-byte volume blocks at TheAudio+0xB8. Keeping
 // refreshPair's body in this TU lets MSVC keep ECX across the inner loop.
