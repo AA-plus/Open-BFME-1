@@ -99,6 +99,7 @@ def added_lift_lines(old, new, lines=None):
     # 0204cb9c94). Every touched file whose NEW text mentions emit is checked
     # for growth even when no added line names __emit. Macros defined in a
     # header are not followed (a gap that predates 47cf6cb).
+    _PRELUDE.clear()  # per run: ":" and revs mean a different tree per call
     removed, added, path, touched = collections.Counter(), [], None, []
     for line in lines:
         if line.startswith("+++ b/"):
@@ -126,7 +127,8 @@ def added_lift_lines(old, new, lines=None):
         if not name and LIFT_RE.search(COMMENT_RE.sub(" ", line[1:])) \
                 and not NAKED_RE.search(COMMENT_RE.sub(" ", line[1:])):
             if path not in grown:
-                grown[path] = emit_growth(file_text(old, path), file_text(new, path))
+                grown[path] = emit_growth(file_text(old, path), file_text(new, path),
+                                          header_prelude(old), header_prelude(new))
             if not grown[path]:
                 continue
         first, count = bad.get(path, (line[1:].strip()[:80], 0))
@@ -136,21 +138,35 @@ def added_lift_lines(old, new, lines=None):
             continue
         if path not in grown:
             new_text = file_text(new, path)
-            grown[path] = emit_growth(file_text(old, path), new_text) \
-                if LIFT_RE.search(new_text) else []
+            grown[path] = emit_growth(file_text(old, path), new_text,
+                                      header_prelude(old), header_prelude(new)) \
+                if LIFT_RE.search(new_text) or header_prelude(new) else []
         if grown[path]:
             bad[path] = ("emitted bytes grow in " + ", ".join(grown[path])[:80], 1)
     return [(p, "%s  (%d such lines)" % (first, count)) for p, (first, count) in bad.items()]
 
 
-# Every __emit counts, whatever its operand (owner verdict 2026-10-13):
-# a literal is its byte value, a same-file #define/enum constant resolves to
-# its value when trivially possible, anything else is counted as its own
-# symbol (operand text plus its same-file definition, so a changed definition
-# is growth).
+# Every __emit counts, whatever its operand (owner verdict 2026-10-13;
+# adversarial review round 2): a literal is its byte value; a #define, enum or
+# `const` integral constant with a literal initializer resolves to its value
+# (same file, or a tracked game/ header); anything else is counted as its own
+# symbol (operand text plus its definition, so a changed definition is
+# growth). Emit macros are expanded to a fixpoint: a macro is an emit macro if
+# its body names __emit/_emit or another emit macro, and a function-like one
+# has its arguments substituted, so `EB(0x90)` -> `EB(0xC3)` is a new byte.
+# Emit macros and constants are also collected from every tracked game/ header
+# (outside game/gen_small/) that defines one, at the revision being compared;
+# the vendored inputs/reference/ tree is not followed (documented limit).
+# A renamed function's emits count as new (conservative: the gate cannot tell
+# a rename from a move, G2 note 8).
 EMIT_OPERAND = r"\b__?emit\b\s*(\(?\s*[\w$]+\s*\)?|[^\s;{}]+)?"
 EMIT_BYTE_RE = re.compile(EMIT_OPERAND)
 _LITERAL_RE = re.compile(r"\(?\s*(0[xX][0-9A-Fa-f]+|\d+)[uUlL]*\s*\)?$")
+_DEFINE_RE = re.compile(
+    r"(?m)^[ \t]*#\s*define\s+(\w+)(\([^)\n]*\))?[ \t]*((?:[^\n]*\\\n)*[^\n]*)")
+_CONST_RE = re.compile(
+    r"\bconst\b[^;=(){}#\n]*?\b(\w+)\s*=\s*([^;,{}\n]+)\s*[;,]")
+_HEADER_GLOBS = ("game/*.h", "game/*.hpp", "game/*.inl", ":(exclude)game/gen_small/")
 
 
 def file_text(rev, path):
@@ -159,12 +175,57 @@ def file_text(rev, path):
     return "" if data is None else data.decode("utf-8", errors="replace")
 
 
+def _strip_comments(text):
+    text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
+    return re.sub(r"//[^\n]*", " ", text)
+
+
+_PRELUDE = {}
+
+
+def header_prelude(rev):
+    """Definitions text of every tracked game/ header that defines an emit
+    macro, or a macro naming one (fixpoint over `git grep`), at rev. Cheap:
+    one git grep per round, normally one round with no hits."""
+    if rev in _PRELUDE:
+        return _PRELUDE[rev]
+    base = ["git", "grep", "-l", "-I"] + (["--cached"] if rev == ":" else [])
+    tail = [] if rev == ":" else [rev]
+    seen, pattern, texts = set(), [r"-E", r"\b__?emit\b"], []
+    for _ in range(8):
+        proc = subprocess.run(base + pattern + tail + ["--"] + list(_HEADER_GLOBS),
+                              capture_output=True, text=True)
+        paths = [p.split(":", 1)[1] if rev != ":" else p
+                 for p in proc.stdout.splitlines()]
+        paths = [p for p in paths if p not in seen]
+        if not paths:
+            break
+        names = []
+        for path in paths:
+            seen.add(path)
+            text = _strip_comments(file_text(rev, path))
+            texts.append(text)
+            names += [m.group(1) for m in _DEFINE_RE.finditer(text)]
+        if not names:
+            break
+        pattern = ["-w"] + sum((["-e", n] for n in sorted(set(names))), [])
+    _PRELUDE[rev] = "\n".join(texts)
+    return _PRELUDE[rev]
+
+
 def _constants(text):
-    """{name: definition text} for same-file #define and enum constants."""
+    """{name: [definition text]} for #define, enum and `const` constants."""
     consts = {}
-    for m in re.finditer(r"(?m)^[ \t]*#\s*define\s+(\w+)(?!\()[ \t]*((?:[^\n]*\\\n)*[^\n]*)", text):
-        consts.setdefault(m.group(1), [])
-        consts[m.group(1)].append(" ".join(m.group(2).replace("\\\n", " ").split()))
+    for m in _DEFINE_RE.finditer(text):
+        if m.group(2):
+            continue
+        consts.setdefault(m.group(1), []).append(
+            " ".join(m.group(3).replace("\\\n", " ").split()))
+    for m in _CONST_RE.finditer(text):
+        val = " ".join(m.group(2).split())
+        lit = _LITERAL_RE.match(val)
+        consts.setdefault(m.group(1), []).append(
+            str(_emit_value(lit.group(1))) if lit else "const=" + val)
     for m in re.finditer(r"\benum\b[^{;]*\{([^}]*)\}", text):
         nxt = 0
         for item in m.group(1).split(","):
@@ -212,39 +273,128 @@ def _operand_key(op, consts, seen=()):
     return "sym:%s=%s" % (op, "|".join(defs) if defs else "?")
 
 
-def emit_bytes_by_function(text):
+def _macro_table(text):
+    """{name: (params or None, body)}; the last definition wins."""
+    table = {}
+    for m in _DEFINE_RE.finditer(text):
+        params = None
+        if m.group(2):
+            params = [p.strip() for p in m.group(2)[1:-1].split(",") if p.strip()]
+        table[m.group(1)] = (params, " ".join(m.group(3).replace("\\\n", " ").split()))
+    return table
+
+
+def _emit_macros(table):
+    """Names of macros whose expansion reaches __emit (fixpoint)."""
+    emit = {n for n, (_, body) in table.items() if LIFT_RE.search(body)}
+    while True:
+        more = {n for n, (_, body) in table.items() if n not in emit
+                and any(re.search(r"\b%s\b" % re.escape(e), body) for e in emit)}
+        if not more:
+            return emit
+        emit |= more
+
+
+def _call_args(text, pos):
+    """(args, end) for a `(a, b)` starting at text[pos:] (after spaces), or
+    (None, pos) when none."""
+    m = re.match(r"\s*\(", text[pos:])
+    if not m:
+        return None, pos
+    i, depth, args, cur = pos + m.end(), 1, [], ""
+    while i < len(text) and depth:
+        c = text[i]
+        if c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+            if not depth:
+                break
+        if c == "," and depth == 1:
+            args.append(cur.strip())
+            cur = ""
+        else:
+            cur += c
+        i += 1
+    args.append(cur.strip())
+    return args, i + 1
+
+
+def _expand(text, table, emit, limit=16):
+    """Expand emit macros in text to a fixpoint (bounded)."""
+    if not emit:
+        return text
+    name_re = re.compile(r"\b(%s)\b" % "|".join(map(re.escape, sorted(emit))))
+    for _ in range(limit):
+        out, pos, changed = [], 0, False
+        for m in name_re.finditer(text):
+            if m.start() < pos:
+                continue
+            params, body = table[m.group(1)]
+            end = m.end()
+            if params is not None:
+                args, end = _call_args(text, m.end())
+                if args is None:
+                    continue
+                for p, a in zip(params, args + [""] * len(params)):
+                    body = re.sub(r"\b%s\b" % re.escape(p), lambda _m, a=a: a, body)
+            out.append(text[pos:m.start()] + " " + body + " ")
+            pos, changed = end, True
+        if not changed:
+            return text
+        text = "".join(out) + text[pos:]
+    return text
+
+
+def emit_bytes_by_function(text, prelude=""):
     """{scoped function signature: Counter of emitted operands} for a C++ text.
 
     A brace block whose header declares a function (a `name(` declarator) is a
     function; any other block (namespace, class, extern "C") is a container
-    and is scanned inside. A function's key is its enclosing container path
-    plus its signature, so same-named functions in different scopes differ.
-    Emits outside every function are keyed None."""
-    text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
-    text = re.sub(r"//[^\n]*", " ", text)
-    consts = _constants(text)
-    owners, macros = {}, {}
+    and is scanned inside. A header ending in `namespace [N]`, `extern "C"`
+    or `class|struct|union Name [: bases]` opens a container whatever
+    precedes it (a macro invocation without `;`). A function's key is its
+    enclosing container path plus its signature, so same-named functions in
+    different scopes differ. Emits outside every function are keyed None.
+    `prelude` supplies definitions only (game/ headers); its own emits are
+    owned by the header's own check."""
+    text = _strip_comments(text)
+    defs_text = prelude + "\n" + text
+    consts = _constants(defs_text)
+    table = _macro_table(defs_text)
+    emit = _emit_macros(table)
+    owners = {}
+
+    def count(snippet):
+        return collections.Counter(_operand_key(m.group(1), consts)
+                                   for m in EMIT_BYTE_RE.finditer(_expand(snippet, table, emit)))
 
     def directive(match):
         line = " ".join(match.group(0).replace("\\\n", " ").split())
-        found = collections.Counter(_operand_key(m.group(1), consts)
-                                    for m in EMIT_BYTE_RE.finditer(line))
+        name = re.match(r"#\s*define\s+(\w+)", line)
+        if name and name.group(1) in emit:
+            body = re.sub(r"#\s*define\s+\w+(\([^)]*\))?", " ", line, count=1)
+            found = count(body)
+            if not found:
+                found = collections.Counter({"macro:" + body.strip(): 1})
+        else:
+            found = collections.Counter(_operand_key(m.group(1), consts)
+                                        for m in EMIT_BYTE_RE.finditer(line))
         if found:
-            name = re.match(r"#\s*define\s+(\w+)", line)
             key = "#define " + name.group(1) if name else "#preprocessor"
             owners.setdefault(key, collections.Counter()).update(found)
-            if name:
-                macros[name.group(1)] = found
         return " "
     text = re.sub(r"(?m)^[ \t]*#(?:[^\n]*\\\n)*[^\n]*", directive, text)
     text = re.sub(r'"(?:\\.|[^"\\\n])*"', '""', text)
     depth, func, func_depth, header = 0, None, None, []
     scopes = []  # (depth at open, normalized container header)
-    pos = 0
+    pos, skip = 0, 0
     token = r"[{};]|" + EMIT_OPERAND
-    if macros:
-        token += r"|\b(?:%s)\b" % "|".join(map(re.escape, macros))
+    if emit:
+        token += r"|\b(?:%s)\b" % "|".join(map(re.escape, sorted(emit)))
     for match in re.finditer(token, text):
+        if match.start() < skip:
+            continue
         tok = match.group(0)
         if func is None:
             header.append(text[pos:match.start()])
@@ -253,7 +403,10 @@ def emit_bytes_by_function(text):
             if func is None:
                 head = " ".join("".join(header).split())
                 header = []
-                if declared_name(head):
+                scope = _SCOPE_HEAD_RE.search(head)
+                if scope:
+                    scopes.append((depth, " ".join(scope.group(0).split())))
+                elif declared_name(head):
                     func = " :: ".join([s for _, s in scopes] + [head])
                     func_depth = depth
                 else:
@@ -269,24 +422,36 @@ def emit_bytes_by_function(text):
         elif tok == ";":
             if func is None:
                 header = []
-        elif tok in macros:
-            owners.setdefault(func, collections.Counter()).update(macros[tok])
+        elif tok in emit:
+            end = match.end()
+            if table[tok][0] is not None:
+                args, end = _call_args(text, match.end())
+                if args is None:
+                    continue
+            owners.setdefault(func, collections.Counter()).update(
+                count(text[match.start():end]))
+            pos = skip = end
         else:
             owners.setdefault(func, collections.Counter())[
                 _operand_key(match.group(1), consts)] += 1
     return owners
 
 
+_SCOPE_HEAD_RE = re.compile(
+    r'(?:\bnamespace(?:\s+[\w:]+)?|\bextern\s*""'
+    r"|\b(?:class|struct|union)\s+[\w:]+(?:\s*final)?(?:\s*:[^(){};]*)?)\s*$")
+
+
 def _emit_value(value):
     return int(value, 16 if value[:2] in ("0x", "0X") else 10) & 0xFF
 
 
-def emit_growth(old_text, new_text):
+def emit_growth(old_text, new_text, old_prelude="", new_prelude=""):
     """Functions whose emitted bytes grow from OLD to NEW (a new function with
     any __emit counts). Bytes a deleted or shrunk function loses free nothing
     for any other function."""
-    before = emit_bytes_by_function(old_text)
-    after = emit_bytes_by_function(new_text)
+    before = emit_bytes_by_function(old_text, old_prelude)
+    after = emit_bytes_by_function(new_text, new_prelude)
     return sorted((str(k) for k, v in after.items()
                    if v - before.get(k, collections.Counter())), key=str)
 
