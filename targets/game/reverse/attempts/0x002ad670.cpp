@@ -1,5 +1,5 @@
 // ?rva002AD670@StealthUpdate@@QAE?AW4UpdateSleepTime@@XZ
-// partial score=0.97 date=2026-09-28
+// partial score=0.3034 date=2026-09-28
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
 // Retail 0x002AD670 (1885 B): the per-frame stealth step that the real
