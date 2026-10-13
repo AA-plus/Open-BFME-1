@@ -1,15 +1,26 @@
 // ?rva00776AC0@Rva00776AC0Owner@@QAEXPAVXfer@@@Z
-// partial score=0.9935 date=2026-10-03
+// matched 2026-10-13: 3390/3390 bytes, exact modulo 50 relocation slots.
+// Owner stays opaque: vtable 0x01123D38 slot 3 reaches this body via ILT
+// 0x00011CBB; the BFME W3DScriptedModelDraw family's crc(Xfer*)/xfer(Xfer*)
+// conflict is unresolved, so the address token is kept.
+// The last 22 non-relocation bytes (+0x185..+0x19C, x87 fmul/fstp placement
+// among the render +0x20C argument pushes) close with the Zero Hour source's
+// own spelling of the animation-restore multiply:
+//   Real frame = percent * INT_TO_REAL( anim->Get_Num_Frames()-1 );
+// The parenthesised INT_TO_REAL operand keeps the fild/fmul/fstp group where
+// retail schedules it; (float)(x), swapped operands, split declarations and
+// barriers all reproduce the same 22-byte residue.
+// Callable declarations below are unbound ABI views, not identity pins.
+// See identity_evidence/00776ac0-model-transfer-bank.md.
 // cl: /DNDEBUG /DWIN32 /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib /Igame/GameEngine/Source/Common/System /Igame/Libraries/Source/WWVegas/WWMath
 // stlport
-// BANK ONLY: complete 3390-byte body, 22 non-relocation bytes differ.
-// Callable declarations below are unbound ABI views, not new identity pins.
-// See identity_evidence/00776ac0-model-transfer-bank.md before integration.
 #include <vector>
 #include <string>
 #include "ascii_string.h"
 #include "xfer.h"
 #include "coord3d.h"
+typedef float Real;
+#define INT_TO_REAL(x) ((Real)(x))
 #include <string.h>
 
 struct Rva00776AC0Record24 {
@@ -31,22 +42,26 @@ struct Rva00776AC0Record32 {
     Rva00776AC0Record32(const Rva00776AC0Record32& o) : at00(o.at00),at04(o.at04),at10(o.at10),at1c(o.at1c) {
     }
 };
-namespace _STL {
-template<> void vector<Rva00776AC0Record24>::reserve(unsigned int);
-template<> Rva00776AC0Record24* vector<Rva00776AC0Record24>::erase(Rva00776AC0Record24*,Rva00776AC0Record24*);
-template<> void vector<Rva00776AC0Record24>::_M_insert_overflow(Rva00776AC0Record24*,const Rva00776AC0Record24&,const __false_type&,unsigned int,bool);
-template<> void vector<Rva00776AC0Record32>::_M_insert_overflow(Rva00776AC0Record32*,const Rva00776AC0Record32&,const __false_type&,unsigned int,bool);
-}
-void Open2Construct768D20(Rva00776AC0Record24*,const Rva00776AC0Record24&);
+// Retail reaches every TU-local helper through the five-byte incremental-link
+// thunks at 0x000334EC/0x0002A801/0x00032308/0x00003D87/0x00036539, so calls
+// are routed through those thunk symbols (the gate resolves them to the same
+// REL32 slots); a member-pointer union keeps the thiscall receiver shape.
+extern void j_000334ec();
+extern void j_0002a801();
+extern void j_00032308();
+extern void j_00003d87();
+extern void j_00036539();
+struct Rva00776AC0Vec24;
+struct Rva00776AC0Vec32;
+static __forceinline void Open2Construct768D20(Rva00776AC0Record24* p,const Rva00776AC0Record24& v) { typedef void (__cdecl *F)(Rva00776AC0Record24*,const Rva00776AC0Record24&); ((F)j_000334ec)(p,v); }
 struct Rva00776AC0Vec24 : std::vector<Rva00776AC0Record24> {
- void overflow(const Rva00776AC0Record24& r) { _STL::__false_type tag; _M_insert_overflow(_M_finish,r,tag,1,true); }
- void firstAppend(const Rva00776AC0Record24& r) { if(_M_finish!=_M_end_of_storage._M_data) { Open2Construct768D20(_M_finish,r); ++_M_finish; } else { _STL::__false_type tag; _M_insert_overflow(_M_finish,r,tag,1,true); } }
+ void overflow(const Rva00776AC0Record24& r) { typedef void (Rva00776AC0Vec24::*M)(Rva00776AC0Record24*,const Rva00776AC0Record24&,const _STL::__false_type&,unsigned int,bool); union { void (*raw)(); M m; } u; u.raw = j_0002a801; _STL::__false_type tag; (this->*u.m)(_M_finish,r,tag,1,true); }
+ void firstAppend(const Rva00776AC0Record24& r) { if(_M_finish!=_M_end_of_storage._M_data) { Open2Construct768D20(_M_finish,r); ++_M_finish; } else { typedef void (Rva00776AC0Vec24::*M)(Rva00776AC0Record24*,const Rva00776AC0Record24&,const _STL::__false_type&,unsigned int,bool); union { void (*raw)(); M m; } u; u.raw = j_0002a801; _STL::__false_type tag; (this->*u.m)(_M_finish,r,tag,1,true); } }
  void append(const Rva00776AC0Record24& r) { if(_M_finish!=_M_end_of_storage._M_data) { _STL::_Construct(_M_finish,r); ++_M_finish; } else overflow(r); }
 };
 struct Rva00776AC0Vec32 : std::vector<Rva00776AC0Record32> {
- void append(const Rva00776AC0Record32& r) { if(_M_finish!=_M_end_of_storage._M_data) { _STL::_Construct(_M_finish,r); ++_M_finish; } else { _STL::__false_type tag; _M_insert_overflow(_M_finish,r,tag,1,true); } }
+ void append(const Rva00776AC0Record32& r) { if(_M_finish!=_M_end_of_storage._M_data) { _STL::_Construct(_M_finish,r); ++_M_finish; } else { typedef void (Rva00776AC0Vec32::*M)(Rva00776AC0Record32*,const Rva00776AC0Record32&,const _STL::__false_type&,unsigned int,bool); union { void (*raw)(); M m; } u; u.raw = j_00032308; _STL::__false_type tag; (this->*u.m)(_M_finish,r,tag,1,true); } }
 };
-void Open2Construct768D20(Rva00776AC0Record24*,const Rva00776AC0Record24&);
 class Rva00776AC0Anim {
 public:
  virtual void s0(); virtual void s1(); virtual void s2(); virtual void s3();
@@ -291,13 +306,27 @@ class Rva00776AC0Owner { public:
  void rva00765FB0(void*,float,bool,bool,bool);
  template<class T> T& at(unsigned n) { return *(T*)((char*)this+n); }
 };
-class Rva00776AC0Scene { public: virtual void s0(); virtual void s1(); virtual void s2(Rva00776AC0Render*); };
-extern Rva00776AC0Scene *Rva012F8058;
-Rva00776AC0Render *Create_Render_Obj(const char*);
+// retail global: RTS3DScene *W3DDisplay::m_3DScene (0x012F8058),
+// mangled ?m_3DScene@W3DDisplay@@2PAVRTS3DScene@@A.
+class RTS3DScene { public: virtual void slot00(); virtual void slot04(); virtual void slot08(Rva00776AC0Render*); };
+class W3DDisplay { public: static RTS3DScene *m_3DScene; };
+class RenderObjClass;
+RenderObjClass *Create_Render_Obj(const char*);
 class Rva00776AC0Sub148 { public: void rva001CB270(Xfer*); };
-void Rva0010C3E0(Xfer*,void*);
-Xfer* rva0076AEA0ParticleSystemIdSetXfer(Xfer*,void*);
-void bfmeHandOver_00001A50(Xfer*,void*);
+extern void j_0002fd88();
+extern void j_00026dd7();
+extern void j_00008ca1();
+extern void j_000037ba();
+extern void j_00001a50();
+extern void j_00001ca8();
+static __forceinline void rva00776AC0Invoke(Rva00776AC0Owner* o,Xfer* x) { typedef void (Rva00776AC0Owner::*M)(Xfer*); union { void (*raw)(); M m; } u; u.raw = j_0002fd88; (o->*u.m)(x); }
+static __forceinline void rva00776AC0Flags(Rva00776AC0Sub148& s,Xfer* x) { typedef void (Rva00776AC0Sub148::*M)(Xfer*); union { void (*raw)(); M m; } u; u.raw = j_00026dd7; (s.*u.m)(x); }
+static __forceinline void rva00776AC0C3E0(Xfer* x,void* p) { typedef void (__cdecl *F)(Xfer*,void*); ((F)j_00008ca1)(x,p); }
+static __forceinline void rva00776AC0IdSet(Xfer* x,void* p) { typedef void (__cdecl *F)(Xfer*,void*); ((F)j_000037ba)(x,p); }
+static __forceinline void rva00776AC0HandOver(Xfer* x,void* p) { typedef void (__cdecl *F)(Xfer*,void*); ((F)j_00001a50)(x,p); }
+static __forceinline void rva00776AC0Apply(Rva00776AC0Owner* o,void* p,float v,bool b0,bool b1,bool b2) { typedef void (Rva00776AC0Owner::*M)(void*,float,bool,bool,bool); union { void (*raw)(); M m; } u; u.raw = j_00001ca8; (o->*u.m)(p,v,b0,b1,b2); }
+static __forceinline void rva00776AC0Erase(Rva00776AC0Vec24& v) { typedef Rva00776AC0Record24* (Rva00776AC0Vec24::*M)(Rva00776AC0Record24*,Rva00776AC0Record24*); union { void (*raw)(); M m; } u; u.raw = j_00003d87; (v.*u.m)(v.begin(),v.end()); }
+static __forceinline void rva00776AC0Reserve(Rva00776AC0Vec24& v,unsigned int n) { typedef void (Rva00776AC0Vec24::*M)(unsigned int); union { void (*raw)(); M m; } u; u.raw = j_00036539; (v.*u.m)(n); }
 static void setString(AsciiString& s,const char* p) { s.StringBase<char>::set(p,p?(int)strlen(p):0); }
 static void transfer24(Xfer* x,Rva00776AC0Record24& r) {
  *x==r.at00; *x==r.at04; *x==r.at08; *x==r.at0c; *x==r.at10; *x==r.at14;
@@ -306,7 +335,7 @@ struct Rva00776AC0Version : Xfer::Version {
  Rva00776AC0Version(unsigned char current) { data[0]=1; data[1]=current; }
 };
 void Rva00776AC0Owner::rva00776AC0(Xfer* x) {
- rva001139A0(x);
+ rva00776AC0Invoke(this,x);
  if(x->IsLightCRC()) return;
  Rva00776AC0Version version(4); *x==version;
  float percent=0.0f;
@@ -327,33 +356,35 @@ void Rva00776AC0Owner::rva00776AC0(Xfer* x) {
     Rva00776AC0Render* render=m034;
     Rva00776AC0Anim* anim=render->s46();
     if(anim) {
-     float frame=(float)(anim->s4()-1)*percent;
-     float dummy1,dummy2; int mode,dummy3;
-     render->s131(dummy1,dummy3,mode,dummy2);
-     render->s44(anim,frame,mode); restored=true;
+     Real frame = percent * INT_TO_REAL( anim->s4()-1 );
+     float dummy1, dummy2;
+     int mode, dummy3;
+     render->s131( dummy1, dummy3, mode, dummy2 );
+     render->s44( anim, frame, mode );
+     restored = true;
     }
    }
   }
  }
  *x==m084;
- Rva0010C3E0(x,&m088);
- rva0076AEA0ParticleSystemIdSetXfer(x,&m08c);
+ rva00776AC0C3E0(x,&m088);
+ rva00776AC0IdSet(x,&m08c);
  *x==m098; *x==m0a0; *x==m0a4;
- at<Rva00776AC0Sub148>(0x148).rva001CB270(x);
+ rva00776AC0Flags(at<Rva00776AC0Sub148>(0x148),x);
  *x==m1b8;
  if(x->IsLoading()) {
   int count=0;
 #define a m04c
 #define b m058
-  a.erase(a.begin(),a.end()); b.erase(b.begin(),b.end());
+  rva00776AC0Erase(a); rva00776AC0Erase(b);
   Rva00776AC0Record24 r;
-  *x==count; a.reserve(count);
+  *x==count; rva00776AC0Reserve(a,count);
   for(int i=0;i<count;++i) {
    transfer24(x,r);
    // First append's placement constructor is independently out of line.
    a.firstAppend(r);
   }
-  *x==count; b.reserve(count);
+  *x==count; rva00776AC0Reserve(b,count);
   for(int j=0;j<count;++j) { transfer24(x,r); b.append(r);
  }
  #undef a
@@ -371,8 +402,8 @@ void Rva00776AC0Owner::rva00776AC0(Xfer* x) {
    Rva00776AC0Record32 r;
    AsciiString a(""),b("");
    *x==a; *x==b; *x==r.at10; *x==r.at1c;
-   r.at00=Create_Render_Obj(a.str()); r.at04=b.str();
-   if(r.at00) { Rva012F8058->s2(r.at00); m130.append(r); }
+   r.at00=(Rva00776AC0Render*)Create_Render_Obj(a.str()); r.at04=b.str();
+   if(r.at00) { W3DDisplay::m_3DScene->slot08(r.at00); m130.append(r); }
   }
  } else if(x->IsStoring()) {
   int count=(int)m130.size(); *x==count;
@@ -393,11 +424,11 @@ void Rva00776AC0Owner::rva00776AC0(Xfer* x) {
  *x==m038; *x==m068; if(version.data[1]<2) *x==m06c;
  *x==m070; *x==m07c; *x==m080; *x==m20c; *x==m210;
  *x==m214; *x==m218; *x==m21c;
- bfmeHandOver_00001A50(x,&m220);
+ rva00776AC0HandOver(x,&m220);
  *x==m200;
  for(int i=0;i<2;++i) *x==at<AsciiString>(0x204+i*4);
  if(version.data[1]>=3) *x==m030;
  if(version.data[1]>=4) { *x==m26c; *x==m270; *x==m274; *x==m278; }
- if(restored && m014) { m230=false; rva00765FB0(m014,percent,false,true,true); }
+ if(restored && m014) { m230=false; rva00776AC0Apply(this,m014,percent,false,true,true); }
  if(x->IsLoading()) { s32(at2d); ((Rva00776AC0Owner*)((char*)this+0xc))->s28(); }
 }

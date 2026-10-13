@@ -107,7 +107,7 @@ private:
 };
 extern "C" void __cdecl __identifier("?d_0022c2a0@@YAXXZ")();
 extern "C" void __cdecl __identifier("?d_002298b0@@YAXXZ")();
-extern "C" void __cdecl __identifier("?d_00776ac0@@YAXXZ")();
+extern void j_00011cbb();
 
 class Gen_000EC810
 {
@@ -1409,6 +1409,6 @@ void Gen_0077DCF0::bfmeSeed(BfmeSeedTarget *target)
     {
         void (*raw)();
         void (Gen_0077DCF0::*member)(BfmeSeedTarget *);
-    } handoff = { __identifier("?d_00776ac0@@YAXXZ") };
+    } handoff = { j_00011cbb };
     (this->*handoff.member)(target);
 }

@@ -90,7 +90,6 @@ class PSPlayerStats {
 
 typedef char PSSize[sizeof(PSPlayerStats) == 0x1c4 ? 1 : -1];
 
-template <class T> inline StringBase<T>::~StringBase() { releaseBuffer(); }
 template <> inline unsigned short StringBase<unsigned short>::getCharAt(int i) const {
  return m_data ? m_data->data[i] : 0;
 }

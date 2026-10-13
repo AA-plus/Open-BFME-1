@@ -61,3 +61,26 @@ Create_Render_Obj at 8FF290 has its real existing render-object return type;
 the bank's separate render interface view must be bridged to that declaration.
 Scene datum VA 012F8058, all dynamic render slots, string/allocator helpers,
 and all EH cleanup bindings require strict verification before landing.
+
+## Landed exact (2026-10-13, gpt-5.2-codex)
+
+`?rva00776AC0@Rva00776AC0Owner@@QAEXPAVXfer@@@Z` at 0x00776AC0 now measures
+3390/3390 bytes with 50 relocation slots; `tools/add_match.py --replace-rva`
+verified the row and cleared the banked attempt. The recipe that closed the
+last 22-byte x87 scheduling residue:
+
+- every TU-local callee is reached through its `?j_<rva>@@YAXXZ`
+  incremental-link thunk (2fd88 26dd7 8ca1 37ba 1a50 334ec 3d87 36539 2a801
+  32308 1ca8), so the gate resolves the retail REL32 slots;
+- thiscall receivers go through an inline member-function-pointer union
+  (`typedef void (T::*M)(...); union { void (*raw)(); M m; }`) AT the call
+  site -- wrapping it in a `static __forceinline` helper flips a register
+  tie-break at +06b9 (`add eax,ecx` vs `lea edx,[ecx+eax]`) and costs 643
+  diffs (bisected in build/scratch_a6/vA..vG2.cpp; vG2.cpp is the exact shape);
+- `Create_Render_Obj` stays a DIRECT call (declared `RenderObjClass*`), result
+  cast to the owner view;
+- scene global 0x012F8058 must use the recorded name `W3DDisplay::m_3DScene`;
+  a new name is rejected by the DIR32 gate (precedent
+  `game/GameEngine/Source/Common/Rva006BC6C0Apply.cpp`);
+- the final 22 bytes close only with the ZH spelling
+  `Real frame = percent * INT_TO_REAL( anim->s4() - 1 );` using float `Real`.
