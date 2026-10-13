@@ -1,5 +1,4 @@
 // ?update@AICowerState@@UAE?AW4StateReturnType@@XZ
-// partial score=0.9371 date=2026-10-11
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS
 // stlport
 
@@ -34,15 +33,13 @@ public:
     Object *m_owner;
 };
 
-
 class Gen_0026FD20
 {
 public:
-    Bool bfmeReady() const;
+    Int bfmeReady0026FD20() const;
 };
 
-
-class Object
+class Thing
 {
 public:
     virtual void slot00();
@@ -55,16 +52,20 @@ public:
     virtual void slot1C();
     virtual void slot20();
     virtual void slot24();
-    virtual Drawable *getDrawable();
-
     Bool isKindOf( KindOfType kind ) const;
-    Bool bfmeGetRecentDamageSource( ObjectID *sourceID, UnsignedInt frames ) const;
-    Bool bfmeDamageSourceCanCauseCower( Int sourceID ) const;
+};
+
+class Object : public Thing
+{
+public:
+    virtual Drawable *getDrawable() const;
+
+    Bool bfmeGetRecentDamageSource001BFF70( ObjectID *sourceID, UnsignedInt frames ) const;
+    Bool bfmeDamageSourceCanCauseCower001C5D00( Int sourceID ) const;
 
     unsigned char m_padding[ 0x200 ];
     Gen_0026FD20 *m_ai;
 };
-
 
 typedef _STL::list<Drawable *> DrawableList;
 
@@ -79,9 +80,8 @@ public:
     };
 };
 
-void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type messageType,
+Bool pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type messageType,
     PickAndPlayInfo *info );
-
 
 class AICowerState
 {
@@ -109,6 +109,7 @@ public:
     StateMachine *m_machine;
 };
 
+// ?update@AICowerState@@UAE?AW4StateReturnType@@XZ
 StateReturnType AICowerState::update()
 {
     Object *goal = m_machine->getGoalObject();
@@ -123,24 +124,26 @@ StateReturnType AICowerState::update()
     if ( owner == 0 )
         return STATE_FAILURE;
 
-    Bool canCauseCower = false;
-    if ( !slot44() )
-        return STATE_CONTINUE;
+    if ( slot44() )
+    {
+        Bool canCauseCower = false;
+        ObjectID sourceID;
+        if ( owner->bfmeGetRecentDamageSource001BFF70( &sourceID, 4 ) )
+            canCauseCower = owner->bfmeDamageSourceCanCauseCower001C5D00( sourceID );
 
-    ObjectID sourceID;
-    if ( owner->bfmeGetRecentDamageSource( &sourceID, 4 ) )
-        canCauseCower = owner->bfmeDamageSourceCanCauseCower( sourceID );
+        Gen_0026FD20 *ai = owner->m_ai;
+        if ( ai == 0 )
+            return STATE_FAILURE;
 
-    Gen_0026FD20 *ai = owner->m_ai;
-    if ( ai == 0 )
-        return STATE_FAILURE;
-
-    if ( canCauseCower && !ai->bfmeReady() ) {
-    DrawableList drawables;
-    Drawable *drawable = owner->getDrawable();
-    drawables.push_back( drawable );
-    pickAndPlayUnitVoiceResponse( &drawables, GameMessage::MSG_COWER, 0 );
-    return STATE_SUCCESS;
+        // The caller consumes AL; the helper returns only zero or one in EAX.
+        if ( canCauseCower && !static_cast<unsigned char>( ai->bfmeReady0026FD20() ) )
+        {
+            DrawableList drawables;
+            Drawable *drawable = owner->getDrawable();
+            drawables.push_back( drawable );
+            pickAndPlayUnitVoiceResponse( &drawables, GameMessage::MSG_COWER, 0 );
+            return STATE_SUCCESS;
+        }
     }
     return STATE_CONTINUE;
 }

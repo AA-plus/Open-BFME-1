@@ -36752,7 +36752,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0016f150@@YAXXZ,,0x0016F150,352,game/gen_asm/d_0015f070.asm,matched,gen-dump;ghidra=FUN_0056f150
 ?d_0016f340@@YAXXZ,,0x0016F340,238,game/gen_asm/d_0016f340.asm,matched,gen-dump;ghidra=FUN_0056f340
 ?d_0016f4f0@@YAXXZ,,0x0016F4F0,243,game/gen_asm/d_0016f340.asm,matched,gen-dump;ghidra=FUN_0056f4f0
-?d_00174210@@YAXXZ,,0x00174210,334,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp end=ret+int3 callers=1
 ?d_001752a0@@YAXXZ,,0x001752A0,943,game/gen_asm/d_0016f340.asm,matched,gen-dump;ghidra=FUN_005752a0
 ?d_00176070@@YAXXZ,,0x00176070,379,game/gen_asm/d_0016f340.asm,matched,gen-dump;ghidra=FUN_00576070
 ?d_00176a50@@YAXXZ,,0x00176A50,1041,game/gen_asm/d_0016f340.asm,matched,gen-dump;ghidra=FUN_00576a50
@@ -172555,3 +172554,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?xfer00721380@W3DShrubBuffer@@MAEXPAVXfer@@@Z,,0x00721380,1557,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DShrubBuffer_xfer.cpp,matched,Shrub vtable 0x01120F94 slot 3; address suffix retains contradicted bank word; decoded coordinate call view; evidence=targets/game/reverse/identity_evidence/0x00721380-coordinate-call-view.md;model=gpt-6.1-sol;host=fleet
 ?bfmeStepE05B0_003E05B0@Pathfinder@@QAE_NPAVObject@@PAUICoord2D@@@Z,,0x003E05B0,715,game/GameEngine/Source/GameLogic/AI/PathfinderStepE05B0.cpp,matched,address-qualified bank method; complete RET 8 and matched callback caller ABI; identity_evidence/0x003e05b0-register-residue.md;model=gpt-6.1-sol;host=fleet
 ?validate@Rva0076F9E0Owner@@QBEXPAURva0076F9E0Names@@@Z,,0x0076F9E0,1603,game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DModelDrawWeaponBarrelValidation0076F9E0.cpp,matched,decoded thiscall one names pointer;complete ret4 boundary;visible non-retaining tree and lookup;identity-evidence=targets/game/reverse/identity_evidence/0076f9e0-visible-lookups.md;model=gpt-6.1-sol;host=fleet
+?update@AICowerState@@UAE?AW4StateReturnType@@XZ,,0x00174210,334,game/GameEngine/Source/GameLogic/AI/AICowerState_update.cpp,matched,AICowerState inherited update proven by constructor literal and vtable slot 6; identity_evidence/00174210-update.md;model=gpt-6.1-sol;host=fleet
