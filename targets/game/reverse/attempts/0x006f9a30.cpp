@@ -1,21 +1,18 @@
+// ?bfmeMarkAB@BfmeOwnAB@@QAEXPAXABVBfmeRoomAB@@@Z
+// partial score=0.8421 date=2026-10-13
+// cl: /DNDEBUG /MD /O2 /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 // ?bfmeMarkAB@BfmeOwnAB@@QAEXPAXABVBfmeRoomAB@@@Z (identity unknown)
-// partial score=0.86 date=2026-09-06
-// 65/76 at exact size and exact structure (a four-term && chain sharing one
-// exit, then a byte store through the result). Two residues:
-//   - esi/edi are swapped: retail puts `this` in edi and the first parameter
-//     in esi, MSVC the other way round. Tried hoisting the parameter into a
-//     local declared before everything, and splitting the first guard into an
-//     early return so the parameter local is declared later. No effect.
-//   - +0x28: retail emits the esp marker BEFORE `mov ecx,esp`, MSVC after --
-//     the same swap that blocks 0x0034C710.
-// The room copy ctor is the string_base alias pinned at 0x00887B60.
+// Native one-word string payload: matched Rva006F9900Find.cpp accepts
+// AsciiString by value and destroys it; inline copy/dtor forwards to StringBase.
+
+#include "ascii_string.h"
 class BfmeRoomAB
 {
 public:
-	BfmeRoomAB(const BfmeRoomAB &other);
-	~BfmeRoomAB();
+	BfmeRoomAB(const BfmeRoomAB &other) : m_bfmeHandleAB(other.m_bfmeHandleAB) {}
+	~BfmeRoomAB() {}
 
-	int m_bfmeHandleAB;
+	AsciiString m_bfmeHandleAB;
 };
 
 class ClientRoot4120
