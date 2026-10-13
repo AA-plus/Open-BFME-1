@@ -3676,6 +3676,7 @@ name,address,notes
 ??0Rva005EAE70@@QAE@ABV0@@Z,0x005EAE70,base copy constructor forwarded to by the 32/39-byte copy-ctor family (V3CopyCtorForwarders.cpp); target read from the REL32 at its call site; address-derived name; identity not recovered
 ??0Rva005EAF70@@QAE@ABV0@@Z,0x005EAF70,base copy constructor forwarded to by the 32/39-byte copy-ctor family (V3CopyCtorForwarders.cpp); target read from the REL32 at its call site; address-derived name; identity not recovered
 ??0Rva005EB1F0@@QAE@ABV0@@Z,0x005EB1F0,base copy constructor forwarded to by the 32/39-byte copy-ctor family (V3CopyCtorForwarders.cpp); target read from the REL32 at its call site; address-derived name; identity not recovered
+??0Rva005EB1F0@@QAE@PAXPAVV3HostRva005E7AD0@@@Z,0x006008D0,base constructor forwarded to by the new-plus-inline-ctor factory family (V3NewInlineCtorFactories.cpp); target read from the REL32 at its call site; address-derived name; identity not recovered
 ??0Rva005EB320@@QAE@ABV0@@Z,0x005EB320,base copy constructor forwarded to by the 32/39-byte copy-ctor family (V3CopyCtorForwarders.cpp); target read from the REL32 at its call site; address-derived name; identity not recovered
 ??0Rva005EB7B0@@QAE@ABV0@@Z,0x005EB7B0,base copy constructor forwarded to by the 46-byte copy-ctor family (V3CopyCtorForwarders.cpp); target read from the REL32 at its call site; address-derived name; identity not recovered
 ??0Rva005EBD40@@QAE@ABV0@@Z,0x005EBD40,base constructor forwarded to by the new-plus-inline-ctor factory family (V3NewInlineCtorFactories.cpp); target read from the REL32 at its call site; address-derived name; identity not recovered
@@ -3699,7 +3700,6 @@ name,address,notes
 ??0Rva005FEA50Base@FXParticleSystem@@QAE@AAV?$TrackingPtr@VParticleSystem@FXParticleSystem@@@1@PBX@Z,0x00031138,Verified ILT to 0x005FEA50; Wind271 base constructor with TrackingPtr reference and template pointer; full98-byte body and factory ABI audited
 ??0Rva005FED10@@QAE@PAXPAVV3HostRva005E82A0@@@Z,0x005FED10,base constructor forwarded to by the new-plus-inline-ctor factory family (V3NewInlineCtorFactories.cpp); target read from the REL32 at its call site; address-derived name; identity not recovered
 ??0Rva005FFAC0@@QAE@PAXPAVV3HostRva005E76E0@@@Z,0x005FFAC0,base constructor forwarded to by the new-plus-inline-ctor factory family (V3NewInlineCtorFactories.cpp); target read from the REL32 at its call site; address-derived name; identity not recovered
-??0Rva006008D0@@QAE@PAXPAVV3HostRva005E7AD0@@@Z,0x006008D0,base constructor forwarded to by the new-plus-inline-ctor factory family (V3NewInlineCtorFactories.cpp); target read from the REL32 at its call site; address-derived name; identity not recovered
 ??0Rva00606A80Member@@QAE@ABU0@@Z,0x0001FF64,address-derived member copy constructor called by Rva00608FE0Element at +0x48
 ??0Rva00606E60Member@@QAE@ABU0@@Z,0x00032515,address-derived member copy constructor called by Rva00608FE0Element at +0x1FC
 ??0Rva00608FE0Element@@QAE@ABU0@@Z,0x00042339,Open-BFME5 ILT for the SoundUpgrade record copy constructor used by the SoundUpgrade field parser
