@@ -914,11 +914,25 @@ return;
 }
 
 
+// ?IsMantissaZero00879F60@@YAHPAG@Z absent-from-retail
+static inline int IsMantissaZero00879F60(u16 *mant)
+{
+int i;
+int n;
+
+n=0;
+for(i=2;i<=2+INTERNAL_FPF_PRECISION-1;i++)
+        n|=mant[i-2];
+
+return(!n);
+}
+
 /**********************
 ** DivideInternalFPF **
 ***********************
 ** Divide internal FPF number x by y.  Return result in z.
 */
+// ?DivideInternalFPF@@YAXPAUInternalFPF@@00@Z
 static void DivideInternalFPF(InternalFPF *x,
                         InternalFPF *y,
                         InternalFPF *z)
@@ -997,7 +1011,7 @@ case NORMAL_NORMAL:
         /*
         ** Check for unnormal zero arguments
         */
-        if (IsMantissaZero(locx.mantissa))
+        if (IsMantissaZero00879F60(locx.mantissa))
         {
                 if (IsMantissaZero(y->mantissa))
                         SetInternalFPFNaN(z);
