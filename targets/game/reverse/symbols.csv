@@ -91177,3 +91177,4 @@ rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?copyString0037B0D0@Config0037B9F0@@QAE?AVAsciiString@@XZ,0x0037B0D0,decoded hidden return string copy from receiver+0x3C; evidence=targets/game/reverse/identity_evidence/0037B9F0-finish-callee-visibility.md
 ??$__insertion_sort@PAHU?$less@H@_STL@@@_STL@@YAXPAH0U?$less@H@0@@Z,0x00045D95,Open-BFME7 retail REL32 target (ILT thunk jmp 0x00513410) the 1166-byte body at 0x00515810 calls twice for std::sort of Int selected indices; autopin
 ?Rva00006F4BUpdateButtons@AptInGameChat@@QAEXXZ,0x00006F4B,AptInGameChat button-refresh helper called from ?Rva00515810@AptInGameChat@@QAEXXZ at 0x00515810; retail call-site target (ILT thunk jmp 0x005147F0)
+?d_008cced0@@YAXXZ,0x008CCED0,Address-only compatibility for the retired dump name; BfmeConv1226.cpp and the d_008cb600 dump still call it; body is Rva008CCED0BytecodeRunner::run

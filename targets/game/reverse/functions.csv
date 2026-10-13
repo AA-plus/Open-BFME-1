@@ -38433,7 +38433,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_008cbdf0@@YAXXZ,,0x008CBDF0,1757,game/gen_asm/d_008cb600.asm,matched,gen-dump;ghidra=FUN_00ccbdf0
 ?d_008cc690@@YAXXZ,,0x008CC690,687,game/gen_asm/d_008cb600.asm,matched,gen-dump;ghidra=FUN_00ccc690
 ?d_008cc940@@YAXXZ,,0x008CC940,917,game/gen_asm/d_008cb600.asm,matched,gen-dump;ghidra=FUN_00ccc940
-?d_008cced0@@YAXXZ,,0x008CCED0,375,game/gen_asm/d_008cb600.asm,matched,gen-dump;ghidra=FUN_00ccced0
 ?d_008cd2f0@@YAXXZ,,0x008CD2F0,254,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_00ccd2f0
 ?d_008cde50@@YAXXZ,,0x008CDE50,907,game/gen_asm/d_008cb600.asm,matched,gen-dump;ghidra=FUN_00ccde50
 ?d_008cf030@@YAXXZ,,0x008CF030,380,game/gen_asm/d_008cb600.asm,matched,gen-dump;ghidra=FUN_00ccf030
@@ -172556,3 +172555,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?Rva00515810@AptInGameChat@@QAEXXZ,,0x00515810,1166,game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/BfmeAptScreenInGameChatRefreshFriendsList.cpp,matched,exact 1166B via ZH WOLLobbyMenu parity and window-manager slots;model=gpt-5.2-codex;host=chalco.vps
 ?updateObjectGlobal@Rva002E4030LuaHost@@QAEXPAURva002E32A0IdOwner@@@Z,,0x002E4030,269,game/GameEngine/Source/Common/Rva002E32A0ObjectIdAsStr.cpp,matched,address-derived Lua host method; canonical AsciiString lifetime and actual C Lua API contracts reproduce EH state elision; RET4 at 002E413A followed by INT3; evidence=targets/game/reverse/identity_evidence/002e4030-native-string-lifetime.md;model=gpt-6-astra;host=GreatFaram
 ?_bfme_newMap@VictorySystem@@UAEXXZ,,0x001DF4A0,747,game/GameEngine/Source/GameLogic/System/VictorySystemNewMap.cpp,matched,identity=existing VictorySystem vtable slot+0x24 and decoded caller; evidence=targets/game/reverse/identity_evidence/001df4a0-new-map.md; complete ABI and unwind verified; literal constants and nonthrowing finder;model=gpt-6.1-sol;host=fleet
+?run@Rva008CCED0BytecodeRunner@@QAEPAEPAX0H@Z,,0x008CCED0,375,game/Libraries/Source/Apt/Rva008CCED0BytecodeRunner.cpp,matched,Bounded bytecode runner thiscall ret0C with cursor result; evidence=targets/game/reverse/identity_evidence/008cced0-runner-and-shape.md;model=gpt-6.1-sol;host=fleet
