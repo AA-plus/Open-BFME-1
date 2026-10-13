@@ -37722,7 +37722,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00476360@@YAXXZ,,0x00476360,1,game/GameEngine/Source/Common/Rva00476360TinyBody.cpp,matched,one-byte carved return at a proven ret boundary
 ?d_004776e0@@YAXXZ,,0x004776E0,512,game/gen_asm/d_00475b00.asm,matched,gen-dump;ghidra=FUN_008776e0
 ?d_0047d2b0@@YAXXZ,,0x0047D2B0,471,game/gen_asm/d_00475b00.asm,matched,gen-dump;ghidra=FUN_0087d2b0
-?d_0048d460@@YAXXZ,,0x0048D460,159,game/gen_asm/d_0047ab00.asm,matched,gen-dump;bounds=high
 ?d_0048e6b0@@YAXXZ,,0x0048E6B0,1,game/GameEngine/Source/Common/Rva0048E6B0Noop.cpp,matched,carved ret boundary; address-derived identity
 ?d_0048f5c0@@YAXXZ,,0x0048F5C0,571,game/gen_asm/d_0048a320.asm,matched,gen-dump;ghidra=FUN_0088f5c0
 ?d_0048f8c0@@YAXXZ,,0x0048F8C0,231,game/gen_asm/d_0048a320.asm,matched,gen-dump;ghidra=FUN_0088f8c0
@@ -172555,3 +172554,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?method@Rva0040AC30Owner@@QAEPAVBfme5MaterialPass@@HH@Z,,0x0040AC30,244,game/GameEngine/Source/GameClient/Rva0040AC30Owner.cpp,matched,Decoded receiver and two stack dwords; explicit first-allocation register result; independent value-copy and unwind evidence in identity_evidence/0040ac30-complete-abi.md;model=gpt-6.1-sol;host=fleet
 ?drawCenteredScaledImage00794040@@YAXPBVImage@@PBUICoord2D@@1H@Z,,0x00794040,170,game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DPushButtonCenteredScaledImage00794040.cpp,matched,Opaque address-preserving push-button overlay helper; complete tail jump at +A4; decoded EDI image ECX start EAX size and stack color; delayed center reads after beginImageDraw reproduce x87 order; evidence=targets/game/reverse/identity_evidence/00794040-x87-operand-order.md;model=gpt-6.1-sol;host=fleet
 ?_bfme_loadMenu005694E0@BfmeAptScreenQuitMenu@@QAEXPBD@Z,,0x005694E0,154,game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/BfmeAptScreenQuitMenuLoadMenu.cpp,matched,Selector and callback ABI proven in targets/game/reverse/identity_evidence/005694e0-load-menu.md; native inline multiplayer predicate;model=gpt-6.1-sol;host=fleet
+?rva0048D460AnsiToWide@@YGXPBDPAVUnicodeString@@@Z,,0x0048D460,159,game/GameEngine/Source/GameClient/GUI/IMEManagerAnsiToWide0048D460.cpp,matched,Address-derived ANSI-to-wide helper; complete ret8 extent; GeneralsMD IMEManager donor shared array cleanup; canonical array operators; evidence=targets/game/reverse/identity_evidence/0048d460-native-flow.md;model=gpt-6.1-sol;host=fleet
