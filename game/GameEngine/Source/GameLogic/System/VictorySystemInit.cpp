@@ -27,13 +27,6 @@ public:
 		((StringBase<char> *)this)->releaseBuffer();
 	}
 
-	int compareNoCase( const AsciiString &that ) const
-	{
-		const int length = that.m_data ? that.m_data->m_length : 0;
-		const char *data = that.m_data ? (const char *)(that.m_data + 1) : "";
-		return compareNoCase( data, length );
-	}
-
 private:
 	struct Header
 	{
@@ -42,21 +35,28 @@ private:
 		unsigned short m_capacity;
 	};
 
-	int compareNoCase( const char *text, int length ) const
-	{
-		const int thisLength = m_data ? m_data->m_length : 0;
-		const char *data = m_data ? (const char *)(m_data + 1) : "";
-		int difference = _memicmp( data, text,
-			thisLength < length ? thisLength : length );
-		if( difference != 0 )
-		{
-			return difference;
-		}
-		return thisLength - length;
-	}
-
 	Header *m_data;
 };
+
+// Retail StringBase<char>::compareNoCase shape (_memicmp over the shared
+// prefix, then the length difference), spelled as the explicit specialization
+// so this TU emits no AsciiString::compareNoCase COMDAT of its own. Same
+// spelling as game/Libraries/Source/WWVegas/WWLib/RvaTreeInsertUniqueNoCase.cpp.
+template <>
+inline int StringBase<char>::compareNoCase( const StringBase<char> &str ) const
+{
+	int thatLen = str.m_data ? str.m_data->length : 0;
+	const char *thatData = str.m_data ? &str.m_data->data[ 0 ] : (const char *)"";
+	int thisLen = m_data ? m_data->length : 0;
+	const char *thisData = m_data ? &m_data->data[ 0 ] : (const char *)"";
+	int n = thisLen < thatLen ? thisLen : thatLen;
+	int c = _memicmp( thisData, thatData, n );
+	if( c != 0 )
+	{
+		return c;
+	}
+	return thisLen - thatLen;
+}
 
 struct FactionVictoryParameters
 {
@@ -128,7 +128,7 @@ unsigned int VictorySystem::_bfme_findFactionVictoryParametersIndex(
 		index < m_factionVictoryParameters.size() && !found;
 		++index )
 	{
-		if( m_factionVictoryParameters[index].m_name.compareNoCase( name ) == 0 )
+		if( ( (const StringBase<char> *)&m_factionVictoryParameters[index].m_name )->compareNoCase( *(const StringBase<char> *)&name ) == 0 )
 		{
 			result = index;
 			found = true;
