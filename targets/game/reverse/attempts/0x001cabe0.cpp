@@ -1,11 +1,6 @@
 // ?bfmeAskBIC@BfmeSubBIC@@QAEHXZ
-// partial score=0.8803 date=2026-09-30
+// partial score=0.9894 date=2026-10-13
 // cl: /DNDEBUG /MD /EHsc
-// The BfmeThingBXF family reaches this 376-byte helper through the
-// BfmeSubBIC::bfmeAskBIC member ABI.  Retail's complete boundary is
-// 0x001CABE0..0x001CAFF8; the final ret is at +0x177 and padding starts at
-// +0x178.  The member views below are TU-scoped and keep the recovered retail
-// offsets visible without inventing a second production alias.
 
 typedef bool Bool;
 typedef unsigned int UnsignedInt;
@@ -17,7 +12,11 @@ enum NameKeyType
 
 enum Relationship
 {
-	RelationshipEnemy = 2
+	ENEMIES = 0,
+	NEUTRAL,
+	ALLIES,
+	// Compatibility spelling for the canonical ALLIES value.
+	RelationshipEnemy = ALLIES
 };
 
 class Player;
@@ -27,7 +26,7 @@ class Module;
 class NameKeyGenerator
 {
 public:
-	int nameToKey(const char *name);
+	NameKeyType nameToKey(const char *name);
 };
 
 extern NameKeyGenerator *TheNameKeyGenerator;
@@ -39,15 +38,12 @@ public:
 
 	void *m_vtable;
 	ThingTemplate *m_override;
-	unsigned char m_pad08[0xc8];
-	UnsignedInt m_kindOf;
+	unsigned char m_pad08[0xc0];
+	UnsignedInt m_kindOf[3];
 };
 
-class Object
-{
-public:
-	Module *findModule(NameKeyType key) const;
-};
+#define OBJECT_TU_MEMBERS public: Module *findModule(NameKeyType key) const;
+#include "../../../../game/GameEngine/Source/GameLogic/Object/object.h"
 
 class Team
 {
@@ -59,11 +55,13 @@ class Player
 {
 public:
 	Relationship getRelationship(const Team *team) const;
+	int getPlayerColor() const { return m_color; }
 
 	unsigned char m_pad00[0x1c4];
-	UnsignedInt m_color;
+	int m_color;
 	unsigned char m_pad1c8[0x68];
 	Team *m_defaultTeam;
+	const Team *getDefaultTeam() const { return m_defaultTeam; }
 };
 
 class Rva000DF7F0Player : public Player
@@ -77,6 +75,7 @@ class PlayerList
 public:
 	unsigned char m_pad00[0xc];
 	Player *m_localPlayer;
+	Player *getLocalPlayer() { return m_localPlayer; }
 	Player *getNthPlayer(int index);
 };
 
@@ -87,7 +86,7 @@ class StealthUpdate
 public:
 	unsigned char m_pad00[0x34];
 	int m_disguisedPlayerIndex;
-	int m_active;
+	const ThingTemplate *m_active;
 };
 
 class ContainModuleInterface
@@ -108,7 +107,7 @@ public:
 	virtual void slot12() = 0;
 	virtual void slot13() = 0;
 	virtual void slot14() = 0;
-	virtual Player *getApparentPlayer(Player *localPlayer) = 0;
+	virtual const Player *getApparentPlayer(const Player *localPlayer) const = 0;
 };
 
 class BfmeSubBIC
@@ -116,6 +115,7 @@ class BfmeSubBIC
 public:
 	virtual void slot00();
 	int bfmeAskBIC();
+	ContainModuleInterface *getContain() const { return m_contain; }
 
 	ThingTemplate *m_template;
 	unsigned char m_pad08[0x1f4];
@@ -123,14 +123,15 @@ public:
 	unsigned char m_pad200[0x3c];
 	Team *m_team;
 	UnsignedInt m_originalTeamName;
-	UnsignedInt m_indicatorColor;
+	int m_indicatorColor;
 };
 
+// ?bfmeAskBIC@BfmeSubBIC@@QAEHXZ
 int BfmeSubBIC::bfmeAskBIC()
 {
-	Player *localPlayer = ThePlayerList->m_localPlayer;
-	Player *controller = m_team ? m_team->getControllingPlayer() : 0;
-	Player *colorPlayer = controller;
+	const Player *localPlayer = ThePlayerList->getLocalPlayer();
+	const Player *controller = m_team ? m_team->getControllingPlayer() : 0;
+	const Player *colorPlayer = controller;
 	Bool useDefaultColor = true;
 
 	ThingTemplate *thing = m_template;
@@ -138,7 +139,7 @@ int BfmeSubBIC::bfmeAskBIC()
 		if (thing != 0 && thing->m_override != 0)
 			thing = thing->m_override->getFinalOverride();
 
-		if ((thing->m_kindOf & 0x00800000) != 0)
+		if ((thing->m_kindOf[2] & 0x00800000) != 0)
 		{
 			static NameKeyType key_StealthUpdate =
 				(NameKeyType)TheNameKeyGenerator->nameToKey("StealthUpdate");
@@ -147,9 +148,9 @@ int BfmeSubBIC::bfmeAskBIC()
 
 			if (stealth != 0 && stealth->m_active != 0 &&
 				controller != 0 && localPlayer != 0 &&
-				controller->getRelationship(localPlayer->m_defaultTeam) !=
+				controller->getRelationship(localPlayer->getDefaultTeam()) !=
 					RelationshipEnemy &&
-				reinterpret_cast<Rva000DF7F0Player *>(localPlayer)->active())
+				reinterpret_cast<const Rva000DF7F0Player *>(localPlayer)->active())
 			{
 				colorPlayer = ThePlayerList->getNthPlayer(
 					stealth->m_disguisedPlayerIndex);
@@ -159,33 +160,26 @@ int BfmeSubBIC::bfmeAskBIC()
 		}
 	}
 
-	if (m_contain != 0)
+	if (getContain() != 0)
 	{
-		Player *containedPlayer = m_contain->getApparentPlayer(localPlayer);
-		if (containedPlayer != 0)
-			return containedPlayer->m_color;
+		const Player *containedPlayer = getContain()->getApparentPlayer(localPlayer);
+		colorPlayer = containedPlayer;
+		if (colorPlayer != 0)
+			return colorPlayer->getPlayerColor();
 	}
 
 	if (!useDefaultColor && colorPlayer != 0)
-		return colorPlayer->m_color;
+		return colorPlayer->getPlayerColor();
 
 	if (m_indicatorColor != 0)
 		return m_indicatorColor;
 
 	if (m_team != 0)
 	{
-		Player *player = m_team->getControllingPlayer();
+		const Player *player = m_team->getControllingPlayer();
 		if (player != 0)
-			return player->m_color;
+			return player->getPlayerColor();
 	}
 
 	return 0xff000000;
 }
-
-#pragma comment(linker, "/alternatename:?getControllingPlayer@Team@@QBEPAVPlayer@@XZ=?j_0002369b@@YAXXZ")
-#pragma comment(linker, "/alternatename:?getFinalOverride@ThingTemplate@@QAEPAV1@XZ=?j_000022bb@@YAXXZ")
-#pragma comment(linker, "/alternatename:?findModule@Object@@IBEPAVModule@@W4NameKeyType@@@Z=?j_0002ae23@@YAXXZ")
-#pragma comment(linker, "/alternatename:?getRelationship@Player@@QBE?AW4Relationship@@PBVTeam@@@Z=?j_0003e77a@@YAXXZ")
-#pragma comment(linker, "/alternatename:?active@Rva000DF7F0Player@@QBE_NXZ=?j_000179bd@@YAXXZ")
-#pragma comment(linker, "/alternatename:?getNthPlayer@PlayerList@@QAEPAVPlayer@@H@Z=?j_00044f30@@YAXXZ")
-#pragma comment(linker, "/alternatename:?nameToKey@NameKeyGenerator@@QAEHPBD@Z=?j_0003add7@@YAXXZ")
