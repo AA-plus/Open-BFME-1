@@ -250,3 +250,84 @@ def test_fix6_function_returning_struct_is_still_a_function():
     # `struct S* f()` must stay a function: re-showing its emit passes.
     body = "struct S* f()\n{\n\t__asm {\n\t__emit 0x90\n\t}\n}\n"
     assert run("int y;\n" + body, body) == []
+
+
+# --- orchestrator spot checks of b87538b88a (build/r2_g/test_orch_extra.py) ---
+I = "game/GameEngine/Include/Common/ProbeEmit.inl"
+H2 = "game/GameEngine/Include/Common/ProbeOuter.h"
+
+
+def test_token_paste_refuse():
+    m = "#define CAT(a,b) a##b\n"
+    assert run(m + F("g", ""), m + F("g", "\tCAT(__em,it) 0xC3\n")) != []
+
+
+def test_token_paste_reshown_passes():
+    m = "#define CAT(a,b) a##b\n"
+    body = F("g", "\tCAT(__em,it) 0xC3\n")
+    assert run("int y;\n" + m + body, m + body) == []
+
+
+def test_inl_header_macro_refuse():
+    inc = '#include "Common/ProbeEmit.inl"\n'
+    assert run(inc + F("g", ""), inc + F("g", "\tRAWI\n"), {I: "#define RAWI __emit 0xC3\n"}) != []
+
+
+def test_transitive_header_macro_refuse():
+    files = {H: "#define RAWH __emit 0xC3\n", H2: '#include "Common/ProbeEmit.h"\n#define OUTER RAWH RAWH\n'}
+    inc = '#include "Common/ProbeOuter.h"\n'
+    assert run(inc + F("g", ""), inc + F("g", "\tOUTER\n"), files) != []
+
+
+def test_header_constant_value_change_refuse():
+    body = '#include "Common/ProbeEmit.h"\n' + F("g", E("OPH"))
+    assert _gate({P: body, H: "#define OPH 0x90\n"}, {P: body, H: "#define OPH 0xC3\n"}) != []
+
+
+def test_header_const_int_value_change_refuse():
+    body = '#include "Common/ProbeEmit.h"\n' + F("g", E("KH"))
+    assert _gate({P: body, H: "const int KH = 0x90;\n"}, {P: body, H: "const int KH = 0xC3;\n"}) != []
+
+
+def test_header_constant_unrelated_change_passes():
+    body = '#include "Common/ProbeEmit.h"\n' + F("g", E("OPH"))
+    assert _gate({P: body, H: "#define OPH 0x90\n#define X 1\n"},
+                 {P: body, H: "#define OPH 0x90\n#define X 2\n"}) == []
+
+
+def test_header_macro_body_change_refuse():
+    body = '#include "Common/ProbeEmit.h"\n' + F("g", "\tRAWH\n")
+    assert _gate({P: body, H: "#define RAWH __emit 0x90\n"},
+                 {P: body, H: "#define RAWH __emit 0x90 __emit 0xC3\n"}) != []
+
+
+def test_plain_cpp_edit_without_emit_pass():
+    assert run(F("g", "") + "int x;\n", F("g", "") + "int y;\n") == []
+
+
+# --- second follow-up: pasting is judged per use, never per macro ---
+SLOT = ("#define BFME_VIRTUAL_SLOT(n) virtual void slot##n();\n"
+        "#define BFME_VIRTUAL_SLOT10(n) BFME_VIRTUAL_SLOT(n##0) BFME_VIRTUAL_SLOT(n##1) "
+        "BFME_VIRTUAL_SLOT(n##2) BFME_VIRTUAL_SLOT(n##3) BFME_VIRTUAL_SLOT(n##4) "
+        "BFME_VIRTUAL_SLOT(n##5) BFME_VIRTUAL_SLOT(n##6) BFME_VIRTUAL_SLOT(n##7) "
+        "BFME_VIRTUAL_SLOT(n##8) BFME_VIRTUAL_SLOT(n##9)\n")
+
+
+def test_491e03cf7c_slot_paste_macros_pass():
+    # 491e03cf7c (a real C++ conversion) was refused by a4c07311a8, which
+    # counted every `##` macro as an emit macro.
+    cls = "class Slots {\n\tBFME_VIRTUAL_SLOT10(1)\n\tBFME_VIRTUAL_SLOT(20)\n};\n"
+    b = SLOT + cls + F("g", "")
+    a = SLOT + "#define EXTRA(n) int x##n;\n" + cls + "class More {\n\tBFME_VIRTUAL_SLOT10(3)\n};\n" + \
+        F("g", "") + "void h()\n{\n\tint v = 1;\n}\n"
+    assert run(b, a) == []
+
+
+def test_paste_macro_spelling_emit_macro_refuse():
+    m = "#define RAW __emit 0xC3\n#define CAT(a,b) a##b\n"
+    assert run(m + F("g", ""), m + F("g", "\tCAT(RA,W)\n")) != []
+
+
+def test_unbalanced_paste_use_fails_closed():
+    m = "#define CAT(a,b) a##b\n"
+    assert run(m + F("g", ""), m + F("g", "\tCAT(__em,\n")) != []

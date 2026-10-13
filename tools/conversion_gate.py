@@ -100,6 +100,7 @@ def added_lift_lines(old, new, lines=None):
     # for growth even when no added line names __emit. Macros defined in a
     # header are not followed (a gap that predates 47cf6cb).
     _PRELUDE.clear()  # per run: ":" and revs mean a different tree per call
+    _CHANGED.clear()
     removed, added, path, touched = collections.Counter(), [], None, []
     for line in lines:
         if line.startswith("+++ b/"):
@@ -119,6 +120,8 @@ def added_lift_lines(old, new, lines=None):
                         removed[(path, name)] += 1
                 else:
                     added.append((path, name, line))
+    # First, so the prelude already holds the headers of re-defined names.
+    users = users_of_changed_names(old, new, lines)
     bad, grown = {}, {}
     for path, name, line in added:
         if name and removed[(path, name)]:
@@ -128,19 +131,26 @@ def added_lift_lines(old, new, lines=None):
                 and not NAKED_RE.search(COMMENT_RE.sub(" ", line[1:])):
             if path not in grown:
                 grown[path] = emit_growth(file_text(old, path), file_text(new, path),
-                                          header_prelude(old), header_prelude(new))
+                                          header_prelude(old)[0], header_prelude(new)[0])
             if not grown[path]:
                 continue
         first, count = bad.get(path, (line[1:].strip()[:80], 0))
         bad[path] = (first, count + 1)
+    for path in users:
+        if path not in touched:
+            touched.append(path)
     for path in touched:
         if path in bad or not path.endswith(tuple(CPP_SUFFIXES) + (".h", ".hpp", ".inl")):
             continue
         if path not in grown:
             new_text = file_text(new, path)
+            names = header_prelude(new)[1]
+            mentions = names and re.search(
+                r"\b(?:%s)\b" % "|".join(map(re.escape, sorted(names))), new_text)
             grown[path] = emit_growth(file_text(old, path), new_text,
-                                      header_prelude(old), header_prelude(new)) \
-                if LIFT_RE.search(new_text) or header_prelude(new) else []
+                                      header_prelude(old)[0], header_prelude(new)[0]) \
+                if LIFT_RE.search(new_text) or "##" in new_text or mentions \
+                or path in users else []
         if grown[path]:
             bad[path] = ("emitted bytes grow in " + ", ".join(grown[path])[:80], 1)
     return [(p, "%s  (%d such lines)" % (first, count)) for p, (first, count) in bad.items()]
@@ -167,6 +177,7 @@ _DEFINE_RE = re.compile(
 _CONST_RE = re.compile(
     r"\bconst\b[^;=(){}#\n]*?\b(\w+)\s*=\s*([^;,{}\n]+)\s*[;,]")
 _HEADER_GLOBS = ("game/*.h", "game/*.hpp", "game/*.inl", ":(exclude)game/gen_small/")
+_SOURCE_GLOBS = ("game/", ":(exclude)game/gen_small/", ":(exclude)game/gen_asm/")
 
 
 def file_text(rev, path):
@@ -175,41 +186,96 @@ def file_text(rev, path):
     return "" if data is None else data.decode("utf-8", errors="replace")
 
 
+def _definitions(text):
+    """{name: definitions} of every constant and macro a text defines."""
+    text = _strip_comments(text)
+    defs = {k: tuple(v) for k, v in _constants(text).items()}
+    for name, value in _macro_table(text).items():
+        defs[name] = defs.get(name, ()) + (value,)
+    return defs
+
+
+def _grep(rev, args, paths):
+    """`git grep -l` at rev (":" = index); paths without the rev prefix."""
+    cmd = ["git", "grep", "-l", "-I"] + (["--cached"] if rev == ":" else []) + args
+    cmd += ([] if rev == ":" else [rev]) + ["--"] + list(paths)
+    out = subprocess.run(cmd, capture_output=True, text=True).stdout
+    return [p.split(":", 1)[1] if rev != ":" else p for p in out.splitlines()]
+
+
+def _words(names):
+    return ["-w"] + sum((["-e", n] for n in sorted(names)), [])
+
+
+def users_of_changed_names(old, new, lines):
+    """game/ files whose emits use a #define/enum/const/macro this diff
+    re-defines: a header-only edit of `#define OP 0x90` must re-judge every
+    unchanged .cpp emitting `__emit OP`, function by function. Only files that
+    emit at all (literal __emit, or a game/ header emit macro) are candidates:
+    one batched `git grep` per revision, and none when no definition changed
+    (a4c07311a8 grepped every user of every changed name and took 60+ s)."""
+    paths = {line[6:] for line in lines if line.startswith(("+++ b/", "--- a/"))}
+    changed = set()
+    for path in paths:
+        if not path.startswith("game/") or path.startswith("game/gen_small/"):
+            continue
+        before, after = _definitions(file_text(old, path)), _definitions(file_text(new, path))
+        changed |= {n for n in set(before) | set(after) if before.get(n) != after.get(n)}
+    if not changed:
+        return []
+    found, used = set(), set()
+    alt = "|".join(map(re.escape, sorted(changed)))
+    word = re.compile(r"\b(?:%s)\b" % alt)
+    for rev in (old, new):
+        # Files emitting a changed name directly: one grep.
+        found |= set(_grep(rev, ["-E", r"\b__?emit\b[[:space:](]*(%s)\b" % alt], _SOURCE_GLOBS))
+        # Files using a header emit macro whose body names a changed name.
+        text, names = header_prelude(rev)
+        table = _macro_table(text)
+        via = {n for n in names if n in table and word.search(table[n][1])}
+        if via:
+            found |= set(_grep(rev, _words(via), _SOURCE_GLOBS))
+    used = changed if found else set()
+    if used - _CHANGED:
+        _CHANGED.update(used)
+        _PRELUDE.clear()
+    return sorted(found)
+
+
 def _strip_comments(text):
     text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
     return re.sub(r"//[^\n]*", " ", text)
 
 
-_PRELUDE = {}
+_PRELUDE, _CHANGED, _PARSED = {}, set(), {}
 
 
 def header_prelude(rev):
-    """Definitions text of every tracked game/ header that defines an emit
-    macro, or a macro naming one (fixpoint over `git grep`), at rev. Cheap:
-    one git grep per round, normally one round with no hits."""
+    """(definitions text, emit/paste macro names) of the tracked game/ headers
+    that define an emit macro, a pasting macro, or a macro naming one
+    (fixpoint over `git grep`), plus the headers naming a constant this diff
+    re-defines that an emitting file uses (_CHANGED), at rev. Cheap: a few
+    batched greps; only headers that matter are read."""
     if rev in _PRELUDE:
         return _PRELUDE[rev]
-    base = ["git", "grep", "-l", "-I"] + (["--cached"] if rev == ":" else [])
-    tail = [] if rev == ":" else [rev]
-    seen, pattern, texts = set(), [r"-E", r"\b__?emit\b"], []
+    seen, texts, names = set(), [], set()
+    new = _grep(rev, ["-E", r"\b__?emit\b|##"], _HEADER_GLOBS)
+    if _CHANGED:
+        new += _grep(rev, _words(_CHANGED), _HEADER_GLOBS)
     for _ in range(8):
-        proc = subprocess.run(base + pattern + tail + ["--"] + list(_HEADER_GLOBS),
-                              capture_output=True, text=True)
-        paths = [p.split(":", 1)[1] if rev != ":" else p
-                 for p in proc.stdout.splitlines()]
-        paths = [p for p in paths if p not in seen]
-        if not paths:
+        new = [p for p in new if p not in seen]
+        if not new:
             break
-        names = []
-        for path in paths:
+        for path in new:
             seen.add(path)
-            text = _strip_comments(file_text(rev, path))
-            texts.append(text)
-            names += [m.group(1) for m in _DEFINE_RE.finditer(text)]
-        if not names:
+            texts.append(_strip_comments(file_text(rev, path)))
+        table = _macro_table("\n".join(texts))
+        more = (_emit_macros(table) | _paste_macros(table)) - names
+        if not more:
             break
-        pattern = ["-w"] + sum((["-e", n] for n in sorted(set(names))), [])
-    _PRELUDE[rev] = "\n".join(texts)
+        names |= more
+        new = _grep(rev, _words(more), _HEADER_GLOBS)
+    _PRELUDE[rev] = ("\n".join(texts), names)
     return _PRELUDE[rev]
 
 
@@ -285,23 +351,36 @@ def _macro_table(text):
 
 
 def _emit_macros(table):
-    """Names of macros whose expansion reaches __emit (fixpoint)."""
+    """Names of macros whose expansion reaches __emit (fixpoint). A pasting
+    macro (`##`) is not one by itself: each use of it is expanded with its
+    arguments pasted and rescanned (emit_bytes_by_function), so
+    `CAT(__em,it)` counts and `BFME_VIRTUAL_SLOT(n)` (491e03cf7c) does not."""
     emit = {n for n, (_, body) in table.items() if LIFT_RE.search(body)}
-    while True:
-        more = {n for n, (_, body) in table.items() if n not in emit
-                and any(re.search(r"\b%s\b" % re.escape(e), body) for e in emit)}
+    while emit:
+        names = re.compile(r"\b(?:%s)\b" % "|".join(map(re.escape, sorted(emit))))
+        more = {n for n, (_, body) in table.items() if n not in emit and names.search(body)}
         if not more:
-            return emit
+            break
         emit |= more
+    return emit
+
+
+def _paste_macros(table):
+    """Function-like macros whose body pastes tokens."""
+    return {n for n, (params, body) in table.items() if params is not None and "##" in body}
+
+
+_OPEN_PAREN_RE = re.compile(r"\s*\(")
+UNEXPANDABLE = " __emit <unexpandable> "
 
 
 def _call_args(text, pos):
     """(args, end) for a `(a, b)` starting at text[pos:] (after spaces), or
     (None, pos) when none."""
-    m = re.match(r"\s*\(", text[pos:])
+    m = _OPEN_PAREN_RE.match(text, pos)
     if not m:
         return None, pos
-    i, depth, args, cur = pos + m.end(), 1, [], ""
+    i, depth, args, cur = m.end(), 1, [], ""
     while i < len(text) and depth:
         c = text[i]
         if c == "(":
@@ -316,15 +395,26 @@ def _call_args(text, pos):
         else:
             cur += c
         i += 1
+    if depth:
+        return False, len(text)  # unbalanced: cannot be expanded
     args.append(cur.strip())
     return args, i + 1
 
 
+_NAME_RE_CACHE = {}
+
+
 def _expand(text, table, emit, limit=16):
-    """Expand emit macros in text to a fixpoint (bounded)."""
+    """Expand emit and pasting macros in text to a fixpoint. A use that
+    cannot be expanded (unbalanced arguments, recursion limit) becomes an
+    unknown emit: the gate fails closed."""
     if not emit:
         return text
-    name_re = re.compile(r"\b(%s)\b" % "|".join(map(re.escape, sorted(emit))))
+    key = tuple(sorted(emit))
+    if key not in _NAME_RE_CACHE:
+        _NAME_RE_CACHE.clear()
+        _NAME_RE_CACHE[key] = re.compile(r"\b(%s)\b" % "|".join(map(re.escape, key)))
+    name_re = _NAME_RE_CACHE[key]
     for _ in range(limit):
         out, pos, changed = [], 0, False
         for m in name_re.finditer(text):
@@ -336,14 +426,21 @@ def _expand(text, table, emit, limit=16):
                 args, end = _call_args(text, m.end())
                 if args is None:
                     continue
+                if args is False:
+                    out.append(text[pos:m.start()] + UNEXPANDABLE)
+                    pos, changed = end, True
+                    continue
                 for p, a in zip(params, args + [""] * len(params)):
                     body = re.sub(r"\b%s\b" % re.escape(p), lambda _m, a=a: a, body)
+            # `##` pastes tokens (CAT(__em,it) -> __emit); the result is
+            # rescanned on the next round like any other expansion.
+            body = re.sub(r"\s*##\s*", "", body)
             out.append(text[pos:m.start()] + " " + body + " ")
             pos, changed = end, True
         if not changed:
             return text
         text = "".join(out) + text[pos:]
-    return text
+    return text + UNEXPANDABLE if name_re.search(text) else text
 
 
 def emit_bytes_by_function(text, prelude=""):
@@ -359,15 +456,22 @@ def emit_bytes_by_function(text, prelude=""):
     `prelude` supplies definitions only (game/ headers); its own emits are
     owned by the header's own check."""
     text = _strip_comments(text)
-    defs_text = prelude + "\n" + text
-    consts = _constants(defs_text)
-    table = _macro_table(defs_text)
+    if prelude not in _PARSED:
+        _PARSED.clear()
+        _PARSED[prelude] = (_constants(prelude), _macro_table(prelude))
+    pre_consts, pre_table = _PARSED[prelude]
+    consts = {k: list(v) for k, v in pre_consts.items()}
+    for k, v in _constants(text).items():
+        consts.setdefault(k, []).extend(v)
+    table = dict(pre_table)
+    table.update(_macro_table(text))
     emit = _emit_macros(table)
+    expandable = emit | _paste_macros(table)
     owners = {}
 
     def count(snippet):
         return collections.Counter(_operand_key(m.group(1), consts)
-                                   for m in EMIT_BYTE_RE.finditer(_expand(snippet, table, emit)))
+                                   for m in EMIT_BYTE_RE.finditer(_expand(snippet, table, expandable)))
 
     def directive(match):
         line = " ".join(match.group(0).replace("\\\n", " ").split())
@@ -390,8 +494,8 @@ def emit_bytes_by_function(text, prelude=""):
     scopes = []  # (depth at open, normalized container header)
     pos, skip = 0, 0
     token = r"[{};]|" + EMIT_OPERAND
-    if emit:
-        token += r"|\b(?:%s)\b" % "|".join(map(re.escape, sorted(emit)))
+    if expandable:
+        token += r"|\b(?:%s)\b" % "|".join(map(re.escape, sorted(expandable)))
     for match in re.finditer(token, text):
         if match.start() < skip:
             continue
@@ -422,11 +526,14 @@ def emit_bytes_by_function(text, prelude=""):
         elif tok == ";":
             if func is None:
                 header = []
-        elif tok in emit:
+        elif tok in expandable:
             end = match.end()
             if table[tok][0] is not None:
                 args, end = _call_args(text, match.end())
                 if args is None:
+                    continue
+                if args is False:
+                    owners.setdefault(func, collections.Counter())["sym:<unexpandable>"] += 1
                     continue
             owners.setdefault(func, collections.Counter()).update(
                 count(text[match.start():end]))
