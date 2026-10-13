@@ -1,8 +1,8 @@
 // ?m009F0FA0@Q1Receiver0134FAAC@@QAEXPAVRva009EF0D0Element@@@Z
-// partial score=0.8819 date=2026-10-09
+// partial score=0.8917 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
-// Evidence: targets/game/reverse/identity_evidence/009f0fa0-native-queue.md
+// Evidence: targets/game/reverse/identity_evidence/009f0fa0-count-boundary.md
 
 #include <deque>
 #define _BFME_RETAIL_TREE_INSERT_LAYOUT
@@ -224,7 +224,8 @@ void Q1Receiver0134FAAC::m009F0FA0(Rva009EF0D0Element *entry)
 		}
 		if (i < m_deques78[queue].size())
 		{
-			int lastIndex = m_deques78[queue].size() - 1;
+			unsigned int count = m_deques78[queue].size();
+			int lastIndex = count - 1;
 			Rva009EF0D0Element *&last = m_deques78[queue][lastIndex];
 			m_deques78[queue][i] = last;
 			m_deques78[queue].pop_back();
