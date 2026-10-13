@@ -4,11 +4,12 @@
 // declaration only, the body is game/gen_small/fun_004.cpp
 struct Gen_006434c0 { void m(); };
 
+// Retail ILT 0x00011522 routes the append call to 0x000A4030.
+void j_00011522();
+
 class BfmeStrV36
 {
 public:
-	void bfmeAppendV36(char *a, char *b, char *tag);
-
 	char *b;
 	char *e;
 };
@@ -66,6 +67,6 @@ void __stdcall bfmeAppendRangeV36(BfmeStrV36 *other, int pos, int n)
 		mov eax, dword ptr [ebp-0x60]
 		push eax
 		mov ecx, dword ptr [ebp-0x64]
-		call BfmeStrV36::bfmeAppendV36
+		call j_00011522
 	}
 }
