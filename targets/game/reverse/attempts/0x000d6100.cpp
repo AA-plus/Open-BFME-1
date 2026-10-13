@@ -1,4 +1,9 @@
 // ?getRva0058B590Value@Player@@QBEJH@Z
+// partial score=1.0 date=2026-10-13
+#include "../../../../game/GameEngine/Source/Common/Rva0058B590Value.cpp"
+#include <hash_map>
+#include <vector>
+// ?getRva0058B590Value@Player@@QBEJH@Z
 // partial score=0.64 date=2026-09-09
 // cl: /DNDEBUG /DRELEASE_DEBUG_LOGGING /DWIN32 /D_WINDOWS /MD /EHsc /DZH_EMIT_POOL_GLUE /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
 // stlport
@@ -28,9 +33,8 @@ struct BfmeObjectHashNode
 
 struct BfmeGameLogic
 {
-	unsigned char m_pad00[0xb4];
-	BfmeObjectHashNode **m_objectBucketsBegin;
-	BfmeObjectHashNode **m_objectBucketsEnd;
+ unsigned char m_pad00[0xb0];
+ _STL::hash_map<int, BfmeObject*, _STL::hash<int>, _STL::equal_to<int> > m_objectHash;
 };
 
 extern BfmeGameLogic *TheBfmeGameLogic;
@@ -44,9 +48,7 @@ struct BfmeObject
 struct BfmePlayerValue
 {
 	Int *m_key;
-	Real *m_valuesBegin;
-	Real *m_valuesEnd;
-	unsigned char m_pad0c[4];
+	_STL::vector<Real> m_valuesBegin;
 	UnsignedInt m_objectID;
 };
 
@@ -57,16 +59,11 @@ struct BfmePlayerValueNode
 	BfmePlayerValue *m_value;
 };
 
-class Player
-{
-public:
-	long getRva0058B590Value(int value) const;
-};
 
 long Player::getRva0058B590Value(int value) const
 {
 	Real result = BfmeZeroRange;
-	Int valueIndex = 0;
+	UnsignedInt valueIndex = 0;
 	BfmePlayerValueNode *anchor = *(BfmePlayerValueNode **)((const unsigned char *)this + 0x640);
 	BfmePlayerValueNode *node = anchor->m_next;
 
@@ -77,21 +74,18 @@ long Player::getRva0058B590Value(int value) const
 			BfmePlayerValue *entry = node->m_value;
 			if (entry->m_objectID != 0)
 			{
-				BfmeObjectHashNode **buckets = TheBfmeGameLogic->m_objectBucketsBegin;
-				UnsignedInt bucketCount = (UnsignedInt)(TheBfmeGameLogic->m_objectBucketsEnd - buckets);
-				BfmeObjectHashNode *hash = buckets[entry->m_objectID % bucketCount];
-				while (hash != NULL && hash->m_id != entry->m_objectID)
-					hash = hash->m_next;
-				if (hash != NULL)
-				{
-					BfmeObject *object = hash->m_object;
+                _STL::hash_map<int, BfmeObject*, _STL::hash<int>, _STL::equal_to<int> >::iterator found = TheBfmeGameLogic->m_objectHash.find(entry->m_objectID);
+                if (found != TheBfmeGameLogic->m_objectHash.end())
+                {
+                    BfmeObject *object = found->second;
 					if (object != NULL && (object->m_status & 8) == 0)
 					{
 						if (*entry->m_key == value)
 						{
-							Int count = (Int)(entry->m_valuesEnd - entry->m_valuesBegin);
+							UnsignedInt count = entry->m_valuesBegin.size();
 							if (valueIndex < count)
-								result = entry->m_valuesBegin[valueIndex++];
+								result = entry->m_valuesBegin[valueIndex];
+							++valueIndex;
 						}
 					}
 				}
@@ -100,5 +94,7 @@ long Player::getRva0058B590Value(int value) const
 		}
 	}
 
-	return (long)floor((double)(g_bfmeK1253 - result * g_bfmeScaleBC));
+	result *= g_bfmeScaleBC;
+	result = g_bfmeK1253 - result;
+	return rva0058B590FloatToLong((float)floor((double)result));
 }
