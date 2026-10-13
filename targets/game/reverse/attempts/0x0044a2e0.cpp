@@ -1,5 +1,5 @@
 // ?rva0044a2e0@Rva00449790Owner@@QAEXXZ
-// partial score=0.9617 date=2026-10-13
+// partial score=0.9921 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringbaseascii /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 // Address-derived reconstruction of the embedded BFME cursor-animation owner.
@@ -154,11 +154,17 @@ private:
 	Int m_previousY;
 };
 
-extern Rva0044A2E0Mouse *TheMouse;
+class Mouse;
+extern Mouse *TheMouse;
+#define TheMouse ((Rva0044A2E0Mouse *)TheMouse)
 extern Anim2DCollection *TheAnim2DCollection;
-extern Rva0044A2E0GlobalData *TheWritableGlobalData;
+class GlobalData;
+extern GlobalData *TheWritableGlobalData;
+#define TheWritableGlobalData ((Rva0044A2E0GlobalData *)TheWritableGlobalData)
 // Retail loads this pointer between the two mouse-coordinate reads.
-extern ClientRoot4120 * volatile TheGameClient;
+class GameClient;
+extern GameClient *TheGameClient;
+#define TheGameClient (*(ClientRoot4120 * volatile *)&TheGameClient)
 extern InGameUI *TheInGameUI;
 
 void Rva00449790Owner::rva0044a2e0()
@@ -222,7 +228,8 @@ void Rva00449790Owner::rva0044a2e0()
 			point.y = (Real)(TheWritableGlobalData->m_int_E40 + previousY);
 			Real zRise = 1.0f;
 			static const Real zFactor = 0.99f;
-			Real zStep = (double)*(volatile const Real *)&zFactor / (Real)count;
+			double numerator = *(volatile const Real *)&zFactor;
+			Real zStep = count > 0 ? (Real)numerator / (Real)count : (Real)numerator / (Real)count;
 
 			for (Int i = 0; i < count; ++i)
 			{
