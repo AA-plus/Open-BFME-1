@@ -1,5 +1,5 @@
 // ?onTriggerEntered@CastleBehavior@@QAEXPAVObject@@@Z
-// partial score=0.977 date=2026-09-28
+// partial score=0.977 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /GX- /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWMath /Igame/GameEngine/Source/GameLogic/Object /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 // ?onTriggerEntered@CastleBehavior@@QAEXPAVObject@@@Z
@@ -15,7 +15,6 @@ typedef float Real;
 
 #include "coord3d.h"
 #include "ascii_string.h"
-template <class T> inline const T *StringBase<T>::str() const { return m_data ? m_data->data : (const T*)""; }
 
 class Overridable
 {
