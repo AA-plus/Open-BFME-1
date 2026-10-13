@@ -75,6 +75,7 @@ PROTECTED = (
 )
 
 TRAILER = re.compile(r"^Verifier-Change:[ \t]*(\S.{7,}?)[ \t]*$", re.MULTILINE)
+PLACEHOLDER = re.compile(r"<[^<>]*>")
 
 
 def lines_set(text):
@@ -173,7 +174,13 @@ def protected(paths):
 def reason(message):
     body = "\n".join(line for line in message.splitlines() if not line.startswith("#"))
     found = TRAILER.search(body)
-    return found.group(1).strip() if found else None
+    if not found:
+        return None
+    why = found.group(1).strip()
+    # the refusal's own hint pasted unchanged, or any bare <placeholder>, is no reason
+    if PLACEHOLDER.fullmatch(why.strip("`'\" \t.")):
+        return None
+    return why
 
 
 def banner(title, paths, why, where=""):

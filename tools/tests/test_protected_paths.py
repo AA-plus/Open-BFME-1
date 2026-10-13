@@ -89,6 +89,15 @@ def test_the_refusal_names_the_trailer_to_add(repo, capsys):
     assert "add a `Verifier-Change: <what changed and why>` line to the commit message" in err
 
 
+def test_the_pasted_hint_or_a_bare_placeholder_is_no_reason(repo):
+    for why in ("<what changed and why>", "<what changed and why>`", "`<reason goes here>`"):
+        assert pp.reason(f"x\n\nVerifier-Change: {why}\n") is None, why
+    real = "name_regression treats <Word><6-8 hex in-image address> as address-derived"
+    assert pp.reason(f"x\n\nVerifier-Change: {real}\n") == real
+    assert staged(repo, "loosen\n\nVerifier-Change: <what changed and why>\n",
+                  tools__build_py="x = 2\n") == 1
+
+
 def test_a_token_reason_or_a_comment_line_does_not_count(repo):
     assert staged(repo, "x\n\nVerifier-Change: ok\n", tools__build_py="x = 3\n") == 1
     assert staged(repo, "x\n# Verifier-Change: commented out reason\n") == 1
