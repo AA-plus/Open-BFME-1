@@ -1,5 +1,6 @@
-// ?d_00442de0@@YAXXZ
-// partial score=0.9018 date=2026-09-30
+// ?appendPoint@Rva00442DE0Owner@@QAEXURva00442DE0Point@@@Z
+// partial score=0.9849 date=2026-10-13
+// ?appendPoint@Rva00442DE0Owner@@QAEXURva00442DE0Point@@@Z
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS /Igame/Libraries/Source/WWVegas/WWMath
 // stlport
 #include <list>
@@ -15,6 +16,24 @@ inline Coord3D::Coord3D(int x, int y, int z)
     this->z = (float)z;
 }
 
+
+
+// Authentic matched normalize body (RVA000FB930,79B), kept noinline.
+// Visibility reduces caller differences39->7; paired integer delta fixes
+// the remaining wrong temporary slot (7->6). Residue is only MOV/FSTP swap
+// at caller+64/+68; every relocation remains aligned.
+static const float zero_value = 0.0f;
+static const float one = 1.0f;
+__declspec(noinline) void Coord3D::normalize()
+{
+    float len = (float)sqrt(x * x + y * y + z * z);
+    if (len != zero_value) {
+        float scale = one / len;
+        x *= scale;
+        y *= scale;
+        z *= scale;
+    }
+}
 
 // Retail 0x00442DE0..0x00442F6D: complete thiscall body, ret 8, point passed by value.
 // Address-qualified owner: no matched caller proves an InGameUI method name.
@@ -43,7 +62,8 @@ void Rva00442DE0Owner::appendPoint(Rva00442DE0Point pos)
         const Rva00442DE0Point &last = points.back();
         int lastX = last.x;
         int lastY = last.y;
-        Coord3D delta(pt.x - lastX, pt.y - lastY, 0);
+        Rva00442DE0Point difference = { pt.x - lastX, pt.y - lastY };
+        Coord3D delta(difference.x, difference.y, 0);
         float distance = (float)sqrt(delta.x * delta.x + delta.y * delta.y);
         float tolerance = (float)(int)(*(unsigned int*)((char*)TheMouse + 0x10ec) / 3);
         if (distance < tolerance) return;
