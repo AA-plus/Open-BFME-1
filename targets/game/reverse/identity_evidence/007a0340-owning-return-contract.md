@@ -60,9 +60,10 @@ Get_Texture(const char*) as raw TextureClass* and nonconst. matinfo.cpp's
 integer implementation is explicitly present-unmatched and Add_Refs a raw
 return. The name overload inline calls the integer overload and returns NULL
 on a missing name. A repair needs owning return propagation through BOTH
-paths (null handle on failure), the proven const integer receiver, and each
-consumer's full-expression lifetime. Do not assert constness of the name
-lookup overload without its independent evidence.
+paths (null handle on failure), the existing handle-return binding's const
+integer receiver, and each consumer's full-expression lifetime. That qualifier
+is present in the matched stand-in and binding; bytes alone do not prove the
+original C++ qualifier. Do not infer the name overload's qualifier from it.
 
 Textures is presently DynamicVectorClass<TextureClass*> in matinfo.h;
 matched local material models and copy/getter consumers use handle elements.
