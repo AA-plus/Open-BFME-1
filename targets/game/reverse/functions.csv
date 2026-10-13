@@ -31214,7 +31214,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?bfmeInitVKE@BfmeThingVKE@@QAEPAV1@ABV1@@Z,,0x007620A0,66,game/GameEngine/Source/Common/BfmeConv1399.cpp,matched,
 ?bfmeInitVKT@BfmeThingVKT@@QAEPAV1@ABUBfmeBlockVKT@@0@Z,,0x002E26C0,46,game/GameEngine/Source/Common/BfmeConv1410.cpp,matched,
 ?bfmeInitVKV@BfmeThingVKV@@QAEPAV1@ABV1@@Z,,0x00605200,83,game/GameEngine/Source/Common/BfmeConv1411.cpp,matched,
-?bfmeInitVLU@BfmeStrVLU@@QAEPAV1@HI@Z,,0x0089E030,133,game/GameEngine/Source/Common/BfmeConv1420.cpp,matched,
 ?bfmeInitVN@BfmeBaseVN@@QAEPAV1@ID@Z,,0x003BBAF0,66,game/GameEngine/Source/Common/Rva003BBAF0Ctor.cpp,matched,
 ?bfmeInitVNE@BfmeRectVNE@@QAEPAV1@IID@Z,,0x003BBF70,104,game/GameEngine/Source/Common/BfmeConv1507.cpp,matched,
 ?bfmeInitVNF@BfmeBoxVNF@@QAEPAV1@IPBUBfmeVecVNF@@HID@Z,,0x003BBD70,132,game/GameEngine/Source/Common/BfmeConv1509.cpp,matched,
@@ -172556,3 +172555,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?j_0003E22A@@YAXXZ,,0x0003E22A,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk to matched target 0x005D2DF0;model=claude-sonnet-5-5;host=SARUMAN
 ?j_0003F418@@YAXXZ,,0x0003F418,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk to matched target 0x001D6A70;model=claude-sonnet-5-5;host=SARUMAN
 ?j_00048B9E@@YAXXZ,,0x00048B9E,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk to matched target 0x001EE950;model=claude-sonnet-5-5;host=SARUMAN
+??0RepeatedByteString0089E030@@QAE@HI@Z,,0x0089E030,133,game/GameEngine/Source/Common/BfmeConv1420.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/0089e030-RepeatedByteString0089E030-constructor.md;model=gpt-6.1-sol;host=fleet

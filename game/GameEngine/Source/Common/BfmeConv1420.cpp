@@ -32,14 +32,14 @@ public:
 };
 extern EAStringC::StringDataC g_rva012D5298Empty;
 
-class BfmeStrVLU
+class RepeatedByteString0089E030
 {
 public:
-	BfmeStrVLU *bfmeInitVLU(int c, unsigned n);
+	RepeatedByteString0089E030(int c, unsigned n);
 	BfmeHdrVLU *m_bfme00;
 };
 
-BfmeStrVLU *BfmeStrVLU::bfmeInitVLU(int c, unsigned n)
+RepeatedByteString0089E030::RepeatedByteString0089E030(int c, unsigned n)
 {
 	if (n != 0)
 	{
@@ -57,5 +57,4 @@ BfmeStrVLU *BfmeStrVLU::bfmeInitVLU(int c, unsigned n)
 		m_bfme00 = (BfmeHdrVLU *)&g_rva012D5298Empty;
 		++((BfmeHdrVLU *)&g_rva012D5298Empty)->m_bfme00;
 	}
-	return this;
 }
