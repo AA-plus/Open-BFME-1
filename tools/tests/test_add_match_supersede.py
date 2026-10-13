@@ -17,6 +17,18 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import add_match
 
+def fake_run(gate):
+    """subprocess.run double: the verify build returns GATE; git calls (gate_writers.stamp,
+    which passes capture_output=True since 58db922b43) get a captured failure, so no stamp
+    file is written outside the fixture."""
+    def run(command, **kwargs):
+        if command and command[0] == "git":
+            return SimpleNamespace(returncode=1, stdout=b"", stderr=b"")
+        assert set(kwargs) == {"cwd", "env"}, kwargs
+        return SimpleNamespace(returncode=gate)
+    return run
+
+
 
 HEADER = "name,export_rva,target_rva,target_size,source,status,notes"
 DUMP = (
@@ -45,7 +57,7 @@ def arrange(tmp_path, monkeypatch, *, gate, target_rva="0x00ABCD00", size="32",
     build_sh.chmod(0o755)
     monkeypatch.setattr(
         add_match.subprocess, "run",
-        lambda command, *, cwd, env: SimpleNamespace(returncode=gate))
+        fake_run(gate))
     monkeypatch.setattr(sys, "argv", [
         "add_match.py", REAL, target_rva, size, SOURCE_REL,
         "--replace-rva", "0x00ABCD00", "--root", str(tmp_path),
@@ -270,7 +282,7 @@ def test_replace_existing_tombstones_only_when_the_identity_key_moves(
     build_sh.chmod(0o755)
     monkeypatch.setattr(
         add_match.subprocess, "run",
-        lambda command, *, cwd, env: SimpleNamespace(returncode=0))
+        fake_run(0))
     monkeypatch.setattr(sys, "argv", [
         "add_match.py", REAL, new_rva, "32", "game/New.cpp",
         "--replace-existing", "--root", str(tmp_path),

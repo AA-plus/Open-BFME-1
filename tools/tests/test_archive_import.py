@@ -14,6 +14,18 @@ import archive_import
 import build
 import reloc_ledger
 
+def fake_run(gate):
+    """subprocess.run double: the verify build returns GATE; git calls (gate_writers.stamp,
+    which passes capture_output=True since 58db922b43) get a captured failure, so no stamp
+    file is written outside the fixture."""
+    def run(command, **kwargs):
+        if command and command[0] == "git":
+            return SimpleNamespace(returncode=1, stdout=b"", stderr=b"")
+        assert set(kwargs) == {"cwd", "env"}, kwargs
+        return SimpleNamespace(returncode=gate)
+    return run
+
+
 PUBLIC = "_Native@24"
 TABLE = "?nativeTable@@3PAHA"
 INIT = "?nativeInit@@YAPAXXZ"
@@ -178,8 +190,7 @@ def transaction(route, monkeypatch, gate=0, extra=()):
     proof.parent.mkdir(parents=True)
     proof.write_text("Independent route identity proof.")
     (route.root / "build.sh").write_text("#!/bin/sh\nexit 0\n")
-    monkeypatch.setattr(add_match.subprocess, "run", lambda command, *, cwd, env:
-                        SimpleNamespace(returncode=gate))
+    monkeypatch.setattr(add_match.subprocess, "run", fake_run(gate))
     monkeypatch.setattr(sys, "argv", ["add_match.py", PUBLIC, "0x00001000", "6", SOURCE,
         "--root", str(route.root), "--replace-rva", "0x00001000",
         "--replace-archive-import", OLD, "--identity-evidence", PROOF,
