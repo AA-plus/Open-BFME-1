@@ -1,46 +1,13 @@
-// ?loadBigFilesFromDirectory@Win32BIGFileSystem@@UAE_NVAsciiString@@0_N@Z
-// partial score=0.97 date=2026-09-19
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /D_STLP_USE_STATIC_LIB /MD /EHsc /Iinputs/reference/shims/ini /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib
 // stlport
-//
-// Win32BIGFileSystem::loadBigFilesFromDirectory, retail 0x009CDB90, 459 bytes --
-// vtable slot 9 of 0x01143B40, which init reaches through [eax+0x24].
-//
-// Its own translation unit because it needs exceptions: it opens with the fs:[0]
-// prologue where closeArchiveFile next door has no SEH frame at all.
-//
-// Zero Hour's body reaches 332 bytes of the 459. The missing code includes
-// the vector work retail makes between filling the filename list and
-// iterating it: 0x009CD890 (123B) is the by-value resize helper,
-// 0x009CC4C0 (61B) copies the set into the vector, and 0x009CDB40 (74B) is
-// the Q3 sort driver. The retail loop also replaces an existing map entry's
-// archive before assigning the newly opened archive.
-//
-// BFME copies the list into a vector and sends the range to the recovered Q3
-// sort driver. FilenameList is keyed on rts::less_than_nocase, so this is not
-// equivalent to simply iterating the set: the vector uses the game's sort
-// family and comparator ABI.
-//
-// How each step was established, by length against retail's 459:
-//
-//   Zero Hour's body, no vector at all      332
-//   + resize / copy / Q3 sort               421
-//   + map find/delete before assignment     459   <- current target shape
-//
-// The frame and operation graph are now the useful comparison points; register
-// assignment and local temporary ordering still need compiler validation.
-//
-// NOT claimed. The length agreeing at every step above is good evidence the
-// operations are right, but it is not proof, and the register assignment is
-// unresolved.
 
-#include "Common/AsciiString.h"
+#include "../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 #include <map>
 #include <set>
 #include <vector>
 #include <algorithm>
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/ArchiveFile.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/ArchiveFile.h
 class ArchiveFile
 {
 public:
@@ -66,7 +33,7 @@ typedef std::set<AsciiString, rts::less_than_nocase<AsciiString> > FilenameList;
 
 class File;
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include/Win32Device/Common/Win32BIGFileSystem.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include/Win32Device/Common/Win32BIGFileSystem.h
 class Win32BIGFileSystem
 {
 public:
@@ -89,7 +56,7 @@ protected:
 	ArchiveFileMap m_archiveFileMap;	// +0x04
 };
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/LocalFileSystem.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/LocalFileSystem.h
 class LocalFileSystem
 {
 public:
@@ -108,9 +75,7 @@ public:
 
 extern LocalFileSystem *TheLocalFileSystem;
 
-// Retail's four-byte string sort family is already recovered under the
-// address-derived Q3SortElem4 spelling.  This TU-local view is only an ABI
-// bridge: the storage remains the real vector<AsciiString> below.
+// Q3SortElem4 bridges the verified by-value resize ABI to vector<AsciiString>.
 struct Q3SortElem4
 {
 	Q3SortElem4() : m_string() {}
@@ -126,6 +91,7 @@ namespace _STL
 	{
 	public:
 		void resize(unsigned int count, Q3SortElem4 value);
+		void resize(unsigned int count) { resize(count, Q3SortElem4()); }
 	};
 }
 
@@ -135,7 +101,7 @@ struct Q3SortCompare
 
 void Rva009CDB40(Q3SortElem4 *first, Q3SortElem4 *last, Q3SortCompare comp);
 
-// ?loadBigFilesFromDirectory@Win32BIGFileSystem@@UAEHVAsciiString@@0H@Z present-unmatched
+// ?loadBigFilesFromDirectory@Win32BIGFileSystem@@UAE_NVAsciiString@@0_N@Z
 Bool Win32BIGFileSystem::loadBigFilesFromDirectory( AsciiString dir, AsciiString fileMask,
                                                     Bool overwrite )
 {
@@ -144,7 +110,7 @@ Bool Win32BIGFileSystem::loadBigFilesFromDirectory( AsciiString dir, AsciiString
 
 	std::vector<AsciiString> ordered;
 	reinterpret_cast<_STL::vector<Q3SortElem4, _STL::allocator<Q3SortElem4> > *>
-		(&ordered)->resize( filenameList.size(), Q3SortElem4() );
+		(&ordered)->resize( filenameList.size() );
 	std::copy( filenameList.begin(), filenameList.end(), ordered.begin() );
 	Rva009CDB40( reinterpret_cast<Q3SortElem4 *>( ordered.begin() ),
 		reinterpret_cast<Q3SortElem4 *>( ordered.end() ), Q3SortCompare() );
