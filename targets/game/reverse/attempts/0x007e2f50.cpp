@@ -1,5 +1,5 @@
-// ?d_007e2f50@@YAXXZ
-// partial score=0.75 date=2026-09-03
+// ?readPacket@BfmeB996@@QAEDPAPAHPAH1PADD@Z
+// partial score=0.9831 date=2026-10-13
 // ?readPacket@BfmeB996@@QAEDPAPAHPAH0PADD@Z [retail body 0x007E2F50]
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHs-c-
 
@@ -27,7 +27,7 @@ extern "C" void *memset(void *destination, int value, unsigned int size);
 class BfmeB996
 {
 public:
-	char readPacket(int *output, int *first, int *second,
+	char readPacket(int **output, int *first, int *second,
 		char *stop, char flag);
 	char bfmeTry996(int first, int second, char *stop);
 
@@ -38,7 +38,7 @@ private:
 	int m_limit;
 };
 
-char BfmeB996::readPacket(int *output, int *first, int *second,
+char BfmeB996::readPacket(int **output, int *first, int *second,
 	char *stop, char flag)
 {
 	*stop = 0;
@@ -47,7 +47,7 @@ char BfmeB996::readPacket(int *output, int *first, int *second,
 	int *secondPointer = second;
 	BfmeB996 *reader = this;
 	char *stopPointer = stop;
-	int *outputPointer = output;
+	int **outputPointer = output;
 
 	if (!reader->bfmeTry996((int)firstPointer, (int)secondPointer, stopPointer))
 		return 0;
@@ -74,10 +74,10 @@ packet:
 
 		*(int *)(buffer + 4) = secondValue;
 		*(int *)buffer = firstValue;
-		*outputPointer = (int)buffer;
+		*outputPointer = (int *)buffer;
 
-		if (reader->m_dev->consume(buffer + 8, secondValue - 8) ==
-			secondValue - 8)
+		if (reader->m_dev->consume(buffer + 8, *secondPointer - 8) ==
+			*secondPointer - 8)
 			return 1;
 
 		if (*outputPointer != 0) {
