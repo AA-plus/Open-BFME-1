@@ -1,23 +1,12 @@
 // ?rva001F1620@BezierProjectileBehavior@@QAEX_N@Z
-// partial score=0.96 date=2026-09-07
-// cl: /DNDEBUG /DWIN32 /MD /O2 /Ob2 /GX- /D_STLP_USE_STATIC_LIB
-//
-// BezierProjectileBehavior primary-interface reset, retail 0x001F1620,
-// 449 bytes.  The caller at 0x001F1CE0 selects this routine after the
-// projectile reaches its final path point and the module data requests the
-// kill path.
-
+// partial score=0.9109 date=2026-10-13
+// cl: /DNDEBUG /DWIN32 /MD /O2 /Ob2 /GX- /D_STLP_USE_STATIC_LIB /Igame/Libraries/Include
 #include <string.h>
 
 typedef bool Bool;
 typedef unsigned int UnsignedInt;
 
-struct Coord3D
-{
-	float x;
-	float y;
-	float z;
-};
+#include <Lib/Coord3D.h>
 
 enum PathfindLayerEnum
 {
@@ -42,11 +31,18 @@ public:
 	{
 		memset(m_bits, 0, sizeof(m_bits));
 	}
+	BitFlags(int word, unsigned bits)
+	{
+		memset(m_bits, 0, sizeof(m_bits));
+		m_bits[word] |= bits;
+	}
 
+	UnsignedInt test(int i) const { return m_bits[i >> 5] & (1U << (i & 31)); }
+	void set(int i) { m_bits[i >> 5] |= 1U << (i & 31); }
 	UnsignedInt m_bits[(NUM_BITS + 31) / 32];
 };
 
-typedef BitFlags<320> ModelConditionFlags;
+typedef BitFlags<304> ModelConditionFlags;
 typedef BitFlags<86> ObjectStatusMaskType;
 
 class Object;
@@ -69,15 +65,23 @@ public:
 };
 
 extern TerrainLogic *TheTerrainLogic;
-extern volatile float g_bfmeDirectionWeight1285;
+
+
+extern void j_000095ed();
 
 class Object
 {
 public:
 	void setLayer(PathfindLayerEnum layer);
 	void setPosition(const Coord3D *position);
-	void clearAndSetModelConditionFlags(const ModelConditionFlags &clear,
-		const ModelConditionFlags &set);
+	// The canonical 320-bit signature conflicts with the decoded 304-bit complement.
+	void clearAndSetModelConditionFlags001C7720(const ModelConditionFlags &clear,
+        const ModelConditionFlags &set)
+    {
+        typedef void (Object::*Update)(const ModelConditionFlags &, const ModelConditionFlags &);
+        union { void (*fn)(); Update call; } route = {j_000095ed};
+        (this->*route.call)(clear,set);
+    }
 	void setStatus(const ObjectStatusMaskType &status, Bool set);
 	void notifyModelConditionChanged();
 	void kill(DamageType damage, DeathType death);
@@ -85,7 +89,7 @@ public:
 	char m_pad00[0x38];
 	volatile Coord3D m_position;
 	char m_pad44[0xCC];
-	UnsignedInt m_conditionWords[10];
+	ModelConditionFlags m_conditionWords;
 	char m_pad138[0xCC];
 	void *m_ai;
 };
@@ -108,14 +112,22 @@ struct RandomAccessIteratorTag
 {
 };
 
+// Only the links are interpreted; retail frees a twelve-byte node.
 struct ListNode
 {
 	ListNode *m_next;
 	ListNode *m_previous;
 };
 
-BezierPathPod *copyBezierPath(BezierPathPod *first, BezierPathPod *last,
-	BezierPathPod *result, const RandomAccessIteratorTag &tag, int *distance);
+extern void j_00014d7b();
+typedef BezierPathPod *(__cdecl *BezierPathCopy001F1620)(BezierPathPod *, BezierPathPod *, BezierPathPod *, const RandomAccessIteratorTag &, int *);
+// ?copyBezierPath@@YAPAUBezierPathPod@@PAU1@00ABURandomAccessIteratorTag@@PAH@Z absent-from-retail
+static inline BezierPathPod *copyBezierPath(BezierPathPod *first, BezierPathPod *last,
+    BezierPathPod *result, const RandomAccessIteratorTag &tag, int *distance)
+{
+    union { void (*fn)(); BezierPathCopy001F1620 call; } route = {j_00014d7b};
+    return route.call(first, last, result, tag, distance);
+}
 
 void __cdecl bfmeDeallocate(void *block, unsigned int bytes);
 
@@ -125,16 +137,21 @@ public:
 	void bfmeOneCPB(int one, int two);
 };
 
+enum CommandSourceType { rva001F1620Source = 2 };
+
 class AICommandInterface
 {
 public:
-	void aiIdle(int commandSource);
+	void aiIdle(CommandSourceType commandSource);
 };
 
 class BezierProjectileBehavior
 {
 public:
 	void rva001F1620(Bool flag);
+	// ?clearLinks@BezierProjectileBehavior@@QAEXXZ absent-from-retail
+	void clearLinks() { m_list->m_next = m_list; m_list->m_previous = m_list; }
+
 
 	char m_pad00[0x04];
 	BezierProjectileBehaviorModuleData *m_moduleData;
@@ -156,7 +173,7 @@ void BezierProjectileBehavior::rva001F1620(Bool)
 	Coord3D position;
 	position.x = object->m_position.x;
 	position.y = object->m_position.y;
-	position.z = object->m_position.z + g_bfmeDirectionWeight1285;
+	position.z = object->m_position.z + 10.0f;
 
 	PathfindLayerEnum layer =
 		TheTerrainLogic->getLayerForDestination(object, &position);
@@ -183,28 +200,24 @@ void BezierProjectileBehavior::rva001F1620(Bool)
 		bfmeDeallocate(current, 0x0c);
 		list = *(ListNode * volatile *)((char *)this + 0x7c);
 	}
-	list = *(ListNode * volatile *)((char *)this + 0x7c);
+	clearLinks();
+	const ModelConditionFlags set(4, 0x30000);
 	ModelConditionFlags clear;
-	ModelConditionFlags set;
-	list->m_next = list;
-	list = *(ListNode * volatile *)((char *)this + 0x7c);
-	list->m_previous = list;
-	set.m_bits[4] = 0x30000;
-	object->clearAndSetModelConditionFlags(set, clear);
+	object->clearAndSetModelConditionFlags001C7720(set, clear);
 
 	BezierProjectileBehaviorModuleData *data = m_moduleData;
 	if (data->m_killInsteadOfDestroy)
 	{
-		if ((object->m_conditionWords[3] & 0x80000) == 0)
+		if (object->m_conditionWords.test(115) == 0)
 		{
-			object->m_conditionWords[3] |= 0x80000;
+			object->m_conditionWords.set(115);
 			object->notifyModelConditionChanged();
 		}
 		object->kill(DAMAGE_UNRESISTABLE, DEATH_NORMAL);
-		ObjectStatusMaskType status;
-		status.m_bits[0] |= 0x20;
-		object->setStatus(status, false);
 	}
+	ObjectStatusMaskType status;
+	status.m_bits[0] |= 0x20;
+	object->setStatus(status, false);
 
 	void *ai = *(void **)((char *)object + 0x204);
 	if (data->m_aiCommand > 0)
@@ -215,6 +228,6 @@ void BezierProjectileBehavior::rva001F1620(Bool)
 	}
 	else if (ai)
 	{
-		((AICommandInterface *)((char *)ai + 0x20))->aiIdle(2);
+		((AICommandInterface *)((char *)ai + 0x20))->aiIdle(rva001F1620Source);
 	}
 }
