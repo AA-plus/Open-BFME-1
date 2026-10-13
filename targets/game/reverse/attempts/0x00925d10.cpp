@@ -1,9 +1,10 @@
 // ?bfmeSet1016@BfmeDst1016@@QAEXHHH@Z
-// partial score=0.933 date=2026-09-28
+// partial score=0.9437 date=2026-10-13
 // cl: /DNDEBUG /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/shims/sweep
 // Open-BFME5 conversions.
 
 #include "matrix3d.h"
+#include "sharebuf.h"
 
 extern float g_01076C24;
 void rva009371E0Inc();
@@ -21,12 +22,6 @@ struct Rva00925D10Tree
 	Rva00925D10Pivot *m_pivots;
 };
 
-struct Rva00925D10Buf
-{
-	char m_pad0[0xc];
-	void *m_array;
-};
-
 class BfmeDst1016
 {
 public:
@@ -35,12 +30,12 @@ public:
 	char m_pad0[0x28];
 	int m_count;
 	char m_pad1[4];
-	Rva00925D10Buf *m_vert[2];
+	ShareBufferClass<Vector3> *m_vert[2];
 	char m_pad2[8];
-	Rva00925D10Buf *m_norm[2];
+	ShareBufferClass<Vector3> *m_norm[2];
 	char m_pad3[0x10];
-	Rva00925D10Buf *m_links;
-	Rva00925D10Buf *m_runs;
+	ShareBufferClass<unsigned short> *m_links;
+	ShareBufferClass<unsigned short> *m_runs;
 };
 
 void BfmeDst1016::bfmeSet1016(int a, int b, int r)
@@ -61,17 +56,17 @@ void BfmeDst1016::bfmeSet1016(int a, int b, int r)
 	int i;
 	for (i = 0; i < streams; i++) {
 		if (m_vert[i] != 0)
-			srcV[i] = (Vector3 *)m_vert[i]->m_array;
+			srcV[i] = (Vector3 *)m_vert[i]->Get_Array();
 		else
 			srcV[i] = 0;
 		if (m_norm[i] != 0)
-			srcN[i] = (Vector3 *)m_norm[i]->m_array;
+			srcN[i] = (Vector3 *)m_norm[i]->Get_Array();
 		else
 			srcN[i] = 0;
 	}
 
-	unsigned short *runs = (unsigned short *)m_runs->m_array;
-	unsigned short *links = (unsigned short *)m_links->m_array;
+	unsigned short *runs = (unsigned short *)m_runs->Get_Array();
+	unsigned short *links = (unsigned short *)m_links->Get_Array();
 
 	rva009371E0Inc();
 
