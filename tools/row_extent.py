@@ -26,11 +26,23 @@ it, and follows padding (int3 or alignment) after an unconditional ret/jmp, or a
 run of >=3 int3. A start right after an internal ret is a split, and refused.
 A range that runs over another matched row's start is refused too.
 
-Exempt: EH funclets (anchored `parent=`), compiler-label object symbols
-(add_match.COMPILER_LABEL), catch funclets Ghidra merged into their parent
-(`ghidra=Catch@`, or the catch shape `mov eax, <address in the parent>; ret`),
-and `?j_XXXXXXXX` ILT thunks whose hex is the row's RVA, 5 B, opening E9.
-A row re-judges whenever its name, extent, status or exemption changes.
+Exemptions are verified, never trusted by value, and only waive the
+padding-before-start rule for a body the row may legitimately sit in; the
+instruction-boundary, branch-target and span checks always apply:
+
+- `parent=<name>` (EH funclets): <name> must be a functions.csv row, and the
+  waiver covers only an enclosing body that starts at that row's RVA. Most
+  funclets sit in retail's separate funclet region and need no waiver.
+- `object-symbol=<compiler label>` waives nothing on its own: a label proves
+  only what the object file called the symbol. It counts together with a
+  verified parent=, which is already sufficient (2026-10-13: of 27439
+  label-only matched rows none needs a waiver).
+- `ghidra=Catch@<va>`: <va> must be the row's own VA (RVA + 0x400000).
+- catch shape: the row decodes from its start to `mov eax, <VA inside the
+  enclosing body>; ret` at its end, with no earlier ret or jmp out of it.
+A waived start must still follow a ret or jmp (no fall-through entry).
+- `?j_XXXXXXXX` ILT thunks whose hex is the row's RVA, 5 B, opening E9.
+A row re-judges whenever its name, extent, status or exemption notes change.
 """
 import bisect
 import csv
@@ -39,8 +51,8 @@ import re
 
 MIN_PAD_RUN = 3
 IMAGE_BASE = 0x400000
-PARENT = re.compile(r"(?:^|;)\s*parent=")
-CATCH_NOTE = re.compile(r"(?:^|;)\s*ghidra=Catch@")
+PARENT = re.compile(r"(?:^|;)\s*parent=([^;]*)")
+CATCH_NOTE = re.compile(r"(?:^|;)\s*ghidra=Catch@([0-9A-Fa-f]+)\s*(?:;|$)")
 # Same spelling as tools/add_match.py's COMPILER_LABEL (kept import-free: add_match
 # pulls in the build stack).
 COMPILER_LABEL = re.compile(r"(?:^|;)\s*object-symbol=(?:_?\$[A-Za-z]\w*|__ehhandler\$\S*|"
@@ -67,13 +79,31 @@ def parse_rows(raw):
 
 
 def note_exempt(row):
+    """Notes that claim an exemption (claims only; check_row verifies them)."""
     notes = row.get("notes") or ""
     return bool(PARENT.search(notes) or COMPILER_LABEL.search(notes)
                 or CATCH_NOTE.search(notes))
 
 
+def waived_starts(row, rows_by_name):
+    """Body starts whose padding rule the row's verified notes waive."""
+    notes = row.get("notes") or ""
+    out = set()
+    parent = PARENT.search(notes)
+    if parent:
+        out.update(p["rva"] for p in rows_by_name.get(parent.group(1).strip(), ())
+                   if p["rva"] != row["rva"])
+    catch = CATCH_NOTE.search(notes)
+    if catch and int(catch.group(1), 16) == row["rva"] + IMAGE_BASE:
+        out.add(None)  # any enclosing body: Ghidra merged the catch into it
+    return out
+
+
 def key(row):
-    return (row["name"], row["rva"], row["size"], row.get("status"), note_exempt(row))
+    notes = row.get("notes") or ""
+    claims = tuple(m.group(0).strip() if m else None for m in (
+        PARENT.search(notes), COMPILER_LABEL.search(notes), CATCH_NOTE.search(notes)))
+    return (row["name"], row["rva"], row["size"], row.get("status"), claims)
 
 
 def changed_rows(before, after):
@@ -150,8 +180,12 @@ def is_padding(insn):
     return insn.mnemonic == "mov" and insn.op_str in ("edi, edi", "esi, esi")
 
 
-def boundary_reason(start, size, rva, read):
-    """Why `rva` is NOT a function start inside body [start, start+size), or None."""
+def boundary_reason(start, size, rva, read, waive_padding=False):
+    """Why `rva` is NOT a function start inside body [start, start+size), or None.
+
+    `waive_padding` (a verified funclet or catch) keeps the instruction-boundary
+    and branch-target checks and replaces the padding rule with: the previous
+    instruction is a ret or jmp."""
     insns = list(disasm().disasm(read(start, size), start))
     addrs = [i.address for i in insns]
     if rva not in addrs:
@@ -165,6 +199,12 @@ def boundary_reason(start, size, rva, read):
             if target == rva:
                 return f"it is a branch target of 0x{insn.address:08X} inside that body"
     index = addrs.index(rva)
+    if waive_padding:
+        # A funclet or catch is entered by the EH machinery, never by falling
+        # through: every real waived row follows a ret or jmp (2026-10-13).
+        if index and insns[index - 1].mnemonic in ("ret", "jmp"):
+            return None
+        return "the code before it falls through into it, so it is no funclet entry"
     pads = 0
     while index - pads - 1 >= 0 and is_padding(insns[index - pads - 1]):
         pads += 1
@@ -182,27 +222,46 @@ def boundary_reason(start, size, rva, read):
 
 
 def catch_shape(row, start, size, read):
-    """`mov eax, <VA inside the enclosing body>; ret`: an MSVC catch funclet."""
-    tail = read(row["rva"] + row["size"] - 6, 6)
-    if len(tail) != 6 or tail[0] != 0xB8 or tail[5] != 0xC3:
+    """The row is exactly one MSVC catch funclet: it decodes from its start to
+    `mov eax, <VA inside the enclosing body>; ret` at its end, with no earlier
+    ret and no jmp out of the row (which would make it span bodies)."""
+    rva, length = row["rva"], row["size"]
+    insns = list(disasm().disasm(read(rva, length), rva))
+    if (len(insns) < 2 or insns[-1].address + insns[-1].size != rva + length
+            or insns[-1].mnemonic != "ret" or insns[-1].op_str
+            or insns[-2].mnemonic != "mov" or insns[-2].size != 5
+            or not insns[-2].op_str.startswith("eax, 0x")):
         return False
-    target = int.from_bytes(tail[1:5], "little") - IMAGE_BASE
-    return start <= target < start + size
+    target = int(insns[-2].op_str[5:], 16) - IMAGE_BASE
+    if not start <= target < start + size:
+        return False
+    for insn in insns[:-1]:
+        if insn.mnemonic.startswith("ret"):
+            return False
+        if insn.mnemonic == "jmp":
+            try:
+                dest = int(insn.op_str, 16)
+            except ValueError:
+                return False
+            if not rva <= dest < rva + length:
+                return False
+    return True
 
 
-def check_row(row, extents, read):
+def check_row(row, extents, read, rows_by_name=None):
     """Refusal text for one new row, or None."""
-    if row["size"] <= 0 or note_exempt(row):
+    if row["size"] <= 0:
         return None
+    waived = waived_starts(row, rows_by_name or {})
     rva, size = row["rva"], row["size"]
     where = f"{row['name']} @ 0x{rva:08X}/{size}"
     try:
         if ilt_thunk(row, read):
             return None
         for start, length, label in extents.enclosing(rva):
-            if catch_shape(row, start, length, read):
-                continue
-            why = boundary_reason(start, length, rva, read)
+            waive = (None in waived or start in waived
+                     or catch_shape(row, start, length, read))
+            why = boundary_reason(start, length, rva, read, waive)
             if why:
                 return (f"{where} starts inside {label}: {why}. Re-anchor the row "
                         "at the body's real start (tools/boundary_validator.py) or "
@@ -251,5 +310,8 @@ def check(before_rows, after_rows, ghidra_sizes, read):
     if not new:
         return []
     extents = Extents(ghidra_sizes, after_rows)
+    by_name = {}
+    for r in after_rows:
+        by_name.setdefault(r["name"], []).append(r)
     read = guarded(read)
-    return [msg for msg in (check_row(r, extents, read) for r in new) if msg]
+    return [msg for msg in (check_row(r, extents, read, by_name) for r in new) if msg]
