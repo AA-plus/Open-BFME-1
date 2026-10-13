@@ -16588,6 +16588,7 @@ name,address,notes
 ?aiMoveToAndEvacuate@AICommandInterface@@QAEXPBUCoord3D@@W4CommandSourceType@@@Z,0x00027903,aiMoveToAndEvacuate ILT from groupEvacuate aircraft arm
 ?aiMoveToObject@AICommandInterface@@QAEXPAVObject@@W4CommandSourceType@@@Z,0x0001C26A,typed AI movement thunk used by QueueProductionExitUpdate::notifyProductionBurstFinished
 ?aiMoveToPosition@AICommandInterface@@QAEXPBUCoord3D@@W4CommandSourceType@@@Z,0x0003436A,Open-BFME5 AI movement thunk alias
+?aiMoveToPosition@AICommandInterface@@QAEXPBVCoord3D@@W4CommandSourceType@@@Z,0x0003436A,Coord3D class-tag spelling of the struct-tag aiMoveToPosition pin at the same ILT; AIPlayer::recruitSpecificAITeam 0x00167930 calls it from a class Coord3D view
 ?aiPreTeamDestroy@AIPlayer@@QAEXPBVTeam@@@Z,0x00161430,Player preTeamDestroy tail target; canonical AIPlayer queue-removal body matches retail structure
 ?allInside@Team@@QBE_NPAVPolygonTrigger@@I@Z,0x000F5A30,the call ScriptConditions::evaluateTeamInsideAreaEntirely (0x00324AC0) makes on the team it looked up with the trigger area and the type parameter; the reference declares exactly that const member with that pair and nothing else in Team takes it
 ?allOnSameFrame@DisconnectManager@@IAE_NPAVConnectionManager@@@Z,0x00020DB5,DisconnectManager status update frame-alignment gate through ILT to the existing 0x0066C160 body
@@ -88833,6 +88834,7 @@ name,address,notes
 ?tryInfiltrationEvent@Radar@@QAEXPBVObject@@@Z,0x0000D805,Radar.cpp defines Radar::tryInfiltrationEvent with one const Object pointer. Object::defect reaches the body at RVA 0x001083D0 through thunk 0x0000D805.
 ?tryQuery@Rva002BCB60AerialPathfinder@@QAE_NPAVRva002BCB60QueryObject@@MPAUCoord3D@@@Z,0x00148800,parent raw ILT and complete selector call-site ABI verified; actual body target
 ?tryToRecruit@Rva000F2A00Team@@QAEPAVObject@@PBVThingTemplate@@PBUCoord3D@@M@Z,0x0001A2B2,ILT to the unnamed body 0x000F2A00; AIPlayer::selectTeamToReinforce 0x00167080+0x335 calls it where Zero Hour calls Team::tryToRecruit(thing &origin maxRecruitDistance) and uses the returned Object; address-derived owner because the ledger Team::tryToRecruit row is elsewhere
+?tryToRecruit@Rva000F2A00Team@@QAEPAVObject@@PBVThingTemplate@@PBVCoord3D@@M@Z,0x0001A2B2,Coord3D class-tag spelling of the struct-tag tryToRecruit pin at the same ILT; AIPlayer::recruitSpecificAITeam 0x00167930 calls it from a class Coord3D view (ILT oracle confirms PBVCoord3D there)
 ?turnOffScreen@DisconnectManager@@IAEXH@Z,0x00044AD0,ILT thunk; real body 0x66B270
 ?turnOnScreen@DisconnectManager@@IAEXPAVConnectionManager@@@Z,0x0066BFE0,ZH twin minus hidePacketRouterTimeout: showScreen via 0x0050E9A0; m_disconnectState+0xC=SCREENON(0); m_lastKeepAliveSendTime+0x10=-1; populateDisconnectScreen 0x0066BEF0; resetPlayerTimeouts 0x0066B980; +0x258=0; m_timeOfDisconnectScreenOn+0x25C=timeGetTime; sole caller BFMEDisconnectManager::update 0x0066CAEF; ILT 0x00034900
 ?u1Call_005C7110@@YAXPAX00PAPAX@Z,0x005C7110,cdecl four-argument callee of 0x005C8320; address-derived name

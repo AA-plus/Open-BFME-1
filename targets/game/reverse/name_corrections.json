@@ -19678,5 +19678,15 @@
   "old_name": "Detail008BE760",
   "new_name": "Rva008BD2B0",
   "reason": "The class the 0x008BE760 body constructs is the vptr-only derived object whose out-of-line constructor ??0Rva008BD2B0@@QAE@XZ is the matched row at 0x008BD2B0 (MidVptrOnlyDerivedCtors.cpp) and whose vftable ??_7Rva008BD2B0@@6B@ is recorded at 0x01136DD0 in dir32_addresses.csv; the landed TU must spell the class with that recorded address-derived name so the vftable relocation resolves and the body byte-matches, so the bank's speculative label Detail008BE760 is withdrawn."
+ },
+ {
+  "old_path": "game/GameEngine/Source/GameLogic/AI/AIPlayerUpdateBridgeRepairThunk.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/AI/AIPlayerRecruitSpecificAITeam.cpp",
+  "before_sha256": "dd9b81ec4692731fb880e4d87941b0c3ceab6500fa1979ed9b949c7c96e3ad3f",
+  "after_sha256": "258a2f070d62849ebdc3799edd3e60756b0e5a92048314d3b96aeb2898b770bb",
+  "evidence": "targets/game/reverse/identity_evidence/00167930-recruit-specific-ai-team.md",
+  "old_name": "updateBridgeRepair",
+  "new_name": "bfmeConcat",
+  "reason": "Not a rename: the deleted naked lift AIPlayerUpdateBridgeRepairThunk.cpp declared only the refuted AIPlayer::updateBridgeRepair for 0x00167930, and the new TU is that body's real identity AIPlayer::recruitSpecificAITeam (vtable slot 10; matched Player::recruitSpecificTeam caller). The pairing is positional between unrelated tokens of two different files."
  }
 ]
