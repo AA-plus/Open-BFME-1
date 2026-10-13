@@ -188,7 +188,7 @@ public:
 private:
 	void applyPendingModelConditionFlags(bool immediate);
 	void startAmbientSound(bool onlyIfPermanent);
-	void refreshAmbientSound();
+	void refreshAmbientSound0041AE50();
 	unsigned char m_bfmeHead[0xfc];
 	Object *m_object;						// +0x0fc
 	unsigned char m_bfmeGap100[0x140 - 0x100];
@@ -302,7 +302,7 @@ void Drawable::enableAmbientSoundFromScript(bool enable)
 	if (enable)
 	{
 		startAmbientSound(false);
-		refreshAmbientSound();
+		refreshAmbientSound0041AE50();
 		return;
 	}
 
@@ -320,7 +320,7 @@ void Drawable::friend_setSelected()
 		return;
 
 	m_selected = true;
-	refreshAmbientSound();
+	refreshAmbientSound0041AE50();
 	startAmbientSound(false);
 
 	SelectionModule **module = m_selectionModules;

@@ -238,7 +238,7 @@ private:
 	void updateHiddenStatus();
 	// This no-argument member is the retail callee reached through ILT
 	// 0x0002E564. Its identity is not present in the surviving symbols.
-	void refreshAmbientSound();
+	void refreshAmbientSound0041AE50();
 
 	char m_pad000[0x6c];
 	RGBColor m_tintColor;					// this+0x06c
@@ -375,7 +375,7 @@ void Drawable::replaceModelConditionState( const ModelConditionFlags &flags,
 		if( (m_conditionState.m_bits[ 4 ] & 0x80000) == 0 &&
 			m_flag141 != 0 && m_secondMaterialPassOpacity != 0 )
 		{
-			refreshAmbientSound();
+			refreshAmbientSound0041AE50();
 		}
 	}
 	else if( (m_conditionState.m_bits[ 4 ] & 0x80000) != 0 )

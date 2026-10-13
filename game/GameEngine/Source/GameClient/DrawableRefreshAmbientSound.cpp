@@ -1,13 +1,11 @@
-// ?refreshAmbientSound@Drawable@@AAEXXZ
-// partial score=0.89 date=2026-09-06
-// cl: /DNDEBUG /MD /EHsc
-// BFME Drawable selected-ambient refresh, retail 0x0041AE50.
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
+// Selected ambient refresh with retail ABI views.
+// Evidence: targets/game/reverse/identity_evidence/0x0041ae50-refresh-ambient.md
 
 typedef unsigned int UnsignedInt;
+enum DrawableID { INVALID_DRAWABLE_ID = 0 };
 
-class AsciiString
-{
-};
+#include "ascii_string.h"
 
 class Rva000B97D0Ptr
 {
@@ -18,19 +16,17 @@ public:
 	void *m_ptr;
 };
 
-#pragma comment(linker, "/alternatename:??0Rva000B97D0Ptr@@QAE@ABV0@@Z=?j_00036075@@YAXXZ")
-#pragma comment(linker, "/alternatename:??1Rva000B97D0Ptr@@QAE@XZ=?j_000362ff@@YAXXZ")
-#pragma comment(linker, "/alternatename:??4Rva000B97D0Ptr@@QAEAAV0@ABV0@@Z=?j_0002c6d8@@YAXXZ")
-
 class __declspec(novtable) AudioEventRTS
 {
 public:
-	AudioEventRTS() {}
+	AudioEventRTS();
 	virtual ~AudioEventRTS();
 	bool isCurrentlyPlaying() const;
 	AudioEventRTS &assign( const AudioEventRTS &other );
 	void setObjectID( UnsignedInt id );
+	void setDrawableID(DrawableID id);
 	void setPlayingHandle( UnsignedInt handle );
+	// ?eventInfo@AudioEventRTS@@QAEAAVRva000B97D0Ptr@@XZ absent-from-retail
 	Rva000B97D0Ptr &eventInfo()
 	{
 		return *reinterpret_cast<Rva000B97D0Ptr *>( m_data + 4 );
@@ -38,11 +34,6 @@ public:
 
 	char m_data[0x6c];
 };
-
-#pragma comment(linker, "/alternatename:?isCurrentlyPlaying@AudioEventRTS@@QBE_NXZ=?j_00035a5d@@YAXXZ")
-#pragma comment(linker, "/alternatename:?assign@AudioEventRTS@@QAEAAV1@ABV1@@Z=?j_0001f753@@YAXXZ")
-#pragma comment(linker, "/alternatename:?setObjectID@AudioEventRTS@@QAEXI@Z=?j_00011428@@YAXXZ")
-#pragma comment(linker, "/alternatename:?setPlayingHandle@AudioEventRTS@@QAEXI@Z=?j_00040a52@@YAXXZ")
 
 class BfmeSubBTB
 {
@@ -64,29 +55,25 @@ public:
 	AudioEventRTS *lookup();
 };
 
-#pragma comment(linker, "/alternatename:?lookup@Rva00417200@@QAEPAVAudioEventRTS@@XZ=?j_000339b5@@YAXXZ")
-
 class ThingTemplate
 {
 public:
-	AudioEventRTS *lookupSound( int index ) const;
+	void *getPerUnitFx(int index) const;
+	// ?lookupSound@ThingTemplate@@QBEPAVAudioEventRTS@@H@Z absent-from-retail
+	AudioEventRTS *lookupSound(int index) const { return static_cast<AudioEventRTS *>(getPerUnitFx(index)); }
 };
 
-#pragma comment(linker, "/alternatename:?lookupSound@ThingTemplate@@QBEPAVAudioEventRTS@@H@Z=?j_0000286a@@YAXXZ")
-
-class DynamicAudioEventRTS
+class DynamicAudioEventRTS000B9A70
 {
 public:
-	DynamicAudioEventRTS() throw();
+	DynamicAudioEventRTS000B9A70(const AsciiString &name, int timeOfDay);
+	// ?event@DynamicAudioEventRTS000B9A70@@QAEAAVAudioEventRTS@@XZ absent-from-retail
 	AudioEventRTS &event()
 	{
 		return *reinterpret_cast<AudioEventRTS *>( m_data + 4 );
 	}
 	unsigned char m_data[0x74];
 };
-
-#pragma comment(linker, "/alternatename:??0DynamicAudioEventRTS@@QAE@XZ=?j_00040d18@@YAXXZ")
-
 
 class ClientSubsystem
 {
@@ -101,7 +88,7 @@ public:
 	CLIENT_SUBSYSTEM_SLOT(12) CLIENT_SUBSYSTEM_SLOT(13)
 	CLIENT_SUBSYSTEM_SLOT(14) CLIENT_SUBSYSTEM_SLOT(15)
 	CLIENT_SUBSYSTEM_SLOT(16)
-	virtual UnsignedInt addAudioEvent( AudioEventRTS *event );
+	virtual UnsignedInt addAudioEvent( const AudioEventRTS *event );
 	CLIENT_SUBSYSTEM_SLOT(18) CLIENT_SUBSYSTEM_SLOT(19)
 	CLIENT_SUBSYSTEM_SLOT(20) CLIENT_SUBSYSTEM_SLOT(21)
 	CLIENT_SUBSYSTEM_SLOT(22) CLIENT_SUBSYSTEM_SLOT(23)
@@ -115,7 +102,7 @@ public:
 	CLIENT_SUBSYSTEM_SLOT(38) CLIENT_SUBSYSTEM_SLOT(39)
 	CLIENT_SUBSYSTEM_SLOT(40) CLIENT_SUBSYSTEM_SLOT(41)
 	CLIENT_SUBSYSTEM_SLOT(42)
-	virtual void getAudioEventInfo( AudioEventRTS *event );
+	virtual void getAudioEventInfo( const AudioEventRTS *event ) const;
 #undef CLIENT_SUBSYSTEM_SLOT
 };
 
@@ -123,22 +110,26 @@ extern ClientSubsystem *TheAudioClientUpdate;
 
 class Drawable
 {
+public:
+	DrawableID getID() const { return *(const DrawableID *)(reinterpret_cast<const unsigned char *>(this) + 0x100); }
+
 private:
-	void refreshAmbientSound();
+	void refreshAmbientSound0041AE50();
 
 	unsigned char m_bfmeHead[0x140];
 	unsigned char m_ambientSoundEnabled;
 	unsigned char m_ambientSoundEnabledFromScript;
 	unsigned char m_bfmeGap142;
 	unsigned char m_selected;
-	DynamicAudioEventRTS *m_ambientSound;
-	DynamicAudioEventRTS *m_damagedAmbientSound;
-	DynamicAudioEventRTS *m_selectedAmbientSound;
+	DynamicAudioEventRTS000B9A70 *m_ambientSound;
+	DynamicAudioEventRTS000B9A70 *m_damagedAmbientSound;
+	DynamicAudioEventRTS000B9A70 *m_selectedAmbientSound;
 	unsigned char m_bfmeGap150[0x100];
 	unsigned int m_conditionState[10];
 };
 
-void Drawable::refreshAmbientSound()
+// ?refreshAmbientSound0041AE50@Drawable@@AAEXXZ
+void Drawable::refreshAmbientSound0041AE50()
 {
 	if ( !m_bfmeGap142 || !m_ambientSoundEnabledFromScript || !m_selected ||
 		(m_conditionState[4] & 0x80000) == 0 )
@@ -154,24 +145,25 @@ void Drawable::refreshAmbientSound()
 	AudioEventRTS *selected = reinterpret_cast<Rva00417200 *>( this )->lookup();
 	if ( m_selectedAmbientSound == 0 )
 	{
-		DynamicAudioEventRTS *created = new DynamicAudioEventRTS;
+		DynamicAudioEventRTS000B9A70 *created = new DynamicAudioEventRTS000B9A70(AsciiString::TheEmptyString, 0);
 		m_selectedAmbientSound = created;
 	}
 
 	m_selectedAmbientSound->event().assign( *selected );
-	Rva000B97D0Ptr eventInfo( m_selectedAmbientSound->event().eventInfo() );
-
-	if ( eventInfo.m_ptr == 0 )
 	{
-		TheAudioClientUpdate->getAudioEventInfo( &m_selectedAmbientSound->event() );
-		eventInfo = m_selectedAmbientSound->event().eventInfo();
-	}
+		Rva000B97D0Ptr eventInfo( m_selectedAmbientSound->event().eventInfo() );
 
-	if ( eventInfo.m_ptr != 0 )
-	{
-		m_selectedAmbientSound->event().setObjectID( *(const UnsignedInt *)(
-			reinterpret_cast<const unsigned char *>( this ) + 0x100 ) );
-		m_selectedAmbientSound->event().setPlayingHandle(
-			TheAudioClientUpdate->addAudioEvent( &m_selectedAmbientSound->event() ) );
+		if ( eventInfo.m_ptr == 0 )
+		{
+			TheAudioClientUpdate->getAudioEventInfo( &m_selectedAmbientSound->event() );
+			eventInfo = m_selectedAmbientSound->event().eventInfo();
+		}
+
+		if ( eventInfo.m_ptr != 0 )
+		{
+			m_selectedAmbientSound->event().setDrawableID( getID() );
+			UnsignedInt handle = TheAudioClientUpdate->addAudioEvent( &m_selectedAmbientSound->event() );
+			m_selectedAmbientSound->event().setPlayingHandle(handle);
+		}
 	}
 }

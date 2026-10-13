@@ -87295,7 +87295,7 @@ name,address,notes
 ?refresh@Rva00845250Node@@QAEXXZ,0x00833D90,U2 lane: member called on both arguments of the comparison at 0x00845250; unnamed dump elsewhere
 ?refresh@Rva008B6D70Obj@@QAEXPAX00@Z,0x008B65E0,Open-BFME7 retail REL32 target (ILT thunk) the body at 0x008B6D70 calls; autopin
 ?refreshAllPlayerControls@SkirmishScreenState@@QAEXXZ,0x0000F94D,Skirmish state pending-update dispatcher call
-?refreshAmbientSound@Drawable@@AAEXXZ,0x0002E564,Drawable::replaceModelConditionState reaches the no-argument ambient-state callee through its retail ILT
+?refreshAmbientSound0041AE50@Drawable@@AAEXXZ,0x0002E564,Drawable::replaceModelConditionState reaches the no-argument ambient-state callee through its retail ILT
 ?refreshEntries003BEC30@Rva003C1A50@@QAEXXZ,0x0000A754,"Reviewed3BEC30167B loops owner+C vector flagged1D entries, resolves name and refreshes member; not a clear operation"
 ?refreshGameSlot@SkirmishScreenState@@QAEXH@Z,0x00018C1E,Skirmish pending-update dispatcher call
 ?refreshGameSlots@SkirmishScreenState@@QAEXXZ,0x00024267,Skirmish pending-update dispatcher call
@@ -91179,3 +91179,7 @@ rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?Rva00006F4BUpdateButtons@AptInGameChat@@QAEXXZ,0x00006F4B,AptInGameChat button-refresh helper called from ?Rva00515810@AptInGameChat@@QAEXXZ at 0x00515810; retail call-site target (ILT thunk jmp 0x005147F0)
 ?d_008cced0@@YAXXZ,0x008CCED0,Address-only compatibility for the retired dump name; BfmeConv1226.cpp and the d_008cb600 dump still call it; body is Rva008CCED0BytecodeRunner::run
 ?drawTrapezoidWater@WaterRenderObjClass@@IAEXPAVRva007A8FF0Data@@QAVVector3@@@Z,0x007A8FF0,ABI view retaining the saved water method name and opaque record type; decoded RET8 and complete caller 007AA820; ILT 00015C26; evidence=targets/game/reverse/identity_evidence/007aa820-visible-quad.md
+??0DynamicAudioEventRTS000B9A70@@QAE@ABVAsciiString@@H@Z,0x000B9A70,0041AE50 constructor call via ILT 00040D18; complete 33-byte body forwards AsciiString reference and int to 000B2CC0 and returns this with RET8; evidence identity_evidence/0x0041ae50-refresh-ambient.md
+?lookup@Rva00417200@@QAEPAVAudioEventRTS@@XZ,0x00417200,0041AE50 calls ILT 000339B5 with ECX receiver; complete 17-byte body forwards receiver to 00416F20 with selector 95 and returns event pointer or empty-event address; address-derived ABI view; evidence identity_evidence/0x0041ae50-refresh-ambient.md
+??4Rva000B97D0Ptr@@QAEAAV0@ABV0@@Z,0x00087750,0041AE50 calls ILT 0002C6D8 with ECX holder and pointer-reference stack argument; complete 73-byte body increments source pointee plus4 and releases old pointee then stores one word; RET4 and EAX this; address-derived ABI view; evidence identity_evidence/0x0041ae50-refresh-ambient.md
+??1Rva000B97D0Ptr@@QAE@XZ,0x000877B0,0041AE50 normal and state1 cleanup reach ILT 000362FF; complete 35-byte body releases holder word through refcount plus4 and virtual flag-one deletion; ECX receiver and plain RET; address-derived ABI view; evidence identity_evidence/0x0041ae50-refresh-ambient.md
