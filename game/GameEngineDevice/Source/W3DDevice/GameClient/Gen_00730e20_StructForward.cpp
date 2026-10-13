@@ -1,48 +1,43 @@
-// BFME retail 0x00730E20: guarded forwarding of a 12-byte value and one dword.
+// cl: /DNDEBUG /MD
+// BFME retail 0x00730E20 (48 bytes, ret 0x10): a vtable slot (ILT 0x000212DD)
+// that forwards a 12-byte value and a float to the owner at +0x10 when it is
+// set. The callee is the matched Rva006CB1E0Owner::scan (0x006CB1E0, ILT
+// 0x00019C7C).
+//
+// Retail copies the value field by field through EDX after pushing the float,
+// which is what MSVC emits for a by-value argument whose type has a
+// user-declared copy constructor (as WWMath's Vector3 does); a trivially
+// copyable struct is copied with a different register order.
 
-struct Gen_00730e20_Value
+typedef float Real;
+
+struct Rva006CB1E0Value
 {
-	volatile unsigned a;
-	volatile unsigned b;
-	volatile unsigned c;
+	Rva006CB1E0Value(const Rva006CB1E0Value &other) : x(other.x), y(other.y), z(other.z) {}
+
+	Real x;
+	Real y;
+	Real z;
 };
 
-extern void j_00019c7c(void);
-
-class Gen_00730e20_Target
+class Rva006CB1E0Owner
 {
 public:
-	void forward(Gen_00730e20_Value value, unsigned tail);
+	void scan(Rva006CB1E0Value value, Real tail);
 };
 
 class Gen_00730e20
 {
 public:
-	void forward(Gen_00730e20_Value value, unsigned tail);
+	void forward(Rva006CB1E0Value value, Real tail);
 
 private:
 	unsigned char m_pad[0x10];
-	Gen_00730e20_Target * m_target;
+	Rva006CB1E0Owner *m_target;		// +0x10
 };
 
-void Gen_00730e20::forward(Gen_00730e20_Value value, unsigned tail)
+void Gen_00730e20::forward(Rva006CB1E0Value value, Real tail)
 {
-	__asm {
-		mov eax, [ecx+10h]
-		test eax, eax
-		je forward_done
-		mov eax, [esp+10h]
-		mov edx, [esp+4h]
-		push eax
-		sub esp, 0Ch
-		mov eax, esp
-		mov [eax], edx
-		mov edx, [esp+18h]
-		mov [eax+4], edx
-		mov edx, [esp+1Ch]
-		mov [eax+8], edx
-		mov ecx, [ecx+10h]
-		call j_00019c7c
-	forward_done:
-	}
+	if (m_target)
+		m_target->scan(value, tail);
 }
