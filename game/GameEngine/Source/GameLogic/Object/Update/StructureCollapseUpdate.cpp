@@ -369,6 +369,8 @@ struct StructureCollapseRetailModuleData
 	Int m_oclCounts[4];
 	Int m_beforeFXCounts;
 	Int m_fxCounts[4];
+	Int m_unmodelledEC;
+	Bool m_flagF0;					// +0xF0, tested by doCollapseDoneStuff
 };
 
 class StructureCollapseFXShim
@@ -454,15 +456,24 @@ void StructureCollapseUpdate::doPhaseStuff(StructureCollapsePhaseType scphase, c
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 // ?doCollapseDoneStuff@StructureCollapseUpdate@@IAEXXZ
+// Retail 0x002AE520 (called from update). BFME adds the module-data flag at
+// +0xF0 that destroys the building once the collapse is done. The ZH-shaped
+// body without it at 0x002A38A0 is RubbleRiseUpdate::doRubbleDoneStuff
+// (RubbleRiseUpdateDoRubbleDoneStuff.cpp).
 void StructureCollapseUpdate::doCollapseDoneStuff() 
 {
 	static NameKeyType key_BoneFXUpdate = NAMEKEY("BoneFXUpdate");
-	Object *building = *(Object **)((unsigned char *)this + 8);
+	Object *building = reinterpret_cast<const StructureCollapseThisShim *>(this)->getObject();
 	BoneFXUpdate *bfxu = (BoneFXUpdate *)building->findUpdateModule(key_BoneFXUpdate);
 	if (bfxu != NULL) 
 	{
 		bfxu->stopAllBoneFX();
 	}
+	const StructureCollapseRetailModuleData *d =
+		*reinterpret_cast<const StructureCollapseRetailModuleData *const *>(
+			reinterpret_cast<const char *>(this) + 4);
+	if (d->m_flagF0 == TRUE)
+		TheGameLogic->destroyObject(reinterpret_cast<const StructureCollapseThisShim *>(this)->getObject());
 }
 
 // ------------------------------------------------------------------------------------------------
