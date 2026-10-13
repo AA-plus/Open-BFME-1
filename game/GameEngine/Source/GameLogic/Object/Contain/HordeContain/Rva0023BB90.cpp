@@ -1,15 +1,15 @@
+// t=1.75min model=gpt-6-astra lane=R budget=30m
 // ?bfmeRunFDB@BfmeThingFDB@@QAEXPAX@Z
-// partial score=0.679 date=2026-10-03
+// Retail RET4 at +0x234; INT3 at +0x237. Matched BfmeThingFDB::bfmeGoFDB
+// calls this body through ILT 0x00048F36.
+// Retail clears bits304..319 after complementing the ten-word mask.
 // cl: /DNDEBUG /MD /EHs-c-
 
 template <int N> class BitFlags;
 
-class Object
-{
-public:
-	void clearAndSetModelConditionFlags(const BitFlags<320> &clear,
-		const BitFlags<320> &set);
-};
+// Retain the independently corrected two-reference callee ABI at 0x001C7720.
+#define OBJECT_TU_MEMBERS void clearAndSetModelConditionFlags(const BitFlags<320> &, const BitFlags<320> &);
+#include "../../object.h"
 
 class BfmeA1165
 {
@@ -23,37 +23,14 @@ public:
 	unsigned int words[10];
 };
 
+// stlport
+#define _STLP_NO_EXCEPTIONS 1
+#include <bitset>
 struct BfmeMask320
 {
-	unsigned int words[10];
-
-	void andWith(const BfmeMask320 &other)
-	{
-		words[0] &= other.words[0];
-		words[1] &= other.words[1];
-		words[2] &= other.words[2];
-		words[3] &= other.words[3];
-		words[4] &= other.words[4];
-		words[5] &= other.words[5];
-		words[6] &= other.words[6];
-		words[7] &= other.words[7];
-		words[8] &= other.words[8];
-		words[9] &= other.words[9];
-	}
-
-	void flip()
-	{
-		words[0] = ~words[0];
-		words[1] = ~words[1];
-		words[2] = ~words[2];
-		words[3] = ~words[3];
-		words[4] = ~words[4];
-		words[5] = ~words[5];
-		words[6] = ~words[6];
-		words[7] = ~words[7];
-		words[8] = ~words[8];
-		words[9] = ~words[9];
-	}
+    _STL::bitset<304> bits;
+    void andWith(const BfmeMask320& other) { bits &= other.bits; }
+    void flip() { bits.flip(); }
 };
 
 class BfmeThingFDB
@@ -73,7 +50,7 @@ void BfmeThingFDB::bfmeRunFDB(void *it)
 
 	BfmeMask320 filterCopy = *(BfmeMask320 *)&filter;
 	Object *source = *(Object **)((char *)this + 8);
-	BfmeMask320 sourceFlags = *(BfmeMask320 *)((char *)source + 0x110);
+	BfmeMask320 sourceFlags = *(BfmeMask320 *)&source->m_modelConditionFlags;
 	filterCopy.andWith(sourceFlags);
 	BfmeMask320 clearFlags = sourceFlags;
 	clearFlags.flip();
@@ -81,9 +58,4 @@ void BfmeThingFDB::bfmeRunFDB(void *it)
 	((Object *)it)->clearAndSetModelConditionFlags(
 		(const BitFlags<320> &)clearFlags,
 		(const BitFlags<320> &)filterCopy);
-}
-
-void *__cdecl operator new(unsigned int, void *p) throw()
-{
-	return p;
 }
