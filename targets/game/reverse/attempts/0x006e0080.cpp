@@ -1,28 +1,7 @@
 // ?step006E0080@Rva006E0080Owner@@QAEXPAUCoord3D@@0PAURva006E0080Context@@@Z
-// partial score=0.7525 date=2026-09-30
-// cl: /DNDEBUG /MD /EHsc
-// Retail 0x006E0080 (986 bytes): an anonymous camera-transition step.
-//
-// IDENTITY IS NOT RECOVERED.  The only caller is the still-unconverted body at
-// 0x006E0580 (through ILT), which calls it thiscall with two Coord3D out
-// pointers and a context record.  No vtable slot, string or Zero Hour twin
-// names the owner, so every name here carries the address.
-// Caller evidence: 0x006E0580 (Rva006E0580State::build, reached from
-// W3DView::buildCameraTransform) passes its own this and its context argument,
-// so the owner is that state object and the context is the 0xD8 Gen_006DFC60.
-//
-// What the bytes show: a five-state machine on this+0x2C.
-//   - It compares a module AsciiString (0x012F8044) against "Target" and
-//     "Zoom" to pick the requested state (2 or 3, else -1).
-//   - It looks the context's object (+0xA4) up through
-//     GameLogic::findObjectByID and seeds two tracks (+0x30 and +0x3C) from
-//     the out pointers unless the context's +0x9C flag is set.
-//   - It eases two blend factors, whose steps and limits are .data floats
-//     0.4/0.03 and 0.5/0.05, to interpolate the tracks toward the object's
-//     position (Thing::m_cachedPos, +0x38).
-//   - In state 3 it projects the context's half screen size through
-//     TheTacticalView->screenToTerrain (vtable +0x164, witnessed in
-//     InGameUIBodies.cpp) into a point that is never read.
+// partial score=0.9412 date=2026-10-13
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib
+// stlport
 
 typedef int Int;
 typedef float Real;
@@ -31,41 +10,20 @@ typedef bool Bool;
 #define TRUE true
 #define FALSE false
 
-template <typename T> class StringBase
-{
-	friend class AsciiString;
-
-private:
-	StringBase() : m_data( 0 ) {}
-	~StringBase();
-
-public:
-	int compare( const T *text ) const;
-
-private:
-	void *m_data;
-};
-
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString() : StringBase<char>() {}
-	~AsciiString() {}
-
-	Int compare( const char *text ) const { return StringBase<char>::compare( text ); }
-};
+#include "../../../../game/Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include/Lib/BaseType.h
-struct Coord3D
-{
-	Coord3D() {}
-	Coord3D &operator=( const Coord3D &other ) { x = other.x; y = other.y; z = other.z; return *this; }
-
-	Real x, y, z;
-};
+#include "../../../../game/Libraries/Include/Lib/Coord3D.h"
+#include <new>
+#define _OPERATOR_NEW_DEFINED_
+#include "../../../../game/Libraries/Source/WWVegas/WWMath/vector3.h"
+// ?copy006E0080@@YAXPAUCoord3D@@PBU1@@Z absent-from-retail
+static inline void copy006E0080(Coord3D *out, const Coord3D *in) { out->x = in->x; out->y = in->y; out->z = in->z; }
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include/Lib/BaseType.h
+// ?copy006E0080@@YAXPAVVector3@@PBUCoord3D@@@Z absent-from-retail
+static inline void copy006E0080(Vector3 *out, const Coord3D *in) { out->X = in->x; out->Y = in->y; out->Z = in->z; }
+
 struct ICoord2D
 {
 	Int x, y;
@@ -82,11 +40,8 @@ private:
 	Coord3D m_cachedPos;								///< Thing+0x38
 };
 
-class GameLogic
-{
-public:
-	Object *findObjectByID( Int id );
-};
+#define BFME_GAMELOGIC_LOOKUP_VISIBLE
+#include "../../../../game/GameEngine/Source/Common/Thing/GameLogicObjectLookup.h"
 
 extern GameLogic *TheGameLogic;
 
@@ -118,11 +73,12 @@ public:
 	BFME_VIEW_SLOT( 84 ) BFME_VIEW_SLOT( 85 ) BFME_VIEW_SLOT( 86 ) BFME_VIEW_SLOT( 87 )
 	BFME_VIEW_SLOT( 88 )
 #undef BFME_VIEW_SLOT
-	virtual void screenToTerrain( const ICoord2D *pixel, Coord3D *world, Bool clamp ) = 0;	///< +0x164
+	virtual Bool screenToTerrain( const ICoord2D *pixel, Coord3D *world, Bool clamp ) = 0;	///< +0x164
 };
 
 extern View *TheTacticalView;
 
+// ABI and scheduling evidence: targets/game/reverse/identity_evidence/0x006e0080-lookup-visibility.md
 // The context record the caller passes; only the fields read here are modelled.
 struct Rva006E0080Context
 {
@@ -162,8 +118,9 @@ static Real s_step012BA8BC = 0.03f;						///< retail [0x012BA8BC]
 // ?step006E0080@Rva006E0080Owner@@QAEXPAUCoord3D@@0PAURva006E0080Context@@@Z
 void Rva006E0080Owner::step006E0080( Coord3D *pos, Coord3D *target, Rva006E0080Context *context )
 {
-	static Coord3D s_savedPos012F8020;					///< retail [0x012F8020]
-	static Coord3D s_unused;
+	// Native empty constructors reproduce the guarded twelve-byte storage; original static types are unproven.
+	static Vector3 s_savedPos012F8020;					///< retail [0x012F8020]
+	static Vector3 s_unused;
 
 	Int requested = -1;
 	if( s_mode012F8044.compare( "Target" ) == 0 )
@@ -182,8 +139,8 @@ void Rva006E0080Owner::step006E0080( Coord3D *pos, Coord3D *target, Rva006E0080C
 
 	if( !context->m_flag9C )
 	{
-		m_target30 = *target;
-		m_pos3C = *pos;
+		copy006E0080(&m_target30, target);
+		copy006E0080(&m_pos3C, pos);
 	}
 
 	switch( m_state2C )
@@ -194,7 +151,7 @@ void Rva006E0080Owner::step006E0080( Coord3D *pos, Coord3D *target, Rva006E0080C
 			m_state2C = 3;
 			if( requested == 3 )
 			{
-				s_savedPos012F8020 = m_pos3C;
+				copy006E0080(&s_savedPos012F8020, &m_pos3C);
 				context->m_fieldB4 = 0x10;
 				context->m_fieldB8 = 2;
 			}
@@ -220,12 +177,12 @@ void Rva006E0080Owner::step006E0080( Coord3D *pos, Coord3D *target, Rva006E0080C
 			target->x = (objPos.x - m_target30.x) * s_blend012F803C + m_target30.x;
 			target->y = (objPos.y - m_target30.y) * s_blend012F803C + m_target30.y;
 			target->z = (objPos.z - m_target30.z) * s_blend012F803C + m_target30.z;
-			*pos = m_pos3C;
+			copy006E0080(pos, &m_pos3C);
 
 			if( s_blend012F803C >= 1.0f )
 			{
 				m_state2C = 3;
-				s_savedPos012F8020 = m_pos3C;
+				copy006E0080(&s_savedPos012F8020, &m_pos3C);
 				s_blend012F803C = 0;
 				s_blend012F8038 = 0;
 				if( requested == m_state2C )
@@ -258,9 +215,9 @@ void Rva006E0080Owner::step006E0080( Coord3D *pos, Coord3D *target, Rva006E0080C
 				target->x = (objPos.x - m_target30.x) * s_blend012F8034 + m_target30.x;
 				target->y = (objPos.y - m_target30.y) * s_blend012F8034 + m_target30.y;
 				target->z = (objPos.z - m_target30.z) * s_blend012F8034 + m_target30.z;
-				pos->x = (m_target30.x - s_savedPos012F8020.x) * s_blend012F8034 + s_savedPos012F8020.x;
-				pos->y = (m_target30.y - s_savedPos012F8020.y) * s_blend012F8034 + s_savedPos012F8020.y;
-				pos->z = (m_target30.z - s_savedPos012F8020.z) * s_blend012F8034 + s_savedPos012F8020.z;
+				pos->x = (m_target30.x - s_savedPos012F8020.X) * s_blend012F8034 + s_savedPos012F8020.X;
+				pos->y = (m_target30.y - s_savedPos012F8020.Y) * s_blend012F8034 + s_savedPos012F8020.Y;
+				pos->z = (m_target30.z - s_savedPos012F8020.Z) * s_blend012F8034 + s_savedPos012F8020.Z;
 			}
 			else
 			{
