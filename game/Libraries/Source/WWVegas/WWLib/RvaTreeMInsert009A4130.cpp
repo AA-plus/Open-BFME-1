@@ -9,6 +9,8 @@
 // and mapped payload address-derived rather than asserting a false semantic
 // owner.  The caller chain remains recorded in the ledger note.
 
+#include <new>
+
 struct BfmeRbTreeInsertAnchorHelper;
 
 namespace _STL
@@ -36,8 +38,13 @@ inline void *BfmeNodeAllocate(unsigned int bytes)
 	return vectorSmallAllocate(bytes);
 }
 
+// Retail 0x009A3520: the 23-byte placement copy this tree's _M_create_node
+// calls for its 8-byte value; its only tree caller is 0x009A4130 below.
 template <class T1, class T2>
-void _Construct(T1 *p, const T2 &value);
+__declspec(noinline) void _Construct(T1 *p, const T2 &value)
+{
+	new (p) T1(value);
+}
 
 template <class T1, class T2>
 struct pair
@@ -230,3 +237,6 @@ Rva009A4130Tree::iterator BfmeRbTreeInsertAnchor009A4130(
 {
 	return BfmeRbTreeInsertAnchorHelper::run(tree, x, y, v, w);
 }
+
+template void _STL::_Construct<Rva009A4130Pair, Rva009A4130Pair>(
+	Rva009A4130Pair *, const Rva009A4130Pair &);
