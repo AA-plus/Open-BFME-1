@@ -1,12 +1,6 @@
-// ?d_007e8b00@@YAXXZ
-// partial score=0.9 date=2026-09-10
+// _Rva007E8B00
+// partial score=0.6867 date=2026-10-13
 // cl: /O2 /TC /GR- /EHs-c- /GS /MD
-// Retail 0x007E8B00 is the optimized FESL record-field replacer.  Its named
-// caller chain is BfmeThingVIY::bfmeSubVIY (0x007F1400) -> the record writer
-// at 0x007E8EF0 -> 0x007E8D30 -> this helper.  The body is address-derived:
-// the FESL table and separator are distinct from the later Y4 copy at
-// 0x007EC780, so no existing DirtySock global is aliased here.
-
 extern void * __cdecl memmove( void *dest, const void *src,
 	unsigned int count );
 extern int __cdecl memcmp( const void *left, const void *right,
@@ -167,7 +161,7 @@ int Rva007E8B00( unsigned char *buffer, int size,
 
 	memcpy( pValue, field, iLength );
 
-	if( pValue[ iLength ] == 0 && Rva007E8B00Separator != '\n' )
+	if( pValue[ iLength ] == 0 && *(volatile char *)&Rva007E8B00Separator != '\n' )
 	{
 		pValue[ iLength - 1 ] = 0;
 	}
