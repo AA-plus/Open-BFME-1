@@ -1,5 +1,5 @@
 // ?onDie@Rva0020B340SpawnDie@@QAEXPBVDamageInfo@@@Z
-// partial score=0.6 date=2026-09-26
+// partial score=0.4195 date=2026-10-13
 // cl: /DNDEBUG /MD /EHsc
 // stlport
 
@@ -44,6 +44,14 @@ private:
 	char m_pad000[0xB0];
 	ObjectPtrHash m_objHash;
 };
+
+inline __declspec(noinline) Object *GameLogic::findObjectByID(ObjectID id)
+{
+ if (id == 0) return 0;
+ ObjectPtrHash::iterator it = m_objHash.find(id);
+ if (it == m_objHash.end()) return 0;
+ return (*it).second;
+}
 
 extern GameLogic *TheGameLogic;
 
