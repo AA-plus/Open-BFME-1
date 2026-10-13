@@ -1,18 +1,12 @@
-// ?isValidContainerFor@TransportContain@@UBE_NPBVObject@@_N@Z
-// partial score=0.8807017544 date=2026-09-28
-// ?isValidContainerFor@TransportContain@@UBE_NPBVObject@@_N@Z
-// Corrected semantic retry 2026-09-28; remaining 34 differing bytes.
 // cl: /DNDEBUG /MD /EHsc-
-//
-// Open-BFME: TransportContain::isValidContainerFor, retail 0x0022DBA0.
-// The two matched SiegeEngineContain callers reach this body through the
-// import-like thunk at 0x0000583A.  The three direct calls below are kept as
-// declarations because their retail boundaries are independently anchored.
+// TransportContain containment validation through its secondary interface.
+// The canonical Object layout supplies the status and model-condition fields.
 
 typedef bool Bool;
 typedef int Int;
 
 class Object;
+struct Rva2225E0Filter;
 
 struct ContainedItemNode
 {
@@ -54,21 +48,14 @@ public:
 
 #undef CONTAIN_SLOT
 
-class Object
-{
-public:
-	unsigned char m_unmodelled_000[0x90];
-	unsigned int m_status[6];
-	unsigned char m_unmodelled_0a8[0x110 - 0xa8];
-	unsigned int m_modelConditionFlags[10];
-	unsigned char m_unmodelled_138[0x1fc - 0x138];
-	ContainModuleInterface *m_contain;
-
-	Bool hasModelConditionBit(unsigned bit) const
-	{
-		return (m_modelConditionFlags[bit >> 5] & (1U << (bit & 31))) != 0;
-	}
-};
+// ?hasModelConditionBit@Object@@QBE_NI@Z absent-from-retail
+#define OBJECT_TU_MEMBERS \
+    Bool hasModelConditionBit(unsigned bit) const \
+    { \
+        return (m_modelConditionFlags[bit >> 5] & (1U << (bit & 31))) != 0; \
+    }
+#include "../object.h"
+#undef OBJECT_TU_MEMBERS
 
 class TransportContainModuleData
 {
@@ -77,6 +64,12 @@ public:
 	Bool m_unknown1f9;
 	unsigned char m_unmodelled_1fa[0x208 - 0x1fa];
 	Int m_unknown208;
+};
+
+struct Rva0022DBA0Input
+{
+	TransportContainModuleData *data;
+	const Object *rider;
 };
 
 #define TRANSPORT_SLOT(n) virtual void transportSlot##n() = 0;
@@ -92,11 +85,12 @@ public:
 	TRANSPORT_SLOT(15) TRANSPORT_SLOT(16) TRANSPORT_SLOT(17)
 	TRANSPORT_SLOT(18) TRANSPORT_SLOT(19) TRANSPORT_SLOT(20)
 	TRANSPORT_SLOT(21) TRANSPORT_SLOT(22)
-	virtual unsigned getContainMax() const = 0;
+	virtual Int getContainMax() const = 0;
 	TRANSPORT_SLOT(24) TRANSPORT_SLOT(25) TRANSPORT_SLOT(26)
 	TRANSPORT_SLOT(27) TRANSPORT_SLOT(28) TRANSPORT_SLOT(29)
 	TRANSPORT_SLOT(30) TRANSPORT_SLOT(31) TRANSPORT_SLOT(32)
-	TRANSPORT_SLOT(33) TRANSPORT_SLOT(34) TRANSPORT_SLOT(35)
+	virtual Bool isValidContainerFor(const Object *object, Bool checkCapacity) const;
+	TRANSPORT_SLOT(34) TRANSPORT_SLOT(35)
 	TRANSPORT_SLOT(36) TRANSPORT_SLOT(37) TRANSPORT_SLOT(38)
 	TRANSPORT_SLOT(39) TRANSPORT_SLOT(40) TRANSPORT_SLOT(41)
 	TRANSPORT_SLOT(42) TRANSPORT_SLOT(43) TRANSPORT_SLOT(44)
@@ -108,9 +102,8 @@ public:
 	TRANSPORT_SLOT(56) TRANSPORT_SLOT(57) TRANSPORT_SLOT(58)
 	TRANSPORT_SLOT(59) TRANSPORT_SLOT(60) TRANSPORT_SLOT(61)
 	TRANSPORT_SLOT(62) TRANSPORT_SLOT(63)
-	virtual unsigned getContainCount(Bool countRiders) const = 0;
-	virtual Bool isValidContainerFor(const Object *object,
-		Bool checkCapacity) const;
+	virtual unsigned getContainCount002225E0(Rva2225E0Filter *countRiders) const = 0;
+
 
 	TransportContainModuleData *getModuleData() const
 	{
@@ -140,12 +133,12 @@ struct BfmeOpenContainValidationCall
 
 struct BfmeTransportSlotCountCall
 {
-	Int call();
+	Int call() const;
 };
 
 struct BfmeKindOfCall
 {
-	Bool call(Int kind);
+	Bool call(Int kind) const;
 };
 
 static Bool callOpenContainValidation(const TransportContain *self,
@@ -160,30 +153,38 @@ static Bool callOpenContainValidation(const TransportContain *self,
 
 static Int getTransportSlotCount(const Object *object)
 {
-	typedef Int (BfmeTransportSlotCountCall::*Function)();
+	typedef Int (BfmeTransportSlotCountCall::*Function)() const;
 	union { void (*raw)(); Function member; } function;
 	function.raw = j_00026107;
-	return (reinterpret_cast<BfmeTransportSlotCountCall *>((Object*)object)->*
+	return (reinterpret_cast<const BfmeTransportSlotCountCall *>(object)->*
 		function.member)();
 }
 
 static Bool isKindOf(const Object *object, Int kind)
 {
-	typedef Bool (BfmeKindOfCall::*Function)(Int);
+	typedef Bool (BfmeKindOfCall::*Function)(Int) const;
 	union { void (*raw)(); Function member; } function;
 	function.raw = j_0003251f;
-	return (reinterpret_cast<BfmeKindOfCall *>((Object*)object)->*
+	return (reinterpret_cast<const BfmeKindOfCall *>(object)->*
 		function.member)(kind);
 }
 
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+/**
+	can this container contain this kind of object?
+	and, if checkCapacity is TRUE, does this container have enough space left to hold the given unit?
+*/
 // ?isValidContainerFor@TransportContain@@UBE_NPBVObject@@_N@Z
 Bool TransportContain::isValidContainerFor(const Object *rider,
 	Bool checkCapacity) const
 {
-	TransportContainModuleData *data = getModuleData();
+	Rva0022DBA0Input input = { getModuleData(), rider };
+	TransportContainModuleData *data = input.data;
+	rider = input.rider;
+	// sanity
 	if (rider == 0)
-		return false;
-
+		goto nullRider;
 	if ((rider->m_status[1] & 0x20000000) != 0)
 		return false;
 
@@ -192,31 +193,46 @@ Bool TransportContain::isValidContainerFor(const Object *rider,
 		!getObject()->hasModelConditionBit(playerMaskBit))
 		return false;
 
+	// The point of this new code is to determine when something is a "fake" container, to
+	// look at the object inside of it to use that as the valid check. There is a case, when a
+	// paratrooper (an infantry contained in a parachute). In this case, when we pass this object
+	// to contain in a transport plane, we want to check the infantry, not the parachute.
 	ContainModuleInterface *contain = rider->m_contain;
 	if (contain != 0 && contain->isSpecialZeroSlotContainer())
 	{
+		// Report the first thing inside it!
 		const ContainedItemsList *items = rider->m_contain->getContainedItemsList();
 		if (items != 0)
 		{
 			ContainedItemNode *node = items->m_sentinel->m_next;
 			if (node != items->m_sentinel && node->m_object != 0)
+				// Replace the object we are checking with the *first* object contained within it.
 				rider = node->m_object;
 		}
 	}
 
+	// extend functionality
 	if (!callOpenContainValidation(this, rider, checkCapacity))
 		return false;
 
+//	// only allied objects can be transported.
+//	// order matters: we want to know if I consider it to be an ally, not vice versa
+//	if (getObject()->getRelationship(rider) != ALLIES)
+//		return false;
+
 	if (isKindOf(rider, 0x83) && getModuleData()->m_unknown1f9)
-		return getContainCount(false) < getContainMax();
+		return getContainCount002225E0(0) < getContainMax();
 
 	Int transportSlotCount = getTransportSlotCount(rider);
+	// if 0, this object isn't transportable.
 	if (transportSlotCount == 0)
 		return false;
 
 	if (checkCapacity)
-		return getContainCount(false) + m_extraSlotsInUse +
+		return getContainCount002225E0(0) + m_extraSlotsInUse +
 			transportSlotCount <= getContainMax();
 	return true;
+nullRider:
+	return false;
 }
 
