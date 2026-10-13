@@ -1,5 +1,5 @@
 // ?d_00606180@@YAXXZ
-// partial score=0.9520451339915373 date=2026-09-27
+// partial score=0.9513 date=2026-10-13
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/iniexception
 // AnimationSound INI callback at RVA 00606180; identity remains address-derived.
 // All 1417 bytes include five throw tails, normal RET at +0x508.
@@ -17,10 +17,11 @@
 // landed AnimationSoundInfoCtor.cpp (RVA 605270, reached through ILT 8fd5).
 // ThingRef's out-of-line destructor is the existing object symbol at 877b0,
 // reached via ILT 362ff. The per-record reference destructor is inline.
-#include "ascii_string.h"
-#include <string.h>
+#include "string_base.h"
 template<> inline bool StringBase<char>::isEmpty() const { return !m_data || m_data->length == 0; }
 template<> inline const char *StringBase<char>::str() const { return m_data ? m_data->data : ""; }
+#include "ascii_string.h"
+#include <string.h>
 
 extern "C" __declspec(dllimport) int __cdecl _stricmp(const char *, const char *);
 extern "C" __declspec(dllimport) long __stdcall InterlockedDecrement(long *);

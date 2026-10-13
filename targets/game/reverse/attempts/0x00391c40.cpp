@@ -1,5 +1,5 @@
 // ?xfer@GameLogic@@MAEXPAVXfer@@@Z
-// partial score=0.995695 date=2026-09-25
+// partial score=0.9957 date=2026-09-25
 // compile fix 2026-10-12: string_base.h included before ascii_string.h carries the
 // str/isEmpty<char> specializations; duplicate ~AsciiString removed. Scratch compiles to
 // 2323B/79relocs/10 non-reloc diffs at +0x736..+0x740 (inlined STLport _Ht_iterator++
