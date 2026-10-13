@@ -33,7 +33,7 @@ one pointer, zeroes it in its default constructor, and releases it in its
 destructor. Thus each of these three member objects is four bytes on the
 retail ABI; the 0x20-byte spacing does not mean 0x20-byte string objects.
 The matched W3D constructor `Gen006EF850Constructor.cpp` independently
-reserves a 140-byte Display base.
+reserves a 0x140-byte (320-byte) Display base.
 
 Constructor stores zero to AC at `0040F31B`, CC at `0040F351`, and EC at
 `0040F380`. It writes EH state 3 at `0040F386`; omitted intermediate state
