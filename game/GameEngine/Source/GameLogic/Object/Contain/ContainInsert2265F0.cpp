@@ -1,6 +1,4 @@
-// ?add@ContainInsert2265F0@@QAEXPAVObject@@@Z
-// partial score=0.8266 date=2026-09-28
-// This attempt file keeps its earlier method spelling. The current verdict says the vtable and callers do not prove that name.
+// ?addToContain@OpenContain@@UAEXPAVObject@@@Z
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
 #define _BFME_RETAIL_TREE_INSERT_LAYOUT
@@ -12,7 +10,7 @@ typedef _STL::_Rb_tree<int,Rva002253A0Pair,_STL::_Select1st<Rva002253A0Pair>,_ST
 namespace _STL { template<> pair<Rva002253A0Tree::iterator,bool> Rva002253A0Tree::insert_unique(const Rva002253A0Pair &); }
 class Object;
 struct Drawable2265F0 { char pad[0x3ac]; bool byte_3ac; };
-struct Player { char pad[0x24]; int m_playerIndex; };
+class Player { public: char pad[0x24]; int m_playerIndex; unsigned short getPlayerMask() const { return 1 << m_playerIndex; } };
 class ContainDispatch2265F0 { public:
  virtual void slot00() = 0;
  virtual void slot04() = 0;
@@ -33,24 +31,12 @@ class ContainDispatch2265F0 { public:
  virtual void slot40() = 0;
  virtual void onContaining(Object *,bool) = 0;
 };
-class Object { public:
- virtual void slot00() = 0;
- virtual void slot04() = 0;
- virtual void slot08() = 0;
- virtual void slot0C() = 0;
- virtual void slot10() = 0;
- virtual void slot14() = 0;
- virtual void slot18() = 0;
- virtual void slot1C() = 0;
- virtual void slot20() = 0;
- virtual void slot24() = 0;
- virtual Drawable2265F0 *getDrawable() const = 0;
- Player *getControllingPlayer() const;
- void onContainedBy(Object *);
- char pad04[0x70]; unsigned m_id;
- char pad78[0x1c]; unsigned field_94;
- char pad98[0x164]; ContainDispatch2265F0 *m_contain;
- char pad200[0x14]; Object *field_214;
+#define OBJECT_TU_MEMBERS Player *getControllingPlayer() const; void onContainedBy(Object *);
+#include "../object.h"
+#undef OBJECT_TU_MEMBERS
+struct ObjectFields2265F0 {
+ char pad00[0x94]; unsigned field_94;
+ char pad98[0x17c]; Object *field_214;
 };
 class PrimaryContain2265F0 { public:
  virtual void slot00() = 0;
@@ -78,10 +64,12 @@ class PrimaryContain2265F0 { public:
  virtual void slot58() = 0;
  virtual void slot5C(Object *,bool,bool) = 0;
 };
-struct Template2265F0 { char pad[0x158]; _STL::vector<int> field_158; };
+struct TemplateElement2265F0;
+struct Template2265F0 { char pad[0x158]; _STL::vector<TemplateElement2265F0> field_158; };
 struct Logic2265F0 { char pad[0x3c]; unsigned frame; };
-extern Logic2265F0 *logic2265F0;
-class ContainInsert2265F0 { public:
+extern "C" void *g_012F0898;
+#define logic2265F0 ((Logic2265F0 *)g_012F0898)
+class OpenContain { public:
  virtual void slot00() = 0;
  virtual void slot04() = 0;
  virtual void slot08() = 0;
@@ -116,33 +104,38 @@ class ContainInsert2265F0 { public:
  virtual void slot7C() = 0;
  virtual void slot80() = 0;
  virtual void slot84() = 0;
- virtual void slot88() = 0;
+ virtual void addToContain(Object *rider);
  virtual void addToList(Object *) = 0;
 
  char pad04[0x50]; unsigned short field_54;
- void add(Object *rider);
 };
-void ContainInsert2265F0::add(Object *rider)
+void OpenContain::addToContain(Object *rider)
 {
+ // sanity
  if (!rider) return;
- Drawable2265F0 *draw = rider->getDrawable();
+ Drawable2265F0 *draw = (Drawable2265F0 *)rider->getDrawable();
  bool wasSelected = false;
  if (draw && draw->byte_3ac) wasSelected = true;
- if (rider->field_214) return;
+ // this object cannot be contained by this module if it is already contained in something
+ if (((ObjectFields2265F0 *)rider)->field_214) return;
+ // Which list to physically add to needs to be overridable
  addToList(rider);
- field_54 = (unsigned short)(1 << rider->getControllingPlayer()->m_playerIndex);
- ContainDispatch2265F0 *contain = (*(Object **)((char *)this - 0x18))->m_contain;
+ field_54 = rider->getControllingPlayer()->getPlayerMask();
+ ContainDispatch2265F0 *contain = (ContainDispatch2265F0 *)(*(Object **)((char *)this - 0x18))->m_contain;
+ // trigger an onContaining event for the object that just "ate" something
  if (contain) contain->onContaining(rider,wasSelected);
  PrimaryContain2265F0 *primary = (PrimaryContain2265F0 *)((char *)this - 0x20);
+ // ensure our contents are positions correctly.
  primary->slot44();
+ // trigger an onContainedBy event for the object that just got "eaten" by us
  rider->onContainedBy(*(Object **)((char *)this - 0x18));
  primary->slot50();
  Template2265F0 *data = *(Template2265F0 **)((char *)this - 0x1c);
  if (!data->field_158.empty()) {
   unsigned id = rider->m_id;
   unsigned frame = logic2265F0->frame;
-  _STL::pair<int,unsigned> pair(id,frame);
+  _STL::pair<const int,unsigned> pair = _STL::make_pair(id,frame);
   ((Rva002253A0Tree *)((char *)this + 0xa8))->insert_unique(*(const Rva002253A0Pair *)&pair);
  }
- if (rider->field_94 & 0x10000000) primary->slot5C(rider,false,false);
+ if (((ObjectFields2265F0 *)rider)->field_94 & 0x10000000) primary->slot5C(rider,false,false);
 }
