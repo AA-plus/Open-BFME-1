@@ -1,5 +1,7 @@
 // ?update@Rva003A4FD0State@@QAEXPAX@Z
-// partial score=0.8818 date=2026-09-30
+// partial score=1.0 date=2026-10-13
+// ?update@Rva003A4FD0State@@QAEXPAX@Z
+// bytes exact 2026-10-13 (y read into a local before the manager load); blocked on callee identities, see re_attempts.log
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath
 #include "ascii_string.h"
 #include "coord3d.h"
@@ -15,14 +17,15 @@ class Glo012F1028Type {public: void rva003BE020(LivingWorldRegion*);char pad[0x2
 extern Glo012F1028Type *Glo012F1028;
 class BfmeHostCB {public:char bfmePopCB();};
 class Rva003A4FD0State {public:
- void update(void*);AsciiString stringAt003A4390();char pad[12];float x;volatile float y;char gap[8];unsigned char byte1C,byte1D,byte1E;
+ void update(void*);AsciiString stringAt003A4390();char pad[12];float x;float y;char gap[8];unsigned char byte1C,byte1D,byte1E;
 };
 void Rva003A4FD0State::update(void* arg){
  if(((BfmeHostCB*)this)->bfmePopCB())return;
  if(byte1D && byte1E){
+  float py=y;
   LivingWorldRegionManager *manager=Glo012F1028->manager;
   Coord3DBase point;
-  point.y=y;point.x=x;point.z=0;
+  point.y=py;point.x=x;point.z=0;
   LivingWorldRegion *region=manager->rva003C8160(&point);
   if(region && manager->rva003CAE00(region)){
    AsciiString name=stringAt003A4390();
