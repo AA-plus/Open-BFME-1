@@ -1,6 +1,6 @@
-// ?d_00290b90@@YAXXZ
-// partial score=0.93 date=2026-09-10
-// cl: /DNDEBUG /MD /EHsc
+// ?Rva00290B90@EmotionTrackerUpdate@@QAEPAVEmotion@@XZ
+// partial score=0.4272 date=2026-10-13
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Include/Lib /Igame/GameEngine/Source/GameLogic/Object
 // ?Rva00290B90@EmotionTrackerUpdate@@QAEPAVEmotion@@XZ
 // Emotion selection walk; layout taken from the matched constructor at 0x00290740.
 
@@ -11,12 +11,8 @@ class ModuleData;
 class EmotionTrackerUpdateEntry;
 class Overridable;
 
-struct Coord3D
-{
-	float x;
-	float y;
-	float z;
-};
+#include "Coord3D.h"
+#define BFME_HAVE_COORD3D
 
 class Overridable
 {
@@ -41,24 +37,13 @@ struct Rva00290B90Slot
 class Player
 {
 public:
+	int getPlayerIndex() const { return m_index; }
 	unsigned char m_pad00[0x24];
 	int m_index;
 };
 
-class Object
-{
-public:
-	Player *getControllingPlayer() const;
-
-	unsigned char m_pad00[4];
-	Rva00290B90Template *m_template;
-	unsigned char m_pad08[0x30];
-	Coord3D m_position;
-	unsigned char m_pad44[0x4c];
-	unsigned int m_status;
-	unsigned char m_pad94[0x17c];
-	Rva00290B90Slot *m_slot210;
-};
+#define OBJECT_TU_MEMBERS Player *getControllingPlayer() const;
+#include "object.h"
 
 class EmotionTrackerUpdateEntry
 {
@@ -88,8 +73,9 @@ public:
 	Object *findObjectByID(int id);
 };
 
-struct PlayerList
+class PlayerList
 {
+public:
 	unsigned short getPlayersWithRelationship(int index, int relation, bool flag);
 };
 
@@ -111,9 +97,13 @@ struct Gen_001BEC20
 #pragma comment(linker, "/alternatename:?getFinalOverride@Overridable@@QBEPBV1@XZ=?j_000022bb@@YAXXZ")
 #pragma comment(linker, "/alternatename:?bfmeScale@Gen_001BEC20@@QBEHXZ=?j_0003a391@@YAXXZ")
 
-#define TheBfmeGameLogic (*(GameLogic **)0x012F0898)
-#define Rva002EE330ThePlayers (*(PlayerList **)0x012ED748)
-#define Rva002EEDA0TheShroudManager (*(Rva002EEDA0ShroudManager **)0x012ED5BC)
+#define TheBfmeGameLogic TheGameLogic
+extern GameLogic *TheGameLogic;
+#define Rva002EE330ThePlayers ThePlayerList
+extern PlayerList *ThePlayerList;
+class ShroudManager;
+extern ShroudManager *TheShroudManager;
+#define Rva002EEDA0TheShroudManager reinterpret_cast<Rva002EEDA0ShroudManager *>(TheShroudManager)
 
 // upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Module.h
 class ObjectModule
@@ -209,20 +199,20 @@ Emotion *EmotionTrackerUpdate::Rva00290B90()
 			if (player != 0)
 			{
 				unsigned int maskA =
-					Rva002EE330ThePlayers->getPlayersWithRelationship(player->m_index, 3, false);
+					Rva002EE330ThePlayers->getPlayersWithRelationship(player->getPlayerIndex(), 3, false);
 				unsigned int maskB =
-					Rva002EE330ThePlayers->getPlayersWithRelationship(player->m_index, 4, false);
+					Rva002EE330ThePlayers->getPlayersWithRelationship(player->getPlayerIndex(), 4, false);
 				shroudOther =
-					Rva002EEDA0TheShroudManager->lookup(&m_object->m_position, 1, maskB);
+					Rva002EEDA0TheShroudManager->lookup(&m_object->m_cachedPos, 1, maskB);
 				shroudSelf =
-					Rva002EEDA0TheShroudManager->lookup(&m_object->m_position, 1, maskA);
+					Rva002EEDA0TheShroudManager->lookup(&m_object->m_cachedPos, 1, maskA);
 			}
 		}
 
 		int level = 0;
 		int selfLayer;
-		if (m_object->m_slot210 != 0)
-			level = m_object->m_slot210->m_value28;
+		if (reinterpret_cast<Rva00290B90Slot *>(m_object->m_experienceTracker) != 0)
+			level = reinterpret_cast<Rva00290B90Slot *>(m_object->m_experienceTracker)->m_value28;
 
 		for (Emotion **it = m_emotionsBegin; it != m_emotionsEnd; ++it)
 		{
@@ -261,11 +251,11 @@ Emotion *EmotionTrackerUpdate::Rva00290B90()
 				Object *other = TheBfmeGameLogic->findObjectByID(m_endFrame[6]);
 				if (other != 0)
 				{
-					Rva00290B90Template *t = other->m_template;
+					Rva00290B90Template *t = reinterpret_cast<Rva00290B90Template *>(other->m_template);
 					if (t != 0 && t->m_override != 0)
 						t = (Rva00290B90Template *)t->m_override->getFinalOverride();
 					if ((t->m_flags & 0x2000000) == 0 &&
-						(other->m_status & 0x40) == 0 &&
+						(other->m_status[0] & 0x40) == 0 &&
 						(selfLayer = ((Gen_001BEC20 *)m_object)->bfmeScale()) !=
 							((Gen_001BEC20 *)other)->bfmeScale())
 						continue;
