@@ -28,12 +28,12 @@ typedef int Int;
 void W3DRadarResetLock(void);					// retail 0x00903090
 char bfmeUnlock1179(void);					// retail 0x00905B10
 void deleteTerrainIndexArray(void *memory);
+void __cdecl operator delete[](void *memory);	// retail 0x00881EF0
 
 class W3DTerrainBackground
 {
 public:
 	~W3DTerrainBackground();
-	static void operator delete[](void *memory);
 
 private:
 	char m_body[0xC4];
