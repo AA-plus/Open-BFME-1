@@ -93,15 +93,6 @@ public:
 
 extern GameLogic *TheGameLogic;
 
-// This is the canonical Overridable base: getNextOverride() is the inline
-// const +4 load.  The retail target at ILT 0x22bb is an out-of-line call, so it
-// uses this existing declaration-only const view rather than the recursive
-// canonical inline getFinalOverride().
-class BfmeControlBarOverridable {
-public:
-    const BfmeControlBarOverridable *getFinalOverride() const;
-};
-
 class ThingTemplate : public Overridable {
 };
 
@@ -162,13 +153,9 @@ void Rva00260060Owner::update(Object *object)
     if (producer != 0) {
         ThingTemplate *thingTemplate = producer->getTemplate();
         if (thingTemplate != 0) {
-            const Overridable *nextOverride =
-                thingTemplate->getNextOverride();
-            if (nextOverride != 0)
-                thingTemplate = const_cast<ThingTemplate *>(
-                    reinterpret_cast<const ThingTemplate *>(
-                        reinterpret_cast<const BfmeControlBarOverridable *>(
-                            nextOverride)->getFinalOverride()));
+            thingTemplate = const_cast<ThingTemplate *>(
+                static_cast<const ThingTemplate *>(
+                    thingTemplate->getFinalOverride()));
         }
         if ((*reinterpret_cast<const unsigned int *>(
                  reinterpret_cast<const unsigned char *>(thingTemplate) + 0xd4)
