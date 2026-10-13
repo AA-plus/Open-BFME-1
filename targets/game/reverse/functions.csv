@@ -37440,7 +37440,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0040de00@@YAXXZ,,0x0040DE00,502,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_0080de00
 ?d_0040e260@@YAXXZ,,0x0040E260,115,game/gen_asm/d_00405e80.asm,matched,gen-dump;ghidra=FUN_0080e260
 ?d_0040e2f0@@YAXXZ,,0x0040E2F0,118,game/gen_asm/d_00405e80.asm,matched,gen-dump;ghidra=FUN_0080e2f0
-?d_0040ee90@@YAXXZ,,0x0040EE90,282,game/gen_asm/d_00405e80.asm,matched,gen-dump;ghidra=FUN_0080ee90
 ?d_0040f260@@YAXXZ,,0x0040F260,508,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_0080f260
 ?d_00410e10@@YAXXZ,,0x00410E10,195,game/gen_asm/d_00405e80.asm,matched,gen-dump;ghidra=FUN_00810e10
 ?d_00411cd0@@YAXXZ,,0x00411CD0,201,game/gen_asm/d_00411110.asm,matched,gen-dump;ghidra=FUN_00811cd0
@@ -172555,3 +172554,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?W3DGadgetProgressBarImageDraw00793620@@YAXPAVGameWindow@@PAVWinInstanceData@@@Z,,0x00793620,868,game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DProgressBarImageDraw00793620.cpp,matched,Opaque callback identity; complete 868-byte body and helper ABI decoded; empty coordinate constructor and native EA endpoint order; evidence=identity_evidence/00793620-coordinate-lifetimes.md;model=gpt-6.1-sol;host=fleet
 ?rva001F1620@BezierProjectileBehavior@@QAEX_N@Z,,0x001F1620,449,game/GameEngine/Source/GameLogic/Object/Behavior/BezierProjectileBehavior_rva001F1620.cpp,matched,converted dump; primary Bezier receiver and ret4 from complete callers via ILT00012E8B; mask lifetime scope; identity_evidence=targets/game/reverse/identity_evidence/001f1620-mask-scope-recovery.md;model=gpt-6.1-sol;host=fleet
 ?DivideInternalFPF@@YAXPAUInternalFPF@@00@Z,,0x00879F60,801,game/Libraries/Source/Benchmark/emfloat.cpp,matched,BYTEmark division identified by complete SetupCPUEmFloatArrays and DoEmFloatIteration callers; private register ABI; complete switch tables; induction-origin reduction; evidence=targets/game/reverse/identity_evidence/00879f60-loop-origin.md;model=gpt-6.1-sol;host=fleet
+?update@Rva0040EE90Owner@@QAEXXZ,,0x0040EE90,282,game/GameEngine/Source/GameClient/Rva0040EE90OwnerUpdate.cpp,matched,Address-derived no-argument thiscall; exact pre-decrement predicate scheduling; evidence=targets/game/reverse/identity_evidence/0040ee90-update.md;model=gpt-6.1-sol;host=fleet

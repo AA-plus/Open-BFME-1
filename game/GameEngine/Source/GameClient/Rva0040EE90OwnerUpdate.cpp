@@ -1,10 +1,9 @@
-// ?d_0040ee90@@YAXXZ
-// partial score=0.93 date=2026-09-08
-// The owner and member names below are address-derived carriers for the
-// witnessed offsets; no BfmeFadeHP identity is asserted.
-#define Rva01075350Zero (*(const float *)0x01075350)
-#define Rva01075334One (*(const float *)0x01075334)
-#define Rva01084068Scale (*(const float *)0x01084068)
+// Address-derived view of the display update and its six-word drawing state.
+extern const float Rva00C75350Zero;
+#define Rva01075350Zero Rva00C75350Zero
+extern const float Rva00C75334One;
+#define Rva01075334One Rva00C75334One
+#define Rva01084068Scale 255.0f
 
 class Rva0040E2F0State
 {
@@ -32,6 +31,7 @@ public:
 	Rva0040E2F0State m_120;
 };
 
+// ?update@Rva0040EE90Owner@@QAEXXZ
 void Rva0040EE90Owner::update()
 {
 	unsigned int c = 0xffffff;
@@ -42,10 +42,10 @@ void Rva0040EE90Owner::update()
 
 		if (v != 0)
 		{
+			int negative = v - 1 < 0;
 			v = v - 1;
 			m_10c = v;
-			bool nonnegative = v >= 0;
-			v &= -(int)nonnegative;
+			v &= negative - 1;
 			m_10c = v;
 
 			if (v > 0x2d)
