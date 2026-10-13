@@ -19768,5 +19768,15 @@
   "after_sha256": "aaa98329e5d27c081026b92eaa8bda9196a44b6bda3aacb3dc507df73ab6c08f",
   "evidence": "targets/game/reverse/identity_evidence/0069f2f0-00883b70-false-bank-pairing.md",
   "reason": "Git -M1% falsely pairs different-RVA audio bank deletion and memory-pool bank addition. refreshPair remains in its native audio owner; rva00883c0 predates this bank in the independently matched memory-pool owner at00883CC0. No identifier was renamed."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x000d6100.cpp",
+  "new_path": "game/GameEngine/Source/Common/RTS/PlayerGetRva0058B590Value.cpp",
+  "old_name": "m_object",
+  "new_name": "m_value",
+  "before_sha256": "1d6da956569e994679a2ea8496113b716de874c4aa04ed1a7d9f39de563898f1",
+  "after_sha256": "d26de534b5ff8d939b2143cbf5cba4aaf2e99d23a43c0a46de8524e526b91515",
+  "evidence": "targets/game/reverse/identity_evidence/000d6100-player-rva0058b590-value.md",
+  "reason": "positional false pairing: the stash's unused BfmeObjectHashNode::m_object was dropped; the node's m_value field is unchanged"
  }
 ]
