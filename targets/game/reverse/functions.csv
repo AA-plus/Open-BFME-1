@@ -37171,8 +37171,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0035d9b0@@YAXXZ,,0x0035D9B0,662,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075d9b0
 ?d_0035dd40@@YAXXZ,,0x0035DD40,363,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075dd40
 ?d_0035df10@@YAXXZ,,0x0035DF10,227,game/gen_asm/d_003519c0.asm,matched,gen-dump;bounds=high
-?d_0035e1f0@@YAXXZ,,0x0035E1F0,307,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075e1f0
-?d_0035e323@@YAXXZ,,0x0035E323,24,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=Catch@0075e323
 ?d_0035e5a0@@YAXXZ,,0x0035E5A0,284,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075e5a0
 ?d_0035e8b0@@YAXXZ,,0x0035E8B0,624,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075e8b0
 ?d_0035ee70@@YAXXZ,,0x0035EE70,164,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075ee70
@@ -172554,3 +172552,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?seed@Rva005CC860Particle@@QAEXPAVBfmeSeedTarget@@@Z,,0x005CC860,220,game/GameEngine/Source/GameClient/System/Rva005CC860ParticleSeed.cpp,matched,Particle transfer view; native handle and typed inline getter; evidence=targets/game/reverse/identity_evidence/005cc860-handle-accessor.md;model=gpt-6.1-sol;host=fleet
 ?Rva002E5090ScriptLogMessage@@YAXPBD@Z,,0x002E5090,232,game/GameEngine/Source/GameLogic/ScriptEngine/Rva002E5090ScriptLogMessage.cpp,matched,Address-derived logger identity from decoded Lua callers and AppendDebugMessage; visible inline noinline reverseFind preserves cached buffer; identity-evidence=targets/game/reverse/identity_evidence/002e5090-visible-reverse-find.md;model=gpt-6.1-sol;host=fleet
 ?rva0087ED70@GeometryShape@@QBEMXZ,,0x0087ED70,228,game/GameEngine/Source/Common/System/GeometryInfoCalcBoundingStuff.cpp,matched,Same complete228B per-shape sphere reach and matched calcBoundingStuff caller identity; move retail-proven box-local and cylinder-accumulation body into caller TU under noinline to preserve EDX. Retire competing standalone TU and its nonmatching224B visibility model.;model=gpt-6.1-sol;host=ymo-workstation
+??0Rva00359530StringRecordTable@@QAE@ABV0@@Z,,0x0035E1F0,352,game/GameEngine/Source/Common/Rva00359530StringRecordTableCopy0035E1F0.cpp,matched,Native STLport copy constructor; address-derived owner; complete caller and record helper ABI and unwind ownership independently decoded; existing native scoped base and cleanup identities; identity-evidence=targets/game/reverse/identity_evidence/0035e1f0-native-bindings.md;model=gpt-6.1-sol;host=fleet
