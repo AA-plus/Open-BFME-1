@@ -1,5 +1,5 @@
 // ?rva005369A0@BfmeAptScreenOnlineChat@@UAEHPAVGameWindow@@III@Z
-// partial score=0.7783191230207065 date=2026-09-28
+// partial score=0.9927 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /I.
 // OnlineChat vtable 0x01106F58 slot 4 -> ILT 0x000423ED -> 0x005369A0.
 // Constructor 0x00536DC0 and destructor 0x0052D7C0 prove the owner.
@@ -107,9 +107,14 @@ int BfmeAptScreenOnlineChat::rva005369A0(GameWindow *window, unsigned message, u
   break;
  }
  case 0x4030:
-  if((GameWindow *)data1 != m_chatEntry) return 0;
-  if(!data2) rva00536870();
-  break;
+ {
+  int handled;
+  if((GameWindow *)data1 == m_chatEntry) {
+   if(!data2) rva00536870();
+   handled=1;
+  } else handled=0;
+  return handled;
+ }
  }
  return result;
 }
