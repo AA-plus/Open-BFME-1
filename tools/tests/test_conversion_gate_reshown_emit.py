@@ -114,3 +114,49 @@ if __name__ == "__main__":
         if name.startswith("test_"):
             fn()
     print("ok")
+
+
+# Owner verdict 2026-10-13 (conversion_gate): every __emit counts whatever its
+# operand, and functions are keyed by their full enclosing scope.
+
+def test_define_operand_in_clean_function_fails():
+    before = {"game/a.cpp": "#define OP 0x90\nvoid Clean()\n{\n int x = 0;\n}\n"}
+    after = {"game/a.cpp": "#define OP 0x90\nvoid Clean()\n{\n __asm {\n  __emit OP\n }\n}\n"}
+    assert len(_gate(before, after)) == 1
+
+
+def test_enum_operand_in_clean_function_fails():
+    before = {"game/a.cpp": "enum { NOP = 0x90, RET = 0xc3 };\nvoid Clean()\n{\n int x = 0;\n}\n"}
+    after = {"game/a.cpp": "enum { NOP = 0x90, RET = 0xc3 };\nvoid Clean()\n{\n __asm {\n  __emit RET\n }\n}\n"}
+    assert len(_gate(before, after)) == 1
+
+
+def test_unknown_operand_fails():
+    before = {"game/a.cpp": "void Clean()\n{\n int x = 0;\n}\n"}
+    after = {"game/a.cpp": "void Clean()\n{\n __asm {\n  __emit SOMEOP\n }\n}\n"}
+    assert len(_gate(before, after)) == 1
+
+
+def test_changed_define_value_fails():
+    body = "void Dump()\n{\n __asm {\n  __emit OP\n }\n}\n"
+    before = {"game/a.cpp": "#define OP 0x90\n" + body}
+    after = {"game/a.cpp": "#define OP 0xc3\n" + body}
+    assert len(_gate(before, after)) == 1
+
+
+def test_emit_cannot_move_between_namespaces():
+    def src(a, b):
+        return ("namespace A {\nvoid f()\n{\n __asm {\n%s }\n}\n}\n"
+                "namespace B {\nvoid f()\n{\n __asm {\n%s }\n}\n}\n") % (a, b)
+    before = {"game/a.cpp": src("  __emit 0x90\n", "")}
+    after = {"game/a.cpp": src("", "  __emit 0x90\n")}
+    assert len(_gate(before, after)) == 1
+
+
+def test_emit_cannot_move_between_classes():
+    def src(a, b):
+        return ("class A {\n void f()\n {\n  __asm {\n%s  }\n }\n};\n"
+                "class B {\n void f()\n {\n  __asm {\n%s  }\n }\n};\n") % (a, b)
+    before = {"game/a.cpp": src("   __emit 0x90\n", "")}
+    after = {"game/a.cpp": src("", "   __emit 0x90\n")}
+    assert len(_gate(before, after)) == 1

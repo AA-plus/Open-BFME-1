@@ -143,7 +143,14 @@ def added_lift_lines(old, new, lines=None):
     return [(p, "%s  (%d such lines)" % (first, count)) for p, (first, count) in bad.items()]
 
 
-EMIT_BYTE_RE = re.compile(r"\b__?emit\s+(0[xX][0-9A-Fa-f]+|\d+)")
+# Every __emit counts, whatever its operand (owner verdict 2026-10-13):
+# a literal is its byte value, a same-file #define/enum constant resolves to
+# its value when trivially possible, anything else is counted as its own
+# symbol (operand text plus its same-file definition, so a changed definition
+# is growth).
+EMIT_OPERAND = r"\b__?emit\b\s*(\(?\s*[\w$]+\s*\)?|[^\s;{}]+)?"
+EMIT_BYTE_RE = re.compile(EMIT_OPERAND)
+_LITERAL_RE = re.compile(r"\(?\s*(0[xX][0-9A-Fa-f]+|\d+)[uUlL]*\s*\)?$")
 
 
 def file_text(rev, path):
@@ -152,20 +159,76 @@ def file_text(rev, path):
     return "" if data is None else data.decode("utf-8", errors="replace")
 
 
-def emit_bytes_by_function(text):
-    """{function signature: Counter of emitted byte values} for a C++ text.
+def _constants(text):
+    """{name: definition text} for same-file #define and enum constants."""
+    consts = {}
+    for m in re.finditer(r"(?m)^[ \t]*#\s*define\s+(\w+)(?!\()[ \t]*((?:[^\n]*\\\n)*[^\n]*)", text):
+        consts.setdefault(m.group(1), [])
+        consts[m.group(1)].append(" ".join(m.group(2).replace("\\\n", " ").split()))
+    for m in re.finditer(r"\benum\b[^{;]*\{([^}]*)\}", text):
+        nxt = 0
+        for item in m.group(1).split(","):
+            item = " ".join(item.split())
+            if not item:
+                continue
+            name, _, val = item.partition("=")
+            name, val = name.strip(), val.strip()
+            if not re.fullmatch(r"\w+", name):
+                continue
+            if val:
+                lit = _LITERAL_RE.match(val)
+                if lit:
+                    nxt = _emit_value(lit.group(1))
+                    consts.setdefault(name, []).append(str(nxt))
+                else:
+                    nxt = None
+                    consts.setdefault(name, []).append("enum=" + val)
+            elif nxt is not None:
+                consts.setdefault(name, []).append(str(nxt))
+            else:
+                consts.setdefault(name, []).append("enum-after-symbolic")
+            if nxt is not None:
+                nxt += 1
+    return consts
 
-    A top-level brace block whose header declares a function (a `name(`
-    declarator) is a function; any other block (namespace, class, extern "C")
-    is a container and is scanned inside. Emits outside every function are
-    keyed None."""
+
+def _operand_key(op, consts, seen=()):
+    """Byte value (int) or a symbol string for one __emit operand."""
+    op = (op or "").strip()
+    if not op:
+        return "sym:<none>"
+    lit = _LITERAL_RE.match(op)
+    if lit:
+        return _emit_value(lit.group(1))
+    name = op.strip("() \t")
+    defs = consts.get(name)
+    if defs and len(defs) == 1 and name not in seen:
+        d = defs[0]
+        lit = _LITERAL_RE.match(d)
+        if lit:
+            return _emit_value(lit.group(1))
+        if re.fullmatch(r"\(?\s*\w+\s*\)?", d):
+            return _operand_key(d, consts, seen + (name,))
+    return "sym:%s=%s" % (op, "|".join(defs) if defs else "?")
+
+
+def emit_bytes_by_function(text):
+    """{scoped function signature: Counter of emitted operands} for a C++ text.
+
+    A brace block whose header declares a function (a `name(` declarator) is a
+    function; any other block (namespace, class, extern "C") is a container
+    and is scanned inside. A function's key is its enclosing container path
+    plus its signature, so same-named functions in different scopes differ.
+    Emits outside every function are keyed None."""
     text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
     text = re.sub(r"//[^\n]*", " ", text)
+    consts = _constants(text)
     owners, macros = {}, {}
 
     def directive(match):
         line = " ".join(match.group(0).replace("\\\n", " ").split())
-        found = collections.Counter(_emit_value(v) for v in EMIT_BYTE_RE.findall(line))
+        found = collections.Counter(_operand_key(m.group(1), consts)
+                                    for m in EMIT_BYTE_RE.finditer(line))
         if found:
             name = re.match(r"#\s*define\s+(\w+)", line)
             key = "#define " + name.group(1) if name else "#preprocessor"
@@ -176,8 +239,9 @@ def emit_bytes_by_function(text):
     text = re.sub(r"(?m)^[ \t]*#(?:[^\n]*\\\n)*[^\n]*", directive, text)
     text = re.sub(r'"(?:\\.|[^"\\\n])*"', '""', text)
     depth, func, func_depth, header = 0, None, None, []
+    scopes = []  # (depth at open, normalized container header)
     pos = 0
-    token = r"[{};]|\b__?emit\s+(?:0[xX][0-9A-Fa-f]+|\d+)"
+    token = r"[{};]|" + EMIT_OPERAND
     if macros:
         token += r"|\b(?:%s)\b" % "|".join(map(re.escape, macros))
     for match in re.finditer(token, text):
@@ -190,12 +254,17 @@ def emit_bytes_by_function(text):
                 head = " ".join("".join(header).split())
                 header = []
                 if declared_name(head):
-                    func, func_depth = head, depth
+                    func = " :: ".join([s for _, s in scopes] + [head])
+                    func_depth = depth
+                else:
+                    scopes.append((depth, head))
             depth += 1
         elif tok == "}":
             depth -= 1
             if func is not None and depth == func_depth:
                 func = None
+            elif func is None and scopes and scopes[-1][0] == depth:
+                scopes.pop()
             header = []
         elif tok == ";":
             if func is None:
@@ -204,7 +273,7 @@ def emit_bytes_by_function(text):
             owners.setdefault(func, collections.Counter()).update(macros[tok])
         else:
             owners.setdefault(func, collections.Counter())[
-                _emit_value(EMIT_BYTE_RE.match(tok).group(1))] += 1
+                _operand_key(match.group(1), consts)] += 1
     return owners
 
 
