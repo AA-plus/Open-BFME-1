@@ -1,14 +1,17 @@
-// ?prepare@Rva21C710Owner@@QAEXPAVRva21C710Object@@@Z
-// partial score=0.9031 date=2026-09-24
+// cl: /I.
+// ?prepare0021C4B0@Rva21C710Owner@@QAEXPAVRva21C710Object@@@Z
 // stlport
 #define _STLP_NO_EXCEPTIONS 1
 #include <bitset>
 
+struct Coord3D;
 struct Rva21C710Vector
 {
 	float x;
 	float y;
 	float z;
+	void set(const Coord3D *a);
+
 };
 
 class Rva21C710Object
@@ -25,6 +28,7 @@ public:
 	unsigned char status;
 };
 
+// class-gate: allow Coord3D Retail array callbacks require the constructor and destructor omitted by the generated layout header.
 struct Coord3D
 {
 	Coord3D();
@@ -34,6 +38,11 @@ struct Coord3D
 	float y;
 	float z;
 };
+
+// ?set@Rva21C710Vector@@QAEXPAUCoord3D@@@Z absent-from-retail
+inline void Rva21C710Vector::set(const Coord3D *a) { x = a->x; y = a->y; z = a->z; }
+
+#include "game/GameEngine/Source/GameLogic/Object/object.h"
 
 class Rva21C710StatusMask
 {
@@ -53,13 +62,6 @@ public:
 	_STL::bitset<86> words;
 };
 
-
-struct Rva21C710Node
-{
-	Rva21C710Node *next;
-	Rva21C710Node *previous;
-	Rva21C710Object *object;
-};
 
 class Rva21C710OwnerInterface
 {
@@ -88,7 +90,7 @@ public:
 class Rva21C710Owner
 {
 public:
-	void prepare(Rva21C710Object *object);
+	void prepare0021C4B0(Rva21C710Object *object);
 
 	Rva21C710Object *getObject() const
 	{
@@ -108,42 +110,7 @@ private:
 	class Rva21C710OwnerInterface interface;
 };
 
-class Rva21C710MemberDispatch
-{
-public:
-	void dispatch(Rva21C710Object *object, void *action);
-	void dispatchNew(Rva21C710Object *object, void *action);
-	void dispatchMember(Rva21C710Object *object, void *action);
-
-private:
-	char gap[0x99C];
-	Rva21C710Node *members;
-};
-
-void Rva21C710MemberDispatch::dispatch(Rva21C710Object *object, void *action)
-{
-	if ((object->status & 0x40) != 0)
-		((Rva21C710Owner *)((char *)this - 0x20))->prepare(object);
-
-	Rva21C710Node *end = members;
-	Rva21C710Node *node = end->next;
-
-	while (node != end) {
-		if (node->object == object) {
-			dispatchMember(object, 0);
-			return;
-		}
-		node = node->next;
-	}
-
-	dispatchNew(object, action);
-}
-
-// The caller above reaches this body through ILT 0x0000D468.  Its adjacent
-// 0x001F9180 sibling establishes the same BFME helper idiom: a 32-element
-// Coord3D EH array, an AsciiString copied from a nested owner field, and the
-// six-argument Object bone query.  The remaining calls below are kept bound to
-// their observed retail ILTs rather than relying on a same-named ZH overload.
+// The matched dispatcher calls this owner through its interface at offset 0x20.
 
 struct Rva21C710OwnerStringHolder
 {
@@ -156,45 +123,7 @@ struct Rva21C710OwnerContext
 	Rva21C710OwnerStringHolder *nameHolder;
 };
 
-template <class CharType>
-class StringBase
-{
-	friend class AsciiString;
-
-private:
-	struct Header
-	{
-		int references;
-		unsigned short length;
-		unsigned short capacity;
-		CharType data[1];
-	};
-
-	StringBase(const StringBase &other);
-	void releaseBuffer();
-
-protected:
-	Header *data;
-};
-
-class AsciiString : public StringBase<char>
-{
-public:
-	AsciiString(const AsciiString &other)
-		: StringBase<char>(*(const StringBase<char> *)&other)
-	{
-	}
-
-	~AsciiString()
-	{
-		((StringBase<char> *)this)->releaseBuffer();
-	}
-
-	const char *str() const
-	{
-		return data != 0 ? &data->data[0] : (const char *)0x0107388B;
-	}
-};
+#include "game/Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 class Gen_00411DD0
 {
@@ -227,6 +156,7 @@ public:
 	class Rva21C710Physics *physics;
 };
 
+// ?getPosition@Rva21C710Object@@QBEPBURva21C710Vector@@XZ absent-from-retail
 inline const Rva21C710Vector *Rva21C710Object::getPosition() const
 {
 	return &((const Rva21C710PrepareObjectView *)this)->position;
@@ -239,8 +169,8 @@ public:
 	unsigned char motiveState;
 };
 
-extern float g_rva00EAEB4C;
-extern float g_rva00EAEB48;
+float g_rva00EAEB4C = 3.5f;
+float g_rva00EAEB48 = 3.0f;
 extern void j_00008337();
 extern void j_0000d81e();
 extern void j_000107ad();
@@ -267,15 +197,16 @@ typedef void (Coord3D::*Rva21C710Normalize)();
 typedef int (__cdecl *Rva21C710Random)(int, int, char *, int);
 typedef void (Gen_00411DD0::*Rva21C710BfmeSet)(bool);
 
-// ?prepare@Rva21C710Owner@@QAEXPAVRva21C710Object@@@Z
-void Rva21C710Owner::prepare(Rva21C710Object *object)
+// ?prepare0021C4B0@Rva21C710Owner@@QAEXPAVRva21C710Object@@@Z
+void Rva21C710Owner::prepare0021C4B0(Rva21C710Object *object)
 {
 	Coord3D positions[32];
 	AsciiString prefix(*(const AsciiString *)
 		((const unsigned char *)getContext()->nameHolder->data + 0x20));
 
-	int count = getObject()->getMultiLogicalBonePosition(prefix.str(), 32,
-		positions, 0, true, 0);
+	union { void (*raw)(); Rva21C710GetBones member; } boneCall;
+	boneCall.raw = j_000107ad;
+	int count = (getObject()->*boneCall.member)(prefix.str(), 32, positions, 0, true, 0);
 
 	Rva21C710PrepareObjectView *view =
 		(Rva21C710PrepareObjectView *)object;
@@ -289,7 +220,7 @@ void Rva21C710Owner::prepare(Rva21C710Object *object)
 		} randomCall;
 		randomCall.raw = j_00001bae;
 		int index = randomCall.function(0, count - 1,
-			(char *)0x010AB460, 0x24C);
+			(char *)"F:\\bfme\\Code\\gameengine\\Source\\GameLogic\\Object\\Contain\\ContestableContain.cpp", 0x24C);
 		Coord3D *point = &positions[index];
 
 		Rva21C710SetPosition setPosition;
@@ -304,12 +235,14 @@ void Rva21C710Owner::prepare(Rva21C710Object *object)
 
 		const Rva21C710Vector *origin = getObject()->getPosition();
 		Rva21C710Vector direction;
-		direction.x = point->x;
-		direction.z = origin->z;
-		direction.y = point->y;
-		direction.x -= origin->x;
+		float originX = origin->x;
+		float originY = origin->y;
+		// Preserve the position snapshot write before replacing its vertical component.
+		*(volatile float *)&direction.z = origin->z;
+		direction.set(point);
+		direction.x -= originX;
+		direction.y -= originY;
 		direction.z = 0.0f;
-		direction.y -= origin->y;
 
 		Rva21C710Normalize normalize;
 		union
