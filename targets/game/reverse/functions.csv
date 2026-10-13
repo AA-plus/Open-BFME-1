@@ -37483,7 +37483,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0042cdf0@@YAXXZ,,0x0042CDF0,351,game/gen_asm/d_0042c460.asm,matched,gen-dump;ghidra=FUN_0082cdf0
 ?d_0042d460@@YAXXZ,,0x0042D460,435,game/gen_asm/d_004171c0.asm,matched,gen-dump;bounds=high
 ?d_0042ec50@@YAXXZ,,0x0042EC50,1,game/GameEngine/Source/Common/Rva0042TinyBodies.cpp,matched,opaque address-derived body with proven ret boundary
-?d_00431a60@@YAXXZ,,0x00431A60,357,game/gen_asm/d_003fa5b0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00831a60
 ?d_004327e0@@YAXXZ,,0x004327E0,387,game/gen_asm/d_004171c0.asm,matched,gen-dump;bounds=high
 ?d_00433dc0@@YAXXZ,,0x00433DC0,360,game/gen_asm/d_0042c460.asm,matched,gen-dump;ghidra=FUN_00833dc0
 ?d_004340c0@@YAXXZ,,0x004340C0,177,game/gen_asm/d_004171c0.asm,matched,gen-dump;bounds=high
@@ -172555,3 +172554,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?rva00380EE0@ExperienceLevelSystem@@QAEHPAVObject@@_N@Z,,0x00380EE0,284,game/GameEngine/Source/Common/Rva00380EE0ExperienceAdvance.cpp,matched,Complete284B RET8; matched ExperienceTracker caller and record mutation prove iterative level lookup with per-iteration AsciiString lifetime; native Object header; existing address-qualified method retained;model=gpt-6-astra;host=GreatFaram
 ?rva0010EA60@Rva0010EA60Owner@@QAEXPAXI@Z,,0x0010EA60,122,game/GameEngine/Source/Common/System/SaveGame/Rva0010EA60Owner.cpp,matched,RET8 extent through0010EADA; matched0010F100 forward caller; native lists at48/4C; static allocator82E5F0 calls; erase returned iterator preserves retail post-free value reference;model=gpt-6-astra;host=GreatFaram
 ?loadBigFilesFromDirectory@Win32BIGFileSystem@@UAE_NVAsciiString@@0_N@Z,,0x009CDB90,459,game/GameEngineDevice/Source/Win32Device/Common/Win32BIGFileSystem_loadBigFilesFromDirectory.cpp,matched,canonical AsciiString and one-argument resize; identity vtable 0x01143B40 slot 9 and init caller; complete RET12 extent; evidence=targets/game/reverse/identity_evidence/009cdb90-canonical-resize.md;model=gpt-6.1-sol;host=fleet
+?rva00431A60@GameClient@@UAEXPAVFrustumClass@@MP6AXPAVDrawable@@PAX@Z2@Z,,0x00431A60,357,game/GameEngine/Source/GameClient/GameClientRva00431A60Frustum.cpp,matched,GameClient slot 21 and complete camera caller prove owner and ABI;native vector temporary;identity-evidence=targets/game/reverse/identity_evidence/00431a60-frustum-native-vector.md;model=gpt-6.1-sol;host=reference-machine

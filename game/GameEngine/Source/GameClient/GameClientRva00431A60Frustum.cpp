@@ -1,38 +1,11 @@
-// ?rva00431A60@GameClient@@UAEXPAVFrustumClass@@MP6AXPAVDrawable@@PAX@Z2@Z
-// partial score=0.9607843137254902 date=2026-09-23
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib
-// GameClient virtual at retail 0x00431A60 (357B), address-derived method name.
-//
-// Owner: GameClient vtables 0x01120468 and 0x010F37F0 hold ILT 0x00021B07
-// (jmp 0x00431A60) at slot 21 (+0x54); slot 12 of 0x01120468 is the matched
-// GameClient::firstDrawable (0x004318B0) and slot 2 is
-// SubsystemInterface::loadIniFilesFromLegend. m_drawableList +0x10 and the
-// Drawable next link +0x104 match the landed GameClient::reset and
-// GameClient::iterateDrawablesInRegion. The one caller (0x007450CF) runs
-// CameraClass::Update_Frustum and passes camera+0x104 (the camera frustum), a
-// sqrt-derived float, callback 0x00B3AD50 and a user pointer through
-// [vtable+0x54].
-//
-// Body: walk the drawable list; a drawable whose object's template has bit
-// 0x20 at +0xD8 bypasses culling and is always reported. Otherwise build a
-// sphere from the interpolated position (0x0041D150) and the radius helper at
-// 0x00416B20 plus the extra radius, test the cached plane index at +0x2E8
-// first, then side planes 1..4 with the WWMath PlaneClass::In_Front(const
-// SphereClass &) inline. Visible drawables go to the callback, clear the
-// cached plane and get bfmeGo923B(1); culled or hidden ones get bfmeGo923B(0).
-
+// GameClient frustum traversal at its address-derived virtual slot.
 #include "sphere.h"
 #include "frustum.h"
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include/Lib/BaseType.h
-struct Coord3D
-{
-	float x;
-	float y;
-	float z;
-};
+#include "../../../Libraries/Include/Lib/Coord3D.h"
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Overridable.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Overridable.h
 class Overridable
 {
 private:
@@ -69,7 +42,7 @@ public:
 	}
 };
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Thing.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Thing.h
 class Thing
 {
 private:
@@ -148,6 +121,7 @@ private:
 	Drawable *m_drawableList;
 };
 
+// ?rva00431A60@GameClient@@UAEXPAVFrustumClass@@MP6AXPAVDrawable@@PAX@Z2@Z
 void GameClient::rva00431A60(FrustumClass *frustum, float radius, GameClientFuncPtr userFunc, void *userData)
 {
 	if (radius < 0.0f)
@@ -163,8 +137,8 @@ void GameClient::rva00431A60(FrustumClass *frustum, float radius, GameClientFunc
 		const Object *obj = draw->getObject();
 		if (!obj || !(obj->getTemplate()->m_byteD8 & 0x20))
 		{
-			Coord3D pos = *(const Coord3D *)((const BFMERopeDrawableGetPositionShim *)draw)->getPositionLinear();
-			SphereClass sphere(Vector3(&pos.x), ((Rva00416B20 *)draw)->get() + radius);
+			Vector3 pos = *(const Vector3 *)((const BFMERopeDrawableGetPositionShim *)draw)->getPositionLinear();
+			SphereClass sphere(Vector3(pos.X, pos.Y, pos.Z), ((Rva00416B20 *)draw)->get() + radius);
 
 			int plane = draw->m_dword2E8;
 			if (plane >= 1 && plane <= 4 && frustum->Planes[plane].In_Front(sphere))
