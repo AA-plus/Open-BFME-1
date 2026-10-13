@@ -1,5 +1,5 @@
 // ?set@CloudTextureShader@@EAEHH@Z
-// partial score=0.8701 date=2026-10-09
+// partial score=0.9934 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameNetwork /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Benchmark /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWAudio /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
 // CloudTextureShader uses native DX8 declarations and a counted texture return.
 // Evidence: targets/game/reverse/identity_evidence/007c34e0-cloud-set.md
@@ -92,6 +92,13 @@ enum { BFME_SAMP_MINFILTER = 6, BFME_SAMP_MAGFILTER = 5,
        BFME_SAMP_ADDRESSU = 1, BFME_SAMP_ADDRESSV = 2,
        BFME_SET_SAMP_SLOT = 69, BFME_SET_TEXTURE_SLOT = 65 };
 
+// ??$bfmeSetStage@$04$01@@YAXI@Z absent-from-retail
+template<unsigned State, unsigned Value>
+static __forceinline void bfmeSetStage(unsigned stage)
+{
+    BFME_SET_TSS(stage, State, Value);
+}
+
 class W3DShaderInterface
 {
 public:
@@ -134,6 +141,7 @@ __forceinline void bfmeBindCloudTexture(unsigned stage, const BfmeHandleCX &text
     (*(BFMESetTextureFn **)device)[BFME_SET_TEXTURE_SLOT](device, stage, ((const TextureBaseClass &)texture).Peek_D3D_Base_Texture());
 }
 
+/**Setup a certain texture stage to project our cloud texture*/
 // ?set@CloudTextureShader@@EAEHH@Z
 int CloudTextureShader::set(int stage)
 {
@@ -157,7 +165,8 @@ int CloudTextureShader::set(int stage)
         }
     }
 
-	terrainShader2Stage.updateNoise1(((D3DXMATRIX*)&curView),&inv,false);	
+	//Get a texture matrix that applies the current cloud position
+	terrainShader2Stage.updateNoise1(((D3DXMATRIX*)&curView),&inv,false);	//update curView with texture matrix
 
 	BFME_SET_TSS(stage, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
 	BFME_SET_TSS(stage, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
@@ -176,7 +185,7 @@ int CloudTextureShader::set(int stage)
 	BFME_SET_TSS(stage, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	BFME_SET_TSS(stage, D3DTSS_COLORARG2, D3DTA_CURRENT);
 	BFME_SET_TSS(stage, D3DTSS_COLOROP, D3DTOP_MODULATE);
-	BFME_SET_TSS(stage, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	bfmeSetStage<D3DTSS_ALPHAARG1, D3DTA_TEXTURE>(stage);
 	BFME_SET_TSS(stage, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 	BFME_SET_TSS(stage, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2);
 	bfmeBindCloudTexture(stage, bfmeGet(stage));
