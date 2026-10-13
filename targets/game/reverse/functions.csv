@@ -30304,7 +30304,7 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?bfmeGoAZA@BfmeThingAZA@@QAEXXZ,,0x001FD550,63,game/GameEngine/Source/Common/BfmeConv430.cpp,matched,
 ?bfmeGoAZB@BfmeThingAZB@@QAEXPAX@Z,,0x00584DD0,63,game/GameEngine/Source/Common/BfmeConv432.cpp,matched,
 ?bfmeGoB3@BfmeObjB3@@QAEIXZ,,0x0040B300,212,game/GameEngine/Source/Common/Rva0040B300Argb.cpp,matched,Open-BFME5 convert 0x0040B300 ARGB pack from scaled floats
-?bfmeGoB7D0@Rva0045B7D0Base@@QAEXM@Z,,0x0045B7D0,25,game/GameEngine/Source/Common/Rva0045B7D0ScaledForwarder.cpp,matched,clean C++ scaled virtual forwarder; retail vtable slot 0x214 and pinned global 0x01075954; prior near miss fixed with minimal inline assembly
+?bfmeGoB7D0@Rva0045B7D0Base@@QAEXM@Z,,0x0045B7D0,25,game/GameEngine/Source/Common/Rva0045B7D0ScaledForwarder.cpp,matched,clean C++ scaled virtual forwarder; retail vtable slot 0x214 and pinned global;model=claude;host=vm 0x01075954; prior near miss fixed with minimal inline assembly
 ?bfmeGoB955@BfmeIter955@@QAEXXZ,,0x002340E0,62,game/GameEngine/Source/Common/BfmeConv955.cpp,matched,
 ?bfmeGoBBA@BfmeThingBBA@@QAEXXZ,,0x004B5A20,15,game/GameEngine/Source/Common/BfmeConv433.cpp,matched,
 ?bfmeGoBBC@@YAXXZ,,0x00584D60,15,game/GameEngine/Source/Common/BfmeConv435.cpp,matched,
