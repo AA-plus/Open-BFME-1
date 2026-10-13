@@ -37933,7 +37933,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00573c20@@YAXXZ,,0x00573C20,314,game/gen_asm/d_0056a2f0.asm,matched,gen-dump;ghidra=FUN_00973c20
 ?d_00574500@@YAXXZ,,0x00574500,1152,game/gen_asm/d_00572210.asm,matched,gen-dump;bounds=high
 ?d_00575b70@@YAXXZ,,0x00575B70,3413,game/gen_asm/d_00499050.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00975b70
-?d_0057a470@@YAXXZ,,0x0057A470,5296,game/gen_asm/d_00576c20.asm,matched,gen-dump;ghidra=FUN_0097a470
 ?d_0057edb0@@YAXXZ,,0x0057EDB0,514,game/gen_asm/d_0057da50.asm,matched,gen-dump;ghidra=FUN_0097edb0
 ?d_005805a0@@YAXXZ,,0x005805A0,1,game/GameEngine/Source/Common/Rva005805A0Noop.cpp,matched,carved one-byte ret body with no proven owner so address-derived name preserves identity
 ?d_005805b0@@YAXXZ,,0x005805B0,1,game/GameEngine/Source/Common/Rva005805B0Noop.cpp,matched,carved one-byte ret body with no proven owner
@@ -38221,7 +38220,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00763ac0@@YAXXZ,,0x00763AC0,1500,game/gen_asm/d_006e2ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00b63ac0
 ?d_00765b70@@YAXXZ,,0x00765B70,473,game/gen_asm/d_0075fb90.asm,matched,gen-dump;ghidra=FUN_00b65b70
 ?d_00765fb0@@YAXXZ,,0x00765FB0,2190,game/gen_asm/d_0075fb90.asm,matched,gen-dump;ghidra=FUN_00b65fb0
-?d_00766aa0@@YAXXZ,,0x00766AA0,3386,game/gen_asm/d_0075fb90.asm,matched,gen-dump;ghidra=FUN_00b66aa0
 ?d_00767fb0@@YAXXZ,,0x00767FB0,639,game/gen_asm/d_0075fb90.asm,matched,gen-dump;ghidra=FUN_00b67fb0
 ?d_0076b6e0@@YAXXZ,,0x0076B6E0,231,game/gen_asm/d_00752a20.asm,matched,gen-dump;bounds=high
 ?d_0076b980@@YAXXZ,,0x0076B980,953,game/gen_asm/d_00752a20.asm,matched,gen-dump;bounds=high
@@ -38564,7 +38562,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_009b2190@@YAXXZ,,0x009B2190,916,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00db2190
 ?d_009b5530@@YAXXZ,,0x009B5530,768,game/gen_asm/d_009af200.asm,matched,gen-dump;ghidra=FUN_00db5530
 ?d_009b6d80@@YAXXZ,,0x009B6D80,5028,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
-?d_009b8130@@YAXXZ,,0x009B8130,5572,game/gen_asm/d_00968910.asm,matched,gen-dump;bounds=high
 ?d_009bebb0@@YAXXZ,,0x009BEBB0,3721,game/gen_asm/d_009b6740.asm,matched,gen-dump;ghidra=FUN_00dbebb0
 ?d_009bfa40@@YAXXZ,,0x009BFA40,4068,game/gen_asm/d_009b6740.asm,matched,gen-dump;ghidra=FUN_00dbfa40
 ?d_009c2ce0@@YAXXZ,,0x009C2CE0,2374,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
@@ -172556,3 +172553,6 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ??0Rva006008D0@@QAE@PAXPAVV3HostRva005E7AD0@@@Z,,0x006008D0,178,game/masm_dumps/Rva006008D0Ctor.asm,matched,MASM dump re-homed from retired mis-anchored generateParticleInfo row 0x006008AF; ghidra/int3/ret boundary;identity_evidence/006008af-boundary.md;address-derived pinned name; ILT 0x00046E48 factory 0x005E7AD0;model=claude-opus-5-5;host=GreatFaram
 ??0BaseY005E7940@@QAE@PAVOwnerY005E7940@@@Z,,0x006009B0,440,game/masm_dumps/Rva006009B0Ctor.asm,matched,MASM dump re-homed from retired mis-anchored generateParticleInfo row 0x006008AF; ghidra/int3/ret boundary;identity_evidence/006008af-boundary.md;address-derived pinned name; ILT 0x00049184 factory 0x005E7940;model=claude-opus-5-5;host=GreatFaram
 ??0T1Base_00600BE0@@QAE@PAX0@Z,,0x00600BE0,440,game/masm_dumps/Rva00600BE0Ctor.asm,matched,MASM dump re-homed from retired mis-anchored generateParticleInfo row 0x006008AF; ghidra/int3/ret boundary;identity_evidence/006008af-boundary.md;address-derived pinned name; ILT 0x0000FB50 ctor 0x005E78A0;model=claude-opus-5-5;host=GreatFaram
+?forward00769C30@Rva00766AA0Owner@@QAE_NPAURva00766AA0Buffer@@VAsciiString@@PAPAX2@Z,,0x00766AA0,3386,game/masm_dumps/Rva00766AA0GeometryForward.asm,matched,MASM dump of the 00766AA0 gen-dump body under the pinned caller spelling; C++ bank targets/game/reverse/attempts/0x00766aa0.cpp compiles to 3386/3386B with 36 relocations and shape 1.000 but 82 non-relocation bytes are unreachable: 28 matrix-copy scratch-register rotation bytes at +0x15C..+0x1F8 and 54 x87 evaluation-order bytes in the corner dot products +0x828..+0xC09; measured over 8 prior verdicts plus this session's probe and rotation_sweep (38 toggles); dump byte-identical to retail outside reloc slots; evidence targets/game/reverse/identity_evidence/00766aa0-masm-codegen-blocker.md;model=gpt-5.2-codex;host=chalco.vps
+?_bfme_updateProfileDisplay@BfmeAptScreenSkirmish@@QAEXXZ,,0x0057A470,5296,game/masm_dumps/Rva0057A470UpdateProfileDisplay.asm,matched,MASM dump of the proven body; C++ bank compiles to 5296B shape 1.000 with 222 non-reloc stack-slot allocation bytes (head saved-esp one slot off); 25 verdicts plus EH and shape-family sweeps never moved a byte;model=gpt-5.2-codex;host=chalco.vps
+?Rva009B8130@@YAXXZ,,0x009B8130,5572,game/masm_dumps/Rva009B8130Vp6WideAccum.asm,matched,MASM dump of the proven VP6 wide reconstruct body; C++ bank 5572B with 33 non-reloc head bytes (plane/base/firstBlock register rotation and blockCount load scheduling); no pin proven so address-derived name retained;model=gpt-5.2-codex;host=chalco.vps
