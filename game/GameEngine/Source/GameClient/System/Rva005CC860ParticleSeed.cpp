@@ -1,7 +1,8 @@
-// ?seed@Rva005CC860Particle@@QAEXPAVBfmeSeedTarget@@@Z
-// partial score=0.83 date=2026-09-26
 // cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD
-// Retail seed/transfer method at 0x005CC860; class identity is not yet proven.
+// Transfer view retaining the bank's address-qualified identity.
+// Evidence: targets/game/reverse/identity_evidence/005cc860-handle-accessor.md
+
+struct Rva005CC860Coord3D { float x, y, z; };
 
 struct Rva005CC860Pair
 {
@@ -16,13 +17,13 @@ public:
     virtual void slot04();
     virtual void slot08();
     virtual void slot0C();
-    virtual bool skipTransfer();
+    virtual bool skipTransfer() const;
     virtual void slot14();
     virtual void slot18();
     virtual void slot1C();
     virtual void slot20();
     virtual void slot24();
-    virtual void beginPair(Rva005CC860Pair *pair);
+    virtual BfmeSeedTarget &beginPair(Rva005CC860Pair *pair);
     virtual void slot2C();
     virtual void slot30();
     virtual void slot34();
@@ -36,12 +37,12 @@ public:
     virtual void slot54();
     virtual void slot58();
     virtual void slot5C();
-    virtual void take60(void *field);
+    virtual BfmeSeedTarget &take60(Rva005CC860Coord3D *field);
     virtual void slot64();
     virtual void slot68();
     virtual void slot6C();
     virtual void slot70();
-    virtual void take74(void *field);
+    virtual BfmeSeedTarget &take74(void *field);
 };
 
 class Rva005CC860Notifier
@@ -53,13 +54,29 @@ public:
     virtual void notify(BfmeSeedTarget *target);
 };
 
+enum Rva005CC860Id { Rva005CC860Invalid = 0 };
+
 class Gen00001B18
 {
 public:
     unsigned char padding[0xac];
-    void *fieldAC;
+    Rva005CC860Id fieldAC;
+    // ?readSeedField@Gen00001B18@@QBE?AW4Rva005CC860Id@@XZ absent-from-retail
+    Rva005CC860Id readSeedField() const { return fieldAC; }
 };
 Gen00001B18 *Make00001B18();
+
+class Rva005CC860Handle
+{
+public:
+    Gen00001B18 *system;
+    void *previous;
+    void *next;
+    // ??BRva005CC860Handle@@QBE_NXZ absent-from-retail
+    operator bool() const { return system != 0; }
+    // ??CRva005CC860Handle@@QBEPAVGen00001B18@@XZ absent-from-retail
+    Gen00001B18 *operator->() const { return !system ? Make00001B18() : system; }
+};
 
 class Gen_005BDC70
 {
@@ -79,30 +96,24 @@ class Rva005CC860Particle
 {
 public:
     void seed(BfmeSeedTarget *target);
-    void *readSeedField() const;
+
 private:
     unsigned char padding[0x58];
     unsigned int field58;
-    unsigned int field5C;
-    unsigned char pad60[8];
+    Rva005CC860Coord3D field5C;
     unsigned int field68;
     unsigned int field6C;
     unsigned char pad70[0xc];
-    Gen00001B18 *volatile field7C;
-    unsigned char pad80[0xc];
+    Rva005CC860Handle field7C;
+    unsigned int field88;
+
     Rva005CC860Notifier *field8C;
     Rva005CC860Notifier *field90;
     Rva005CC860Notifier *field94;
     Y3NotifyTail_005C9740 field98;
 };
 
-void *Rva005CC860Particle::readSeedField() const
-{
-    Gen00001B18 *system = field7C;
-    if (!system) system = Make00001B18();
-    return system->fieldAC;
-}
-
+// ?seed@Rva005CC860Particle@@QAEXPAVBfmeSeedTarget@@@Z
 void Rva005CC860Particle::seed(BfmeSeedTarget *target)
 {
     if (target->skipTransfer())
@@ -121,6 +132,6 @@ void Rva005CC860Particle::seed(BfmeSeedTarget *target)
     target->take60(&field5C);
     target->take74(&field68);
     target->take74(&field6C);
-    void *value = field7C ? readSeedField() : 0;
+    Rva005CC860Id value = field7C ? field7C->readSeedField() : Rva005CC860Invalid;
     bfmeHandOver_0000240A(target, &value);
 }
