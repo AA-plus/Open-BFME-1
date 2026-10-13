@@ -37370,7 +37370,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_003ca9d0@@YAXXZ,,0x003CA9D0,673,game/gen_asm/d_002e22f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_007ca9d0
 ?d_003caeb0@@YAXXZ,,0x003CAEB0,782,game/gen_asm/d_003ca7c0.asm,matched,gen-dump;ghidra=FUN_007caeb0
 ?d_003cb640@@YAXXZ,,0x003CB640,248,game/gen_asm/d_002e22f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_007cb640
-?d_003cb790@@YAXXZ,,0x003CB790,334,game/gen_asm/d_003ca7c0.asm,matched,gen-dump;ghidra=FUN_007cb790
 ?d_003cc460@@YAXXZ,,0x003CC460,1,game/GameEngine/Source/Common/Rva003BTinyBodies.cpp,matched,opaque address-derived body with proven ret boundary
 ?d_003cc940@@YAXXZ,,0x003CC940,437,game/gen_asm/d_003ca7c0.asm,matched,gen-dump;ghidra=FUN_007cc940
 ?d_003ccb70@@YAXXZ,,0x003CCB70,400,game/gen_asm/d_003ca7c0.asm,matched,gen-dump;ghidra=FUN_007ccb70
@@ -172555,3 +172554,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?rva00431A60@GameClient@@UAEXPAVFrustumClass@@MP6AXPAVDrawable@@PAX@Z2@Z,,0x00431A60,357,game/GameEngine/Source/GameClient/GameClientRva00431A60Frustum.cpp,matched,GameClient slot 21 and complete camera caller prove owner and ABI;native vector temporary;identity-evidence=targets/game/reverse/identity_evidence/00431a60-frustum-native-vector.md;model=gpt-6.1-sol;host=reference-machine
 ?rva00082C20JF@BfmeXfJF@@QAE_NHHM@Z,,0x00082C20,997,game/GameEngine/Source/Common/GlobalDataLightingBlend00082C20.cpp,matched,bounds=high;thiscall bool(int int float);identity=address-derived;typed lighting view and complete inline slot-copy;proof=targets/game/reverse/identity_evidence/00082c20-lighting-blend-retry.md;model=gpt-6.1-sol;host=fleet
 ?set@CloudTextureShader007C34E0@@EAEHH@Z,,0x007C34E0,2117,game/GameEngineDevice/Source/W3DDevice/GameClient/CloudTextureShaderSet.cpp,matched,Cloud shader slot eleven; exact C++ with ordered snapshot initialization; evidence=targets/game/reverse/identity_evidence/007c34e0-ordered-initialization.md; identity=address-derived owner; descriptive cloud shader role retained;model=gpt-6.1-sol;host=conversion-worker
+?probe@Gen003BFB20Owner@@QAE_NPAX@Z,,0x003CB790,334,game/GameEngine/Source/GameLogic/LivingWorld/Gen003BFB20OwnerProbe.cpp,matched,Opaque bank name retained; complete caller and callee ABI audit; conditional removal and distinct canonical globals; evidence=targets/game/reverse/identity_evidence/003cb790-probe-control-flow.md;model=gpt-6.1-sol;host=fleet
