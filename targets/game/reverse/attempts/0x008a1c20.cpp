@@ -1,5 +1,5 @@
 // ?bfmeRemoveObjectA1C20@BfmeJ1017@@QAEXPAVBfmeObj4310@@@Z
-// partial score=0.55 date=2026-09-10
+// partial score=0.0459 date=2026-09-10
 // BFME object-removal helper reached by BfmeObj4310::bfmeCleanup at 0x008C3F10.
 // The caller leaves the BfmeJ1017 holder in ECX and passes the object on the
 // stack; the holder's 0x20-byte entries are drained through releaseAll.
