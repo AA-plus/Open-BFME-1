@@ -1,9 +1,9 @@
-// ?Rva00515810@BfmeAptScreenInGameChat@@QAEXXZ
-// partial score=0.95 date=2026-09-18
+// ?Rva00515810@AptInGameChat@@QAEXXZ
+// partial score=0.4726 date=2026-10-13
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringinline
 // stlport
 //
-// BfmeAptScreenInGameChat::Rva00515810, retail 0x00515810, 1166 bytes.
+// AptInGameChat::Rva00515810, retail 0x00515810, 1166 bytes.
 // The InitGadgets caller and its ILT pin prove this member identity. The body
 // preserves selected profile IDs, gathers buddy and request records, repaints
 // the friends list, and restores the selected rows.
@@ -132,7 +132,7 @@ extern Int Rva00515810AddEntry( GameWindow *listbox, Int profileID,
 	void *record, Color color );
 #pragma comment(linker, "/alternatename:?Rva00515810AddEntry@@YAHPAVGameWindow@@HPAXH@Z=?j_000208d3@@YAXXZ")
 
-class BfmeAptScreenInGameChat
+class AptInGameChat
 {
 public:
 	void Rva00515810();
@@ -144,12 +144,12 @@ private:
 	GameWindow *m_friendsList;
 };
 
-#pragma comment(linker, "/alternatename:?updateButtons@BfmeAptScreenInGameChat@@QAEXXZ=?j_00006f4b@@YAXXZ")
+#pragma comment(linker, "/alternatename:?updateButtons@AptInGameChat@@QAEXXZ=?j_00006f4b@@YAXXZ")
 
 // ?Rva00512890@@YGHHAAVUnicodeString@@@Z
 extern "C" int __stdcall Rva00512890( Int profileID, UnicodeString &result );
 
-void BfmeAptScreenInGameChat::Rva00515810()
+void AptInGameChat::Rva00515810()
 {
 	if ( m_friendsList == 0 || TheGameSpyInfo == 0 )
 		return;
@@ -172,15 +172,15 @@ void BfmeAptScreenInGameChat::Rva00515810()
 	previousTopIndex = GadgetListBoxGetTopVisibleEntry( m_friendsList );
 	GadgetListBoxReset( m_friendsList );
 	std::vector<Gen_t_00513940_m4pod> records;
-	BuddyInfoMap *buddies = TheGameSpyInfo->getBuddyMap();
-	for ( BuddyInfoMap::iterator it = buddies->begin(); it != buddies->end(); ++it )
+	BuddyInfoMap *buddyMap = TheGameSpyInfo->getBuddyMap();
+	for ( BuddyInfoMap::iterator it = buddyMap->begin(); it != buddyMap->end(); ++it )
 	{
 		Gen_t_00513940_m4pod record = { (Int)&it->second };
 		records.push_back( record );
 	}
 
-	BuddyInfoMap *requests = TheGameSpyInfo->getBuddyRequestMap();
-	for ( BuddyInfoMap::iterator it = requests->begin(); it != requests->end(); ++it )
+	buddyMap = TheGameSpyInfo->getBuddyRequestMap();
+	for ( BuddyInfoMap::iterator it = buddyMap->begin(); it != buddyMap->end(); ++it )
 	{
 		Gen_t_00513940_m4pod record = { (Int)&it->second };
 		records.push_back( record );
@@ -194,17 +194,24 @@ void BfmeAptScreenInGameChat::Rva00515810()
 		it != records.end(); ++it )
 	{
 		unsigned char *record = (unsigned char *)it->value;
-		Int profileID = *(Int *)record;
 		UnicodeString displayName;
-		Int state = Rva00512890( profileID, displayName );
+		Int state = Rva00512890( *(Int *)record, displayName );
 		Int color = 0;
-		if ( state == 1 )
-			color = 9;
-		else if ( state == 2 )
+		switch ( state )
+		{
+		case 1:
 			color = 8;
-		Int index = Rva00515810AddEntry( m_friendsList, profileID,
+			break;
+		case 2:
+			color = 9;
+			break;
+		case 4:
+			color = 0;
+			break;
+		}
+		Int index = Rva00515810AddEntry( m_friendsList, *(Int *)record,
 			record + 4, GameSpyColor[color] );
-		if ( selectedProfiles.find( profileID ) != selectedProfiles.end() )
+		if ( selectedProfiles.find( *(Int *)record ) != selectedProfiles.end() )
 			indicesToSelect.push_back( index );
 	}
 	std::sort( indicesToSelect.begin(), indicesToSelect.end() );
