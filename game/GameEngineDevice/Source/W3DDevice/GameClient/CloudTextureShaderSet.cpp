@@ -1,8 +1,7 @@
-// ?set@CloudTextureShader@@EAEHH@Z
-// partial score=0.9934 date=2026-10-13
+// ?set@CloudTextureShader007C34E0@@EAEHH@Z
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameNetwork /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Benchmark /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWAudio /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
-// CloudTextureShader uses native DX8 declarations and a counted texture return.
-// Evidence: targets/game/reverse/identity_evidence/007c34e0-cloud-set.md
+// CloudTextureShader007C34E0 uses native DX8 declarations and a counted texture return.
+// Evidence: targets/game/reverse/identity_evidence/007c34e0-ordered-initialization.md
 
 #define Matrix4x4 Matrix4
 #define private public
@@ -37,13 +36,17 @@ class BFMEValueName
 	TCHAR *m_Buffer;
 
 public:
-	BFMEValueName(int initial_len, bool hint_temporary)
+	BFMEValueName(int initial_len, bool hint_temporary, bool observed = false)
 		: m_Buffer(StringClass::m_EmptyString)
 	{
 		((StringClass *)this)->Get_String(initial_len, hint_temporary);
-		TCHAR null_char = g_bfmeCh1035;
-		TCHAR *buffer = m_Buffer;
-		*buffer = null_char;
+		if (observed) {
+			*(volatile TCHAR *)*(TCHAR *volatile *)&m_Buffer = g_bfmeCh1035;
+		} else {
+			TCHAR null_char = g_bfmeCh1035;
+			TCHAR *buffer = m_Buffer;
+			*buffer = null_char;
+		}
 	}
 
 	~BFMEValueName()
@@ -64,7 +67,7 @@ enum { BFME_SET_TSS_SLOT = 67 };
 		number_of_DX8_calls++;                                                               \
 	} else if (DX8Wrapper::TextureStageStates[stage_][state_] != (unsigned)(value_)) {       \
 		if (WW3D::Is_Snapshot_Activated()) {                                                 \
-			BFMEValueName value_name(0, true);                                               \
+			BFMEValueName value_name(0, true, (state_) == D3DTSS_ALPHAARG1 || (state_) == D3DTSS_ALPHAOP);                                               \
 			DX8Wrapper::Get_DX8_Texture_Stage_State_Value_Name(*(StringClass *)&value_name, \
 				(D3DTEXTURESTAGESTATETYPE)(state_), (value_));                               \
 			SNAPSHOT_SAY(("DX8 - SetTextureStageState(stage: %d, state: %s, value: %s)\n", \
@@ -126,7 +129,7 @@ public:
 };
 extern TerrainShader2Stage terrainShader2Stage;
 
-class CloudTextureShader : public W3DShaderInterface
+class CloudTextureShader007C34E0 : public W3DShaderInterface
 {
 	virtual int set(int stage);
 	virtual int init(void);
@@ -142,8 +145,8 @@ __forceinline void bfmeBindCloudTexture(unsigned stage, const BfmeHandleCX &text
 }
 
 /**Setup a certain texture stage to project our cloud texture*/
-// ?set@CloudTextureShader@@EAEHH@Z
-int CloudTextureShader::set(int stage)
+// ?set@CloudTextureShader007C34E0@@EAEHH@Z
+int CloudTextureShader007C34E0::set(int stage)
 {
 	Matrix4x4 curView;
 	DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
