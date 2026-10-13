@@ -87,7 +87,12 @@ def added_lift_lines(old, new, lines=None):
     # existing lift, not a new one: re_attempts 59794 added a tick parameter to
     # the unchanged naked CommUdpProcess so its C caller could pass it, and was
     # charged with adding a naked body. Only a line naming the same function
-    # cancels; an __emit line names none and always counts.
+    # cancels by name. An __emit line names none: it is forgiven only when no
+    # function in that file gains emitted bytes (emit_growth, OLD vs NEW file
+    # text, per function), so a hunk that merely re-shows a function's existing
+    # __emit lines passes (re_attempts 0x006D88A0, removing ~W3DBridge from
+    # W3DBridgeBuffer.cpp) while bytes removed from one function never pay
+    # for bytes added to another.
     removed, added, path = collections.Counter(), [], None
     for line in lines:
         if line.startswith("+++ b/"):
@@ -105,14 +110,78 @@ def added_lift_lines(old, new, lines=None):
                         removed[(path, name)] += 1
                 else:
                     added.append((path, name, line))
-    bad = {}
+    bad, grown = {}, {}
     for path, name, line in added:
         if name and removed[(path, name)]:
             removed[(path, name)] -= 1
             continue
+        if not name and LIFT_RE.search(COMMENT_RE.sub(" ", line[1:])) \
+                and not NAKED_RE.search(COMMENT_RE.sub(" ", line[1:])):
+            if path not in grown:
+                grown[path] = emit_growth(file_text(old, path), file_text(new, path))
+            if not grown[path]:
+                continue
         first, count = bad.get(path, (line[1:].strip()[:80], 0))
         bad[path] = (first, count + 1)
     return [(p, "%s  (%d such lines)" % (first, count)) for p, (first, count) in bad.items()]
+
+
+EMIT_BYTE_RE = re.compile(r"\b__?emit\s+(0[xX][0-9A-Fa-f]+|\d+)")
+
+
+def file_text(rev, path):
+    """Text of path at rev (":" = the index), "" when absent."""
+    data = blob(rev, path)
+    return "" if data is None else data.decode("utf-8", errors="replace")
+
+
+def emit_bytes_by_function(text):
+    """{function signature: Counter of emitted byte values} for a C++ text.
+
+    A top-level brace block whose header declares a function (a `name(`
+    declarator) is a function; any other block (namespace, class, extern "C")
+    is a container and is scanned inside. Emits outside every function are
+    keyed None."""
+    text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
+    text = re.sub(r"//[^\n]*", " ", text)
+    text = re.sub(r"(?m)^[ \t]*#.*$", " ", text)
+    text = re.sub(r'"(?:\\.|[^"\\\n])*"', '""', text)
+    owners, depth, func, func_depth, header = {}, 0, None, None, []
+    pos = 0
+    for match in re.finditer(r"[{};]|\b__?emit\s+(?:0[xX][0-9A-Fa-f]+|\d+)", text):
+        tok = match.group(0)
+        if func is None:
+            header.append(text[pos:match.start()])
+        pos = match.end()
+        if tok == "{":
+            if func is None:
+                head = " ".join("".join(header).split())
+                header = []
+                if declared_name(head):
+                    func, func_depth = head, depth
+            depth += 1
+        elif tok == "}":
+            depth -= 1
+            if func is not None and depth == func_depth:
+                func = None
+            header = []
+        elif tok == ";":
+            if func is None:
+                header = []
+        else:
+            value = EMIT_BYTE_RE.match(tok).group(1)
+            owners.setdefault(func, collections.Counter())[int(value, 16 if value[:2] in ("0x", "0X") else 10) & 0xFF] += 1
+    return owners
+
+
+def emit_growth(old_text, new_text):
+    """Functions whose emitted bytes grow from OLD to NEW (a new function with
+    any __emit counts). Bytes a deleted or shrunk function loses free nothing
+    for any other function."""
+    before = emit_bytes_by_function(old_text)
+    after = emit_bytes_by_function(new_text)
+    return sorted((str(k) for k, v in after.items()
+                   if v - before.get(k, collections.Counter())), key=str)
 
 
 _DECLSPEC_RE = re.compile(r"__declspec\s*\([^)]*\)")
