@@ -1,15 +1,5 @@
-// ?Rva009ADAA0@@YAXPAURva009AF200Context@@PAE1IIHPBI@Z
-// partial score=0.7538 date=2026-09-28
 // cl: /O2 /Ob0 /DNDEBUG /DWIN32 /D_WINDOWS /MD
-// ?Rva009ADAA0@@YAXPAURva009AF200Context@@PAE1IIHPBI@Z  retail 0x009ADAA0, 730 B (RET at +0x2D9; ledger 727 is truncated)
-// Shape: On2 VP3 postproc DeblockVerticalEdgesInLoopFilteredBand (tail band called last by
-// matched copyPlane009AF0D0), VP6 variant: QStep = QuantScale[ctx+0xC] outside the loop, FLimit =
-// QStep*QStep*3>>5 inside the band loop, Src/Des from 8*(CurrentFrag-StartFrag+1) (the
-// compiler forms Src[-3] as Des-3+distance), Sum1/Sum2 as two separate k loops, old-loopfilter
-// else arm through the ctx+0x38 bounding table and the 0x01356FE0 clamp table. Identity unproven: opaque name.
-// Probe --size 730: 726 B, 177 differing bytes, frame 0x40 exact; residue = register choice in
-// the last Sum2 ABS (+0x16D) and the running-sum tail from +0x217.
-extern const unsigned char g_bfmeClampTable[];
+extern unsigned char g_bfmeClampTable[];
 
 struct Rva009AF200Context
 {
@@ -24,6 +14,8 @@ struct Rva009AF200Context
 
 #define ABS(x) ((x) > 0 ? (x) : -(x))
 
+// ?Rva009ADAA0@@YAXPAURva009AF200Context@@PAE1IIHPBI@Z
+// The matched plane copier supplies the final eight-row band.
 void Rva009ADAA0(Rva009AF200Context *pbi, unsigned char *SrcPtr,
 	unsigned char *DesPtr, unsigned int PlaneLineStep,
 	unsigned int FragsAcross, int StartFrag, const unsigned int *QuantScale)
@@ -72,18 +64,14 @@ void Rva009ADAA0(Rva009AF200Context *pbi, unsigned char *SrcPtr,
 				Des[-2] = (unsigned char)((Sum1 + x[3]) >> 3);
 				Sum1 += x[7] - x[0];
 				Des[-1] = (unsigned char)((Sum1 + x[4]) >> 3);
-				Sum1 += x[8] - x[1];
-				Des[0] = (unsigned char)((Sum1 + x[5]) >> 3);
-				Sum1 += x[9] - x[2];
-				Des[1] = (unsigned char)((Sum1 + x[6]) >> 3);
-				Sum1 += x[9] - x[3];
-				Des[2] = (unsigned char)((Sum1 + x[7]) >> 3);
-				Sum1 += x[9] - x[4];
-				Des[3] = (unsigned char)((Sum1 + x[8]) >> 3);
+				for (k = 0; k < 4; ++k) {
+					Sum1 += x[k == 0 ? 8 : 9] - x[k + 1];
+					Des[k] = (unsigned char)((Sum1 + x[k + 5]) >> 3);
+				}
 			} else {
 				FiltVal = pbi->m_bounding[(x[3] - x[4] * 3 + x[5] * 3 - x[6] + 4) >> 3];
-				Des[-1] = g_bfmeClampTable[x[4] + FiltVal];
-				Des[0] = g_bfmeClampTable[x[5] - FiltVal];
+				Des[-1] = g_bfmeClampTable[x[4] + FiltVal + 256];
+				Des[0] = g_bfmeClampTable[x[5] - FiltVal + 256];
 			}
 
 			Src += PlaneLineStep;
