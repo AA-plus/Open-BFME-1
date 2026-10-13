@@ -37,6 +37,7 @@ extern void rva00036458Target(void);
 extern void rva00037F4CTarget(void);
 extern void rva00044BFCTarget(void);
 extern void rva0004B0F1Target(void);
+extern void rva0003E22ATarget(void);
 extern void rva00037619Target(void);
 extern void rva00030512Target(void);
 extern void rva0002BFF8Target(void);
@@ -88,6 +89,7 @@ extern void rva00044E31Target(void);
 #pragma comment(linker, "/alternatename:?rva00044BFCTarget@@YAXXZ=?getInstance@?$ConcreteModuleClass@V?$ModuleTag@$07$E?LIFE_EVENT_MODULE_KEY@FXParticleSystem@@3QBDB$E?LIFE_EVENT_MODULE_NAME@2@3QBDBVLifeEventModule@2@VLifeEventModuleTemplate@2@VParticleLifeEventModule@2@VParticleLifeEventModuleTemplate@2@@FXParticleSystem@@@FXParticleSystem@@SAABV12@XZ")
 #pragma comment(linker, "/alternatename:?rva00044E31Target@@YAXXZ=??1LifeEventModuleTemplate@FXParticleSystem@@UAE@XZ")
 #pragma comment(linker, "/alternatename:?rva0004B0F1Target@@YAXXZ=?getInstance@?$ConcreteModuleClass@V?$ModuleTag@$03$E?HEMISPHERICAL_EMISSION_VELOCITY_MODULE_KEY@FXParticleSystem@@3QBDB$E?HEMISPHERICAL_EMISSION_VELOCITY_MODULE_NAME@2@3QBDBVHemisphericalEmissionVelocityModule@2@VHemisphericalEmissionVelocityModuleTemplate@2@V?$DefaultParticleModule@$03@2@V?$DefaultParticleModuleTemplate@$03@2@@FXParticleSystem@@@FXParticleSystem@@SAABV12@XZ")
+#pragma comment(linker, "/alternatename:?rva0003E22ATarget@@YAXXZ=Gen_treeraw_005d2df0")
 #pragma comment(linker, "/alternatename:?rva00037619Target@@YAXXZ=??0BunkerBusterBehavior@@QAE@PAVThing@@PBVModuleData@@@Z")
 #pragma comment(linker, "/alternatename:?rva00030512Target@@YAXXZ=?insert_unique@?$_Rb_tree@HU?$pair@$$CBHUGen_t_001423b0_p12cd@@@_STL@@U?$_Select1st@U?$pair@$$CBHUGen_t_001423b0_p12cd@@@_STL@@@2@U?$less@H@2@V?$allocator@U?$pair@$$CBHUGen_t_001423b0_p12cd@@@_STL@@@2@@_STL@@QAE?AU?$_Rb_tree_iterator@U?$pair@$$CBHUGen_t_001423b0_p12cd@@@_STL@@U?$_Nonconst_traits@U?$pair@$$CBHUGen_t_001423b0_p12cd@@@_STL@@@2@@2@U32@ABU?$pair@$$CBHUGen_t_001423b0_p12cd@@@2@@Z")
 #pragma comment(linker, "/alternatename:?rva0002BFF8Target@@YAXXZ=??0KeepObjectDieModuleData@@QAE@XZ")
@@ -354,4 +356,9 @@ void j_00030512(void)
 void j_00037619(void)
 {
 	rva00037619Target();
+}
+
+void j_0003E22A(void)
+{
+	rva0003E22ATarget();
 }
