@@ -1,13 +1,11 @@
 // ?placeAt001AD080@Rva001AD080TerrainLogic@@QAEXPBVThingTemplate@@PBUCoord3D@@PBVMatrix3D@@M@Z
-// partial score=0.8266 date=2026-09-28
-// cl: /DNDEBUG /MD /EHsc- /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS /Iinputs/reference/shims/stringinline
+// partial score=0.9714 date=2026-10-13
+// cl: /DNDEBUG /MD /EHsc- /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
-// Retail RVA 0x001AD080, 594 bytes. Tree placement: needs a W3DTreeDrawModule, links the record into its bucket.
-// Residue: retail keeps this in EBX and position in EDI; this form swaps them (see build/r1ad080 in the seat).
 
 #include <vector>
 
-#include "StringInline.h"
+#include "ascii_string.h"
 
 typedef unsigned short UnsignedShort;
 typedef unsigned int UnsignedInt;
@@ -263,10 +261,13 @@ void Rva001AD080TerrainLogic::placeAt001AD080(const ThingTemplate *thingTemplate
 	if (candidateLimit > 0) limit=candidateLimit;
 	Int oldValue = m_value3c;
 	++m_value3c;
-	unsigned char f2c=templatePtr->m_field48b; unsigned char f2d=templatePtr->m_field48c;
+	unsigned char f2d = templatePtr->m_field48c;
+	unsigned char f2c = templatePtr->m_field48b;
 	Rva001AD080Record record(*position,id,oldValue,templatePtr,limit,f2c,f2d,oldWord);
 	m_records.push_back(record);
+	Int shadowType = templatePtr->m_field482;
+	const AsciiString &nameString = templatePtr->m_nameString;
+	const AsciiString &shadowTextureName = templatePtr->m_shadowTextureName;
 	g_bfmeTerrainVisual->slot33(id, *position, extra, matrix, 0, found,
-		templatePtr->m_field482, templatePtr->m_shadowTextureName,
-		templatePtr->m_nameString);
+		shadowType, shadowTextureName, nameString);
 }
