@@ -1,9 +1,8 @@
 // ?rva001FE970@GettingBuiltBehavior@@QAEXXZ
-// partial score=0.9528 date=2026-10-09
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 #define OBJECT_TU_MEMBERS bool bfmeGetRecentDamageSource(unsigned int *, unsigned int) const;
-#include "../../../../game/GameEngine/Source/GameLogic/Object/object.h"
-#include "../../../../game/Libraries/Source/WWVegas/WWLib/ascii_string.h"
+#include "../object.h"
+#include "../../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
 template <typename T>
 __forceinline bool StringBase<T>::isEmpty() const
@@ -87,7 +86,8 @@ void GettingBuiltBehavior::rva001FE970()
         return;
     typedef bool (Rva0004B015Carrier::*AvailableFn)() const;
     union { void (*fn)(); AvailableFn call; } available = { j_0004b015 };
-    Module *module = rva0036BB10FindCastleMemberBehavior(m_object);
+    Object *moduleObject = m_object;
+    Module *module = rva0036BB10FindCastleMemberBehavior(moduleObject);
     Rva0036BB10ModuleView *view = (Rva0036BB10ModuleView *)module;
     if (module && view->m_field14 && !view->m_field24 && ((Rva0004B015Carrier *)module->*available.call)())
         return;
