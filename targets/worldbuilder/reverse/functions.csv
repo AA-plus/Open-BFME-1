@@ -10,3 +10,4 @@ name,target_rva,target_size,status,source,profile,evidence,model
 ?OnUpdateWindowPreview640x480@CWB3dFrameWnd@@IAEXPAVCCmdUI@@@Z,0x000CC512,44,matched,worldbuilder/WBFrameWnd.cpp,editor-size,mfc:CWB3dFrameWnd::OnUpdateWindowPreview640x480,gpt-6
 ?OnUpdateViewShowtexture@CWorldBuilderView@@IAEXPAVCCmdUI@@@Z,0x001044C3,28,matched,worldbuilder/WorldBuilderView.cpp,editor-size,mfc:CWorldBuilderView::OnUpdateViewShowtexture,gpt-6
 ?OnEditLinkCenters@CWorldBuilderDoc@@IAEXXZ,0x000F9420,11,matched,worldbuilder/WorldBuilderDoc.cpp,editor-size,mfc:CWorldBuilderDoc::OnEditLinkCenters,claude-opus-5-5
+?OnUpdateEditLinkCenters@CWorldBuilderDoc@@IAEXPAVCCmdUI@@@Z,0x000F942D,25,matched,worldbuilder/WorldBuilderDoc.cpp,editor-size,mfc:CWorldBuilderDoc::OnUpdateEditLinkCenters,claude-opus-5-5

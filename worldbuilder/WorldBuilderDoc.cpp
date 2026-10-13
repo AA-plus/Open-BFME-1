@@ -8,9 +8,15 @@ class CWorldBuilderDoc
 
 protected:
     void OnEditLinkCenters();
+    void OnUpdateEditLinkCenters(CCmdUI *pCmdUI);
 };
 
 void CWorldBuilderDoc::OnEditLinkCenters()
 {
     m_linkCenters = !m_linkCenters;
+}
+
+void CWorldBuilderDoc::OnUpdateEditLinkCenters(CCmdUI *pCmdUI)
+{
+    pCmdUI->SetCheck(m_linkCenters ? 1 : 0);
 }
