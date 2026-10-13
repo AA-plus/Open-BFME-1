@@ -1,5 +1,5 @@
 // ?rva00150A70@AIGroup@@QAEXPAUCoord3D@@PBU2@H@Z
-// partial score=0.984 date=2026-09-27
+// partial score=0.884 date=2026-10-13
 // cl: /DNDEBUG /MD /EHsc
 // AIGroup methods that walk the member list.
 //
@@ -79,7 +79,14 @@ class PolygonTrigger;
 
 enum GuardMode { BFME_GUARD_MODE_NORMAL };
 
-#include "../../game/GameEngine/Source/GameLogic/command_source_type.h"
+enum CommandSourceType
+{
+    CMD_FROM_PLAYER = 0,
+    CMD_FROM_SCRIPT = 1,
+    CMD_FROM_AI = 2,
+    CMD_FROM_DOZER = 3,
+    CMD_DEFAULT_SWITCH_WEAPON = 4
+};
 
 enum NameKeyType { NAMEKEY_INVALID = 0 };
 enum IterOrderType { ITER_FASTEST = 0, ITER_SORTED_NEAR_TO_FAR = 1 };
