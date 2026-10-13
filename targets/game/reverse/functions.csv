@@ -38210,7 +38210,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_007aaa30@@YAXXZ,,0x007AAA30,244,game/gen_asm/d_007aaa30.asm,matched,gen-dump;switch-carved start=int3-aligned end=switch-table+int3 refs=0
 ?d_007ab170@@YAXXZ,,0x007AB170,1,game/GameEngine/Source/Common/Rva007AB170NoOp.cpp,matched,carved one-byte ret; identity remains address-derived
 ?d_007af200@@YAXXZ,,0x007AF200,100,game/gen_asm/d_007a4d40.asm,matched,gen-dump;ghidra=FUN_00baf200
-?d_007af400@@YAXXZ,,0x007AF400,122,game/gen_asm/d_007a4d40.asm,matched,gen-dump;ghidra=FUN_00baf400
 ?d_007af940@@YAXXZ,,0x007AF940,282,game/gen_asm/d_007a4d40.asm,matched,gen-dump;ghidra=FUN_00baf940
 ?d_007afd10@@YAXXZ,,0x007AFD10,396,game/gen_asm/d_007a4d40.asm,matched,gen-dump;ghidra=FUN_00bafd10
 ?d_007b23f0@@YAXXZ,,0x007B23F0,4823,game/gen_asm/d_00776ac0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00bb23f0
@@ -172555,3 +172554,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?DivideInternalFPF@@YAXPAUInternalFPF@@00@Z,,0x00879F60,801,game/Libraries/Source/Benchmark/emfloat.cpp,matched,BYTEmark division identified by complete SetupCPUEmFloatArrays and DoEmFloatIteration callers; private register ABI; complete switch tables; induction-origin reduction; evidence=targets/game/reverse/identity_evidence/00879f60-loop-origin.md;model=gpt-6.1-sol;host=fleet
 ?update@Rva0040EE90Owner@@QAEXXZ,,0x0040EE90,282,game/GameEngine/Source/GameClient/Rva0040EE90OwnerUpdate.cpp,matched,Address-derived no-argument thiscall; exact pre-decrement predicate scheduling; evidence=targets/game/reverse/identity_evidence/0040ee90-update.md;model=gpt-6.1-sol;host=fleet
 ?bfmeSetupXA@BfmePoolXA@@QAEXPAVBfmeSpecXA@@@Z,,0x008C6130,234,game/Libraries/Source/Apt/BfmePoolXA008C6130Setup.cpp,matched,cpp-reconstruction;inherited opaque storage views;counter assignment view matches tail;evidence=targets/game/reverse/identity_evidence/008c6130-counter-assignment-view.md;model=gpt-6.1-sol;host=fleet
+??0W3DShadowTexture@@QAE@XZ,,0x007AF400,122,game/GameEngineDevice/Source/W3DDevice/GameClient/Shadow/W3DShadowTextureConstructor.cpp,matched,ZH W3DShadowTexture ctor with BFME null texture and empty name; stamps recorded W3DShadowTexture vftables; ILT 0x000455F7 oracle CONFIRMED;model=claude;host=vm
