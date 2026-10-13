@@ -185,3 +185,63 @@ def test_stale_without_receipts_says_normal_cache(tmp_path, monkeypatch):
     why = {}
     assert census.stale_objects([obj], {obj: tmp_path / "f.cpp"}, why) == [obj]
     assert census.describe_stale([obj], why) == "1 stale objects: f.obj (normal cache not current)"
+
+
+def _stale_after(flag, obj):
+    """A stale_objects stand-in: current until flag is set, then obj is stale."""
+    def stale(present, sources, why=None):
+        if not flag:
+            return []
+        if why is not None:
+            why[obj] = "receipt inputs differ: preprocessed inputs"
+        return [obj]
+    return stale
+
+
+def test_pre_link_refusal_names_objects_and_why(tmp_path, monkeypatch):
+    obj = tmp_path / "pre.obj"
+    monkeypatch.setattr(census, "ledger", lambda: [])
+    monkeypatch.setattr(census, "verify_data_objects", lambda: None)
+    monkeypatch.setattr(census, "objects", lambda rows: ([obj], []))
+    monkeypatch.setattr(census, "_object_sources", lambda rows: {obj: tmp_path / "pre.cpp"})
+    monkeypatch.setattr(census, "stale_objects", _stale_after([1], obj))
+    monkeypatch.setattr(census, "link", lambda *a, **k: pytest.fail("linked past a stale object"))
+    with pytest.raises(SystemExit, match=r"1 stale objects: pre\.obj \(receipt inputs differ.*rerun with --build"):
+        census.main([])
+
+
+def test_record_selection_link_refusal_names_objects(tmp_path, monkeypatch):
+    obj, flag = tmp_path / "sel.obj", []
+    monkeypatch.setattr(census, "verify_data_objects", lambda: None)
+    monkeypatch.setattr(census.subprocess, "run", lambda *a, **k: SimpleNamespace(stdout="", returncode=0))
+    monkeypatch.setattr(census, "objects", lambda rows: ([obj], []))
+    monkeypatch.setattr(census, "_object_sources", lambda rows: {obj: tmp_path / "sel.cpp"})
+    monkeypatch.setattr(census, "stale_objects", _stale_after(flag, obj))
+    monkeypatch.setattr(census, "read_history", lambda: [])
+    monkeypatch.setattr(census, "head", lambda: "c0ffee")
+    monkeypatch.setattr(census, "final_log", lambda c: "")
+    monkeypatch.setattr(census, "read_facts", lambda present, rows: {})
+    monkeypatch.setattr(census, "selection_link", lambda present, log: flag.append(1) or "")
+    monkeypatch.setattr(census, "selected_definitions", lambda text: {})
+    monkeypatch.setattr(census, "validate_fact_snapshots", lambda present, facts: None)
+    monkeypatch.setattr(census, "write_status", lambda *a, **k: pytest.fail("recorded past a stale object"))
+    with pytest.raises(SystemExit, match=r"during the selection link; nothing recorded \(1 stale objects: sel\.obj"):
+        census.record({"missing": 0, "when": "now"}, [])
+
+
+def test_selected_main_selection_link_refusal_names_objects(tmp_path, monkeypatch):
+    obj, flag = tmp_path / "map.obj", []
+    monkeypatch.setattr(census, "read_history", lambda: [{"commit": "c0ffee"}])
+    monkeypatch.setattr(census.subprocess, "run", lambda *a, **k: SimpleNamespace(stdout="", returncode=0))
+    monkeypatch.setattr(census, "ledger", lambda: [])
+    monkeypatch.setattr(census, "verify_data_objects", lambda: None)
+    monkeypatch.setattr(census, "objects", lambda rows: ([obj], []))
+    monkeypatch.setattr(census, "_object_sources", lambda rows: {obj: tmp_path / "map.cpp"})
+    monkeypatch.setattr(census, "stale_objects", _stale_after(flag, obj))
+    monkeypatch.setattr(census, "final_log", lambda c: "")
+    monkeypatch.setattr(census, "read_facts", lambda present, rows: {})
+    monkeypatch.setattr(census, "selection_link", lambda present, log: flag.append(1) or "")
+    monkeypatch.setattr(census, "validate_fact_snapshots", lambda present, facts: None)
+    monkeypatch.setattr(census, "STATUS", tmp_path / "missing_status.csv")
+    with pytest.raises(SystemExit, match=r"during the selection link; rerun the census \(1 stale objects: map\.obj"):
+        census.selected_main()

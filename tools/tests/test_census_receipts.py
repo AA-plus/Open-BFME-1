@@ -515,5 +515,27 @@ def test_failed_preprocessor_raises_proof_failed(tmp_path, monkeypatch):
     source, header, obj, command, env, _ = fixture(tmp_path, monkeypatch)
     monkeypatch.setattr(proofs, 'capture_preprocessor',
                         lambda cmd, env: SimpleNamespace(returncode=2, stdout=b'', stderr=b'C1083'))
-    with pytest.raises(proofs.ProofFailed, match='preprocessor failed'):
+    with pytest.raises(proofs.ProofFailed, match='preprocessor failed: C1083'):
         proofs.snapshot(source, command, env)
+
+
+def test_preprocessor_failure_names_the_error_not_include_notes():
+    notes = b"".join(b"Note: including file: C:\\long\\include\\path\\header_%03d.h\r\n" % i for i in range(60))
+    error = b"a.cpp(1) : fatal error C1083: Cannot open include file: 'h.h': No such file or directory\r\n"
+    text = proofs.preprocessor_failure(notes + error)
+    assert text.startswith("preprocessor error: a.cpp(1) : fatal error C1083")
+    assert "Note: including file" not in text
+    assert proofs.preprocessor_failure(b"x.h(3) : #error unsupported\n").startswith("preprocessor error: x.h(3) : #error")
+    assert proofs.preprocessor_failure(notes + b"preprocessor timed out after 600 s\n") == \
+        "preprocessor failed: preprocessor timed out after 600 s"
+
+
+def test_twice_failed_proof_reason_keeps_the_real_error(tmp_path, monkeypatch):
+    source, header, obj, command, env, _ = fixture(tmp_path, monkeypatch)
+    receipt = proofs.Receipts(tmp_path / 'inputs.json')
+    assert build.try_compile_source(source, obj, input_proof=receipt)[0]
+    notes = b"".join(b"Note: including file: C:\\long\\include\\path\\header_%03d.h\r\n" % i for i in range(60))
+    monkeypatch.setattr(proofs, 'capture_preprocessor', lambda cmd, env: SimpleNamespace(
+        returncode=2, stdout=b'', stderr=notes + b"a.cpp(1) : fatal error C1083: Cannot open include file\r\n"))
+    assert not receipt.current(source, obj)
+    assert "preprocessor error: a.cpp(1) : fatal error C1083" in receipt.why[str(obj)]

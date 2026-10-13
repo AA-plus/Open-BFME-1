@@ -149,6 +149,23 @@ def capture_preprocessor(command, env):
         timeout_note=b"preprocessor timed out after %g s (BFME_PREPROCESS_TIMEOUT)" % timeout)
 
 
+_ERROR_LINE = re.compile(r'\b(?:fatal error|error)\b|#error', re.IGNORECASE)
+
+
+def preprocessor_failure(stderr):
+    """Name the compiler's own error, not the /showIncludes notes before it.
+
+    A real input change (C1083, #error) must read differently from a flake
+    such as a timeout, which has no error line."""
+    lines = [line.strip() for line in stderr.decode("latin-1").splitlines()
+             if line.strip() and not line.lstrip().startswith("Note: including file:")]
+    tail = " | ".join(lines)[-1200:]
+    errors = [line for line in lines if _ERROR_LINE.search(line)]
+    if errors:
+        return f"preprocessor error: {errors[0]}" + (f" (then: {tail})" if len(lines) > 1 else "")
+    return "preprocessor failed: " + tail
+
+
 def snapshot(source, command, env):
     # VC7.1 ML /EP fails with A1018 writing NUL; do not treat its partial output
     # as complete input evidence. Header-free assembler uses the normal cache.
@@ -163,7 +180,7 @@ def snapshot(source, command, env):
     except OSError as error:
         raise ProofFailed(f"preprocessor did not run: {error}") from error
     if result.returncode:
-        raise ProofFailed("preprocessor failed: " + result.stderr.decode("latin-1")[-1200:])
+        raise ProofFailed(preprocessor_failure(result.stderr))
     # MSVC 7.1 ignores /D and /U attempts to replace these reserved macros.
     # Token-pasting can construct their names without a literal source token.
     # Their expansion is a date/time string (also in #line/include operands),
