@@ -11,3 +11,4 @@ name,target_rva,target_size,status,source,profile,evidence,model
 ?OnUpdateViewShowtexture@CWorldBuilderView@@IAEXPAVCCmdUI@@@Z,0x001044C3,28,matched,worldbuilder/WorldBuilderView.cpp,editor-size,mfc:CWorldBuilderView::OnUpdateViewShowtexture,gpt-6
 ?OnEditLinkCenters@CWorldBuilderDoc@@IAEXXZ,0x000F9420,11,matched,worldbuilder/WorldBuilderDoc.cpp,editor-size,mfc:CWorldBuilderDoc::OnEditLinkCenters,claude-opus-5-5
 ?OnUpdateEditLinkCenters@CWorldBuilderDoc@@IAEXPAVCCmdUI@@@Z,0x000F942D,25,matched,worldbuilder/WorldBuilderDoc.cpp,editor-size,mfc:CWorldBuilderDoc::OnUpdateEditLinkCenters,claude-opus-5-5
+?OnUpdateViewShowwireframe@WbView3d@@IAEXPAVCCmdUI@@@Z,0x000D5273,28,matched,worldbuilder/wbview3d.cpp,editor-size,mfc:WbView3d::OnUpdateViewShowwireframe,claude-opus-5-5
