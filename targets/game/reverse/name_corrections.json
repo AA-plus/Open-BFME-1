@@ -19748,5 +19748,15 @@
   "after_sha256": "3e5c6fe447ee06e0e932678641cefb9bf12fe8e1a95d077a72c70e83cc3fd23e",
   "evidence": "targets/game/reverse/identity_evidence/00299080-one-ring-penalty-spawn.md",
   "reason": "PathfindLayer::isPointOnWall is refuted for 0x00299080: the body takes no stack arguments, does nothing isPointOnWall does, and tags its random draw with OneRingPenaltyUpdate.cpp; the method name is unproven, so it keeps its address (rva00299080)."
+ },
+ {
+  "old_path": "targets/game/reverse/functions.csv",
+  "new_path": "targets/game/reverse/functions.csv",
+  "old_name": "getModuleNameKey",
+  "new_name": "rva001F8AB0",
+  "before_sha256": "0c44546f85fae95e094c4c76272a12529c7d086f5d6eb251c02e8b7f426f3fb9",
+  "after_sha256": "698725ec9925c2a51af48cc087d7b17b2896641dd39715a0de7e7878d49ba7c0",
+  "evidence": "targets/game/reverse/identity_evidence/001f8ab0-dynamic-portal-lookup.md",
+  "reason": "WorkerAIUpdate::getModuleNameKey is refuted for 0x001F8AB0: the body ignores ecx, reads an Object from its one stack argument and returns that object's DynamicPortalBehaviour module (cdecl); the EA name is unproven, so it keeps its address (rva001F8AB0)."
  }
 ]
