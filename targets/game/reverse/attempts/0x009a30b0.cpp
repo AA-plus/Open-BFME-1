@@ -1,5 +1,5 @@
 // ?bfmeTwoCGD@BfmeThingCGD@@QAEXXZ
-// partial score=0.264264 date=2026-09-28
+// partial score=0.8769 date=2026-10-13
 // BfmeThingCGD::bfmeTwoCGD; identity witnessed by BfmeConv597.cpp.
 struct Rva009A30B0Vector { float x,y,z; Rva009A30B0Vector(const Rva009A30B0Vector &v) : x(v.x), y(v.y), z(v.z) {} };
 struct Rva009A30B0Interface {
@@ -32,7 +32,7 @@ public:
             fieldc064 = buckets[fieldc060];
         }
         Rva009A30B0Record *p = fieldc064;
-        fieldc064 = p->next;
+        fieldc064 = fieldc064->next;
         return p;
     }
 };
