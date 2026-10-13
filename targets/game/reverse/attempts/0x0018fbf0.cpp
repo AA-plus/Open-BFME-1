@@ -1,24 +1,31 @@
 // ?bfmeClipSegment6DF730@BfmePolygon6DF1F0@@QBEDPBUBfmeCoord6DF1F0@@0PAU2@H@Z
-// partial score=0.8139 date=2026-10-03
+// partial score=0.898 date=2026-10-13
 // cl: /O2 /G6 /DNDEBUG /MD /EHsc- /Igame/Libraries/Source/WWVegas/WWMath
 #include "coord3d.h"
 #include <math.h>
-// Existing caller ABI from Rva006DF730ClampToArea.cpp. Polygon layout is
-// witnessed by PolygonTrigger_pointInTrigger.cpp and retail +0x10/+0x14.
-// 0x0018FBF0..0x0018FFA7: 951 bytes; all exits use ret 0x10.
-// Existing caller identity retained, including its char result and int flags.
-// Retail tests only the low byte of flags. The semantic original name remains
-// unknown. Intended home: GameEngine/Source/GameLogic/Map/PolygonTriggerClipSegment.cpp.
-// The coordinate records here retain the established caller ABI; Coord3D's
-// existing header supplies the actual normalize() callee declaration.
-struct BfmeCoord6DF1F0 { float x, y, z; };
+
+// The caller and PolygonTrigger neighbor witness this address-derived ABI.
+// The shared Coord3D declaration supplies the normalize receiver layout.
+struct BfmeCoord6DF1F0 {
+    float x, y, z;
+    // ?add@BfmeCoord6DF1F0@@QAEXPBU1@@Z absent-from-retail
+    void add(const BfmeCoord6DF1F0 *a) { x += a->x; y += a->y; z += a->z; }
+    // ?set@BfmeCoord6DF1F0@@QAEXMMM@Z absent-from-retail
+    void set(float ax, float ay, float az) { x = ax; y = ay; z = az; }
+};
 struct ClipPoint0018FBF0 { int x, y, z; };
 struct ClipPair0018FBF0 { float x, y; };
-extern bool IntersectLine2D(const Coord2D *, const Coord2D *, const Coord2D *, const Coord2D *, Coord2D *);
-// Authentic visible helper from coord3d.cpp; independently probes 79/79
-// at RVA 0x000FB930. Visibility improves the caller to 949/951 bytes,
-// 173 raw differences; the remaining x87/local-lifetime mismatch is unlanded.
-__declspec(noinline) void Coord3D::normalize()
+
+extern "C" void __cdecl __identifier("?j_00033b90@@YAXXZ")();
+// ?IntersectLine2D0018FBF0@@YA_NPBVCoord2D@@000PAV1@@Z absent-from-retail
+static __forceinline bool IntersectLine2D0018FBF0(const Coord2D *a, const Coord2D *b, const Coord2D *c, const Coord2D *d, Coord2D *result)
+{
+    return ((bool (__cdecl *)(const Coord2D *, const Coord2D *, const Coord2D *, const Coord2D *, Coord2D *))&__identifier("?j_00033b90@@YAXXZ"))(a, b, c, d, result);
+}
+
+// The visible helper preserves the caller's native register contract.
+// Inline linkage keeps its existing translation unit as the strong owner.
+__declspec(noinline) inline void Coord3D::normalize()
 {
     float len = (float)sqrt(x*x + y*y + z*z);
     if (len != 0.0f) {
@@ -26,6 +33,7 @@ __declspec(noinline) void Coord3D::normalize()
         x *= scale; y *= scale; z *= scale;
     }
 }
+
 class BfmePolygon6DF1F0 {
     char m_unmodelled00[0x10];
     ClipPoint0018FBF0 *m_points;
@@ -35,6 +43,17 @@ public:
     char bfmeClipSegment6DF730(const BfmeCoord6DF1F0 *from,
         const BfmeCoord6DF1F0 *to, BfmeCoord6DF1F0 *clipped, int flags) const;
 };
+
+extern "C" void __cdecl __identifier("?j_0000a7db@@YAXXZ")();
+// ?bfmeContains6DF1F0@BfmePolygon6DF1F0@@QBEDABUBfmeCoord6DF1F0@@@Z absent-from-retail
+inline char BfmePolygon6DF1F0::bfmeContains6DF1F0(const BfmeCoord6DF1F0 &point) const
+{
+    union { void (__cdecl *symbol)(); char (BfmePolygon6DF1F0::*member)(const BfmeCoord6DF1F0 &) const; } contains;
+    contains.symbol = &__identifier("?j_0000a7db@@YAXXZ");
+    return (this->*contains.member)(point);
+}
+
+// ?bfmeClipSegment6DF730@BfmePolygon6DF1F0@@QBEDPBUBfmeCoord6DF1F0@@0PAU2@H@Z present-unmatched
 char BfmePolygon6DF1F0::bfmeClipSegment6DF730(const BfmeCoord6DF1F0 *from,
     const BfmeCoord6DF1F0 *to, BfmeCoord6DF1F0 *clipped, int flags) const
 {
@@ -53,14 +72,15 @@ char BfmePolygon6DF1F0::bfmeClipSegment6DF730(const BfmeCoord6DF1F0 *from,
         ClipPair0018FBF0 a = {(float)pt1.x, (float)pt1.y};
         ClipPair0018FBF0 b = {(float)pt2.x, (float)pt2.y};
         ClipPair0018FBF0 intersection;
-        if (IntersectLine2D((Coord2D*)&a, (Coord2D*)&b, (Coord2D*)&start, (Coord2D*)&end, (Coord2D*)&intersection)) {
+        if (IntersectLine2D0018FBF0((Coord2D*)&a, (Coord2D*)&b, (Coord2D*)&start, (Coord2D*)&end, (Coord2D*)&intersection)) {
             float side = (from->y - pt1.y)*(pt2.x - pt1.x) - (from->x - pt1.x)*(pt2.y - pt1.y);
             ClipPair0018FBF0 normal = {(float)(pt2.y-pt1.y), (float)(pt1.x-pt2.x)};
             float len = sqrt(normal.x*normal.x + normal.y*normal.y);
             if (len != 0.0f) { normal.x /= len; normal.y /= len; }
             if (side > 0.0f) { normal.x *= -1.0f; normal.y *= -1.0f; }
             normal.x *= 0.1f; normal.y *= 0.1f;
-            BfmeCoord6DF1F0 result = {normal.x + intersection.x, normal.y + intersection.y, 0.0f};
+            BfmeCoord6DF1F0 result; result.set(intersection.x, intersection.y, 0.0f);
+            BfmeCoord6DF1F0 offset = {normal.x, normal.y, 0.0f}; result.add(&offset);
             if (!bfmeContains6DF1F0(result)) { *clipped = *from; return 0; }
             if ((char)flags) {
                 BfmeCoord6DF1F0 slide = {(float)pt2.x, (float)pt2.y, 0.0f}; BfmeCoord6DF1F0 p1 = {(float)pt1.x, (float)pt1.y, 0.0f}; slide.x -= p1.x; slide.y -= p1.y;
@@ -72,12 +92,11 @@ char BfmePolygon6DF1F0::bfmeClipSegment6DF730(const BfmeCoord6DF1F0 *from,
                     ((Coord3D*)&slide)->normalize();
                     slide.x *= remaining; slide.y *= remaining; slide.z *= remaining;
                     BfmeCoord6DF1F0 next = {result.x + slide.x, result.y + slide.y, slide.z};
-                    if (bfmeContains6DF1F0(next)) { *clipped = next; return 1; }
+                    if (bfmeContains6DF1F0(next)) { result = next; goto success0018FBF0; }
                 }
             }
-            *clipped = result; return 1;
+            success0018FBF0: *clipped = result; return 1;
         }
     }
     return 0;
 }
-
