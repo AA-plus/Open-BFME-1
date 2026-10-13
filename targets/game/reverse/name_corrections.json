@@ -19688,5 +19688,25 @@
   "old_name": "updateBridgeRepair",
   "new_name": "bfmeConcat",
   "reason": "Not a rename: the deleted naked lift AIPlayerUpdateBridgeRepairThunk.cpp declared only the refuted AIPlayer::updateBridgeRepair for 0x00167930, and the new TU is that body's real identity AIPlayer::recruitSpecificAITeam (vtable slot 10; matched Player::recruitSpecificTeam caller). The pairing is positional between unrelated tokens of two different files."
+ },
+ {
+  "old_path": "game/GameEngine/Source/GameLogic/ScriptEngine/ScriptActions_doRotateCameraTowardObject_Thunk.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/ScriptEngine/ScriptActionsRva002EE060.cpp",
+  "old_name": "doRotateCameraTowardObject",
+  "new_name": "rva002EE060",
+  "before_sha256": "2ef0a5f2c5888cf0f106b80d731132b76fad764b013cc7ccf9dd71fbe583388b",
+  "after_sha256": "620bec4a45abe5856a9b60f842d18d83b13731012e0b4f0c32951e668f7d7d7c",
+  "evidence": "targets/game/reverse/identity_evidence/002ee060-rotate-camera-toward-object.md",
+  "reason": "The five-argument name doRotateCameraTowardObject is refuted for 0x002EE060: the body returns ret 0x18 (six stack arguments) and tools/ilt_oracle.py contradicts every six-argument doRotateCameraTowardObject spelling tried, so the EA name is unproven and the landed method keeps its address (rva002EE060)."
+ },
+ {
+  "old_path": "targets/game/reverse/functions.csv",
+  "new_path": "targets/game/reverse/functions.csv",
+  "old_name": "doRotateCameraTowardObject",
+  "new_name": "rva002EE060",
+  "before_sha256": "a709049408aa4bedd2dc95e6c4134fa47fef7b59613f3dffedf95831fe613223",
+  "after_sha256": "d0c64deb34b93bbedea196c82d560904fc41f6d1c36fac2e7231000579cb4dd2",
+  "evidence": "targets/game/reverse/identity_evidence/002ee060-rotate-camera-toward-object.md",
+  "reason": "The five-argument name doRotateCameraTowardObject is refuted for 0x002EE060: the body returns ret 0x18 (six stack arguments) and tools/ilt_oracle.py contradicts every six-argument doRotateCameraTowardObject spelling tried, so the EA name is unproven and the landed method keeps its address (rva002EE060)."
  }
 ]
