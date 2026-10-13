@@ -134,3 +134,21 @@ def test_scoped_run_still_tightens_stale_high_lines(tree):
                      0x4000, "object-symbol=?real@@YAXXZ")
     problems = gate(tree)
     assert problems and all("0x00004000" in p for p in problems)
+
+
+def test_a_replacement_alone_drops_the_retired_label_line(tree):
+    # review round 2 (2026-10-13, N2): with a commit between the label row and its
+    # replacement, a replacement that writes no new label must still rescan the
+    # retired RVA's token and drop its line
+    append_and_admit(tree, "?d_9@@YAXXZ,,0x00BF4000,9,game/z.cpp,matched,object-symbol=$L9",
+                     0xBF4000, "object-symbol=$L9")
+    git(tree, "add", "."); git(tree, "commit", "-qm", "c")
+    led = tree / LEDGER
+    led.write_bytes(led.read_bytes() + b"?p@@YAXXZ,,0x00002000,5,game/p.cpp,matched,\n")
+    git(tree, "add", "."); git(tree, "commit", "-qm", "d")
+    before = led.read_bytes()
+    led.write_bytes(before.replace(
+        b"?d_9@@YAXXZ,,0x00BF4000,9,game/z.cpp,matched,object-symbol=$L9\n",
+        b"?real@@YAXXZ,,0x00BF4004,5,game/z.cpp,matched,\n"))
+    add_match.admit_compiler_label_alias(tree, "", 0xBF4004, before, 0xBF4000)
+    assert "0x00BF4000" not in (tree / hatch_counters.BASELINE).read_text()

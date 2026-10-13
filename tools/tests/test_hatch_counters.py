@@ -347,6 +347,25 @@ def test_admit_restamps_an_earlier_tool_allowance_in_the_same_file(repo):
     assert staged(repo).returncode == 0                                       # both pins carry the new blob
 
 
+def test_scoped_admit_keeps_a_stale_allowance_out_of_scope_verbatim(repo):
+    # review round 2 (2026-10-13): only an allowance for BEFORE/the current blob is
+    # pending; a stale one out of SCOPE is kept byte for byte, not rescanned and refused
+    pins = repo.lay["rev"] + "/symbols.csv"
+    repo.write(pins, repo.read(pins) + "?b@@3HA,0x00001004,tool\n")
+    assert admit(repo, pins, "--tokens", "0x00001004").returncode == 0
+    stale = [l for l in repo.read(repo.lay["base"]).splitlines() if "0x00001004" in l]
+    assert stale and "allow=" in stale[0]
+    repo.write(pins, repo.read(pins) + "# unrelated edit\n")
+    before = repo.git("hash-object", pins).strip()
+    repo.write(pins, repo.read(pins) + "?d@@3HA,0x0000100C,tool\n")
+    env = dict(os.environ, HATCH_ROOT=str(repo.root), HATCH_NOW=str(T0 + 60))
+    code = ("import sys; sys.path.insert(0, 'tools'); import hatch_counters as h; "
+            "r = h.admit(%r, 'scoped tool write', {'0x0000100C'}, before=%r, scope={'0x0000100C'}); "
+            "sys.exit(1 if r['refused'] else 0)" % (pins, before))
+    assert subprocess.run([sys.executable, "-c", code], cwd=repo.root, env=env).returncode == 0
+    assert stale[0] in repo.read(repo.lay["base"]).splitlines()
+
+
 def test_admit_shrinks_and_leaves_other_files_alone(repo):
     repo.write(repo.lay["src"], SOURCE.replace("__emit 0x90 ", ""))
     other = repo.read(repo.lay["base"])
