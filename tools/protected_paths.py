@@ -171,16 +171,28 @@ def protected(paths):
     return sorted(p for p in set(paths) if any(fnmatch.fnmatchcase(p, pat) for pat in PROTECTED))
 
 
+HINT = "what changed and why"
+ENTITY = re.compile(r"&(?:[A-Za-z]+|#[0-9]+|#x[0-9A-Fa-f]+);")
+
+
+def placeholder(why):
+    """True when a trailer text is no reason: a bare <placeholder>, or, once
+    brackets, entities and punctuation are stripped, empty (no letter or
+    digit) or the refusal's own hint (review round 2, 2026-10-13)."""
+    if PLACEHOLDER.fullmatch(why.strip("`'\" \t.")):
+        return True
+    bare = re.sub(r"[\W_]+", " ", ENTITY.sub(" ", why))
+    return " ".join(bare.split()).lower() in ("", HINT)
+
+
 def reason(message):
     body = "\n".join(line for line in message.splitlines() if not line.startswith("#"))
-    found = TRAILER.search(body)
-    if not found:
-        return None
-    why = found.group(1).strip()
-    # the refusal's own hint pasted unchanged, or any bare <placeholder>, is no reason
-    if PLACEHOLDER.fullmatch(why.strip("`'\" \t.")):
-        return None
-    return why
+    # with several trailers, any real one counts
+    for found in TRAILER.finditer(body):
+        why = found.group(1).strip()
+        if not placeholder(why):
+            return why
+    return None
 
 
 def banner(title, paths, why, where=""):

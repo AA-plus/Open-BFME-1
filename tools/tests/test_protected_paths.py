@@ -98,6 +98,27 @@ def test_the_pasted_hint_or_a_bare_placeholder_is_no_reason(repo):
                   tools__build_py="x = 2\n") == 1
 
 
+def test_punctuation_only_is_no_reason(repo):
+    for why in ("..........", "-------- ????"):
+        assert pp.reason(f"x\n\nVerifier-Change: {why}\n") is None, why
+
+
+def test_the_hint_in_other_brackets_or_bare_is_no_reason(repo):
+    for why in ("[what changed and why]", "{...}", "(...)", "&lt;...&gt;",
+                "what changed and why", "What Changed And Why."):
+        assert pp.reason(f"x\n\nVerifier-Change: {why}\n") is None, why
+    assert staged(repo, "loosen\n\nVerifier-Change: [what changed and why]\n",
+                  tools__build_py="x = 4\n") == 1
+
+
+def test_any_real_trailer_among_several_counts(repo):
+    msg = ("x\n\nVerifier-Change: <what changed and why>\n"
+           "Verifier-Change: mask reloc type 7 in DIR32 compare\n")
+    assert pp.reason(msg) == "mask reloc type 7 in DIR32 compare"
+    assert pp.reason("x\n\nVerifier-Change: ..........\nVerifier-Change: {...}\n") is None
+    assert staged(repo, msg, tools__build_py="x = 5\n") == 0
+
+
 def test_a_token_reason_or_a_comment_line_does_not_count(repo):
     assert staged(repo, "x\n\nVerifier-Change: ok\n", tools__build_py="x = 3\n") == 1
     assert staged(repo, "x\n# Verifier-Change: commented out reason\n") == 1
