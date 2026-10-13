@@ -91156,3 +91156,4 @@ rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?method@Rva00917E10@@QAEXAAVRenderInfoClass@@IH@Z,0x00917E10,address-derived ABI view for the 0x00917E10 PointGroupClass member (row ?Rva00917E10@@YAXXZ); single call site 0x005F31A0+0x3A9 passes this=TheBfmeSecondManager plus the three stack arguments and ignores the result
 ?rva004340C0SubtitleCoordinate@@YAHHPAVRva0081D520Owner@@MM@Z,0x004340C0,cdecl int(int owner low high) coordinate helper decoded from the two 0x004341A0 call sites; callers encode ILT thunk 0x0002F040 to this body; index selects owner+0x24 float row and owner+0x60 picks the alternate path
 ?rva00002432Target@@YAXXZ,0x006FA630,No-argument tail-thunk view of independently matched W3DParticleSystemManager constructor
+?rva00001DA7Target@@YAXXZ,0x00135180,No-argument tail-thunk view of independently matched matched target of ILT 00001DA7
