@@ -12,6 +12,10 @@
 
 // Retail calls the array allocator 0x00881F70 at both new[] sites.
 void *__cdecl operator new[](unsigned int);
+// The vector deleting destructor frees through this array deallocator
+// (retail 0x00881EF0, defined by mem_ops.cpp); without it the TU emits a
+// copy calling scalar delete that the link must not keep.
+void __cdecl operator delete[](void *memory);
 
 extern void j_0003a328(void);
 extern void j_00014c5e(void);
