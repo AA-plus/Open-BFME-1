@@ -1,5 +1,5 @@
 // ?doLocomotor@AIUpdateInterface@@MAE?AW4UpdateSleepTime@@XZ
-// partial score=0.9745557350565428 date=2026-09-23
+// partial score=0.9746 date=2026-09-23
 // stlport
 // cl: /DNDEBUG /MD /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWMath
 // Candidate only. Retail 002768A0. Identity: AIUpdateInterface table
@@ -105,10 +105,10 @@ struct Rva002768A0Object {
     unsigned at000; Rva002768A0Override *at004;
     char pad008[0x38-8]; Coord3D at038;
     char pad044[0x110-0x44]; _STL::bitset<320> at110;
-    void clear(int bit) {
+    __forceinline void clear(int bit) {
         if(at110.test(bit)) { at110.set(bit,0); ((Rva002768A0Route*)(this))->r_0002191d(); }
     }
-    void set(int bit) {
+    __forceinline void set(int bit) {
         if(!at110.test(bit)) { at110.set(bit); ((Rva002768A0Route*)(this))->r_0002191d(); }
     }
 };
