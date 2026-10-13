@@ -1,7 +1,8 @@
 // ?update0037B9F0@Rva0037C310Owner@@QAE_NXZ
-// partial score=0.9618 date=2026-10-08
 // cl: /DNDEBUG /DWIN32 /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Igame/GameEngine/Source/GameLogic/Object /Igame/GameEngine/Source/Common/Thing /Igame/GameEngine/Source/GameClient
 // stlport
+extern "C" void _ReadWriteBarrier(void);
+#pragma intrinsic(_ReadWriteBarrier)
 #include "ascii_string.h"
 template <> inline bool StringBase<char>::isEmpty() const { return !m_data || m_data->length==0; }
 template <> inline bool StringBase<char>::isNotEmpty() const { return !isEmpty(); }
@@ -45,10 +46,15 @@ bool Rva0037C310Owner::update0037B9F0()
         AIUpdateInterface *ai=object00->m_ai;
         if(ai) ((BfmeThingFCD *)ai)->checkAndNotify();
     }
+    // Keep the FX reads in a separate compiler region.
+    _ReadWriteBarrier();
     if(data04->fx34) {
         Object *object=object00;
         Rva001CF980Result *query=object->queryAt001CF980();
-        if(query) object=query->object4c();
+        Object *selected;
+        if(query) selected=query->object4c();
+        else selected=object;
+        object=selected;
         int id=id08;
         Object *target=TheBfmeGameLogic->findObjectByID(id);
         if(target || !id) {
