@@ -1,5 +1,5 @@
 // ?method@Rva001F8E20Owner@@QAEXPAUCoord3D@@@Z
-// partial score=0.5861 date=2026-09-30
+// partial score=0.7546 date=2026-10-13
 // stlport
 // cl: /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib
 #include "Common/Thing.h"
@@ -17,8 +17,9 @@ void Rva001F8E20Owner::method(Coord3D *out) {
  Coord3D in = {1.0f,0.0f,0.0f};
  Coord3D delta;
  object->transformPoint(&in,&delta);
- delta.x -= object->getPosition()->x;
- delta.y -= object->getPosition()->y;
+ Thing *receiver=object;
+ delta.x -= receiver->getPosition()->x;
+ delta.y -= receiver->getPosition()->y;
  float ay=(float)fabs(delta.y), ax=(float)fabs(delta.x);
  const float &maximum=ax>ay?ax:ay;
  float scale=g_bfmeDefaultBU/maximum;
@@ -30,7 +31,7 @@ void Rva001F8E20Owner::method(Coord3D *out) {
  in.x*=len;
  in.y*=len;
  Coord3D result;
- object->transformPoint(&in,&result);
+ receiver->transformPoint(&in,&result);
  out->x=result.x;
  out->y=result.y;
  out->z=result.z;
