@@ -37395,7 +37395,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_003de940@@YAXXZ,,0x003DE940,284,game/gen_asm/d_003d5070.asm,matched,gen-dump;bounds=high
 ?d_003df580@@YAXXZ,,0x003DF580,2029,game/gen_asm/d_002e22f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_007df580
 ?d_003dff70@@YAXXZ,,0x003DFF70,808,game/gen_asm/d_003dd7a0.asm,matched,gen-dump;ghidra=FUN_007dff70
-?d_003e05b0@@YAXXZ,,0x003E05B0,715,game/gen_asm/d_003dd7a0.asm,matched,gen-dump;ghidra=FUN_007e05b0
 ?d_003e0930@@YAXXZ,,0x003E0930,938,game/gen_asm/d_003dd7a0.asm,matched,gen-dump;ghidra=FUN_007e0930
 ?d_003e17a0@@YAXXZ,,0x003E17A0,1514,game/gen_asm/d_003dd7a0.asm,matched,gen-dump;ghidra=FUN_007e17a0
 ?d_003e3f70@@YAXXZ,,0x003E3F70,424,game/gen_asm/d_003dd7a0.asm,matched,gen-dump;ghidra=FUN_007e3f70
@@ -172555,3 +172554,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?startPowerRecharge@Rva0026AE00SpecialPowerModule@@UAEXXZ,,0x0026AE00,112,game/GameEngine/Source/GameLogic/Object/SpecialPower/Rva0026AE00StartPowerRecharge.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/00268ba0-start-power-recharge-swap.md;override in five vftables on a class with its SpecialPowerModuleInterface at +0x24; ILT oracle CONTRADICTS the base name here; owner address-derived;model=claude;host=vm
 ?startPowerRecharge@SpecialPowerModule@@UAEXXZ,,0x00268BA0,214,game/GameEngine/Source/GameLogic/Object/SpecialPower/SpecialPowerModule_startPowerRecharge.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/00268ba0-start-power-recharge-swap.md;base SpecialPowerModule::startPowerRecharge via ILT 0x0000DC5B in most powers' interface vftables; ILT oracle CONFIRMED; BFME scales the reload time;model=claude;host=vm
 ?xfer00721380@W3DShrubBuffer@@MAEXPAVXfer@@@Z,,0x00721380,1557,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DShrubBuffer_xfer.cpp,matched,Shrub vtable 0x01120F94 slot 3; address suffix retains contradicted bank word; decoded coordinate call view; evidence=targets/game/reverse/identity_evidence/0x00721380-coordinate-call-view.md;model=gpt-6.1-sol;host=fleet
+?bfmeStepE05B0_003E05B0@Pathfinder@@QAE_NPAVObject@@PAUICoord2D@@@Z,,0x003E05B0,715,game/GameEngine/Source/GameLogic/AI/PathfinderStepE05B0.cpp,matched,address-qualified bank method; complete RET 8 and matched callback caller ABI; identity_evidence/0x003e05b0-register-residue.md;model=gpt-6.1-sol;host=fleet
