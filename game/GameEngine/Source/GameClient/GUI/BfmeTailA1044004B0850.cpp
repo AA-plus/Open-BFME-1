@@ -1,17 +1,11 @@
-// ?bfmeTailA1044@BfmeB1044@@QAEXXZ
-// partial score=0.8366 date=2026-10-01
-// Identity evidence: the 0x00006E83 thunk jumps to retail 0x004B0850,
-// and BfmeB1044::bfmeGo1044B at 0x004B17E0 selects that thunk for nonzero IDs.
+// cl: /I.
+// Button menu screen-position update with an address-qualified identity.
+// Evidence: targets/game/reverse/identity_evidence/004b0850-screen-position.md
 
 #include <stdlib.h>
 #pragma intrinsic(abs)
 
-struct Coord3D
-{
-	float x;
-	float y;
-	float z;
-};
+#include "game/Libraries/Include/Lib/Coord3D.h"
 
 struct ICoord2D
 {
@@ -31,24 +25,10 @@ public:
 	float getMaxHeightAbovePosition(void) const;
 };
 
-class Object
-{
-public:
-	virtual void slot00(void) = 0;
-	virtual void slot01(void) = 0;
-	virtual void slot02(void) = 0;
-	virtual void slot03(void) = 0;
-	virtual void slot04(void) = 0;
-	virtual void slot05(void) = 0;
-	virtual void slot06(void) = 0;
-	virtual void slot07(void) = 0;
-	virtual void slot08(void) = 0;
-	virtual void slot09(void) = 0;
-	virtual Drawable *getDrawable(void) const = 0;
-	bool getWorldspaceBestContactPoint(Coord3D *pointOut,
-		const Coord3D *callerPos, const char *label, int preference,
-		int seed, bool skipCollideTest) const;
-};
+#define BFME_HAVE_COORD3D
+#define OBJECT_TU_MEMBERS bool getWorldspaceBestContactPoint(Coord3D *, const Coord3D *, const char *, int, int, bool) const;
+#include "game/GameEngine/Source/GameLogic/Object/object.h"
+#undef OBJECT_TU_MEMBERS
 
 class GameLogic
 {
@@ -93,8 +73,8 @@ public:
 	virtual int worldToScreen(const Coord3D *world, ICoord2D *screen) = 0;
 };
 
-#define TheGameLogic (*(GameLogic **)0x012F0898)
-#define TheTacticalView (*(View **)0x012F1600)
+extern GameLogic *TheGameLogic;
+extern View *TheTacticalView;
 
 extern void j_00034e91(void);
 
@@ -102,19 +82,21 @@ typedef bool (Object::*WorldspaceBestContactPointCall)(Coord3D *pointOut,
 	const Coord3D *callerPos, const char *label, int preference, int seed,
 	bool skipCollideTest) const;
 
-__forceinline int bfmeAbs1044(int value)
+// ?bfmeAbs1044@@YAHH@Z absent-from-retail
+static __forceinline int bfmeAbs1044(int value)
 {
 	return abs(value);
 }
 
-__forceinline float bfmeHeight1044(bool hasContactPoint,
-	const float *positionZ, const Object *object)
+// ?bfmeHeight1044@@YAM_NPDMPBVObject@@@Z absent-from-retail
+static __forceinline float bfmeHeight1044(bool hasContactPoint,
+	const volatile float *positionZ, const Object *object)
 {
 	if (hasContactPoint)
 		return *positionZ;
 	return reinterpret_cast<const GeometryInfo *>(
 		reinterpret_cast<const char *>(object) + 0xAC)->getMaxHeightAbovePosition()
-		* (*(const float *)0x0107533C);
+		* 0.5f;
 }
 
 class BfmeB1044
@@ -125,7 +107,7 @@ public:
 	virtual void slot02(void) = 0;
 	virtual void slot03(void) = 0;
 	virtual void slot04(void) = 0;
-	void bfmeTailA1044(void);
+	void bfmeTailA1044004B0850(void);
 
 	char m_bfmePad[4];
 	unsigned char m_bfmeFlag;
@@ -136,35 +118,35 @@ public:
 	int m_bfme24;
 };
 
-void BfmeB1044::bfmeTailA1044(void)
+// ?bfmeTailA1044004B0850@BfmeB1044@@QAEXXZ
+void BfmeB1044::bfmeTailA1044004B0850(void)
 {
 	Object *object = TheGameLogic->findObjectByID(m_bfme18);
-	struct Locals
-	{
-		ICoord2D screen;
-		Coord3D point;
-		Coord3D position;
-	} locals;
+	ICoord2D screen;
 
 	if (object != 0)
 	{
-		Coord3D *const point = &locals.point;
-		Coord3D *const position = &locals.position;
+		struct Frame
+		{
+			Coord3D point;
+			Coord3D position;
+		} frame;
+
 		Drawable *drawable = object->getDrawable();
 		if (drawable != 0)
 		{
-			*point = *drawable->getPosition();
+			frame.point = *drawable->getPosition();
 		}
 		else
 		{
 			const Coord3D sourcePosition = *reinterpret_cast<const Coord3D *>(
 				reinterpret_cast<const char *>(object) + 0x38);
-			*point = sourcePosition;
+			frame.point = sourcePosition;
 		}
 
-		position->x = 0.0f;
-		position->y = 0.0f;
-		position->z = 0.0f;
+		frame.position.x = 0.0f;
+		frame.position.y = 0.0f;
+		frame.position.z = 0.0f;
 		union
 		{
 			void *asVoid;
@@ -172,40 +154,41 @@ void BfmeB1044::bfmeTailA1044(void)
 		} contactPointCast;
 		contactPointCast.asVoid = (void *)j_00034e91;
 		bool hasContactPoint = (object->*contactPointCast.asMember)(
-			position, position, reinterpret_cast<const char *>(0x010FD1D0), 0, 0, false);
+			&frame.position, &frame.position, "Menu", 0, 0, false);
 		if (hasContactPoint)
 		{
-			position->x -= reinterpret_cast<const Coord3D *>(
+			frame.position.x -= reinterpret_cast<const Coord3D *>(
 				reinterpret_cast<const char *>(object) + 0x38)->x;
-			position->y -= reinterpret_cast<const Coord3D *>(
+			frame.position.y -= reinterpret_cast<const Coord3D *>(
 				reinterpret_cast<const char *>(object) + 0x38)->y;
-			position->z -= reinterpret_cast<const Coord3D *>(
+			frame.position.z -= reinterpret_cast<const Coord3D *>(
 				reinterpret_cast<const char *>(object) + 0x38)->z;
-			volatile float *positionX = &position->x;
-			point->x += *positionX;
-			point->y += position->y;
+			volatile float *positionX = &frame.position.x;
+			frame.point.x += *positionX;
+			frame.point.y += frame.position.y;
 		}
-		point->z += bfmeHeight1044(hasContactPoint, &position->z, object);
+		frame.point.z += bfmeHeight1044(hasContactPoint, &frame.position.z, object);
 
-		if (TheTacticalView->worldToScreen(point, &locals.screen))
+		if (TheTacticalView->worldToScreen(&frame.point, &screen))
 		{
-			locals.screen.x = -999;
-			locals.screen.y = -999;
+			screen.x = -999;
+			screen.y = -999;
 		}
 
-		int delta = bfmeAbs1044(m_bfme24 - locals.screen.y);
-		delta += bfmeAbs1044(m_bfme20 - locals.screen.x);
+		const ICoord2D *center = reinterpret_cast<const ICoord2D *>(&m_bfme20);
+		int delta = bfmeAbs1044(center->y - screen.y);
+		delta += bfmeAbs1044(center->x - screen.x);
 		if (delta > 2)
 		{
-			m_bfme20 = locals.screen.x;
-			m_bfme24 = locals.screen.y;
+			m_bfme20 = screen.x;
+			m_bfme24 = screen.y;
 			m_bfmeFlag = 1;
 		}
 	}
 	else
 	{
-		locals.screen.x = -999;
-		locals.screen.y = -999;
+		screen.x = -999;
+		screen.y = -999;
 		slot04();
 	}
 }
