@@ -182,6 +182,20 @@ def check_removed_rows(before, after, deleted, problems):
             "stage the transaction's tombstone with the ledger change.")
 
 
+def check_row_extents(before, after, problems):
+    """A row the commit adds or moves must not start mid-body or span padding.
+
+    See tools/row_extent.py; rows already in HEAD are not re-judged.
+    """
+    import row_extent
+    old, new = row_extent.parse_rows(before), row_extent.parse_rows(after)
+    if not row_extent.changed_rows(old, new):
+        return
+    import build
+    sizes = row_extent.load_ghidra(ROOT / "targets/game/reverse/ghidra_functions.csv")
+    problems.extend(row_extent.check(old, new, sizes, build.read_target_bytes))
+
+
 def check_functions(raw, problems, sources_ok, deleted=None):
     deleted = tombstones() if deleted is None else deleted
     if b"\r\n" not in raw[:200]:
@@ -571,8 +585,9 @@ def main():
     sources_ok = known_sources(spec)
     n_funcs = check_functions(functions_raw, problems, sources_ok, deleted)
     if args.staged:
-        check_removed_rows(read_ledger(FUNCTIONS, "HEAD"), functions_raw,
-                           deleted, problems)
+        head_functions = read_ledger(FUNCTIONS, "HEAD")
+        check_removed_rows(head_functions, functions_raw, deleted, problems)
+        check_row_extents(head_functions, functions_raw, problems)
     n_syms = check_symbols(read_ledger(SYMBOLS, spec), problems)
     check_attempts(spec, problems, functions_raw=functions_raw,
                    sources_ok=sources_ok)
