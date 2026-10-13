@@ -1,16 +1,6 @@
-// ?doTeamGiveNearestTeamUpgrade@ScriptActions@@IAEXPAVParameter@@@Z
-// partial score=0.9446 date=2026-10-03
-// ?doTeamGiveNearestTeamUpgrade@ScriptActions@@IAEXPAVParameter@@@Z
 // cl: /DNDEBUG /DWIN32 /MD /EHsc /Iinputs/reference/shims/objectdlink /Iinputs/reference/shims/stringinline /Igame/Libraries/Source/WWVegas/WWLib
-// TEAM_GIVE_NEAREST_TEAM_UPGRADE, retail RVA 0x002FE270.
-// The action resolves the source team, then gives its upgrade to the nearest
-// eligible member of another team owned by the source object's player.
-// 2026-09-23: ZH DLINK_ITERATOR shape (null-checking advance plus `if (!x)
-// continue;` at the top of both loop bodies) fixed the ESI/EDI rotation, the
-// swapped source/sourceObject homes and the size (632/632). Residue: the
-// sourcePosition copy is not interleaved with the team-list head load the way
-// retail schedules it; removing the equals() address escape reproduces the
-// retail order, so retail's escape is shaped differently.
+// TEAM_GIVE_NEAREST_TEAM_UPGRADE dispatcher body; original method spelling is unknown.
+// Evidence: targets/game/reverse/identity_evidence/002fe270-helper-visibility.md
 
 #include "ObjectDlinkPmf.h"
 #include "ascii_string.h"
@@ -20,24 +10,11 @@ typedef int Int;
 typedef float Real;
 typedef unsigned int UnsignedInt;
 
-struct Coord3DBase
-{
-	Real x;
-	Real y;
-	Real z;
-};
-
-struct Coord3D : Coord3DBase
-{
-	Bool equals(const Coord3DBase &that) const;
-	Real length() const;
-	void sub(const Coord3DBase *that)
-	{
-		x -= that->x;
-		y -= that->y;
-		z -= that->z;
-	}
-};
+#include "../../../../Libraries/Source/WWVegas/WWMath/coord3d.h"
+inline Coord3D::Coord3D() {}
+inline Coord3D::~Coord3D() {}
+inline void Coord3D::sub(const Coord3DBase *that) { x -= that->x; y -= that->y; z -= that->z; }
+__declspec(noinline) inline bool Coord3D::equals(const Coord3DBase &that) const { return x == that.x && y == that.y && z == that.z; }
 
 class BfmeStringArgBase
 {
@@ -57,24 +34,12 @@ private:
 	~BfmeStringLiteralBase();
 };
 
-class BfmeAsciiStringArg
+class BfmeAsciiStringArg : public AsciiString
 {
 public:
-	BfmeAsciiStringArg(const AsciiString &that)
-	{
-		((BfmeStringArgBase *)this)->BfmeStringArgBase::BfmeStringArgBase(
-			*(const BfmeStringArgBase *)&that);
-	}
-
-	BfmeAsciiStringArg(const char *text)
-	{
-		((BfmeStringLiteralBase *)this)->BfmeStringLiteralBase::BfmeStringLiteralBase(text);
-	}
-
-	~BfmeAsciiStringArg();
-
-private:
-	char *m_text;
+    BfmeAsciiStringArg(const AsciiString &that) : AsciiString(that) {}
+    BfmeAsciiStringArg(const char *text) : AsciiString(text) {}
+    ~BfmeAsciiStringArg();
 };
 
 class Team;
@@ -85,6 +50,7 @@ class UpgradeTemplate
 {
 public:
 	unsigned char m_beforeMask[0x20];
+	// The lookup and interface consume this dword as a bit index.
 	UnsignedInt m_upgradeMask;
 };
 
@@ -173,9 +139,12 @@ public:
 		Object *target, UnsignedInt options, Bool forced);
 };
 
-extern BfmeScriptEngineVtbl_44 *TheScriptEngine;
-extern void *TheUpgradeCenter;
-extern void *TheSpecialPowerStore;
+class ScriptEngine;
+class UpgradeCenter;
+class SpecialPowerStore;
+extern ScriptEngine *TheScriptEngine;
+extern UpgradeCenter *TheUpgradeCenter;
+extern SpecialPowerStore *TheSpecialPowerStore;
 
 extern void j_00044e18(void);
 extern void j_0001df16(void);
@@ -387,18 +356,19 @@ static __forceinline Object *bfmeInterfaceTarget(void *interfaceObject)
 class ScriptActions
 {
 protected:
-	void doTeamGiveNearestTeamUpgrade(Parameter *sourceTeam);
+	void doTeamGiveNearestTeamUpgrade002FE270(Parameter *sourceTeam);
 };
 
-void ScriptActions::doTeamGiveNearestTeamUpgrade(Parameter *sourceTeam)
+// ?doTeamGiveNearestTeamUpgrade002FE270@ScriptActions@@IAEXPAVParameter@@@Z
+void ScriptActions::doTeamGiveNearestTeamUpgrade002FE270(Parameter *sourceTeam)
 {
-	Team *source = TheScriptEngine->getTeamNamed(sourceTeam->m_string, false);
+	Team *source = ((BfmeScriptEngineVtbl_44 *)TheScriptEngine)->getTeamNamed(sourceTeam->m_string, false);
 	if (!source)
 		return;
 
 	const SpecialPowerTemplate *power =
 		((BfmeSpecialPowerStoreView *)TheSpecialPowerStore)
-			->findSpecialPowerTemplate((const char *)0x01083C00);
+			->findSpecialPowerTemplate("SpecialAbilityGiveUpgrade");
 	if (!power)
 		return;
 
@@ -415,11 +385,11 @@ void ScriptActions::doTeamGiveNearestTeamUpgrade(Parameter *sourceTeam)
 	if (!player)
 		return;
 
+	Object *bestTarget = 0;
 	Coord3D sourcePosition;
 	sourcePosition.x = ((BfmeObjectFields *)sourceObject)->m_position.x;
 	sourcePosition.y = ((BfmeObjectFields *)sourceObject)->m_position.y;
 	sourcePosition.z = ((BfmeObjectFields *)sourceObject)->m_position.z;
-	Object *bestTarget = 0;
 	Real bestDistance;
 	BfmePlayerTeamNode *node =
 		((BfmePlayerTeamFields *)player)->m_playerTeams->m_next;
@@ -458,6 +428,7 @@ void ScriptActions::doTeamGiveNearestTeamUpgrade(Parameter *sourceTeam)
 						((BfmeObjectFields *)member)->m_position.y;
 					memberPosition.z =
 						((BfmeObjectFields *)member)->m_position.z;
+					// Retail discards this comparison and then reads distance without initialization.
 					(void)distance.equals(sourcePosition);
 					distance.sub(&memberPosition);
 					Real distanceValue = distance.length();
