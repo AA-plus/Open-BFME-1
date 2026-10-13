@@ -1,8 +1,11 @@
 // ?update006059F0@Node004092A0@@QAEXXZ
-// partial score=0.7857 date=2026-09-28
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
+// partial score=0.7879 date=2026-10-13
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWMath
 // stlport
 //
+// 2026-10-13: native Coord3D copy/empty lifetime improves 172 -> 170 nonreloc
+// differences at unchanged907B/903B; remaining frame permutation persists.
+// Audio-event4-byte alignment unchanged; native AsciiString increases frame.
 // Retail 0x006059F0, 903 bytes (ret at +0x386; the generated ledger row claims
 // 896 and stops 7 bytes short of the epilogue). Sole caller:
 // SpatialList004092A0::update (retail 0x0040936B through ILT 0x0003765F), which
@@ -192,10 +195,11 @@ private:
 	Header *m_data;
 };
 
-struct Coord3D
-{
-	Real x, y, z;
-};
+#include "coord3d.h"
+inline Coord3D::Coord3D() {}
+inline Coord3D::~Coord3D() {}
+inline Coord3D::Coord3D(const Coord3D &that) {x=that.x;y=that.y;z=that.z;}
+
 
 enum DrawableID
 {
