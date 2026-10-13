@@ -1,25 +1,17 @@
-// ?drawImageCore@W3DDisplay@@UAEXPAVImage@@MMMMH@Z
-// partial score=0.9818 date=2026-09-27
-// 384/384 with 7 non-reloc bytes at +0x64..+0x72: the texture-slot stores (same residue as 0x006EB000).
-// cl: /DNDEBUG /MD /EHsc
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Source/WWVegas/Wwutil /Igame/Libraries/Source/WWVegas/WWDownload /Igame/Libraries/Source/Compression /Igame/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/shims/sweep /Iinputs/toolchains/dx81/include
 
 typedef int Int;
 typedef float Real;
 typedef unsigned long UnsignedInt;
 
 extern Real g_bfmeDefaultBU;
-#define g_bfmeK1253 (*(Real *)0x0107533c)
+
 extern const Real BfmeZeroRange;
 extern "C" Real g_bfmeUint32Scale;
 
-class TextureClass
-{
-public:
-	unsigned char m_unmodelled00[4];
-	unsigned short m_refCount;
-	void Release_Ref();
-};
-
+#include "texture.h"
+// BFME RectClass has four floats; WWMath/rect.h defines the unrelated TRect.
+// Render2DClass is the older BFME batch layout witnessed by Add_Quad at 0x006E7210.
 class RectClass
 {
 public:
@@ -32,11 +24,27 @@ public:
 	Real Bottom;
 };
 
+
+
+class Rva006ECD30TextureRef
+{
+public:
+    TextureBaseClass *m_value;
+    ~Rva006ECD30TextureRef() { if (m_value) m_value->Release_Ref(); }
+    __forceinline Rva006ECD30TextureRef &operator=(const Rva006ECD30TextureRef &other)
+    {
+        if (other.m_value) other.m_value->Add_Ref();
+        if (m_value) m_value->Release_Ref();
+        m_value = other.m_value;
+        return *this;
+    }
+};
+
 class Render2DClass
 {
 public:
 	unsigned char m_unmodelled00[0x4c];
-	TextureClass *m_texture;
+	Rva006ECD30TextureRef m_texture;
 	UnsignedInt m_textureSet;
 	unsigned char m_texturingEnabled;
 
@@ -59,7 +67,7 @@ public:
 	virtual bool slot18();
 	virtual void slot1c();
 	virtual void slot20();
-	virtual TextureClass **slot24();
+	virtual const Rva006ECD30TextureRef &slot24();
 
 	unsigned char m_unmodelled04[8];
 	Int m_0c;
@@ -127,7 +135,7 @@ public:
 	virtual void slot51();
 	virtual void slot52();
 	virtual void slot53();
-	virtual void drawImageCore(Image *image, Real x0, Real y0,
+	virtual void rva006ECD30(Image *image, Real x0, Real y0,
 		Real x1, Real y1, Int color);
 
 private:
@@ -135,28 +143,23 @@ private:
 	Render2DClass *m_render2D;
 };
 
-// ?drawImageCore@W3DDisplay@@UAEXPAVImage@@MMMMH@Z
-void W3DDisplay::drawImageCore(Image *image, Real x0, Real y0,
+// RVA 0x006ECD30, 384 bytes. Slot 54 of W3DDisplay; method identity unknown.
+void W3DDisplay::rva006ECD30(Image *image, Real x0, Real y0,
 	Real x1, Real y1, Int color)
 {
 	Render2DClass *render;
 	Real textureScale = g_bfmeDefaultBU /
 		(Real)(UnsignedInt)image->m_18;
 	m_render2D->m_texturingEnabled = 1;
-	textureScale = g_bfmeK1253 * textureScale;
+	textureScale = 0.5f * textureScale;
 
-	TextureClass ** const textureRef = image->slot24();
-	render = m_render2D;
-	if (*textureRef != render->m_texture)
-	{
-		if (*textureRef)
-			++(*textureRef)->m_refCount;
-		if (render->m_texture)
-			render->m_texture->Release_Ref();
-		TextureClass *tex = *textureRef;
-		render->m_textureSet = tex ? (UnsignedInt)-1 : 0;
-		render->m_texture = tex;
-	}
+	const Rva006ECD30TextureRef &textureRef = image->slot24();
+    render = m_render2D;
+    if (textureRef.m_value != render->m_texture.m_value)
+    {
+        render->m_texture = textureRef;
+        render->m_textureSet = render->m_texture.m_value ? (UnsignedInt)-1 : 0;
+    }
 
 	Real imageRatio;
 	if (image->slot18())

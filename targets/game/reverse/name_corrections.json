@@ -19708,5 +19708,15 @@
   "after_sha256": "d0c64deb34b93bbedea196c82d560904fc41f6d1c36fac2e7231000579cb4dd2",
   "evidence": "targets/game/reverse/identity_evidence/002ee060-rotate-camera-toward-object.md",
   "reason": "The five-argument name doRotateCameraTowardObject is refuted for 0x002EE060: the body returns ret 0x18 (six stack arguments) and tools/ilt_oracle.py contradicts every six-argument doRotateCameraTowardObject spelling tried, so the EA name is unproven and the landed method keeps its address (rva002EE060)."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x006ecd30.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayRva006ECD30.cpp",
+  "old_name": "drawImageCore",
+  "new_name": "rva006ECD30",
+  "before_sha256": "b7d036450a4a06b25a7789bc5f2d0238869c2f06b17b753364b2643a55944aa4",
+  "after_sha256": "a51b219ff93653d5d44c7db40967fa0dbaf168f283e3c7373471824a0c219215",
+  "evidence": "targets/game/reverse/identity_evidence/006ecd30-texture-handle-assignment.md",
+  "reason": "Slot-based indirect call and bank-only label do not establish drawImageCore; retain W3DDisplay owner with address-qualified method until its native name is witnessed."
  }
 ]
