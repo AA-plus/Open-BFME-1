@@ -433,55 +433,10 @@ void W3DTerrainBackground::fillVBRecursive(UnsignedShort *ib, Int xOffset, Int y
 	
 }
 
-//=============================================================================
-// W3DTerrainBackground::fillVBRecursive
-//=============================================================================
-/** Fills in vertex & index buffers.
-*/
-// ?setFlipRecursive@W3DTerrainBackground@@IAEXHHH@Z present-unmatched
-void W3DTerrainBackground::setFlipRecursive(Int xOffset, Int yOffset, Int width)
-{
-	
-	Int limitX = m_map->getXExtent()-1;
-	Int limitY = m_map->getYExtent()-1;
-	Int i, j;
-	Bool match = true;
-	Int minX = m_xOrigin+xOffset;
-	Int minY = m_yOrigin+yOffset;
-	Int cornerHeight = m_map->getHeight(minX, minY);
-
-	for (i=0; i<=width; i++) {
-		for (j=0; j<=width; j++) {
-			Int k = minX+i;
-			k = k<limitX?k:limitX;
-			Int l = minY+j;
-			l = l<limitY?l:limitY;
-			if (cornerHeight!=m_map->getHeight(k, l)) {
-				match = false;
-				break;
-			}
-		}
-	}
-	if (width==1) {
-		match = true;
-	}
-
-	if (match) {
-		m_map->setFlipState(minX, minY, true);
-		m_map->setFlipState(minX+width, minY, true);
-		m_map->setFlipState(minX+width, minY+width, true);
-		m_map->setFlipState(minX, minY+width, true);
-		return;
-	}
-	Int halfWidth = width/2;
-
-
-	setFlipRecursive(xOffset, yOffset, halfWidth);
-	setFlipRecursive(xOffset, yOffset+halfWidth, halfWidth);
-	setFlipRecursive(xOffset+halfWidth, yOffset, halfWidth);
-	setFlipRecursive(xOffset+halfWidth, yOffset+halfWidth, halfWidth);
-	
-}
+// No W3DTerrainBackground::setFlipRecursive(Int, Int, Int) body here: the
+// TU-local 405-byte version was not retail's. Retail's 792-byte body sits at
+// the ?j_0001b5f9 stub target 0x00729700 (gen_asm ?d_00729700, pending real
+// recovery); calls resolve to it through the pin at 0x0001B5F9.
 
 //=============================================================================
 // W3DTerrainBackground::doTesselatedUpdate: retail body (0x0072C7F0) in
