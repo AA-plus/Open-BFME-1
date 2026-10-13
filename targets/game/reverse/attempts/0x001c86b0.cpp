@@ -1,5 +1,5 @@
 // ?bfmeGetPosition421AE@Object@@QAEPBUCoord3D@@PAU2@0@Z
-// partial score=0.8874 date=2026-09-29
+// partial score=0.9073 date=2026-10-13
 // cl: /DNDEBUG /MD /EHs-c- /Iinputs/reference/shims/sweep /Igame/GameEngine/Include /Igame/GameEngine/Source/Common/System /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib
 // stlport
 #include "../../../../game/GameEngine/Include/GameLogic/TerrainLogic.h"
@@ -84,28 +84,23 @@ const Coord3D *Object::bfmeGetPosition421AE(Coord3D *position, Coord3D *normal)
 	if (drawable != 0)
 	{
 		const Matrix3D *matrix = drawable->getTransformMatrix();
-		Real sampleY[2];
-		Real sampleX;
-		Real sampleZ;
-		Coord3D sample;
-		sampleX = matrix->Get_X_Translation();
-		sampleY[0] = matrix->Get_Y_Translation();
-		sampleZ = matrix->Get_Z_Translation();
-		sample.x = sampleX;
-		sample.y = sampleY[0];
-		sample.z = sampleZ;
+		Vector3 translation = matrix->Get_Translation();
+        Coord3D sample;
+        sample.x = translation.X;
+        sample.y = translation.Y;
+        sample.z = translation.Z;
 
 		if ((m_status & 0x40) != 0)
 		{
 			PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(
 				this, &sample);
 			sample.z = TheTerrainLogic->getLayerHeight(
-				sampleX, sampleY[0], layer, normal, true);
+				translation.X, translation.Y, layer, normal, true);
 		}
 		else if (normal != 0)
 		{
 			TheTerrainLogic->getLayerHeight(
-				sampleX, sampleY[0], m_layer, normal, true);
+				translation.X, translation.Y, m_layer, normal, true);
 		}
 
 		position->x = sample.x;
