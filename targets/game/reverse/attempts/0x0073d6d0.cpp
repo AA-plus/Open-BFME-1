@@ -1,8 +1,11 @@
 // ?apply@Rva0073D6D0@@UAEXI@Z
-// partial score=0.9608 date=2026-10-09
-// cl: /DNDEBUG /MD /Igame/Libraries/Include/Lib
+// partial score=0.9641 date=2026-10-13
+// cl: /DNDEBUG /MD /Oa /Igame/Libraries/Include/Lib
 // Retail 0x0073D6D0 uses an address-derived receiver and camera view.
 #include <math.h>
+extern "C" void _ReadWriteBarrier();
+#pragma intrinsic(_ReadWriteBarrier)
+
 
 #include "Coord3D.h"
 class Rva006DF550 {
@@ -226,6 +229,7 @@ void Rva0073D6D0::apply(unsigned unused)
     slot103();
     if (field2439) {
         field006C = Rva012F9DD8;
+        _ReadWriteBarrier();
         field000C = Rva012F9DE4;
         field003C = Rva012F9DD4;
         field0040 = Rva012F9DD0;
