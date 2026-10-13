@@ -1,12 +1,4 @@
-// ?update@Rva003D2B80Child@@QAEXPAV1@00@Z
-// partial score=0.89 date=2026-09-24
 // cl: /DNDEBUG /MD /EHsc
-// The refresh callback at 0x003D2B80 calls this method through the thunk at
-// 0x0004AFCF.  The retail body updates each 60-byte entry from eight samples
-// in the three neighbouring children, then passes those samples to the
-// matched Rva003CBA90::setSlots body.
-
-// ?update@Rva003D2B80Child@@QAEXPAV1@00@Z present-unmatched
 
 struct Rva003D2B80Source
 {
@@ -36,7 +28,14 @@ public:
 class Rva003CBA90
 {
 public:
-	void setSlots(Y1SlotArray *incoming);
+	char m_lead[0x0c];
+	void *m_owned;
+	Rva003D1380Elem *m_slot[8];
+	int m_pad30;
+	int m_extra;
+	unsigned char m_refCount;
+	unsigned char m_nullCount;
+	__declspec(noinline) void setSlots(Y1SlotArray *incoming);
 };
 
 struct Rva003D1380Elem
@@ -61,8 +60,7 @@ public:
 		Rva003D2B80Child *third);
 };
 
-#define BFME_HALF (*(const float *)0x0107533c)
-
+// ?update@Rva003D2B80Child@@QAEXPAV1@00@Z
 void Rva003D2B80Child::update(Rva003D2B80Child *first,
 	Rva003D2B80Child *second, Rva003D2B80Child *third)
 {
@@ -70,7 +68,7 @@ void Rva003D2B80Child::update(Rva003D2B80Child *first,
 	Rva003D1380Elem *entry = m_begin;
 	if (entry != m_end)
 	{
-		half *= BFME_HALF;
+		half *= 0.5f;
 		do
 		{
 			Y1SlotArray slots;
@@ -99,4 +97,27 @@ void Rva003D2B80Child::update(Rva003D2B80Child *first,
 			++entry;
 		} while (entry != m_end);
 	}
+}
+
+// ?setSlots@Rva003CBA90@@QAEXPAVY1SlotArray@@@Z
+// The caller uses the complete helper for optimization; its owner remains in Y1EightSlotRefCounts.cpp.
+inline void Rva003CBA90::setSlots(Y1SlotArray *incoming)
+{
+	m_nullCount = 0;
+	if (incoming->m_slot[0] == 0) ++m_nullCount;
+	m_slot[0] = incoming->m_slot[0];
+	if (incoming->m_slot[1] == 0) ++m_nullCount;
+	m_slot[1] = incoming->m_slot[1];
+	if (incoming->m_slot[2] == 0) ++m_nullCount;
+	m_slot[2] = incoming->m_slot[2];
+	if (incoming->m_slot[3] == 0) ++m_nullCount;
+	m_slot[3] = incoming->m_slot[3];
+	if (incoming->m_slot[4] == 0) ++m_nullCount;
+	m_slot[4] = incoming->m_slot[4];
+	if (incoming->m_slot[5] == 0) ++m_nullCount;
+	m_slot[5] = incoming->m_slot[5];
+	if (incoming->m_slot[6] == 0) ++m_nullCount;
+	m_slot[6] = incoming->m_slot[6];
+	if (incoming->m_slot[7] == 0) ++m_nullCount;
+	m_slot[7] = incoming->m_slot[7];
 }
