@@ -1,14 +1,8 @@
 // ?rva0023D230@BfmeHordeContainOwner@@QAEPAVObject@@H@Z
-// partial score=0.7604 date=2026-09-24
-// cl: /DNDEBUG /DWIN32 /MD /D_STLP_USE_STATIC_LIB /EHsc
+// cl: /DNDEBUG /DWIN32 /MD /D_STLP_USE_STATIC_LIB /EHsc /I. /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas
 // stlport
-// Retail 0x0023D230 (409 bytes): a HordeContain-family query on the interface
-// subobject at owner+0xC4, beside Rva00237070HordeContainRecentDamage.cpp.  It
-// picks a representative member: the first contained object that is not of
-// the given kind, else the first contained object; with nothing contained,
-// the same over the indexed members.  The method is not proven, so it keeps
-// the address.
 
+#define __PLACEMENT_VEC_NEW_INLINE
 typedef bool Bool;
 typedef unsigned int UnsignedInt;
 typedef UnsignedInt ObjectID;
@@ -21,17 +15,11 @@ typedef UnsignedInt ObjectID;
 
 typedef int KindOfType;
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Overridable.h
-class Overridable
-{
-public:
-	const Overridable *getFinalOverride() const;
+#include "Common/GameMemory.h"
+#include "Common/Overridable.h"
+#include "Common/Override.h"
 
-	void *m_vtable;
-	Overridable *m_nextOverride;
-};
-
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/ThingTemplate.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/ThingTemplate.h
 class ThingTemplate : public Overridable
 {
 public:
@@ -42,28 +30,13 @@ public:
 	}
 
 private:
-	unsigned char m_pad08[0xc8 - 0x08];
+	unsigned char m_pad08[0xc8 - sizeof(Overridable)];
 	UnsignedInt m_kindof[6];
 };
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Object.h
-class Object
-{
-public:
-	const ThingTemplate *getTemplate() const
-	{
-		const ThingTemplate *tmpl = m_template;
-		if (tmpl != 0 && tmpl->m_nextOverride != 0)
-			tmpl = (const ThingTemplate *)tmpl->m_nextOverride->getFinalOverride();
-		return tmpl;
-	}
-
-	Bool isKindOf(KindOfType kind) const { return getTemplate()->isKindOf(kind); }
-
-private:
-	void *m_vtable;
-	const ThingTemplate *m_template;
-};
+// Object +4 holds the native override pointer; the shared header stores its raw representation.
+#define THING_TU_MEMBERS const ThingTemplate *getTemplate() const { return *(const OVERRIDE<ThingTemplate> *)&m_template; } Bool isKindOf(KindOfType kind) const { return getTemplate()->isKindOf(kind); }
+#include "game/GameEngine/Source/GameLogic/Object/object.h"
 
 struct BfmeMemberIndexNode
 {
@@ -112,7 +85,7 @@ public:
 
 extern BfmeGameLogic *TheGameLogic;
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Module/ContainModule.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Module/ContainModule.h
 class Rva00237070ContainOwner
 {
 public:
@@ -152,14 +125,14 @@ private:
 };
 
 // ?rva0023D230@BfmeHordeContainOwner@@QAEPAVObject@@H@Z
+// HordeContain interface at complete-object +0xE4; semantic method identity remains address-derived.
 Object *BfmeHordeContainOwner::rva0023D230(KindOfType kind)
 {
 	const BfmeMemberList *contained = getContainOwner()->getContainedItemsList();
 	for (BfmeMemberList::const_iterator it = contained->begin(); it != contained->end(); ++it)
 	{
-		Object *object = *it;
-		if (!object->isKindOf(kind))
-			return object;
+		if (!(*it)->isKindOf(kind))
+			return *it;
 	}
 	if (contained->begin() != contained->end())
 		return *contained->begin();

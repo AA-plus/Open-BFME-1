@@ -37020,7 +37020,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0023caa0@@YAXXZ,,0x0023CAA0,570,game/gen_asm/d_0023c310.asm,matched,gen-dump;ghidra=FUN_0063caa0
 ?d_0023cdd0@@YAXXZ,,0x0023CDD0,184,game/gen_asm/d_0023c310.asm,matched,gen-dump;ghidra=FUN_0063cdd0
 ?d_0023cec0@@YAXXZ,,0x0023CEC0,492,game/gen_asm/d_0023c310.asm,matched,gen-dump;ghidra=FUN_0063cec0
-?d_0023d230@@YAXXZ,,0x0023D230,409,game/gen_asm/d_0023c310.asm,matched,gen-dump;ghidra=FUN_0063d230
 ?d_0023d430@@YAXXZ,,0x0023D430,598,game/gen_asm/d_002310f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_0063d430
 ?d_0023f1a0@@YAXXZ,,0x0023F1A0,507,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_0063f1a0
 ?d_0023f670@@YAXXZ,,0x0023F670,606,game/gen_asm/d_0023c310.asm,matched,gen-dump;ghidra=FUN_0063f670
@@ -172556,3 +172555,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?xfer@Rva0021C080Contestable@@MAEXPAVXfer@@@Z,,0x0021C080,603,game/GameEngine/Source/GameLogic/Object/Contain/ContestableContain_xfer.cpp,matched,ContestableContain vftable 0x010AB3C0 slot3 thunk 0x0042230E with matched ctor 0x0021BEE0; hoisted ObjectID plus hoisted loop counter and branch-scoped counts reproduce every retail frame slot; 603B exact;name kept address-derived because ilt_oracle contradicts the ContestableContain identity (p_false 7.2e-04);model=gpt-5.2-codex;host=chalco.vps
 ?value@Rva001C9310@@QAEHXZ,,0x001C9310,80,game/GameEngine/Source/GameLogic/Object/Rva001C9310Value.cpp,matched,Native OVERRIDE member fixes register mirror; boundary RET001C935F then INT3; evidence=identity_evidence/001c9310-native-override.md; t=3.62min lane=R budget=30m;model=gpt-6-astra;host=GreatFaram
 ?setFields@Rva00364270Owner@@QAEXURva00364270Data@@@Z,,0x00364270,258,game/GameEngine/Source/GameLogic/System/Rva00364270MaskSetter.cpp,matched,Native ten-word bitset copy and mask; address-qualified bank identity preserved; retail RET 0x28 at +0xFF ends extent258;model=gpt-6-astra;host=GreatFaram
+?rva0023D230@BfmeHordeContainOwner@@QAEPAVObject@@H@Z,,0x0023D230,409,game/GameEngine/Source/GameLogic/Object/Contain/HordeContain/Rva0023D230RepresentativeMember.cpp,matched,HordeContain secondary-interface query with canonical Object and native OVERRIDE field access; evidence=targets/game/reverse/identity_evidence/0023d230-native-override.md;model=gpt-6.1-sol;host=fleet
