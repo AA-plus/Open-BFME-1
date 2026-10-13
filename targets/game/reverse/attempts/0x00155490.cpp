@@ -1,6 +1,6 @@
 // ?groupScatter@AIGroup@@QAEXW4CommandSourceType@@@Z
-// partial score=0.8703 date=2026-10-11
-// cl: /DNDEBUG /MD /EHsc
+// partial score=0.9214 date=2026-10-13
+// cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB
 // Open-BFME: the AIGroup orders that walk the member list and forward one
 // command to each member's own AICommandInterface.
 //
@@ -57,8 +57,10 @@
 // because a guard order can change the membership underneath the walk.
 
 #include <math.h>
+#include <vector>
+// stlport
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include/Lib/BaseType.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include/Lib/BaseType.h
 struct Coord3D
 {
 	float x;
@@ -135,7 +137,7 @@ extern NameKeyGenerator *TheNameKeyGenerator;			// 0x012ED600
 
 #define NAMEKEY(x) (TheNameKeyGenerator->nameToKey(x))
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Overridable.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Overridable.h
 class Overridable
 {
 public:
@@ -146,7 +148,7 @@ public:
 	Overridable *m_nextOverride;				// +0x04
 };
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/ThingTemplate.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/ThingTemplate.h
 class ThingTemplate : public Overridable
 {
 public:
@@ -193,7 +195,7 @@ public:
 	virtual void orderAllPassengersToExit(CommandSourceType cmdSource);	// vtable +0x6C
 };
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/TerrainLogic.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/TerrainLogic.h
 class TerrainLogic
 {
 public:
@@ -255,10 +257,43 @@ extern AI *TheAI;
 
 #pragma comment(linker, "/alternatename:?removeGoal@Pathfinder@@QAEXPAVObject@@@Z=?j_00015d02@@YAXXZ")
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AI.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AI.h
+
+class Team;
+class CommandButton;
+class Path;
+enum AICommandType { AICMD_MOVE_TO_POSITION=0 };
+struct DamageInfo
+{
+	char m_bfme_body[0x5C];					// sizeof(DamageInfo)
+};
+
+// upstream layout: inputs/inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AI.h
+class AICommandParms
+{
+public:
+	AICommandParms( AICommandType cmd, CommandSourceType commandSource );	// ILT 0x00030EA4
+
+	AICommandType m_cmd;					// +0x00
+	CommandSourceType m_cmdSource;			// +0x04
+	Coord3D m_pos;							// +0x08
+	Object *m_obj;							// +0x14
+	Object *m_otherObj;						// +0x18
+	const Team *m_team;						// +0x1C
+	std::vector<Coord3D> m_coords;			// +0x20
+	const Waypoint *m_waypoint;				// +0x2C
+	const PolygonTrigger *m_polygon;		// +0x30
+	int m_intValue;							// +0x34
+	DamageInfo m_damage;					// +0x38
+	const CommandButton *m_commandButton;	// +0x94
+	Path *m_path;							// +0x98
+};
+
+
 class AICommandInterface
 {
 public:
+	virtual void aiDoCommand(const AICommandParms *parms);
 	void aiMoveToPosition(const Coord3D *pos, CommandSourceType cmdSource);
 	void aiFollowWaypointPathAsTeam(const Waypoint *way, CommandSourceType cmdSource);
 	void aiHunt(CommandSourceType cmdSource);
@@ -278,11 +313,11 @@ class BfmeGroupAI
 public:
 	char m_bfmeHead[0x20];
 	AICommandInterface m_bfmeCommands;			// +0x20
-	unsigned char m_bfmeGap[0x1cc - 0x21];
+	unsigned char m_bfmeGap[0x1cc - 0x24];
 	void *m_curLocomotor;					// +0x1cc, AIUpdateInterface view
 };
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Object.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Object.h
 class Object
 {
 public:
@@ -384,7 +419,7 @@ struct BfmeMemberList
 	}
 };
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AI.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AI.h
 class AIGroup
 {
 public:
@@ -404,7 +439,9 @@ public:
 	void groupStealthIdle();
 	void groupScatter(::CommandSourceType cmdSource);
 	bool getMinMaxAndCenter(Coord2D *min, Coord2D *max, Coord3D *center);
+private:
 	void recompute(void);
+public:
 
 	char isReady();								// ILT 0x000104B0
 	void prepFollow(::CommandSourceType cmdSource, int unused);	// ILT 0x0002E636
@@ -420,203 +457,36 @@ private:
 	bool m_dirty;							// +0x10
 };
 
-// ?groupTightenToPosition@AIGroup@@QAEXPBUCoord3D@@_NW4CommandSourceType@@@Z
-// The one that does not forward from the walk. Identity is the matched
-// aiTightenToPosition callee (ILT 0x000438C9 -> 0x001527C0); the addWaypoint arm
-// is aiFollowPathAppend (ILT 0x0000BAC8 -> 0x00153480).
-void AIGroup::groupTightenToPosition(const Coord3D *pos, bool addWaypoint,
-		::CommandSourceType cmdSource)
+
+__declspec(noinline) inline void AICommandInterface::aiMoveToPosition( const Coord3D *position, CommandSourceType commandSource )
 {
-	SimpleObjectIterator *iter = new SimpleObjectIterator;
-
-	for (BfmeListNodeBase *it = m_bfmeMembers->m_bfmeNext;
-			it != m_bfmeMembers;
-			it = it->m_bfmeNext)
-	{
-		Object *obj = ((BfmeMemberNode *)it)->m_bfmeValue;
-		Coord3D unitPos;
-		unitPos.x = obj->getPosX();
-		unitPos.y = obj->getPosY();
-
-		if (obj->getDisabledMask() & 8)
-			continue;
-		if (obj->isKindOf(KINDOF_IMMOBILE))
-			continue;
-		if (obj->getAI() == 0)
-			continue;
-
-		float dx = unitPos.x - pos->x;
-		float dy = unitPos.y - pos->y;
-		iter->insert(obj, dx * dx + dy * dy);
-	}
-
-	iter->sort(ITER_SORTED_NEAR_TO_FAR);
-
-	for (Object *theUnit = iter->first(); theUnit; theUnit = iter->next())
-	{
-		BfmeGroupAI *ai = theUnit->getAI();
-		if (!addWaypoint)
-			ai->m_bfmeCommands.aiTightenToPosition(pos, cmdSource);
-		else
-			ai->m_bfmeCommands.aiFollowPathAppend(pos, cmdSource);
-	}
+	AICommandParms parms( AICMD_MOVE_TO_POSITION, commandSource );
+	parms.m_pos = *position;
+	aiDoCommand( &parms );
 }
 
-// ?groupFollowWaypointPathAsTeam@AIGroup@@QAEXPBVWaypoint@@W4CommandSourceType@@@Z
-// The only one of the four with anything before the walk: a Bool gate at
-// ILT 0x000104B0 and a group prep at ILT 0x0002E636 -> 0x0015AB50.
-void AIGroup::groupFollowWaypointPathAsTeam(const Waypoint *way, ::CommandSourceType cmdSource)
-{
-	if (!isReady())
-		return;
 
-	prepFollow(cmdSource, 0);
+//-------------------------------------------------------------------------------------------------
+// AI Command Interface implementation for AIGroup
+//
 
-	for (BfmeListNodeBase *it = m_bfmeMembers->m_bfmeNext;
-			it != m_bfmeMembers;
-			it = it->m_bfmeNext)
-	{
-		BfmeGroupAI *ai = ((BfmeMemberNode *)it)->m_bfmeValue->m_ai;
-
-		if (ai)
-			ai->m_bfmeCommands.aiFollowWaypointPathAsTeam(way, cmdSource);
-	}
-}
-
-// ?groupHunt@AIGroup@@QAEXW4CommandSourceType@@@Z
-// The bare walk, and at 53 bytes the price of the walk itself. Identity is the
-// matched aiHunt callee, ILT 0x0001C882 -> 0x000D88D0.
-void AIGroup::groupHunt(::CommandSourceType cmdSource)
-{
-	for (BfmeListNodeBase *it = m_bfmeMembers->m_bfmeNext;
-			it != m_bfmeMembers;
-			it = it->m_bfmeNext)
-	{
-		BfmeGroupAI *ai = ((BfmeMemberNode *)it)->m_bfmeValue->m_ai;
-
-		if (ai)
-			ai->m_bfmeCommands.aiHunt(cmdSource);
-	}
-}
-
-// ?groupEvacuate@AIGroup@@QAEXW4CommandSourceType@@@Z
-// The three-way split Zero Hour also has: an airborne aircraft is dropped to the
-// terrain layer height first, anything else with an AI is told to evacuate, and
-// a structure without an AI orders its passengers out through the contain module.
-void AIGroup::groupEvacuate(::CommandSourceType cmdSource)
-{
-	for (BfmeListNodeBase *it = m_bfmeMembers->m_bfmeNext;
-			it != m_bfmeMembers;
-			it = it->m_bfmeNext)
-	{
-		Object *obj = ((BfmeMemberNode *)it)->m_bfmeValue;
-		BfmeGroupAI *ai = obj->getAI();
-		if (ai)
-		{
-			if (obj->isKindOf(KINDOF_AIRCRAFT) && obj->isAirborneTarget())
-			{
-				Coord3D pos;
-				pos.set(((BfmeMemberNode *)it)->m_bfmeValue->getPosition());
-				PathfindLayerEnum layerAtDest =
-						TheTerrainLogic->getHighestLayerForDestination(&pos, false);
-				pos.z = TheTerrainLogic->getLayerHeight(pos.x, pos.y, layerAtDest, 0, true);
-				ai->m_bfmeCommands.aiMoveToAndEvacuate(&pos, cmdSource);
-			}
-			else
-			{
-				ai->m_bfmeCommands.aiEvacuate(false, cmdSource);
-			}
-		}
-		else if (obj->isKindOf(KINDOF_STRUCTURE))
-		{
-			ContainModuleInterface *contain = obj->getContain();
-			if (contain)
-				contain->orderAllPassengersToExit(cmdSource);
-		}
-	}
-}
-
-// ?groupGuardPosition@AIGroup@@QAEXPBUCoord3D@@W4GuardMode@1@W4CommandSourceType@1@@Z
-void AIGroup::groupGuardPosition(const Coord3D *pos, GuardMode mode,
-		CommandSourceType cmdSource)
-{
-	if (!pos)
-		return;
-
-	for (BfmeListNodeBase *it = m_bfmeMembers->m_bfmeNext;
-			it != m_bfmeMembers;
-			it = it->m_bfmeNext)
-	{
-		BfmeGroupAI *ai = ((BfmeMemberNode *)it)->m_bfmeValue->m_ai;
-
-		if (ai)
-			ai->m_bfmeCommands.aiGuardPosition(pos, (::GuardMode)mode,
-					(::CommandSourceType)cmdSource);
-	}
-}
-
-// ?groupBfmeCommand44@AIGroup@@QAEXPBVPolygonTrigger@@HW4CommandSourceType@@PBUCoord3D@@@Z
-// The callee is the matched 0x44 command builder at 0x001549A0, which
-// AICommandInterfaceGuardCommands.cpp reads as a guard-area order carrying an
-// extra position.
-void AIGroup::groupBfmeCommand44(const PolygonTrigger *poly, int value,
-		::CommandSourceType cmdSource, const Coord3D *pos)
-{
-	if (!poly)
-		return;
-
-	for (BfmeListNodeBase *it = m_bfmeMembers->m_bfmeNext;
-			it != m_bfmeMembers;
-			it = it->m_bfmeNext)
-	{
-		BfmeGroupAI *ai = ((BfmeMemberNode *)it)->m_bfmeValue->m_ai;
-
-		if (ai)
-			ai->m_bfmeCommands.aiBfmeCommand44(poly, value, cmdSource, pos);
-	}
-}
-
-// ?groupStealthIdle@AIGroup@@QAEXXZ
-// Descriptive name: identity is the group walk plus the "StealthUpdate" string.
-// It is not Zero Hour's groupIdle, which takes a CommandSourceType.
-void AIGroup::groupStealthIdle()
-{
-	for (BfmeListNodeBase *it = m_bfmeMembers->m_bfmeNext;
-			it != m_bfmeMembers;
-			it = it->m_bfmeNext)
-	{
-		Object *obj = ((BfmeMemberNode *)it)->m_bfmeValue;
-		if (!obj)
-			continue;
-
-		BfmeGroupAI *ai = obj->m_ai;
-		static const NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
-		StealthUpdate *stealth = obj->findUpdateModule(key_StealthUpdate);
-		if (!stealth)
-			continue;
-
-		if (ai)
-			ai->m_bfmeCommands.aiIdle(CMD_FROM_AI);
-		stealth->update002AD250();
-	}
-}
-
-// ?groupScatter@AIGroup@@QAEXW4CommandSourceType@@@Z
-// Named GameLogic::logicMessageDispatcher MSG_DO_SCATTER caller and the
-// vendored AIGroup::groupScatter body establish the identity.  BFME keeps the
-// same member walk but stores its list as the intrusive sentinel at +0x04.
+/**
+ * Scatter
+ */
 void AIGroup::groupScatter(::CommandSourceType cmdSource)
 {
 	if (m_dirty)
 		recompute();
 
-	union { Coord2D min; Coord3D dest; } phase;
+	// compute current centroid of the team
 	Coord3D center;
 	{
+		Coord2D min;
 		Coord2D max;
-		getMinMaxAndCenter(&phase.min, &max, &center);
+		getMinMaxAndCenter(&min, &max, &center);
 	}
 
+	// Move.
 	SimpleObjectIterator *iter = new SimpleObjectIterator;
 
 	BfmeMemberListIterator i;
@@ -625,7 +495,7 @@ void AIGroup::groupScatter(::CommandSourceType cmdSource)
 		Object *obj = *i;
 
 		if (obj->isDisabledByType(3))
-			continue;
+			continue; // don't bother telling the occupants to move.
 		if (obj->isKindOf(KINDOF_IMMOBILE))
 			continue;
 		if (obj->getAI() == 0)
@@ -650,14 +520,15 @@ void AIGroup::groupScatter(::CommandSourceType cmdSource)
 		center.x -= g_01076C24;
 		unitPos.z = theUnit->getPosZ();
 		BfmeGroupAI *ai = theUnit->getAI();
+		Coord3D dest;
 		Coord2D delta;
-		phase.dest = unitPos;
+		dest = unitPos;
 		delta.x = unitPos.x - center.x;
 		delta.y = unitPos.y - center.y;
 		delta.normalize();
-		phase.dest.x += delta.x * 4 * theUnit->getBoundingCircleRadius();
-		phase.dest.y += delta.y * 4 * theUnit->getBoundingCircleRadius();
-		ai->m_bfmeCommands.aiMoveToPosition(&phase.dest, cmdSource);
+		dest.x += delta.x * 4 * theUnit->getBoundingCircleRadius();
+		dest.y += delta.y * 4 * theUnit->getBoundingCircleRadius();
+		ai->m_bfmeCommands.aiMoveToPosition(&dest, cmdSource);
 	}
 }
 
