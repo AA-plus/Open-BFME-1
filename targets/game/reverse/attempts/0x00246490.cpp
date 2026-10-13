@@ -1,5 +1,5 @@
 // ?rva00246490@Rva00246490HordeContainInterface@@QAEXPAVObject@@@Z
-// partial score=0.86 date=2026-09-22
+// partial score=0.8693 date=2026-10-13
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/GameEngine/Include/Precompiled /Igame/Libraries/Source/WWVegas/WWMath
 // stlport
 // Retail 0x00246490: HordeContain +0xE4 interface vtable 0x010AED58 slot 91
@@ -115,9 +115,9 @@ void Rva00246490HordeContainInterface::rva00246490( Object *obj )
 		{
 			Real distance = GetGameLogicRandomValueReal( data->m_backUpMinDistance, data->m_backUpMaxDistance, "F:\\bfme\\Code\\gameengine\\Source\\GameLogic\\Object\\Contain\\HordeContain\\HordeContain.cpp", 0x1ac2 );
 			int delay = GetGameLogicRandomValue( data->m_backUpMinDelayTime, data->m_backUpMaxDelayTime, "F:\\bfme\\Code\\gameengine\\Source\\GameLogic\\Object\\Contain\\HordeContain\\HordeContain.cpp", 0x1ac3 );
-			BfmeRva449E0Key key;
-			key.m_key = member->getID();
-			BfmeRva449E0Value &entry = m_backUp[ key ];
+			union KeyScale00246490 { BfmeRva449E0Key key; Real factor; } temporary;
+			temporary.key.m_key = member->getID();
+			BfmeRva449E0Value &entry = m_backUp[temporary.key];
 
 			Coord3D dir;
 			dir.set( member->getPosition() );
@@ -125,7 +125,8 @@ void Rva00246490HordeContainInterface::rva00246490( Object *obj )
 			dir.y -= center.y;
 			dir.z -= center.z;
 			dir.normalize();
-			dir.scale( distance * 10.0f );
+			temporary.factor = distance * 10.0f;
+			dir.scale(temporary.factor);
 
 			Coord3D pos;
 			pos.set( member->getPosition() );
