@@ -79,6 +79,32 @@
 	{                                                                     \
 	}
 
+// The override behind Rva005E7BF0 (0x00600890) ends with ret 4: it takes the
+// target it passes on to its +0x0C base (Rva00600890AdjustedHandle.cpp), so
+// that slot is spelled with the argument.
+#define BFME_ADJUSTOR_THUNK_TAKING( NAME, OFFSET, ARG )                  \
+	class ARG;                                                            \
+	class NAME##Lead                                                      \
+	{                                                                     \
+	public:                                                               \
+		virtual void handle( ARG *arg );                                  \
+		char m_fill[ ( OFFSET ) - 4 ];                                    \
+	};                                                                    \
+	class NAME##Alternate                                                 \
+	{                                                                     \
+	public:                                                               \
+		virtual void handle( ARG *arg );                                  \
+	};                                                                    \
+	class NAME : public NAME##Lead, public NAME##Alternate                \
+	{                                                                     \
+	public:                                                               \
+		NAME();                                                           \
+		virtual void handle( ARG *arg );                                  \
+	};                                                                    \
+	NAME::NAME()                                                          \
+	{                                                                     \
+	}
+
 BFME_ADJUSTOR_THUNK( Rva00075D30, 88 )
 BFME_ADJUSTOR_THUNK( Rva000DFA70, 8 )
 BFME_ADJUSTOR_THUNK( Rva000F2310, 8 )
@@ -284,7 +310,7 @@ BFME_ADJUSTOR_THUNK( Rva005E7920, 28 )
 BFME_ADJUSTOR_THUNK( Rva005E7930, 28 )
 BFME_ADJUSTOR_THUNK( Rva005E79E0, 8 )
 BFME_ADJUSTOR_THUNK( Rva005E7A60, 8 )
-BFME_ADJUSTOR_THUNK( Rva005E7BF0, 12 )
+BFME_ADJUSTOR_THUNK_TAKING( Rva005E7BF0, 12, BfmeSeedTarget )
 BFME_ADJUSTOR_THUNK( Rva005E7C00, 12 )
 BFME_ADJUSTOR_THUNK( Rva005E7CF0, 8 )
 BFME_ADJUSTOR_THUNK( Rva005E7DC0, 8 )

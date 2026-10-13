@@ -85620,7 +85620,7 @@ name,address,notes
 ?handle@Rva005E7930@@UAEXXZ,0x005E92B0,address-derived override reached by the adjustor thunk at the same address-derived name; target read from the REL32 in the thunk
 ?handle@Rva005E79E0@@UAEXXZ,0x005E7A00,address-derived override reached by the adjustor thunk at the same address-derived name; target read from the REL32 in the thunk
 ?handle@Rva005E7A60@@UAEXXZ,0x005E7A70,address-derived override reached by the adjustor thunk at the same address-derived name; target read from the REL32 in the thunk
-?handle@Rva005E7BF0@@UAEXXZ,0x00600890,address-derived override reached by the adjustor thunk at the same address-derived name; target read from the REL32 in the thunk
+?handle@Rva005E7BF0@@UAEXPAVBfmeSeedTarget@@@Z,0x00600890,address-derived override reached by the adjustor thunk at the same address-derived name; target read from the REL32 in the thunk
 ?handle@Rva005E7C00@@UAEXXZ,0x005E7C20,address-derived override reached by the adjustor thunk at the same address-derived name; target read from the REL32 in the thunk
 ?handle@Rva005E7CF0@@UAEXXZ,0x005E7D00,address-derived override reached by the adjustor thunk at the same address-derived name; target read from the REL32 in the thunk
 ?handle@Rva005E7DC0@@UAEXXZ,0x005E7DD0,address-derived override reached by the adjustor thunk at the same address-derived name; target read from the REL32 in the thunk
