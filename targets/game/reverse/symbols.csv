@@ -91168,3 +91168,4 @@ rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?rva0001D949Target@@YAXXZ,0x001D95B0,No-argument tail-thunk view of independently matched matched target of ILT 0001D949
 ?rva0002A379Target@@YAXXZ,0x001FB5D0,No-argument tail-thunk view of independently matched matched target of ILT 0002A379
 ?rva0002BFF8Target@@YAXXZ,0x00122ED0,No-argument tail-thunk view of independently matched matched target of ILT 0002BFF8
+?rva00030512Target@@YAXXZ,0x001423B0,No-argument tail-thunk view of independently matched matched target of ILT 00030512
