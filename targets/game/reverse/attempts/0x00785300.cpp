@@ -1,5 +1,5 @@
 // ?draw@Rva00785FD0Item@@QAEXXZ
-// partial score=0.8109 date=2026-10-09
+// partial score=0.8473 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameNetwork /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Benchmark /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWAudio /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Igame/Libraries/Source/WWVegas/WWMath
 // stlport
 
@@ -75,16 +75,17 @@ class BfmeThingIH;
 
 struct Rva00785300Matrix
 {
+	template<int X, int Y>
 	void transform(const LinePoint0078B040 &p, float &x, float &y) const
 	{
-		x = a * p.x + c * p.y + tx;
-		y = b * p.x + d * p.y + ty;
+		x = (X & 1 ? *(const volatile float *)&a : a) * (X & 2 ? *(const volatile float *)&p.x : p.x) + (X & 4 ? *(const volatile float *)&c : c) * (X & 8 ? *(const volatile float *)&p.y : p.y) + tx;
+		y = (Y & 1 ? *(const volatile float *)&b : b) * (Y & 2 ? *(const volatile float *)&p.x : p.x) + (Y & 4 ? *(const volatile float *)&d : d) * (Y & 8 ? *(const volatile float *)&p.y : p.y) + ty;
 	}
 	LinePoint0078B040 operator*(const LinePoint0078B040 &p) const
 	{
 		LinePoint0078B040 r;
 		r.x = a * p.x + c * p.y + tx;
-		r.y = b * p.x + d * p.y + ty;
+		r.y = (*(const volatile float *)&b) * p.x + d * p.y + ty;
 		return r;
 	}
 	float a, b, c, d, tx, ty;
@@ -184,20 +185,38 @@ static inline void setFilterField08(Rva00785300TextureRef &tex, int value)
 	((Gen_00920a60 *)filterOf(tex))->m(value);
 }
 
-static inline void setVertex(LineVertex0078B040 *v, const Rva00785300Matrix &m,
+template<int X, int Y> static inline void setVertex(LineVertex0078B040 *v, const Rva00785300Matrix &m, const LinePoint0078B040 &p, unsigned color);
+template<int X, int Y> static inline void setUV(LineVertex0078B040 *v, const Rva00785300Matrix &m, const LinePoint0078B040 &p);
+template<> inline void setVertex<0, 0>(LineVertex0078B040 *v, const Rva00785300Matrix &m,
 	const LinePoint0078B040 &p, unsigned color)
 {
-	v->x = XF_X(m, p);
-	v->y = XF_Y(m, p);
+	v->x = m.a * p.x + m.c * p.y + m.tx;
+	v->y = m.b * p.x + m.d * p.y + m.ty;
 	v->z = 0.0f;
 	v->color = color;
 }
 
-static inline void setUV(LineVertex0078B040 *v, const Rva00785300Matrix &m,
+template<> inline void setVertex<2, 10>(LineVertex0078B040 *v, const Rva00785300Matrix &m,
+	const LinePoint0078B040 &p, unsigned color)
+{
+	v->x = m.a * (*(const volatile float *)&p.x) + m.c * p.y + m.tx;
+	v->y = m.b * (*(const volatile float *)&p.x) + m.d * (*(const volatile float *)&p.y) + m.ty;
+	v->z = 0.0f;
+	v->color = color;
+}
+
+template<> inline void setUV<2, 10>(LineVertex0078B040 *v, const Rva00785300Matrix &m,
 	const LinePoint0078B040 &p)
 {
-	v->field10[0] = XF_X(m, p);
-	v->field10[1] = XF_Y(m, p);
+	v->field10[0] = m.a * (*(const volatile float *)&p.x) + m.c * p.y + m.tx;
+	v->field10[1] = m.b * (*(const volatile float *)&p.x) + m.d * (*(const volatile float *)&p.y) + m.ty;
+}
+
+template<> inline void setUV<6, 10>(LineVertex0078B040 *v, const Rva00785300Matrix &m,
+	const LinePoint0078B040 &p)
+{
+	v->field10[0] = m.a * (*(const volatile float *)&p.x) + (*(const volatile float *)&m.c) * p.y + m.tx;
+	v->field10[1] = m.b * (*(const volatile float *)&p.x) + m.d * (*(const volatile float *)&p.y) + m.ty;
 }
 
 static inline void setTexture(const Rva00785300TextureRef &tex)
@@ -245,14 +264,14 @@ void Rva00785FD0Item::draw()
 				for (std::vector<Rva00785300Triangle>::iterator t = tri->m_triangles.begin();
 					t != tri->m_triangles.end(); ++t)
 				{
-					setVertex(v, m_matrix, t->p[1], color);
-					setUV(v, tri->m_uv, t->p[1]);
+					setVertex<0, 0>(v, m_matrix, t->p[1], color);
+					setUV<2, 10>(v, tri->m_uv, t->p[1]);
 					++v;
-					setVertex(v, m_matrix, t->p[0], color);
-					setUV(v, tri->m_uv, t->p[0]);
+					setVertex<0, 0>(v, m_matrix, t->p[0], color);
+					setUV<6, 10>(v, tri->m_uv, t->p[0]);
 					++v;
-					setVertex(v, m_matrix, t->p[2], color);
-					setUV(v, tri->m_uv, t->p[2]);
+					setVertex<0, 0>(v, m_matrix, t->p[2], color);
+					setUV<2, 10>(v, tri->m_uv, t->p[2]);
 					++v;
 				}
 				(((Rva0078AE40 *)g_rva00785FD0Renderer)->*reinterpret_cast<void (__fastcall Rva0078AE40::*)(void *)>(&Rva0078AE40::closeA))(v);
@@ -273,11 +292,11 @@ void Rva00785FD0Item::draw()
 			for (std::vector<Rva00785300Triangle>::iterator t = tri->m_triangles.begin();
 				t != tri->m_triangles.end(); ++t)
 			{
-				setVertex(v, m_matrix, t->p[0], color);
+				setVertex<0, 0>(v, m_matrix, t->p[0], color);
 				++v;
-				setVertex(v, m_matrix, t->p[2], color);
+				setVertex<0, 0>(v, m_matrix, t->p[2], color);
 				++v;
-				setVertex(v, m_matrix, t->p[1], color);
+				setVertex<2, 10>(v, m_matrix, t->p[1], color);
 				++v;
 			}
 			(((Rva0078AE40 *)g_rva00785FD0Renderer)->*reinterpret_cast<void (__fastcall Rva0078AE40::*)(void *)>(&Rva0078AE40::closeA))(v);
@@ -296,8 +315,8 @@ void Rva00785FD0Item::draw()
 			LinePoint0078B040 a, b;
 			for (std::vector<Rva00785300Line>::iterator l = line->m_lines.begin(); l != line->m_lines.end(); ++l)
 			{
-				m_matrix.transform(l->a(), a.x, a.y);
-				m_matrix.transform(l->b(), b.x, b.y);
+				m_matrix.transform<1, 1>(l->a(), a.x, a.y);
+				m_matrix.transform<0, 4>(l->b(), b.x, b.y);
 				emitLine0078B040(g_rva00785FD0Renderer, &cursor, a, b, line->m_width, color);
 			}
 			(((Rva0078AE40 *)g_rva00785FD0Renderer)->*reinterpret_cast<void (__fastcall Rva0078AE40::*)(void *)>(&Rva0078AE40::closeB))(cursor);
