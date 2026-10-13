@@ -1,5 +1,5 @@
 // ??1BroadcastStealthUpdate@@UAE@XZ
-// partial score=0.15 date=2026-09-10
+// partial score=0.4569 date=2026-09-10
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
 // Scratch clean-C++ reconstruction for retail 0x00289E50.
