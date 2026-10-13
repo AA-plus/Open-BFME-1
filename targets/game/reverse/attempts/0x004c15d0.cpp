@@ -1,4 +1,13 @@
 // ?bfmeShowDN@ControlBar@@QAEXPAUBfmeMsgDN@@@Z
+// partial score=0.9956 date=2026-10-13
+// ROUND41 coherent family ownership candidate (gpt-6-astra).
+// All 11 absolute retail operands for VA012F368C are in the four bodies below.
+// Delete92/hide61/update267 are masked-exact; show678 retains3 handle-transfer
+// differences. This is evidence, not production: migrate all four together,
+// validate their one local data owner and every relocation with normal gates.
+// The historical isolated-static warning below applies if siblings stay in
+// other production TUs; this bank now carries their combined implementation.
+// ?bfmeShowDN@ControlBar@@QAEXPAUBfmeMsgDN@@@Z
 // partial score=0.9764 date=2026-09-28
 // ?bfmeShowDN@ControlBar@@QAEXPAUBfmeMsgDN@@@Z
 // cl: /DNDEBUG /DWIN32 /MD /EHsc
@@ -220,18 +229,21 @@ public:
 	virtual void postProcessLoad(void);
 	virtual void reset(void);				// slot 4, vtable+0x10
 
+	virtual void update(void);
+	Bool isFinished(void) const { return !m_needsUpdate; }
 	void registerGameWindow(GameWindow *win, AnimTypes animType, Bool needsToFinish,
 		UnsignedInt ms = 0, UnsignedInt delayMs = 0);
 	void reverseAnimateWindow(void);
 	Bool isReversed(void) const { return m_reverse; }
 
-	char m_pad04[0x11 - 4];
+	char m_pad04[0x10 - 4];
+	Bool m_needsUpdate;
 	Bool m_reverse;
 	char m_pad12[0x34 - 0x12];
 };
 
 class Glo012F368CType;
-Glo012F368CType *Glo012F368C = 0;				// theAnimateWindowManager
+static Glo012F368CType *Glo012F368C = 0;				// theAnimateWindowManager
 extern Bool g_bfmeReadyPT;					// useAnimation
 
 class Rva005929E0
@@ -270,6 +282,9 @@ class ControlBar
 {
 public:
 	void bfmeShowDN(BfmeMsgDN *source);
+	void deleteBuildTooltipLayout(void);
+	void hideBuildTooltipLayout(void);
+	Bool getShowBuildTooltipLayout(void) const { return m_showBuildToolTipLayout; }
 	void doRepopulateBuildTooltipLayout(void);
 
 	char m_bfmeHeadA[0x278];
@@ -349,4 +364,40 @@ void ControlBar::bfmeShowDN(BfmeMsgDN *source)
 		animateManager()->reset();
 		animateManager()->registerGameWindow(m_buildToolTipLayout->getFirstWindow(), WIN_ANIMATION_SLIDE_RIGHT_FAST, true, 200);
 	}
+}
+
+// Coherent scratch ownership trial: all retail users of VA012F368C.
+void ControlBar::deleteBuildTooltipLayout(void)
+{
+ m_showBuildToolTipLayout = false;
+ m_buildToolTipLayout->hide(true);
+ m_bfmeHandle2F4.reset();
+ if (Glo012F4B98) Glo012F4B98->m_bfmeSub.release();
+ delete animateManager();
+ Glo012F368C = 0;
+}
+void ControlBar::hideBuildTooltipLayout(void)
+{
+ if (animateManager() && animateManager()->isReversed()) return;
+ if (g_bfmeReadyPT && animateManager() && TheWritableGlobalData->m_animateWindows)
+  animateManager()->reverseAnimateWindow();
+ else deleteBuildTooltipLayout();
+}
+class WindowLayout;
+extern ControlBar *TheControlBar;
+void ControlBarPopupDescriptionUpdateFunc(WindowLayout *, void *)
+{
+ if (TheScriptEngine->isGameEnding()) TheControlBar->hideBuildTooltipLayout();
+ if (animateManager() && !TheControlBar->getShowBuildTooltipLayout() && !animateManager()->isReversed())
+  animateManager()->reverseAnimateWindow();
+ else if (!TheControlBar->getShowBuildTooltipLayout() && (!TheWritableGlobalData->m_animateWindows || !g_bfmeReadyPT))
+  TheControlBar->deleteBuildTooltipLayout();
+ if (g_bfmeReadyPT && animateManager() && TheWritableGlobalData->m_animateWindows) {
+  Bool wasFinished = animateManager()->isFinished();
+  animateManager()->update();
+  if (animateManager() && animateManager()->isFinished() && !wasFinished && animateManager()->isReversed()) {
+   delete animateManager(); Glo012F368C = 0;
+   TheControlBar->deleteBuildTooltipLayout();
+  }
+ }
 }
