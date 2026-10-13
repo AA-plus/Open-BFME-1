@@ -1,5 +1,5 @@
 // ?doParticles@W3DParticleSystemManager@@UAEXAAVRenderInfoClass@@@Z
-// partial score=0.8689 date=2026-10-08
+// partial score=0.8703 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/shims/sweep /Iinputs/reference/shims/smudgenopool
 // stlport
 // Retail 0x006FA9B0 uses 12-byte intrusive handles and a deferred renderer.
@@ -7,6 +7,7 @@
 #define __PLACEMENT_VEC_NEW_INLINE
 #include "winbase_shim.h"
 #include "camera.h"
+#include "ww3d.h"
 #include "rinfo.h"
 #include "aabox.h"
 #include "vector2.h"
@@ -34,7 +35,7 @@ class GlobalData;
 extern GlobalData *TheWritableGlobalData;
 struct Rva006FA9B0GlobalData { unsigned char m_beforeHeat[0x1d]; bool m_useHeatEffects; };
 extern int g_bfmeVal991;
-extern unsigned char g_get_006f9ff0;
+#define g_get_006f9ff0 WW3D::Are_Static_Sort_Lists_Enabled()
 extern bool Rva012D6D75;
 extern const char g_bfmeEmptyAscii[];
 float GetGameClientRandomValueReal(float, float, char *, int);
@@ -57,7 +58,7 @@ public:
     virtual void slot04();
     virtual void slot08();
     virtual void slot0c();
-    virtual int render(RenderInfoClass &, const AABoxClass *, unsigned int *);
+    virtual int render(RenderInfoClass &, const AABoxClass &, int *);
 };
 struct GenNode_006fa270;
 struct GenOwner_006fa270 {
@@ -104,12 +105,22 @@ struct GenNode_006fa270 {
             m_prev=0; m_next=0;
         }
     }
-    ~GenNode_006fa270() { unlink(); }
+    ~GenNode_006fa270() {
+        if (m_owner) {
+            if (m_prev) m_prev->m_next=m_next;
+            else m_owner->m_head=m_next;
+            if (m_next) m_next->m_prev=m_prev;
+            else m_owner->m_tail=m_prev;
+            m_prev=0; m_next=0;
+        }
+    }
     GenNode_006fa270 &operator=(const GenNode_006fa270 &other) {
         if (this!=&other) {
-            unlink(); m_owner=other.m_owner;
-            if (m_owner) {
-                m_prev=m_owner->m_tail; m_next=0; m_owner->m_tail=this;
+            unlink();
+            GenOwner_006fa270 *owner=other.m_owner;
+            m_owner=owner;
+            if (owner) {
+                m_prev=owner->m_tail; m_next=0; owner->m_tail=this;
                 if (m_prev) m_prev->m_next=this;
                 else m_owner->m_head=this;
             }
@@ -137,7 +148,7 @@ class W3DParticleSystemManager {
 public:
     virtual void doParticles(RenderInfoClass &);
     unsigned char m_beforeFieldCount[0x84];
-    unsigned int m_fieldParticleCount;
+    int m_fieldParticleCount;
     unsigned char m_beforeOnScreen[4];
     int m_onScreenParticleCount;
     unsigned char m_beforeReady[0x28];
@@ -153,34 +164,44 @@ typedef char check_deferred[offsetof(W3DParticleSystemManager,m_deferred)==0xc0?
 void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 {
     if (!m_readyToRender) return;
+    // external mechanism must tell us when it's OK to render again...
     m_readyToRender=false;
+    //reset each frame
     g_bfmeVal991=0;
-    if (TheSmudgeManager) TheSmudgeManager->setSmudgeCountLastFrame(0);
+    if (TheSmudgeManager) TheSmudgeManager->setSmudgeCountLastFrame(0); //keep track of visible smudges
     const FrustumClass &frustum=rinfo.Camera.Get_Frustum();
     AABoxClass bbox;
+    //Get a bounding box around our visible universe.  Bounded by terrain and the sky
+    //so much tighter fitting volume than what's actually visible.  This will cull
+    //particles falling under the ground.
     TheTerrainRenderObject->getMaximumVisibleBox(frustum,&bbox,true);
+    //@todo lorenzen sez: put these in registers for sure
     float bcX=bbox.Center.X, bcY=bbox.Center.Y, bcZ=bbox.Center.Z;
     float beX=bbox.Extent.X, beY=bbox.Extent.Y, beZ=bbox.Extent.Z;
     SmudgeSet *set=0;
-    if (TheSmudgeManager) set=TheSmudgeManager->addSmudgeSet();
+    if (TheSmudgeManager) set=TheSmudgeManager->addSmudgeSet(); //global smudge set through which all smudges are rendered.
     BfmeHandleCX texture;
     std::list<GenNode_006fa270> &systems=TheParticleSystemManager->m_allParticleSystemList;
     for (std::list<GenNode_006fa270>::iterator it=systems.begin();it!=systems.end();++it) {
         GenNode_006fa270 sys(*it);
         if (!sys.m_owner) continue;
+        // only look at particle/point style systems
         if (sys.m_owner->m_kind==6) continue;
         if (g_get_006f9ff0 && sys.m_owner->m_deferredIndex24>0 && sys.m_owner->m_deferredIndex24<2) {
             m_deferred[sys.m_owner->m_deferredIndex24].push_back(sys);
             continue;
         }
         const char *name=sys.m_owner->m_name.str();
-        if (*(const unsigned int *)name==0x44554d53) {
+        //temporary hack that checks if texture name starts with "SMUD" - if so, we can assume it's a smudge type
+        if (/*sys->isUsingSmudge()*/ *(const unsigned int *)name==0x44554d53) {
             if (TheSmudgeManager && TheSmudgeManager->getHardwareSupport() &&
                 ((Rva006FA9B0GlobalData *)TheWritableGlobalData)->m_useHeatEffects) {
                 bool gotColor=false;
+                //set-up all the per-particle
                 for (Rva006FA9B0Particle *p=sys.m_owner->m_firstParticle;p;p=p->m_systemNext) {
                     const Vector3 *pos=&p->m_position;
                     float psize=((Rva005C30A0Owner *)p)->Rva005C30A0();
+                    //Cull particle to edges of screen and terrain.
                     if (WWMath::Fabs(pos->X-bcX)>(beX+psize)) continue;
                     if (WWMath::Fabs(pos->Y-bcY)>(beY+psize)) continue;
                     if (WWMath::Fabs(pos->Z-bcZ)>(beZ+psize)) continue;
@@ -204,8 +225,8 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
         }
         Rva006FA9B0Renderer *renderer=sys.m_owner->m_renderer;
         if (renderer)
-            m_onScreenParticleCount+=renderer->render(rinfo,&bbox,&m_fieldParticleCount);
-    }
+            m_onScreenParticleCount+=renderer->render(rinfo,bbox,&m_fieldParticleCount);
+    }// next system
     if (g_get_006f9ff0) {
         bool sorting=Rva012D6D75;
         if (sorting) Rva012D6D75=0;
@@ -215,12 +236,14 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
                 if (!sys.m_owner) continue;
                 Rva006FA9B0Renderer *renderer=sys.m_owner->m_renderer;
                 if (renderer)
-                    m_onScreenParticleCount+=renderer->render(rinfo,&bbox,&m_fieldParticleCount);
+                    m_onScreenParticleCount+=renderer->render(rinfo,bbox,&m_fieldParticleCount);
             }
-            m_deferred[pass].erase(m_deferred[pass].begin(),m_deferred[pass].end());
+            m_deferred[pass].clear();
         }
         if (sorting) Rva012D6D75=1;
     }
+    /// @todo lorenzen sez: this should be debug only:
     TheParticleSystemManager->setOnScreenParticleCount(m_onScreenParticleCount);
+    //Draw any particles belonging to weather effects
     if (TheSnowManager) ((W3DSnowManager *)TheSnowManager)->render(rinfo);
 }
