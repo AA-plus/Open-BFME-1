@@ -4,11 +4,12 @@
 // declaration only, the body is game/gen_small/fun_004.cpp
 struct Gen_006434c0 { void m(); };
 
+// Retail calls ILT RVA 0x00021A58, which jumps to body RVA 0x000A5780.
+void j_00021a58();
+
 class BfmeStrV37
 {
 public:
-	void bfmeInitV37(char *a, char *b, char *tag);
-
 	char *b;
 	char *e;
 };
@@ -67,6 +68,6 @@ void __stdcall bfmeAssignRangeV37(BfmeStrV37 *other, int pos, int n)
 		mov eax, dword ptr [ebp-0x74]
 		push eax
 		mov ecx, dword ptr [ebp-0x78]
-		call BfmeStrV37::bfmeInitV37
+		call j_00021a58
 	}
 }
