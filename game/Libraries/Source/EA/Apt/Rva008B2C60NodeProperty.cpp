@@ -19,7 +19,8 @@ static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
 	return (BfmeStringData3AF0 *)&g_rva012D5298Empty;
 }
 extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
-extern int bfmeCompareVSC(const char *, const char *);
+// Retail 009F6FA0 jumps through the MSVCR71._strcmpi IAT slot.
+extern "C" int __cdecl _strcmpi(const char *, const char *);
 
 class Rva8CD130String
 {
@@ -81,7 +82,7 @@ bool __stdcall rva008B2C60NodeProperty(Rva8CD130Value *self,
 {
     if ((self->m_flags & 0x3f) == 32)
     {
-        if (bfmeCompareVSC(key->text(), "NodeName") == 0)
+        if (_strcmpi(key->text(), "NodeName") == 0)
         {
             if (value->isString())
             {
@@ -91,7 +92,7 @@ bool __stdcall rva008B2C60NodeProperty(Rva8CD130Value *self,
                     self->m_receiver20->slot38(text.text());
             }
         }
-        else if (bfmeCompareVSC(key->text(), "NodeValue") == 0)
+        else if (_strcmpi(key->text(), "NodeValue") == 0)
         {
             if (value->isString())
             {

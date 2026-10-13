@@ -5,7 +5,7 @@
 // the same table, which its existing compiler-generated symbol owns.
 // Keep this definition outside the callers: visible dead stores let VC7.1
 // remove their cleanup calls, even with a noinline destructor declaration.
-extern "C" const char __identifier("??_7Rva007E87C0Deleting@@6B@")[];
+extern "C" const char __identifier("??_7Rva007E87C0Deleting@@6B@")[ ];
 
 class Rva007E8810Message
 {

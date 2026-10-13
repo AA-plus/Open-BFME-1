@@ -57,7 +57,8 @@ class AptValue;
 struct Rva008AE770Stack { int m_count; };
 extern Rva008AE770Stack Rva008AE770TheStack;
 extern AptValue *g_bfmeFallbackDB;			// 0x013379BC
-extern int __cdecl bfmeCompareVSC(const char *, const char *);	// 0x009F6FA0
+// Retail 009F6FA0 jumps through the MSVCR71._strcmpi IAT slot.
+extern "C" int __cdecl _strcmpi(const char *, const char *);	// 0x009F6FA0
 
 struct Rva008B5770Entry
 {
@@ -106,7 +107,7 @@ AptValue *rva008B5770NamedProperty(Rva008B5770Owner *owner)
 			do
 			{
 				const char *candidateName = scope->m_entries[index].m_name;
-				if (bfmeCompareVSC((const char *)key.m_data + 8, candidateName) == 0)
+				if (_strcmpi((const char *)key.m_data + 8, candidateName) == 0)
 				{
 					if (scope->m_values[scope->m_entries[index].m_valueIndex]->m_type != 6)
 						break;
