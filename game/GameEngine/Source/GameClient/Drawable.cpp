@@ -2483,13 +2483,25 @@ Bool Drawable::drawsAnyUIText( void )
 // independently from this large translation unit.
 
 //------------------------------------------------------------------------------------------------
-// ?getIconInfo@Drawable@@QAEPAVDrawableIconInfo@@XZ present-unmatched
-DrawableIconInfo* Drawable::getIconInfo()
+// No Drawable::getIconInfo body here: the TU-local 91-byte null-check copy is
+// not retail's (verdict wrong against the 91-byte body at 0x00410F10, which
+// reads m_iconInfo at +0x2E0 with parallel zero-init). The declaration from
+// the header stands; calls resolve to the pinned retail body through ILT
+// 0x000102A8 (gen-thunk ?j_000102a8 -> FUN_00810f10). No /alternatename.
+
+// The matched 12-byte placement operator delete at 0x007EFFF0 is an inline
+// MEMORY_POOL_GLUE member of DrawableIconInfo; this TU used to emit it
+// through getIconInfo's placement-new. Keep emitting the verified copy with
+// the same linkage now that the wrong copy is gone. The anchor is compiler
+// scaffolding, not a retail function.
+#pragma inline_depth(0)
+// ?Rva007EFFF0Emit@@YAXXZ present-unmatched
+void Rva007EFFF0Emit(void)
 {
-	if (m_iconInfo == NULL)
-		m_iconInfo = newInstance(DrawableIconInfo);
-	return m_iconInfo;
+	DrawableIconInfo *p = newInstance(DrawableIconInfo);
+	p->deleteInstance();
 }
+#pragma inline_depth()
 
 //------------------------------------------------------------------------------------------------
 // ?clearEmoticon@Drawable@@QAEXXZ present-unmatched
