@@ -113,18 +113,6 @@ static ShaderClass detailShader(SC_ALPHA_MIRROR);
 // W3DBridge::W3DBridge: retail body (0x006D8800) in W3DBridgeConstructor.cpp.
 
 //=============================================================================
-// W3DBridge destructor.
-//=============================================================================
-/** Frees objects.  */
-//=============================================================================
-// byte-exact reconstruction: game/GameEngineDevice/Source/W3DDevice/GameClient/W3DBridgeDestructor.cpp
-// ??1W3DBridge@@QAE@XZ present-unmatched
-W3DBridge::~W3DBridge(void)
-{
-	clearBridge();
-}
-
-//=============================================================================
 // W3DBridge::renderBridge
 //=============================================================================
 /** Renders the bride.  It is assumed that the shared vertex and index buffers
