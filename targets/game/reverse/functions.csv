@@ -37095,7 +37095,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00297480@@YAXXZ,,0x00297480,43,game/gen_asm/d_00280010.asm,matched,gen-dump;bounds=high
 ?d_002995e0@@YAXXZ,,0x002995E0,309,game/gen_asm/d_00280010.asm,matched,gen-dump;bounds=high
 ?d_0029ac40@@YAXXZ,,0x0029AC40,990,game/gen_asm/d_0028fdf0.asm,matched,gen-dump;ghidra=FUN_0069ac40
-?d_0029b350@@YAXXZ,,0x0029B350,315,game/gen_asm/d_0028fdf0.asm,matched,gen-dump;ghidra=FUN_0069b350
 ?d_0029b760@@YAXXZ,,0x0029B760,862,game/gen_asm/d_0028fdf0.asm,matched,gen-dump;ghidra=FUN_0069b760
 ?d_0029c230@@YAXXZ,,0x0029C230,1,game/GameEngine/Source/Common/SmallGaps/Rva0029C230NoOp.cpp,matched,carved one-byte ret with no proven semantic identity
 ?d_0029e330@@YAXXZ,,0x0029E330,4685,game/gen_asm/d_00299d30.asm,matched,gen-dump;bounds=high
@@ -172556,3 +172555,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?update0037B9F0@Rva0037C310Owner@@QAE_NXZ,,0x0037B9F0,393,game/GameEngine/Source/GameLogic/System/Rva0037B9F0Update.cpp,matched,Address-derived niladic thiscall bool update; complete caller and unwind evidence=targets/game/reverse/identity_evidence/0037B9F0-finish-callee-visibility.md; compiler read-write barrier separates FX region;model=gpt-6.1-sol;host=fleet
 ?buildTiledLocations@BuildAssistant@@UAEPAUTileBuildInfo@1@PBVThingTemplate@@MPBVCoord3D@@1MHPAVObject@@@Z,,0x000FC010,519,game/GameEngine/Source/Common/System/BuildAssistant_buildTiledLocations.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/000fc010-normalize-visibility.md;BuildAssistant table slot 14 and GameEngine registration; WWMath Coord3D class declaration; ILT oracle CONFIRMED; visible exact normalize; standard array allocation and cleanup;model=gpt-6.1-sol;host=fleet
 ?bfmeRunFDB@BfmeThingFDB@@QAEXPAX@Z,,0x0023BB90,567,game/GameEngine/Source/GameLogic/Object/Contain/HordeContain/Rva0023BB90.cpp,matched,lane=R budget=30m; native STLport304-bit inversion restores retail tail clear; RET4+234 INT3+237; matched caller ILT00048F36;model=gpt-6-astra;host=GreatFaram
+?rva0029B350@PhysicsBehavior@@QAEX_N@Z,,0x0029B350,315,game/GameEngine/Source/GameLogic/Object/Update/PhysicsBehaviorRva0029B350.cpp,matched,Matched PhysicsBehavior caller and complete bool thiscall ABI;typed terrain dispatch;identity_evidence/0029b350-terrain-dispatch.md;model=gpt-6.1-sol;host=fleet
