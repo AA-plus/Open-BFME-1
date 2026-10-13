@@ -1,11 +1,9 @@
 // cl: /DNDEBUG /MD /EHsc
-// Open-BFME: byte-exact clean C++ for the scaled special-power recharge at
-// 0x00268BA0.  It is the near twin of ?startPowerRecharge@SpecialPowerModule@@UAEXXZ
-// (0x0026AE00, game/GameEngine/Source/Common/promoted__startPowerRecharge_SpecialPowerModule_UAEXXZ_0026AE00.cpp),
-// with two differences: the module-data and Object links sit at -0xC/-0x8
-// instead of -0x20/-0x1c, and the reload time is scaled by the owner's
-// attribute modifier before it is added to the current frame.
-// The owning class is not identified, so the body keeps an Rva-prefixed name.
+// Retail 0x0026AE00: a startPowerRecharge override in five vftables, on a class whose
+// SpecialPowerModuleInterface sub-object sits at +0x24 (module data at -0x20, Object
+// at -0x1C). ilt_oracle CONTRADICTS ?startPowerRecharge@SpecialPowerModule@@UAEXXZ here
+// and CONFIRMS it at 0x00268BA0, the base body; this owner is not identified.
+// Open-BFME5: byte-exact clean C++ implementation of the retail recharge start.
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Overridable.h
 class Overridable
@@ -37,19 +35,18 @@ private:
 class SpecialPowerTemplate : public Overridable
 {
 public:
+	bool isSharedNSync(void) const
+	{
+		SpecialPowerTemplate *self = const_cast<SpecialPowerTemplate *>(this);
+		return ((const SpecialPowerTemplate *)self->finalOverrideUnrolled())->m_sharedNSync;
+	}
+
 	unsigned int getReloadTime(void) const;
 
+private:
 	unsigned char m_unreconstructed_08[0x10d];
 	bool m_sharedNSync;
 };
-
-// The inlined isSharedNSync() read, kept TU-local: a member accessor here
-// emitted a COMDAT that differs from the first linked copy.
-static inline bool Rva00268BA0IsSharedNSync(const SpecialPowerTemplate *temp)
-{
-	SpecialPowerTemplate *self = const_cast<SpecialPowerTemplate *>(temp);
-	return ((const SpecialPowerTemplate *)self->finalOverrideUnrolled())->m_sharedNSync;
-}
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Module/SpecialPowerModule.h
 class SpecialPowerModuleData
@@ -71,7 +68,6 @@ class Object
 {
 public:
 	Player *getControllingPlayer(void) const;
-	bool getAttributeModifierMultiplier(int which, float *out) const;
 };
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/GameLogic.h
@@ -83,9 +79,11 @@ public:
 
 extern GameLogic *TheGameLogic;
 
-// The retail method runs on the special-power subobject; the module-data and
-// Object links belong to the enclosing module and sit just before it.
-class Rva00268BA0ScaledPowerRecharge
+// The retail method runs on the SpecialPowerModule subobject.  The BFME
+// module-data and Object links are immediately before that subobject, while
+// the ZH header puts them at different positive offsets.
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Module/SpecialPowerModule.h
+class Rva0026AE00SpecialPowerModule
 {
 public:
 	virtual void unused00(void) const;
@@ -98,24 +96,22 @@ public:
 
 	const SpecialPowerModuleData *getSpecialPowerModuleData(void) const
 	{
-		return *(const SpecialPowerModuleData **)((const char *)this - 0xc);
+		return *(const SpecialPowerModuleData **)((const char *)this - 0x20);
 	}
 
 	Object *getObject(void) const
 	{
-		return *(Object **)((const char *)this - 0x8);
+		return *(Object **)((const char *)this - 0x1c);
 	}
 
 	virtual void startPowerRecharge(void);
 
 private:
 	unsigned int m_availableOnFrame;
-	unsigned char m_unreconstructed_08[0xc];
-	bool m_rechargePending;
 };
 
-// ?startPowerRecharge@Rva00268BA0ScaledPowerRecharge@@UAEXXZ
-void Rva00268BA0ScaledPowerRecharge::startPowerRecharge(void)
+// ?startPowerRecharge@Rva0026AE00SpecialPowerModule@@UAEXXZ
+void Rva0026AE00SpecialPowerModule::startPowerRecharge(void)
 {
 	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
 
@@ -126,20 +122,16 @@ void Rva00268BA0ScaledPowerRecharge::startPowerRecharge(void)
 	if (!obj)
 		return;
 
-	Player *player = obj->getControllingPlayer();
+	Player *player = getObject()->getControllingPlayer();
 	if (!player)
 		return;
 
-	if (Rva00268BA0IsSharedNSync(modData->m_specialPowerTemplate))
+	if (modData->m_specialPowerTemplate->isSharedNSync())
 	{
 		player->resetOrStartSpecialPowerReadyFrame(modData->m_specialPowerTemplate);
 	}
 	else
 	{
-		float scalar = 1.0f;
-		obj->getAttributeModifierMultiplier(11, &scalar);
-		m_availableOnFrame = (int)(TheGameLogic->getFrame() + getSpecialPowerTemplate()->getReloadTime() * scalar);
+		m_availableOnFrame = TheGameLogic->getFrame() + getSpecialPowerTemplate()->getReloadTime();
 	}
-
-	m_rechargePending = false;
 }

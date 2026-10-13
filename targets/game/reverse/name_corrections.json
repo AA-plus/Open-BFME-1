@@ -19808,5 +19808,15 @@
   "after_sha256": "db37d69ef29a2c211c772c065042bcc378991818f64fc605f8f4c62c8ff55efd",
   "evidence": "targets/game/reverse/identity_evidence/006e8310-current-false-pair.md",
   "reason": "False token pairing: current member and local pointer persist in both snapshots; the pre-existing global pointer now qualifies current[i] for aggregate assignment. Neither identifier was renamed."
+ },
+ {
+  "old_path": "targets/game/reverse/functions.csv",
+  "new_path": "targets/game/reverse/functions.csv",
+  "old_name": "SpecialPowerModule",
+  "new_name": "Rva0026AE00SpecialPowerModule",
+  "before_sha256": "d28b6e1adc0954823eb7e9954eb30143a6e6436060df8f662de6e4e3785e4d2c",
+  "after_sha256": "bb54817a94ea200b54bd036148ebb24dcb1fd881f689208d4ab10d9f5e7f74e1",
+  "evidence": "targets/game/reverse/identity_evidence/00268ba0-start-power-recharge-swap.md",
+  "reason": "ILT oracle contradicts ?startPowerRecharge@SpecialPowerModule@@UAEXXZ at 0x0026AE00 and confirms it at 0x00268BA0; the 0x0026AE00 owner is not identified, so its class is address-derived"
  }
 ]
