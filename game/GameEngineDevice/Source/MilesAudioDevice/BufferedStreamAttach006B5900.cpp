@@ -1,14 +1,6 @@
+// cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /Igame/Libraries/Source/WWVegas/WWLib /I.
 // ?attach@BufferedStreamStarter006B7E70@@QAEXPAUStreamSlot006B7E70@@PAVFileRef006B7E70@@H@Z
-// partial score=0.9112 date=2026-10-13
-// cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /Igame/Libraries/Source/WWVegas/WWLib
-// Retail 0x006B7E70 (748 bytes; ret 8 at +0x2E9): choose a free 0x40-byte
-// stream slot, attach its counted event and file, fill a sample buffer and
-// configure/start a Miles 3D sample. The owner identity is not proven; all
-// private layout views retain this address. Calls use existing ILT identities
-// with thiscall signatures established from their retail bodies.
-// Event base extent 0x70 and secondary count +0x74 agree with the matched
-// Rva006A1790Event and StartAudioStream006AE2C0 families. Other offsets below
-// are witnessed by this body, not inferred from the Zero Hour layout.
+// Evidence: targets/game/reverse/identity_evidence/006b5900-inline-accessors.md
 #include "ascii_string.h"
 void *__cdecl operator new[](unsigned int);
 extern "C" __declspec(dllimport) long __stdcall InterlockedIncrement(volatile long*);
@@ -23,16 +15,16 @@ extern void j_0003b741(); extern void j_00001ece(); extern void j_00016f86(); ex
 extern void j_0001dff2(); extern void j_00029910(); extern void j_00047519(); extern void j_0002e668();
 extern void j_0000268a(); extern void j_0001079e(); extern void j_00021ff3();
 extern void j_000298e8(); extern void j_0003aa6c(); extern void j_0004066f(); extern void j_00046a33();
-extern "C" void _ReadWriteBarrier(void);
-#pragma intrinsic(_ReadWriteBarrier)
 template<class M> inline M member006B7E70(void (*fn)()) { union { void(*f)(); M m; } u; u.f=fn; return u.m; }
-struct Coord3D { float x,y,z; };
+#include "game/Libraries/Include/Lib/Coord3D.h"
 struct WaveInfo006B7E70 { int format; void *data; unsigned size; int rate,bits,channels; unsigned extra[3]; };
 struct SampleFile006B7E70 { char pad00[8]; WaveInfo006B7E70 info; int m_rva006B5900Word2c; };
 extern AsciiString Rva01336E50EmptyString;
 class FileRef006B7E70 {
 public:
  SampleFile006B7E70 *ptr;
+ // ?offset006B5900@FileRef006B7E70@@QBEHXZ absent-from-retail
+ int offset006B5900() const { return ptr ? ptr->m_rva006B5900Word2c : 0; }
  WaveInfo006B7E70 *info() const { return ptr ? &ptr->info : 0; }
  void release() { typedef void (FileRef006B7E70::*Fn)(); (this->*member006B7E70<Fn>(j_000311bf))(); }
  FileRef006B7E70 &operator=(const FileRef006B7E70 &other) { typedef FileRef006B7E70 &(FileRef006B7E70::*Fn)(const FileRef006B7E70 &); return (this->*member006B7E70<Fn>(j_0000268a))(other); }
@@ -47,6 +39,8 @@ class EventBase006B7E70 {
 public:
  virtual ~EventBase006B7E70();
  char pad04[0x10]; AsciiString name; char pad18[0x10]; int field28; char pad2c[0x1c]; bool m_flag48; char pad49[0x17]; int m_rva006B5900Portion60; char pad64[0x0c];
+ // ?flag006B5900@EventBase006B7E70@@QAEX_N@Z absent-from-retail
+ void flag006B5900(bool value) { m_flag48=value; }
  const AsciiString &getName() const { return name; }
  void advanceNextPlayPortion() { typedef void (EventBase006B7E70::*Fn)(); (this->*member006B7E70<Fn>(j_0001079e))(); }
  void bfmeGenerateFilename() { typedef void (EventBase006B7E70::*Fn)(); (this->*member006B7E70<Fn>(j_00046a33))(); }
@@ -60,14 +54,22 @@ public:
 inline int rva006B5900Portion(Event006B7E70 *event) { return *(volatile int *)((char *)event+0x60); }
 struct Playing006B7E70 { char pad00[8]; unsigned handle; int type; char pad10[4]; EventRef006B7E70 event; FileRef006B7E70 file; char pad1c[0x1f]; bool field3b; };
 struct PlayingRef006B7E70 { Playing006B7E70 *ptr; };
+class Gen0002857E;
 class Rva00691140Handle {
 public:
- Rva00691140Handle *m_rva006B5900Pointer;
+ Gen0002857E *m_rva006B5900Pointer;
  Rva00691140Handle &operator=(const Rva00691140Handle &other) { typedef Rva00691140Handle &(Rva00691140Handle::*Fn)(const Rva00691140Handle &); return (this->*member006B7E70<Fn>(j_0004066f))(other); }
 };
 class Rva006910F0Handle : public Rva00691140Handle {
 public:
  ~Rva006910F0Handle() { typedef void (Rva006910F0Handle::*Fn)(); (this->*member006B7E70<Fn>(j_000298e8))(); }
+};
+class AudioEventRTS;
+class AudioEventRef { public: AudioEventRTS *ptr; };
+class Rva00694710AudioWorker {
+public:
+ Rva006910F0Handle rva00694130(const AudioEventRef &event,int value);
+ Rva006910F0Handle rva00693B90(const AsciiString &filename,int value);
 };
 class Rva006B5900Worker {
 public:
@@ -91,16 +93,17 @@ public:
  void configure(PlayingRef006B7E70 *r,const Coord3D *p) { typedef void (BufferedStreamStarter006B7E70::*Fn)(PlayingRef006B7E70*,const Coord3D*); (this->*member006B7E70<Fn>(j_00047519))(r,p); }
  void resume(PlayingRef006B7E70 *r) { typedef void (BufferedStreamStarter006B7E70::*Fn)(PlayingRef006B7E70*); (this->*member006B7E70<Fn>(j_0002e668))(r); }
 };
+// ?attach@BufferedStreamStarter006B7E70@@QAEXPAUStreamSlot006B7E70@@PAVFileRef006B7E70@@H@Z
 void BufferedStreamStarter006B7E70::attach(StreamSlot006B7E70 *slot,FileRef006B7E70 *file,int mode) {
 	int one=1;
 	int zero=0;
-	slot->event.ptr->m_flag48=one;
+	slot->event.ptr->flag006B5900(one);
 	if(rva006B5900Portion(slot->event.ptr)!=2 || mode==one) slot->event.ptr->advanceNextPlayPortion();
 	slot->event.ptr->bfmeGenerateFilename();
 	if(rva006B5900Portion(slot->event.ptr)==2) {
-  if(!slot->m_rva006B5900Field24.m_rva006B5900Pointer) { Rva006B5900Worker *worker=m_rva006B5900PointerB00; _ReadWriteBarrier(); slot->m_rva006B5900Field24=worker->openForEvent(slot->event,0); }
+  if(!slot->m_rva006B5900Field24.m_rva006B5900Pointer) { Rva00694710AudioWorker *worker=reinterpret_cast<Rva00694710AudioWorker *>(m_rva006B5900PointerB00); slot->m_rva006B5900Field24=worker->rva00694130(reinterpret_cast<const AudioEventRef &>(slot->event),0); }
 	} else if(rva006B5900Portion(slot->event.ptr)!=3) {
-  slot->m_rva006B5900Field20=m_rva006B5900PointerB00->openForEvent(slot->event,0);
+  slot->m_rva006B5900Field20=reinterpret_cast<Rva00694710AudioWorker *>(m_rva006B5900PointerB00)->rva00694130(reinterpret_cast<const AudioEventRef &>(slot->event),0);
 	}
 	FileRef006B7E70 *copyFrom=file; FileRef006B7E70 *copyTo=&slot->m_rva006B5900Field1c;
 	*copyTo=*copyFrom;
@@ -110,82 +113,10 @@ void BufferedStreamStarter006B7E70::attach(StreamSlot006B7E70 *slot,FileRef006B7
 		slot->m_rva006B5900Field28=zero;
 		return;
 	}
-	int base=zero;
-	if(slot->m_rva006B5900Field1c.ptr) base=slot->m_rva006B5900Field1c.ptr->m_rva006B5900Word2c;
+	int base=slot->m_rva006B5900Field1c.offset006B5900();
 	slot->m_rva006B5900Field2c=(unsigned int)sample->info.data-base;
 	slot->m_rva006B5900Field28=sample->info.size+slot->m_rva006B5900Field2c;
-	const void *value = file->ptr ? (const void *)file->ptr : (const void *)&Rva01336E50EmptyString;
-	typedef void (BufferedStreamStarter006B7E70::*Fn)(const void *);
-	(this->*member006B7E70<Fn>(j_00021ff3))(value);
-}
-class BfmeAwakenLog {
-public:
- virtual void v00(); virtual void v04(); virtual void v08(); virtual void v0c();
- virtual void v10(); virtual void v14(); virtual void v18(); virtual void v1c();
- virtual void v20(); virtual void v24(); virtual void v28(); virtual void v2c();
- virtual void v30(); virtual void v34(); virtual BfmeAwakenLog *v38(const char *);
- virtual void v3c(); virtual void v40(); virtual void v44(); virtual void v48(); virtual BfmeAwakenLog *v4c(int);
-};
-class BfmeAwakenDebug {
-public:
- virtual void v00(); virtual void v04(); virtual void v08(); virtual void v0c();
- virtual void v10(); virtual void v14(); virtual void v18(); virtual void v1c();
- virtual void v20(); virtual void v24(); virtual void v28(); virtual void v2c();
- virtual void v30(); virtual void v34(); virtual void v38(); virtual void v3c();
- virtual void v40(); virtual void v44(); virtual void v48(); virtual void v4c();
- virtual void v50(); virtual void v54(); virtual void v58(); virtual void v5c(); virtual void v60();
- virtual void v64(); virtual void v68(); virtual BfmeAwakenLog *v6c(int,int);
-};
-extern BfmeAwakenDebug *TheBfmeAwakenDebug;
-extern bool _bfme_debugReportingEnabled();
-extern void _bfme_debugRecordCallsite(int);
-bool BufferedStreamStarter006B7E70::start(PlayingRef006B7E70 *ref,unsigned sample) {
- int index;
- for(index=0;index<count;++index) if(!slots[index].active && slots[index].available()) break;
- if(index==count) { if(pending>0) --pending; return false; }
- ref->ptr->handle=index;
- ref->ptr->type=2;
- StreamSlot006B7E70 *slot=&slots[index];
- if(slot->allocated) close(slot);
- Coord3D pos; bool valid;
- position(&pos,ref->ptr->event.ptr,&valid);
- if(!valid)return false;
- slot->stop=false; slot->started=false; slot->sample=sample;
- slot->event=ref->ptr->event;
- slot->offset=0; slot->playing=ref->ptr; slot->allocated=true;
- if(activeCount<=0 && timer!=-1) AIL_start_timer(timer);
- ++activeCount;
- if(!ref->ptr->file.ptr) return false;
- WaveInfo006B7E70 *info=ref->ptr->file.info();
- if(info->channels!=1) {
-  if(_bfme_debugReportingEnabled()) {
-   _bfme_debugRecordCallsite(1); TheBfmeAwakenDebug->v60();
-   typedef BfmeAwakenLog* (__cdecl *Write)(BfmeAwakenLog*,const StringBase<char>&);
-   BfmeAwakenLog *log=TheBfmeAwakenDebug->v6c(0,0);
-   Event006B7E70 *event=ref->ptr->event.ptr;
-   reinterpret_cast<Write>(j_00016f86)(log->v38("Stereo WAVE file listed for 3D sound "),event->name)->v4c(2);
-  }
-  ref->ptr->file.release(); return false;
- }
- slot->bits=info->bits; slot->rate=info->rate;
- attach(slot,&ref->ptr->file,2);
- ref->ptr->file.release();
- slot->size=(unsigned)(settings->bufferMilliseconds*slot->bits*slot->rate)/8000;
- if(slot->size<0xc400) slot->size=0xc400;
- unsigned remainder=slot->size&3;
- if(remainder) slot->size=slot->size-remainder+4;
- slot->data=new unsigned[(unsigned)slot->size/4];
- fill(slot,slot->size);
- WaveInfo006B7E70 sampleInfo=*info;
- sampleInfo.data=slot->data; sampleInfo.size=slot->size;
- AIL_set_3D_sample_info(sample,&sampleInfo);
- AIL_register_3D_EOS_callback(sample,0);
- configure(ref,&pos);
- AIL_set_3D_sample_loop_count(sample,0);
- if(ref->ptr->event.ptr->field28!=2 && ref->ptr->event.ptr->field28!=field604) ref->ptr->field3b=true;
- else ref->ptr->field3b=false;
- resume(ref);
- if(slot->started) AIL_start_3D_sample(sample);
- slot->active=true;
- return true;
+	const AsciiString *value = file->ptr ? reinterpret_cast<const AsciiString *>(file->ptr) : &Rva01336E50EmptyString;
+	typedef void (BufferedStreamStarter006B7E70::*Fn)(const AsciiString &);
+	(this->*member006B7E70<Fn>(j_00021ff3))(*value);
 }
