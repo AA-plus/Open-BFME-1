@@ -1,10 +1,5 @@
-// ?W3DGameWinDefaultDraw@@YGXPAVGameWindow@@PAVWinInstanceData@@@Z
-// partial score=0.99 date=2026-09-10
 // cl: /DNDEBUG /MD /EHsc
-// BFME W3D default window callback, retail 0x0078D410 (557 bytes).
-// The reference twin is W3DGameWindow.cpp::W3DGameWinDefaultDraw.  BFME's
-// GameWindow and WinInstanceData layouts are expanded, so the views below
-// keep the retail offsets local to this callback.
+// Retail delegate ABI and layout: targets/game/reverse/identity_evidence/0078d410-delegate-abi-and-sib.md
 
 typedef int Int;
 typedef unsigned int UnsignedInt;
@@ -41,7 +36,7 @@ private:
 public:
 	ICoord2D m_imageOffset;                               // +0x17c
 	unsigned char m_unreconstructed_184[0x20];
-	VideoBuffer *m_videoBuffer;                           // +0x1a4
+	void *m_videoBuffer;                           // +0x1a4
 };
 
 class GameWindow
@@ -49,7 +44,7 @@ class GameWindow
 public:
 	Int winGetScreenPosition(Int *x, Int *y);
 	Int winGetSize(Int *width, Int *height);
-	UnsignedInt winGetStatus(void);
+	UnsignedInt winGetStatus(void) const;
 
 	const Image *winGetEnabledImage(Int index) const
 	{
@@ -151,6 +146,7 @@ public:
 		Int startX, Int startY, Int endX, Int endY);       // +0xfc
 };
 
+// Slot +0xe0 consumes an opaque pointer and four floats in the BFME display.
 class Display
 {
 public:
@@ -182,7 +178,7 @@ public:
 	virtual void unused50(); virtual void unused51();
 	virtual void unused52(); virtual void unused53();
 	virtual void unused54(); virtual void unused55();
-	virtual void drawVideoBuffer(VideoBuffer *buffer, Real startX,
+	virtual void drawVideoBuffer(void *buffer, Real startX,
 		Real startY, Real endX, Real endY, Color color = -1); // +0xe0
 };
 
@@ -198,27 +194,63 @@ enum
 	WIN_COLOR_UNDEFINED = 0x00ffffff
 };
 
-extern Real g_bfmeDefaultBU;
-
 inline Int BitTest(UnsignedInt bits, UnsignedInt mask)
 {
 	return (bits & mask) != 0;
 }
 
-// ?W3DGameWinDefaultDraw@@YGXPAVGameWindow@@PAVWinInstanceData@@@Z
-void __stdcall W3DGameWinDefaultDraw(GameWindow *window, WinInstanceData *instData)
+// ?drawImageBlock0078D410@@YAXPBVImage@@PAVWinInstanceData@@ABUICoord2D@@2@Z absent-from-retail
+static __forceinline void drawImageBlock0078D410(const Image *image, WinInstanceData *instData, const ICoord2D &origin, const ICoord2D &size)
+{
+	ICoord2D start;
+	ICoord2D end;
+
+	start.x = origin.x + instData->m_imageOffset.x;
+	start.y = origin.y + instData->m_imageOffset.y;
+	end.x = start.x + size.x;
+	end.y = start.y + size.y;
+	TheWindowManager->winDrawImage(image, start.x, start.y, end.x, end.y);
+}
+
+class Rva0078D410Delegate
+{
+public:
+	virtual void unused00();
+	virtual void W3DGameWinDefaultDraw0078D410(GameWindow *window, WinInstanceData *instData);
+};
+
+// W3DGameWinDefaultDraw ======================================================
+/** The default redraw callback.  Draws the background using either
+	* the drawData or the background color unless the background color
+	* is set to -1 indicating that default drawing is turned off. */
+//=============================================================================
+// ?W3DGameWinDefaultDraw0078D410@Rva0078D410Delegate@@UAEXPAVGameWindow@@PAVWinInstanceData@@@Z
+void Rva0078D410Delegate::W3DGameWinDefaultDraw0078D410(GameWindow *window, WinInstanceData *instData)
 {
 	Real borderWidth = 1.0f;
 	ICoord2D origin;
 	ICoord2D size;
 	W3DGameWindow *w3dWindow = (W3DGameWindow *)window;
 
+	/** @todo NOTE that we're making a W3DGameWindow cast here, it seems 
+	logical because we are in a W3D draw function so it's reasonable to assume 
+	that we have a W3DGameWindow.  However, we may want to revisit this 
+	type of casting in the future, we have the same problems with the 
+	ObjectModules where we cast object modules for their individual methods.
+	Also note that the other W3D implementations of GUI controls are making
+	a similar cast for their device implementation functions */
+
+	// get the window position in the screen coordinates
 	w3dWindow->winGetScreenPosition(&origin.x, &origin.y);
+	// get size of window
 	w3dWindow->winGetSize(&size.x, &size.y);
 
+	// image drawing vs color drawing
 	if (BitTest(window->winGetStatus(), WIN_STATUS_IMAGE))
 	{
 		const Image *image;
+
+		// get image
 
 		if (BitTest(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 			image = window->winGetDisabledImage(0);
@@ -229,49 +261,48 @@ void __stdcall W3DGameWinDefaultDraw(GameWindow *window, WinInstanceData *instDa
 
 		if (image)
 		{
-			ICoord2D start;
-			ICoord2D end;
-
-			start.x = origin.x + instData->m_imageOffset.x;
-			start.y = origin.y + instData->m_imageOffset.y;
-			end.x = start.x + size.x;
-			end.y = start.y + size.y;
-			TheWindowManager->winDrawImage(image, start.x, start.y,
-				end.x, end.y);
-		}
-	}
+			drawImageBlock0078D410(image, instData, origin, size);
+		}  // end if
+	}  // end if
 	else
 	{
 		Color color;
 		Color borderColor;
 
+		// get colors
+
 		if (BitTest(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 		{
 			color = window->winGetDisabledColor(0);
 			borderColor = window->winGetDisabledBorderColor(0);
-		}
+		}  // end if
 		else if (BitTest(instData->getState(), WIN_STATE_HILITED))
 		{
 			color = window->winGetHiliteColor(0);
 			borderColor = window->winGetHiliteBorderColor(0);
-		}
+		}  // end else if
 		else
 		{
 			color = window->winGetEnabledColor(0);
 			borderColor = window->winGetEnabledBorderColor(0);
-		}
+		}  // end else
 
+		//
+		// draw the border at the edges
+		//
 		if (borderColor != WIN_COLOR_UNDEFINED)
 			TheWindowManager->winOpenRect(borderColor, borderWidth,
 				origin.x, origin.y, origin.x + size.x, origin.y + size.y);
 
+		// draw filled background
 		if (color != WIN_COLOR_UNDEFINED)
 			TheWindowManager->winFillRect(color, borderWidth,
 				origin.x + borderWidth, origin.y + borderWidth,
 				origin.x + size.x - borderWidth,
 				origin.y + size.y - borderWidth);
-	}
+	}  // end else
 
+	// if we have a video buffer, draw the video buffer
 	if (instData->m_videoBuffer)
 	{
 		ICoord2D pos, size;
@@ -281,4 +312,4 @@ void __stdcall W3DGameWinDefaultDraw(GameWindow *window, WinInstanceData *instDa
 		TheDisplay->drawVideoBuffer(instData->m_videoBuffer,
 			pos.x, pos.y, pos.x + size.x, pos.y + size.y);
 	}
-}
+}  // end W3DGameWinDefaultDraw
