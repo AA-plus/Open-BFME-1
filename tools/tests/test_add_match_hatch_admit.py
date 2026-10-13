@@ -74,3 +74,34 @@ def test_verified_compiler_label_rows_pass_and_others_are_refused(tree):
                      0x1000, "object-symbol=?real@@YAXXZ")
     problems = gate(tree)
     assert problems and all("0x00001000" in p for p in problems)
+
+
+def test_landing_a_row_leaves_unrelated_register_lines_byte_for_byte(tree):
+    """owner_queue 132: an add_match run rewrites only the register lines of the rows it
+    lands; an unrelated line's (stale) allow= marker survives untouched."""
+    append_and_admit(tree, "?d_1@@YAXXZ,,0x00BF3B38,9,game/a.cpp,matched,object-symbol=$L1", 0xBF3B38,
+                     "object-symbol=$L1")
+    append_and_admit(tree, "?d_9@@YAXXZ,,0x00BF4000,9,game/z.cpp,matched,object-symbol=$L9", 0xBF4000,
+                     "object-symbol=$L9")
+    git(tree, "add", ".")
+    git(tree, "commit", "-qm", "landed")
+    register = tree / hatch_counters.BASELINE
+    stale = [l for l in register.read_text().splitlines() if "0x00BF3B38" in l]
+    assert len(stale) == 1 and "\tallow=" in stale[0]          # committed, now inert marker
+    # a later label run that lands an unrelated row X
+    append_and_admit(tree, "?d_2@@YAXXZ,,0x00C70890,20,game/b.cpp,matched,object-symbol=_$E2", 0xC70890,
+                     "object-symbol=_$E2")
+    lines = register.read_text().splitlines()
+    assert stale[0] in lines
+    assert any("0x00C70890" in l and "\tallow=" in l for l in lines)
+    assert gate(tree) == []
+    # a replacement that retires 0x00BF4000 drops only that line
+    before = (tree / LEDGER).read_bytes()
+    (tree / LEDGER).write_bytes(before.replace(
+        b"?d_9@@YAXXZ,,0x00BF4000,9,game/z.cpp,matched,object-symbol=$L9\n",
+        b"?real@@YAXXZ,,0x00BF4004,5,game/z.cpp,matched,\n"))
+    add_match.admit_compiler_label_alias(tree, "", 0xBF4004, before, 0xBF4000)
+    lines = register.read_text().splitlines()
+    assert stale[0] in lines
+    assert not any("0x00BF4000" in l for l in lines)
+    assert gate(tree) == []

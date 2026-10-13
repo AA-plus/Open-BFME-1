@@ -480,7 +480,7 @@ def _key_of(line):
     return (cells[0], cells[1], cells[2]) if len(cells) >= 4 and cells[0] in HATCHES else None
 
 
-def admit(path, reason, tokens=None, before=None, now=None):
+def admit(path, reason, tokens=None, before=None, now=None, scope=None):
     """Scoped tool allowance for one file: {"admitted": [keys], "refused": [keys]}.
 
     Rescans only PATH and rewrites only PATH's register lines (no tree scan; the
@@ -489,7 +489,11 @@ def admit(path, reason, tokens=None, before=None, now=None):
     every grown key) or when it already carries an allowance for BEFORE (the blob PATH
     had before the calling tool's edit), which is re-stamped. Every other grown key is
     written at HEAD's count, so the gate names it as a new occurrence. A frozen hatch
-    exits."""
+    exits.
+
+    SCOPE (a set of tokens, or None for all of PATH): rescan and rewrite only PATH's
+    lines whose token is in SCOPE, plus lines still carrying a pending allowance for
+    BEFORE (re-stamped); every other line of PATH is kept byte for byte, allow= and all."""
     path = path.replace("\\", "/")
     if not reason or len(reason.strip()) < 8:
         sys.exit("hatch_counters: admit needs a reason (8+ chars)")
@@ -504,7 +508,7 @@ def admit(path, reason, tokens=None, before=None, now=None):
         key = _key_of(line)
         if key and key[1] == path:
             head[key] = min(int(line.split("\t")[3]), head.get(key, 1 << 62))
-    header, keep, old_allow = [], [], {}
+    header, keep, old_allow, path_lines = [], [], {}, []
     for line in base.read_text(encoding="utf-8").splitlines():
         key = _key_of(line)
         if key is None:
@@ -512,10 +516,17 @@ def admit(path, reason, tokens=None, before=None, now=None):
         elif key[1] != path:
             keep.append((key, line))
         else:
+            path_lines.append((key, line))
             cells = line.split("\t")
             if len(cells) > 4 and cells[4].startswith("allow="):
                 old_allow[key] = cells[4][6:]
     tokens = None if tokens is None else {str(t) for t in tokens}
+    if scope is not None:
+        pending = {k[2] for k, line in path_lines if k in old_allow and old_allow[k] in {before, blob} - {None}
+                   and int(line.split("\t")[3]) > head.get(k, 0)}   # admitted, not yet committed
+        scope = {str(t) for t in scope} | pending
+        keep += [(k, line) for k, line in path_lines if k[2] not in scope]
+        new = collections.Counter({k: n for k, n in new.items() if k[2] in scope})
     admitted, refused = [], []
     for key in sorted(new):
         n, h = new[key], head.get(key, 0)

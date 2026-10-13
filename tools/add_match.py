@@ -291,25 +291,30 @@ COMPILER_LABEL = re.compile(r"(?:^|;)\s*object-symbol=(?:_?\$[A-Za-z]\w*|__ehhan
 LEDGER_REL = "targets/game/reverse/functions.csv"
 
 
-def admit_compiler_label_alias(root, notes, rva, ledger_before):
+def admit_compiler_label_alias(root, notes, rva, ledger_before, retired_rva=None):
     """After verification: admit this row's object-symbol= in the escape-hatch register
     (tools/hatch_counters.py) when it names a compiler label. Any other new alias row,
     and any typed into functions.csv by hand, stays counted growth the register refuses
-    once enforced. Any append re-stamps admissions an earlier tool run left in this
-    working tree (they are bound to the ledger's blob, which this append changed)."""
+    once enforced. Only the register lines of the rows this run lands (RVA, and the
+    RETIRED_RVA a replacement drops) are rewritten, plus admissions an earlier tool run
+    left pending in this working tree (bound to the ledger's previous blob, which this
+    append changed, so they are re-stamped). Every other line stays byte for byte."""
     import hatch_counters
     if Path(hatch_counters.ROOT).resolve() != Path(root).resolve():
         return                                  # a test-only --root has no register
     label = bool(COMPILER_LABEL.search(notes or ""))
-    if not label:
+    before = hatch_counters.blob_id(LEDGER_REL, ledger_before)
+    scope = {f"0x{rva:08X}"} | ({f"0x{retired_rva:08X}"} if retired_rva is not None else set())
+    if not label and retired_rva is None:
         register = Path(root) / hatch_counters.BASELINE
-        pending = re.search(rb"(?m)^object_symbol\t" + re.escape(LEDGER_REL.encode()) + rb"\t[^\n]*\tallow=",
+        pending = re.search(rb"(?m)^object_symbol\t" + re.escape(LEDGER_REL.encode()) +
+                            rb"\t[^\n]*\tallow=" + re.escape(before.encode()) + rb"[ \t]*$",
                             register.read_bytes() if register.exists() else b"")
         if not pending:
             return                              # nothing to admit or carry forward
     hatch_counters.admit(LEDGER_REL, "add_match: verified row bound to a compiler label",
                          tokens={f"0x{rva:08X}"} if label else set(),
-                         before=hatch_counters.blob_id(LEDGER_REL, ledger_before))
+                         before=before, scope=scope)
 
 
 def main():
@@ -676,7 +681,8 @@ def main():
         fail(f"verification failed (exit {result.returncode}) — append and "
              "marker strip REVERTED; nothing was changed")
     print("add_match: verified OK — row is live")
-    admit_compiler_label_alias(root, args.notes, rva, raw)
+    admit_compiler_label_alias(root, args.notes, rva, raw,
+                               None if replaced is None else replaced["rva"])
     if replaced is not None:
         import gate_writers             # a verified relabel of an existing row (pre-commit shadow check)
         gate_writers.stamp("eh_label", raw, functions_csv.read_bytes())
