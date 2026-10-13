@@ -1,12 +1,5 @@
-// ?gogoGadgetTextEntry@GameWindowManager@@UAEPAVGameWindow@@PAV2@IHHHHPAVWinInstanceData@@PAU_EntryData@@PAVGameFont@@_N@Z
-// partial score=0.9 date=2026-09-11
-// ?gogoGadgetTextEntry@GameWindowManager@@UAEPAVGameWindow@@PAV2@IHHHHPAVWinInstanceData@@PAU_EntryData@@PAVGameFont@@_N@Z
-// cl: /DNDEBUG /MD /EHsc
-//
-// Retail 0x0047FCF0 is the BFME text-entry factory.  The BFME gadget path
-// passes a creation record, not a GameWindow, and the record's instance-data
-// pointer is at +0x30.  This TU keeps that ABI and the 0x28-byte EntryData
-// layout local to the reconstructed factory.
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include
+// BFME text-entry factory; decoded creation-record ABI and native string cleanup.
 
 typedef int Int;
 typedef unsigned int UnsignedInt;
@@ -20,69 +13,50 @@ extern "C" void *memset(void *, int, unsigned int);
 class GameWindow;
 class GameFont;
 
-template <typename T> class StringBase
+#include "ascii_string.h"
+#include "unicode_string.h"
+#include "Common/Language.h"
+
+inline UnicodeString::UnicodeString(const UnicodeString &that)
 {
-	friend class AsciiString;
-	friend class UnicodeString;
-	friend class Rva0047FCF0TempString;
+    ((StringBase<unsigned short> *)this)->StringBase<unsigned short>::StringBase(*(const StringBase<unsigned short> *)&that);
+}
 
-private:
-	StringBase() throw();
-	StringBase(const StringBase<T> &that) throw();
-	void releaseBuffer() throw();
-
-protected:
-	void *data;
-};
-
-class AsciiString : private StringBase<char>
+inline UnicodeString::~UnicodeString()
 {
-public:
-	AsciiString(const AsciiString &that) : StringBase<char>(that) {}
-};
+    ((StringBase<unsigned short> *)this)->releaseBuffer();
+}
 
-class UnicodeString : private StringBase<unsigned short>
+class Rva0047FCF0TempString : public UnicodeString
 {
 public:
-	UnicodeString() throw();
-	UnicodeString(const UnicodeString &that) throw() : StringBase<unsigned short>(that) {}
-	~UnicodeString() { releaseBuffer(); }
-
-	Int getLength() const
-	{
-		return data ? *(UnsignedShort *)((char *)data + 4) : 0;
-	}
-
-};
-
-class Rva0047FCF0TempString : private StringBase<unsigned short>
-{
-public:
-	Rva0047FCF0TempString(const Rva0047FCF0TempString &that)
-		: StringBase<unsigned short>(that) {}
-	~Rva0047FCF0TempString() { releaseBuffer(); }
+    // ??0Rva0047FCF0TempString@@QAE@ABV0@@Z absent-from-retail
+    Rva0047FCF0TempString(const Rva0047FCF0TempString &that) : UnicodeString(that) {}
 };
 
 class WinInstanceData
 {
 public:
-	char padBeforeStyle[0xc];
+	char padBeforeStyle[8];
 	UnsignedInt style;
 	char padBeforeTextLabel[0x178];
 	AsciiString textLabel;
 	char padAfterTextLabel[0x1c];
 
+	// ?getStyle@WinInstanceData@@QAEIXZ absent-from-retail
+	UnsignedInt getStyle() { return style; }
+
 	WinInstanceData();
 	void init();
-	~WinInstanceData();
+	virtual ~WinInstanceData();
 };
 
 class DisplayString
 {
 public:
 	virtual void v00();
-	virtual void setText(Rva0047FCF0TempString) throw();
-	virtual Rva0047FCF0TempString getText() throw();
+	virtual void setText(UnicodeString);
+	virtual UnicodeString getText();
 	virtual Int getTextLength();
 };
 
@@ -101,10 +75,6 @@ public:
 	virtual DisplayString *newDisplayString();
 };
 
-// The copy is observed as 40 bytes at 0x0047FCF0.  The two bytes at +0x1c
-// and +0x20 are the character positions, and constructList is at +0x18.
-// The intervening bytes are retained explicitly rather than borrowing the
-// upstream header's smaller EntryData layout.
 struct Rva0047FCF0EntryData
 {
 	DisplayString *text;
@@ -123,9 +93,6 @@ struct Rva0047FCF0EntryData
 typedef char Rva0047FCF0EntryDataSizeCheck[
 	(sizeof(Rva0047FCF0EntryData) == 0x28) ? 1 : -1];
 
-// The record is the object consumed by the BFME creation factories.  The
-// twelve-byte coordinate prefix is followed by a retail-proven 0x18-byte
-// gap before instanceData at +0x30.
 struct Rva0047FCF0FactoryInput
 {
 	GameWindow *owner;
@@ -172,10 +139,6 @@ typedef char Rva0047FCF0ListboxDataSizeCheck[
 class GameWindow
 {
 public:
-	GameWindow *owner;
-	char pad[0x2c];
-	WinInstanceData *instanceData;
-
 	Int winSetOwner(GameWindow *owner);
 	void winSetUserData(void *data);
 };
@@ -207,14 +170,15 @@ public:
 	virtual void v20();
 	virtual void v21();
 	virtual void v22();
-	virtual void v23();
+	virtual GameWindow *gogoGadgetTextEntry(Rva0047FCF0FactoryInput *,
+		Rva0047FCF0EntryData *, GameFont *, Bool);
 	virtual void v24();
 	virtual void assignDefaultGadgetLook(GameWindow *, GameFont *, Bool);
 	virtual void v26();
 	virtual void v27();
 	virtual void v28();
 	virtual GameWindow *create(Rva0047FCF0FactoryInput *);
-	virtual void winDestroy(GameWindow *);
+	virtual Int winDestroy(GameWindow *);
 	virtual void v31();
 	virtual void v32();
 	virtual void v33();
@@ -255,49 +219,51 @@ public:
 	virtual void v68();
 	virtual void v69();
 	virtual UnicodeString winTextLabelToText(AsciiString);
-	virtual GameWindow *gogoGadgetTextEntry(Rva0047FCF0FactoryInput *,
-		Rva0047FCF0EntryData *, GameFont *, Bool);
+	virtual void v71();
 };
 
 extern DisplayStringManager *TheDisplayStringManager;
-extern Int OurLanguage;
 extern void GadgetTextEntrySetText(GameWindow *, UnicodeString);
 
 enum
 {
-	LANGUAGE_ID_JAPANESE = 6,
-	LANGUAGE_ID_KOREAN = 8,
 	ENTRY_TEXT_LEN = 0x100,
 	GWS_ENTRY_FIELD = 0x40,
 	GWS_SCROLL_LISTBOX = 0x20,
 	GWS_MOUSE_TRACK = 0x400
 };
 
-// Preserve the retail incremental-link call sites for the already identified
-// helpers.  These are declarations of existing symbols, not new callbacks.
-#pragma comment(linker, "/alternatename:?winSetOwner@GameWindow@@QAEHPAV1@@Z=?j_00047230@@YAXXZ")
-#pragma comment(linker, "/alternatename:?winSetUserData@GameWindow@@QAEXPAX@Z=?j_00002e69@@YAXXZ")
-#pragma comment(linker, "/alternatename:?GadgetTextEntrySetText@@YAXPAVGameWindow@@VUnicodeString@@@Z=?j_0000c874@@YAXXZ")
-#pragma comment(linker, "/alternatename:??0WinInstanceData@@QAE@XZ=?j_0001d845@@YAXXZ")
-#pragma comment(linker, "/alternatename:?init@WinInstanceData@@QAEXXZ=?j_00021431@@YAXXZ")
-#pragma comment(linker, "/alternatename:??1WinInstanceData@@QAE@XZ=?j_00021431@@YAXXZ")
-
-// ?gogoGadgetTextEntry@GameWindowManager@@UAEPAVGameWindow@@PAV2@IHHHHPAVWinInstanceData@@PAU_EntryData@@PAVGameFont@@_N@Z
+//-------------------------------------------------------------------------------------------------
+/** Does all generic window creation, calls appropriate entry field create
+	* function to set up specific data */
+//-------------------------------------------------------------------------------------------------
+// ?gogoGadgetTextEntry@Rva0047FCF0GameWindowManager@@UAEPAVGameWindow@@PAURva0047FCF0FactoryInput@@PAURva0047FCF0EntryData@@PAVGameFont@@_N@Z
 GameWindow *Rva0047FCF0GameWindowManager::gogoGadgetTextEntry(
 	Rva0047FCF0FactoryInput *input, Rva0047FCF0EntryData *entryData,
 	GameFont *defaultFont, Bool defaultVisual)
 {
 	Rva0047FCF0EntryData *data;
 	GameWindow *entry;
-	if ((input->instanceData->style & GWS_ENTRY_FIELD) == 0)
+	if ((input->instanceData->getStyle() & GWS_ENTRY_FIELD) == 0)
+	{
 		return 0;
+	}  // end if
 
+	// create the window
 	entry = create(input);
 	if (entry == 0)
+	{
 		return 0;
+	}  // end if
 
+	// set owner of this control
 	entry->winSetOwner(input->owner);
 
+	// zero entry data
+//	memset( entryData->text, 0, ENTRY_TEXT_LEN );
+//	memset( entryData->constructText, 0, ENTRY_TEXT_LEN );
+
+	// initialize character positions, legths etc
 	if (entryData->text)
 		entryData->charPos = entryData->text->getTextLength();
 	else
@@ -307,27 +273,45 @@ GameWindow *Rva0047FCF0GameWindowManager::gogoGadgetTextEntry(
 	if (entryData->maxTextLen >= ENTRY_TEXT_LEN)
 		entryData->maxTextLen = ENTRY_TEXT_LEN;
 
+	// allocate entry data
 	data = new Rva0047FCF0EntryData;
+
+	// copy over data control
 	memcpy(data, entryData, sizeof(Rva0047FCF0EntryData));
+
+	// allocate new text display string
 	data->text = TheDisplayStringManager->newDisplayString();
 	data->sText = TheDisplayStringManager->newDisplayString();
 	data->constructText = TheDisplayStringManager->newDisplayString();
+
+	// set the max for the text lengths
+//	data->text->allocateFixed( ENTRY_TEXT_LEN );
+//	data->sText->allocateFixed( ENTRY_TEXT_LEN );
+
+	// do any real display string copies
 	if (entryData->text)
 		data->text->setText(entryData->text->getText());
 	if (entryData->sText)
 		data->sText->setText(entryData->sText->getText());
 
+	// set data into window
 	entry->winSetUserData(data);
+
+	// asian languages get to have list box kanji character completion
 	data->constructList = 0;
 
 	if (OurLanguage == LANGUAGE_ID_KOREAN ||
 		OurLanguage == LANGUAGE_ID_JAPANESE)
 	{
+		// we need to create the construct listbox
 		WinInstanceData boxInstData;
 		Rva0047FCF0ListboxData listData;
 		Rva0047FCF0FactoryInput listInput;
 
+			// intialize instData
 		boxInstData.init();
+
+		// define display region
 		memset(&listData, 0, sizeof(Rva0047FCF0ListboxData));
 		listData.listLength = 128;
 		listData.autoScroll = 0;
@@ -358,12 +342,15 @@ GameWindow *Rva0047FCF0GameWindowManager::gogoGadgetTextEntry(
 		{
 			winDestroy(entry);
 			return 0;
-		}
-	}
+		}  // end if
+	}  // end, korean or japanese
 
+	// assign the default images/colors
 	assignDefaultGadgetLook(entry, defaultFont, defaultVisual);
+
+	// assign text from label
 	UnicodeString text = winTextLabelToText(input->instanceData->textLabel);
 	if (text.getLength())
 		GadgetTextEntrySetText(entry, text);
 	return entry;
-}
+}  // end gogoGadgetTextEntry
