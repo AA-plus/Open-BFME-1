@@ -28,6 +28,12 @@ public:
 	void *m_bfmeRefXT;
 };
 
+Gen00971730::~Gen00971730()
+{
+	if (m_bfmeRefXT != 0)
+		static_cast<TextureClass *>(m_bfmeRefXT)->Release_Ref();
+}
+
 Gen00971730 bfmeMakeXT(const char *name)
 {
 	if (name == 0)
