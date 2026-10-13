@@ -1,10 +1,10 @@
 // ?rva0044a2e0@Rva00449790Owner@@QAEXXZ
-// partial score=0.92 date=2026-09-25
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringinline
+// partial score=0.9617 date=2026-10-13
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringbaseascii /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 // Address-derived reconstruction of the embedded BFME cursor-animation owner.
 // Retail 0x0044A2E0 (757 bytes), reached only through ILT 0x00045570 from
-// 0x0044A6A0 with ecx = TheInGameUI + 0x12C8 -- the same object whose ctor is
+// 0x0044A6A0 with ecx = its receiver + 0x12C8, matching the object whose ctor is
 // 0x00449790 (twelve ints, an STLport list at +0x30, two -1 ints at +0x34/+0x38).
 // Only while TheMouse's cursor (+0x4DA8) is 0x29: submits the GlobalData
 // +0xDD0 string block through 0x0044A240, then for every expired list entry
@@ -13,7 +13,8 @@
 
 #define _STLP_NO_EXCEPTIONS 1
 #include <list>
-#include "StringInline.h"
+#include "ascii_string.h"
+#include "GameClient/ClientRandomValue.h"
 
 typedef int Int;
 typedef unsigned int UnsignedInt;
@@ -22,19 +23,9 @@ typedef float Real;
 extern "C" double __cdecl sqrt(double value);
 #pragma intrinsic(sqrt)
 
-struct Rva0044A2E0Coord
-{
-	Int x;
-	Int y;
-};
+typedef ICoord2D Rva0044A2E0Coord;
 
-struct Rva0044A2E0Vector
-{
-	Real x;
-	Real y;
-
-	Real length() const { return (Real)sqrt(x * x + y * y); }
-};
+typedef Coord2D Rva0044A2E0Vector;
 
 
 struct Rva0044A2E0Element
@@ -55,6 +46,13 @@ public:
 	Anim2DTemplate *findTemplate(const AsciiString &name);
 };
 
+struct Rva00443910Coord;
+class Rva00443910OwnerDirect
+{
+public:
+	void addDirect(Anim2DTemplate *, const Rva00443910Coord *, Int, Real, Real);
+};
+
 class InGameUI
 {
 public:
@@ -63,14 +61,6 @@ public:
 		Real duration, Real zRisePerSecond);
 };
 
-class GameClientRandomVariable
-{
-public:
-	Real getValue() const;
-
-private:
-	char m_data[12];
-};
 
 class ClientRoot4120
 {
@@ -99,18 +89,12 @@ public:
 	char m_data[12];
 };
 
-class StringBaseNarrowBL
-{
-protected:
-	StringBaseNarrowBL(const StringBaseNarrowBL &other);
-	~StringBaseNarrowBL();
-	char *m_text;
-};
+typedef StringBase<char> StringBaseNarrowBL;
 
-class AsciiStringBL : public StringBaseNarrowBL
+class AsciiStringBL : public AsciiString
 {
 public:
-	AsciiStringBL(const AsciiStringBL &other) : StringBaseNarrowBL(other) {}
+	AsciiStringBL(const AsciiStringBL &other) : AsciiString(other) {}
 	~AsciiStringBL() {}
 };
 
@@ -213,7 +197,7 @@ void Rva00449790Owner::rva0044a2e0()
 		Int previousX = m_previousX;
 		if (previousX == -1)
 		{
-			TheInGameUI->rva00443910(animTemplate, &mousePosition, 1,
+			((Rva00443910OwnerDirect *)TheInGameUI)->addDirect(animTemplate, (const Rva00443910Coord *)&mousePosition, 1,
 				TheWritableGlobalData->m_random_DEC.getValue(), 1.0f);
 		}
 		else
@@ -237,7 +221,8 @@ void Rva00449790Owner::rva0044a2e0()
 			point.x = (Real)(TheWritableGlobalData->m_int_E3C + previousX);
 			point.y = (Real)(TheWritableGlobalData->m_int_E40 + previousY);
 			Real zRise = 1.0f;
-			Real zStep = (*(volatile Real *)0x01083BFC) / (Real)count;
+			static const Real zFactor = 0.99f;
+			Real zStep = (double)*(volatile const Real *)&zFactor / (Real)count;
 
 			for (Int i = 0; i < count; ++i)
 			{
@@ -248,7 +233,7 @@ void Rva00449790Owner::rva0044a2e0()
 				position.y = (Int)(point.y + 0.5f);
 				if (count != 1 || !(WWMath::Random_Float() > TheWritableGlobalData->m_real_DE4))
 				{
-					TheInGameUI->rva00443910(animTemplate, &position, 1,
+					((Rva00443910OwnerDirect *)TheInGameUI)->addDirect(animTemplate, (const Rva00443910Coord *)&position, 1,
 						TheWritableGlobalData->m_random_DEC.getValue(), zRise);
 				}
 				zRise -= zStep;
