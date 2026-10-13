@@ -195,7 +195,7 @@ class Rva002B4310
 {
 public:
 	Rva002B4310();
-	virtual void slot();
+	virtual void slot() = 0;
 };
 
 // ??0Rva002B4310@@QAE@XZ
