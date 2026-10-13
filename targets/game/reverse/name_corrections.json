@@ -19728,5 +19728,25 @@
   "after_sha256": "aeee3a3044a0e0bce50b87fc966947855cab8562d8b76b77b2314acfaca106a7",
   "evidence": "targets/game/reverse/identity_evidence/0x00515810-updatebuttons-ilt-contradiction.md",
   "reason": "The bank pinned the helper called at 0x00515810 as ?updateButtons@AptInGameChat@@QAEXXZ at ILT thunk 0x00006F4B; tools/ilt_oracle.py reports that identity CONTRADICTED (bare updateButtons p_false=3.26e-03; ?updateButtons@AptInGameChat@@QAEXXZ and its access-decorated spellings p_false=1.63e-03, outside every window of the target's slots 4878:5263-5287), so the descriptive name is unproven. The pin and the landed private method keep the call target while spelling the address-derived placeholder Rva00006F4BUpdateButtons; see targets/game/reverse/identity_evidence/0x00515810-updatebuttons-ilt-contradiction.md."
+ },
+ {
+  "old_path": "game/GameEngine/Source/GameLogic/Object/Update/PathfindLayer_isPointOnWall_Thunk.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/OneRingPenaltyUpdateRva00299080.cpp",
+  "old_name": "isPointOnWall",
+  "new_name": "rva00299080",
+  "before_sha256": "c08d073a29587262ef295af5bad8855dc5eba08af3596cb7ca9d75ff660fa4c7",
+  "after_sha256": "0e71845ca4a8afb34815e35b4172967a3445361195814c60de01b8272289b592",
+  "evidence": "targets/game/reverse/identity_evidence/00299080-one-ring-penalty-spawn.md",
+  "reason": "PathfindLayer::isPointOnWall is refuted for 0x00299080: the body takes no stack arguments, does nothing isPointOnWall does, and tags its random draw with OneRingPenaltyUpdate.cpp; the method name is unproven, so it keeps its address (rva00299080)."
+ },
+ {
+  "old_path": "targets/game/reverse/functions.csv",
+  "new_path": "targets/game/reverse/functions.csv",
+  "old_name": "isPointOnWall",
+  "new_name": "rva00299080",
+  "before_sha256": "e34a3c1ef4572059fe4c6a3d54757028b2b55319c4112ae6ee88da550ae5d40d",
+  "after_sha256": "3e5c6fe447ee06e0e932678641cefb9bf12fe8e1a95d077a72c70e83cc3fd23e",
+  "evidence": "targets/game/reverse/identity_evidence/00299080-one-ring-penalty-spawn.md",
+  "reason": "PathfindLayer::isPointOnWall is refuted for 0x00299080: the body takes no stack arguments, does nothing isPointOnWall does, and tags its random draw with OneRingPenaltyUpdate.cpp; the method name is unproven, so it keeps its address (rva00299080)."
  }
 ]
