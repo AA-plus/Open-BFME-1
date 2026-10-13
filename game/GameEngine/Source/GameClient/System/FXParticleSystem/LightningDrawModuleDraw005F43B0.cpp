@@ -1,10 +1,14 @@
 // ?draw@LightningDraw005F43B0@@QAEHPAX0PAH@Z
-// partial score=0.9905 date=2026-10-13
-// 2220B/58 relocs; 21 non-reloc bytes left: three x87 fld/fmul operand picks
-// (retail-first: up.Y at +2A0 and +2E0, c.Z at +313; ours picks along.Z/along.X/along.X).
-// dummyI4 below is an allocator-only perturbation: it fixes the fourth pick (+32B);
-// sizes/init texts 3,4 mod 4 of the array reproduce it; unused array, no frame change.
-// partial score=0.981 date=2026-09-28 (42 nonreloc diffs by probe; along = end[-1]-positions[0])
+// converted 2026-10-13 wave16: 2220B/2220B, 58 relocations, EXACT modulo relocations.
+// The last three x87 fld/fmul operand picks (+2A0, +2E0, +313) are pinned by a
+// TU-local replica of Vector3::Cross_Product: a volatile IND read of the contested
+// operand raises its rank, so each pair emits retail's fld-first order, and the
+// parenthesised first product keeps the rank shift off the neighbouring products.
+// The dead int[4] allocator perturbation keeps the fourth pick (+32B) in place.
+// The seven-entry shader switch passes a 4-byte preset shader word by value
+// through a TU-local ShaderClass replica (recorded preset statics plus
+// g_Va012D6E30/48/60/24/28); the callee is the landed same-int setter at
+// 00918DA0, reached under the caller-side spelling pinned in symbols.csv.
 // cl: /DNDEBUG /MD /EHsc /O2 /Ob2 /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/GameEngine/Source/Common/System /Iinputs/reference/shims/sweep
 #include <stddef.h>
 #include "vector3.h"
@@ -15,13 +19,14 @@
 
 // Candidate symbol: ?draw@LightningDraw005F43B0@@QAEHPAX0PAH@Z
 // Restored stronger history candidate: chained X offset sum matches retail.
-// Remaining residue: four x87 cross-product operand orders. No inline assembly.
+// Residue resolved wave16 by volatile-rank cross-product replicas. No inline assembly.
 // Intended home: game/GameEngine/Source/GameClient/System/FXParticleSystem/.
 // Retail 005F43B0: LightningDrawModule primary vtable 01112FD0 slot +10,
 // installed by the verified ctor 005F4E90. The method spelling is unproven.
 // Layout below is offset-derived from this body and that constructor.
 // Renderer callees use their landed symbols except 00918DA0, whose landed
-// spelling takes int while this caller passes a copy-constructed shader word.
+// spelling takes int while this caller passes a 4-byte preset shader word by
+// value under the caller-side spelling pinned in symbols.csv.
 class ParticleSystemZA;
 ParticleSystemZA *bfmeNullSystemZA();
 class Rva005C30A0Owner { public: float Rva005C30A0() const; float Rva005C3120() const; };
@@ -44,12 +49,14 @@ extern ShareBufferClass<unsigned char> *g_byteBuffer;
 
 // These typed declarations record the actual caller ABI. Historical names
 // at 9182C0/9182F0/91A480 have misleading pointer/value parameter types.
-struct ShaderWord005F43B0 {
+class ShaderClass {
+public:
     unsigned value;
-    ShaderWord005F43B0(const ShaderWord005F43B0& v) : value(v.value) {}
+    ShaderClass(const ShaderClass& v) : value(v.value) {}
+    static ShaderClass _PresetAdditiveSpriteShader;
+    static ShaderClass _PresetAlphaSpriteShader;
 };
-extern ShaderWord005F43B0 shader012D6E2C,shader012D6E30,shader012D6E34,
-    shader012D6E48,shader012D6E60,shader012D6E24,shader012D6E28;
+extern ShaderClass g_Va012D6E30,g_Va012D6E48,g_Va012D6E60,g_Va012D6E24,g_Va012D6E28;
 class StreakLineClass { public: void Set_Texture(TextureClass *texture); }; // 009182C0
 struct BfmeThingDUC { void bfmeGoDUC(); }; // 00918290
 class Rva00918DA0 { public: void set(int a); }; // 00918DA0
@@ -62,7 +69,7 @@ public:
     void texture(const BFMEWaterTrackTextureHandle &h) { ((StreakLineClass*)this)->Set_Texture((TextureClass*)&h); }
     // ?reset@StreakCalls005F43B0@@QAEXXZ absent-from-retail
     void reset() { ((BfmeThingDUC*)this)->bfmeGoDUC(); }
-    void shader(ShaderWord005F43B0); // 00918DA0: landed ?set@Rva00918DA0@@QAEXH@Z takes int; see handoff
+    void shader(ShaderClass w); // 00918DA0: landed same-int setter; 4-byte word passed by value
     // ?points@StreakCalls005F43B0@@QAEXIPAX000@Z absent-from-retail
     void points(unsigned n,void *locs,void *widths,void *colors,void *stamps) { ((BfmeStreakUGB*)this)->bfmeSetUGB(n,locs,widths,colors,(int)stamps); }
     // ?tile@StreakCalls005F43B0@@QAEXM@Z absent-from-retail
@@ -108,6 +115,22 @@ inline void updateLightningPoint005F43B0(int k,int n,Vector3 *out, const Vector3
  if(k!=0 && k!=n-1) Vector3::Add(*base,*offset,out); else *out=*offset;
 }
 
+class V3Local005F43B0 {
+public:
+    static void Cross_Product(const Vector3 &a,const Vector3 &b,Vector3 *r) {
+        r->X = ((*(const volatile float *)&a.Y * b.Z) - (a.Z * b.Y));
+        r->Y = (a.Z * b.X - a.X * b.Z);
+        r->Z = (a.X * b.Y - *(const volatile float *)&a.Y * b.X);
+    }
+};
+class V2Local005F43B0 {
+public:
+    static void Cross_Product(const Vector3 &a,const Vector3 &b,Vector3 *r) {
+        r->X = (*(const volatile float *)&a.Y * b.Z - a.Z * b.Y);
+        r->Y = (a.Z * b.X - a.X * *(const volatile float *)&b.Z);
+        r->Z = (*(const volatile float *)&a.X * b.Y - a.Y * b.X);
+    }
+};
 int LightningDraw005F43B0::draw(void *renderInfo,void *unused,int *count)
 {
     int n=0;
@@ -149,8 +172,8 @@ int LightningDraw005F43B0::draw(void *renderInfo,void *unused,int *count)
             int dummyI4[4]={0,0,0,0};
             ((Coord3D*)&along)->normalize();
             field8d4.Z=1; field8d4.X=0; field8d4.Y=0;
-            Vector3::Cross_Product(field8d4,along,&field8c8);
-            Vector3::Cross_Product(along,field8c8,&field8d4);
+            V3Local005F43B0::Cross_Product(field8d4,along,&field8c8);
+            V2Local005F43B0::Cross_Product(along,field8c8,&field8d4);
             for(int j=0;j<field8b8;++j) {
                 Vector3 *out=field48[j];
                 Vector3 *offset=field480[j];
@@ -186,13 +209,13 @@ int LightningDraw005F43B0::draw(void *renderInfo,void *unused,int *count)
         ((StreakCalls005F43B0*)g_rva005F4340Resource)->texture(texture);
         ((StreakCalls005F43B0*)g_rva005F4340Resource)->reset();
         switch(system()->field08) {
-        case 1: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(shader012D6E2C); break;
-        case 2: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(shader012D6E30); break;
-        case 3: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(shader012D6E34); break;
-        case 4: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(shader012D6E48); break;
-        case 5: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(shader012D6E60); break;
-        case 6: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(shader012D6E24); break;
-        case 7: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(shader012D6E28); break;
+        case 1: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(ShaderClass::_PresetAdditiveSpriteShader); break;
+        case 2: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(g_Va012D6E30); break;
+        case 3: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(ShaderClass::_PresetAlphaSpriteShader); break;
+        case 4: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(g_Va012D6E48); break;
+        case 5: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(g_Va012D6E60); break;
+        case 6: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(g_Va012D6E24); break;
+        case 7: ((StreakCalls005F43B0*)g_rva005F4340Resource)->shader(g_Va012D6E28); break;
         }
         for(int j=0;j<field8b8;++j) {
             ((StreakCalls005F43B0*)g_rva005F4340Resource)->points(n,field48[j],g_floatBuffer->Get_Array(),g_vector4Buffer->Get_Array(),stamps);
