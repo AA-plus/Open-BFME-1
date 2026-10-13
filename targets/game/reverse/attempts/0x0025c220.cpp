@@ -1,7 +1,11 @@
 // ?finish@ElvenWoodSpecialPower@@QAEXPAVSpecialPowerLocation@@@Z
-// partial score=0.3325 date=2026-09-28
+// partial score=0.6771 date=2026-10-13
 // ?finish@ElvenWoodSpecialPower@@QAEXPAVSpecialPowerLocation@@@Z
-// retail RVA 0x0025C220, 1152 bytes.  Attempt reconstruction; not yet exact.
+// retail RVA 0x0025C220, 1152 bytes. Attempt reconstruction; not yet exact.
+// Native BitFlags<86> status ABI and query-scoped filter temporaries follow
+// Object::setStatus and EH map C0F211 (states 0/1/2 and 4/5/3).
+// Both filters use the independently exact 102-byte noinline C3DD0 constructor.
+// Remaining frame comments describe retail, not a claim of matching stack slots.
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS /DBFME_STLP_NODE_ALLOC /Iinputs/reference/shims/stlp_nodealloc /Iinputs/reference/shims/sweep /Iinputs/reference/shims/asciistring_downloadmanager /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
 // stlport
 //
@@ -74,35 +78,10 @@ enum
 	RVA_0025C220_STATUS_BIT = 83
 };
 
-template <int NUMBITS>
-class BitFlags
-{
-	_STL::bitset<NUMBITS> m_bits;
-
-public:
-	enum BogusInitType { kInit = 0 };
-
-	BitFlags(BogusInitType, Int idx1, Int idx2)
-	{
-		m_bits._Unchecked_set((size_t)idx1);
-		m_bits._Unchecked_set((size_t)idx2);
-	}
-
-	Bool test(Int idx) const
-	{
-		return m_bits._Unchecked_test((size_t)idx);
-	}
-};
+#include "Common/BitFlags.h"
 
 typedef BitFlags<192> KindOfMaskType;
-typedef BitFlags<96> StatusMaskType;
-
-struct Coord3D
-{
-	float x;
-	float y;
-	float z;
-};
+typedef BitFlags<86> StatusMaskType; // native Object::setStatus mask, 12 bytes
 
 struct Matrix3D
 {
@@ -206,7 +185,7 @@ class BfmeTaintManager
 {
 public:
 	void bfmeApplyCircleWorld(const Coord3D *centre, Real range,
-		unsigned char tint, Bool permanent);
+		Int tint, Bool permanent);
 };
 
 class GameLogic
@@ -251,7 +230,7 @@ public:
 class PartitionFilterAcceptByKindOf : public PartitionFilter
 {
 public:
-	PartitionFilterAcceptByKindOf(const KindOfMaskType &mustBeSet,
+	__declspec(noinline) PartitionFilterAcceptByKindOf(const KindOfMaskType &mustBeSet,
 		const KindOfMaskType &mustBeClear)
 		: m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) {}
 	virtual ~PartitionFilterAcceptByKindOf() {}
@@ -364,12 +343,10 @@ void ElvenWoodSpecialPower::finish(SpecialPowerLocation *subject)
 	// First sweep: everything the wider circle holds that belongs to another
 	// player is remembered and destroyed, so that the second sweep only has
 	// to taint what is left standing.
-	KindOfMaskType wanted(KindOfMaskType::kInit, RVA_0025C220_KIND_BIT,
-		RVA_0025C220_KIND_BIT);
-	PartitionFilterAcceptByKindOf firstFilter(wanted, KINDOFMASK_NONE);
 	BfmeWideResult found = ThePartitionManager->bfmeForwardWideC(
 		&subject->m_position, range * BfmeRva0025C220RangeScale, 0,
-		&firstFilter, 1);
+		&PartitionFilterAcceptByKindOf(KindOfMaskType(KindOfMaskType::kInit,
+			RVA_0025C220_KIND_BIT, RVA_0025C220_KIND_BIT), KINDOFMASK_NONE), 1);
 	_STL::set<Object *> destroyed;
 	Object *object;
 	while (found.next(object))
@@ -383,11 +360,10 @@ void ElvenWoodSpecialPower::finish(SpecialPowerLocation *subject)
 
 	// Second sweep: the same kind mask over the tighter circle, tainting
 	// every survivor the first sweep did not claim.
-	KindOfMaskType wantedToo(KindOfMaskType::kInit, RVA_0025C220_KIND_BIT,
-		RVA_0025C220_KIND_BIT);
-	PartitionFilterAcceptByKindOf secondFilter(wantedToo, KINDOFMASK_NONE);
 	found = ThePartitionManager->bfmeForwardWideC(&subject->m_position,
-		range * BfmeRva0025C220TaintScale, 0, &secondFilter, 1);
+		range * BfmeRva0025C220TaintScale, 0,
+		&PartitionFilterAcceptByKindOf(KindOfMaskType(KindOfMaskType::kInit,
+			RVA_0025C220_KIND_BIT, RVA_0025C220_KIND_BIT), KINDOFMASK_NONE), 1);
 	while (found.next(object))
 	{
 		if (object->getControllingPlayer() == owner->getControllingPlayer())
