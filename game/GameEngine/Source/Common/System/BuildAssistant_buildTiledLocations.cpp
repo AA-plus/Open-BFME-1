@@ -1,26 +1,7 @@
-// ?buildTiledLocations@BuildAssistant@@UAEPAUTileBuildInfo@1@PBVThingTemplate@@MPBUCoord3D@@1MHPAVObject@@@Z
-// partial score=0.9634 date=2026-10-05
 // cl: /DNDEBUG /MD /EHsc
-// readable body of ?buildTiledLocations@BuildAssistant@@UAEPAUTileBuildInfo@1@PBVThingTemplate@@MPBUCoord3D@@1MHPAVObject@@@Z: game/GameEngine/Source/Common/System/BuildAssistant.cpp
-//
-// BuildAssistant::buildTiledLocations, retail 0x000FC010 (519 bytes).
-//
-// Identity: the BuildAssistant vtable 0x010860D8 slot 14 routes here through
-// ILT 0x00015DD9 (slot 18 is the matched sellObject); ret 0x1C takes Zero
-// Hour's seven arguments, the body grows m_buildPositions (+0x08) and
-// m_buildPositionSize (+0x0C), asks slot 10 isLocationLegalToBuild with the
-// 0x1F option mask and returns the function-static TileBuildInfo at VA
-// 0x012ED840 -- Zero Hour's tiling loop step for step. See
-// targets/game/reverse/identity_evidence/000fc010-buildassistant-buildtiledlocations.md.
-//
-// BFME differences, all read from the retail body:
-//  * Coord3D has an empty constructor and destructor (0x00083330 and
-//    0x0005BC40), so the position array is built and destroyed through the
-//    eh vector iterators with an array cookie;
-//  * the line direction is the placement vector itself, normalized in place
-//    by the out-of-line Coord3D::normalize (0x000FB930);
-//  * TerrainLogic::getGroundHeight is virtual slot +0x18.
-
+// readable body of ?buildTiledLocations@BuildAssistant@@UAEPAUTileBuildInfo@1@PBVThingTemplate@@MPBVCoord3D@@1MHPAVObject@@@Z: game/GameEngine/Source/Common/System/BuildAssistant.cpp
+// Evidence: targets/game/reverse/identity_evidence/000fc010-normalize-visibility.md
+#include <new>
 #include <math.h>
 
 typedef bool Bool;
@@ -29,21 +10,32 @@ typedef int Int;
 typedef unsigned int UnsignedInt;
 
 #define NULL 0
+#define DEBUG_ASSERTCRASH(condition, message) ((void)0)
 
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/GameCommon.h
-// A struct, as the pinned callers' mangled names (PBUCoord3D) require.
-struct Coord3D
+#include "../../../../Libraries/Source/WWVegas/WWMath/coord3d.h"
+inline Coord3DBase &Coord3DBase::operator=(const Coord3DBase &that)
 {
-	Coord3D();
-	~Coord3D();
-	void normalize();
-
-	Real x;
-	Real y;
-	Real z;
-};
+    struct Raw { unsigned int x, y, z; };
+    *(Raw *)this = *(const Raw *)&that;
+    return *this;
+}
+inline Coord3D &Coord3D::operator=(const Coord3D &that)
+{
+    *(Coord3DBase *)this = that;
+    return *this;
+}
 inline Coord3D::Coord3D() {}
 inline Coord3D::~Coord3D() {}
+__declspec(noinline) inline void Coord3D::normalize()
+{
+    float len = (float)sqrt(x * x + y * y + z * z);
+    if (len != 0.0f) {
+        float scale = 1.0f / len;
+        x *= scale;
+        y *= scale;
+        z *= scale;
+    }
+}
 
 class ThingTemplate;
 class Object;
@@ -110,10 +102,19 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-/** Given the start and end of a line, compute the tiled positions of objects along it,
-	* stopping at the first position that is not legal to build at */
+/** Tiling wall object helper function, we can use this to "tile" walls when building.
+	* This function will fill out the ARRAY world positions named 'positions' starting
+	* at the 'start' point in the world and going to the 'end' point in the world.  No
+	* more than 'maxTiles' will be considered and if the position of any one of
+	* the objects in the chain is illegal the chain stops there.  The number of objects
+	* actually used for the tiling is returned along with a pointer to the array
+	* of positions in the tile build info.
+	*
+	* REQUIRES: Note that the array at 'postions' must be large enough to hold 'maxTiles'
+	* entries of positions 
+	*/
 //-------------------------------------------------------------------------------------------------
-// ?buildTiledLocations@BuildAssistant@@UAEPAUTileBuildInfo@1@PBVThingTemplate@@MPBUCoord3D@@1MHPAVObject@@@Z
+// ?buildTiledLocations@BuildAssistant@@UAEPAUTileBuildInfo@1@PBVThingTemplate@@MPBVCoord3D@@1MHPAVObject@@@Z
 BuildAssistant::TileBuildInfo *BuildAssistant::buildTiledLocations( const ThingTemplate *thingBeingTiled,
 																																		Real angle,
 																																		const Coord3D *start,
@@ -141,22 +142,44 @@ BuildAssistant::TileBuildInfo *BuildAssistant::buildTiledLocations( const ThingT
 		m_buildPositions = new Coord3D[ maxTiles ];
 		m_buildPositionSize = maxTiles;
 
+		//
+		// lets try to at least keep sanity here so that we don't have a completely unbounded
+		// allocation spot in the code here
+		//
+		DEBUG_ASSERTCRASH( m_buildPositionSize < 200, ("Do you really need to tile this many objects!!!") );
+
 	}  // end if
 	Coord3D *positions = m_buildPositions;
 
+	// compute a vector from the start of the line in the world to the end
 	Real placementX = end->x - start->x;
 	Real placementY = end->y - start->y;
+	//
+	// get the lengh of the placement vector in the world, we'll use this to see how
+	// many objects we'll need to fill the entire line
+	//
 	Real placementLength = (Real)sqrt( placementX * placementX + placementY * placementY );
+	//
+	// first see how many objects we're going to need to go from the placement
+	// line start to the placement line end, we are guaranteed to have one thing (+1)
+	//
 	Int tilesNeeded = (Int)(placementLength / tilingSize) + 1;
+	// we have a max that we are allowed to build to
 	if( tilesNeeded > maxTiles )
 		tilesNeeded = maxTiles;
 	Coord3D pos;
 	Coord3D v;
 	v.x = placementX;
 	v.y = placementY;
-	Int tilesUsed = 1;
+	// we're guaranteed to have at least one object so lets take care of that position now
 	positions[ 0 ] = *start;
-	v.z = 0.0f;
+	//
+	// march down each object and set the position based on its position in the line.
+	// note that we're skipping the first one because we've already set it explicitly
+	// and are guaranteed to have at least one object
+	//
+	Int tilesUsed = 1;  // actual objects "tiled", we are guaranteed to have at least one
+	v.z = 0.0f;  //end->z - start->z;
 	v.normalize();
 	for( Int i = 1; i < tilesNeeded; i++ )
 	{
