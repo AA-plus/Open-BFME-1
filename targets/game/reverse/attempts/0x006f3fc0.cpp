@@ -1,5 +1,5 @@
 // ?draw@W3DDisplay@@UAEXXZ
-// partial score=0.94 date=2026-09-24
+// partial score=0.9704 date=2026-10-13
 // cl: /DNDEBUG /MD /EHs-c- /Iinputs/reference/shims/sweep
 #include <windows.h>
 void * __cdecl operator new[](unsigned);
@@ -7,13 +7,30 @@ void __cdecl operator delete[](void *);
 extern "C" __declspec(dllimport) unsigned long __stdcall timeGetTime();
 class W3DView { public: bool updateCameraMovements(); };
 class BfmeQ1087 { public: void bfmeGo1087A(); };
+class DebugDisplayInterface;
+typedef void DebugDisplayCallback006F3FC0(DebugDisplayInterface *,void *,FILE *);
+void j_0002f9f0(); void j_0003413f(); void j_0000d779();
+struct StrideValue006F3FC0
+{
+    unsigned value;
+    // ??0StrideValue006F3FC0@@QAE@I@Z absent-from-retail
+    explicit StrideValue006F3FC0(unsigned v) : value(v) {}
+    // ??BStrideValue006F3FC0@@QBEIXZ absent-from-retail
+    operator unsigned() const { return value; }
+};
 class W3DDisplay {
 public:
  virtual void draw();
- char pad04[0x28]; unsigned callback2c; char pad30[0xe1]; unsigned char field111;
+ char pad04[0x28]; DebugDisplayCallback006F3FC0 *callback2c; char pad30[0xe1]; unsigned char field111;
  void rva006F0300(); void rva006F2CC0(); void rva006EE800(); bool rva006EB500(unsigned);
 protected:
- void updateAverageFPS(); void captureScreen(char *,unsigned); void saveScreenShot(char *,unsigned,unsigned);
+ void updateAverageFPS();
+ void captureScreen(char *,unsigned);
+ // ?captureScreen@W3DDisplay@@IAEXPADUStrideValue006F3FC0@@@Z absent-from-retail
+ void captureScreen(char *p,StrideValue006F3FC0 stride) { captureScreen(p,stride.value); }
+ void saveScreenShot(char *,unsigned,unsigned);
+ // ?saveScreenShot@W3DDisplay@@IAEXPADUStrideValue006F3FC0@@I@Z absent-from-retail
+ void saveScreenShot(char *p,StrideValue006F3FC0 width,unsigned height) { saveScreenShot(p,width.value,height); }
 };
 class RvaDrawSlots { public:
  virtual void slot00();
@@ -200,16 +217,26 @@ extern int Rva012BAA5C,Rva012F804C;
 extern HWND ApplicationHWnd;
 extern const float Rva0111E36C,Rva010A13C4;
 
+//DECLARE_PERF_TIMER(BigAssRenderLoop)
+// W3DDisplay::draw ===========================================================
+/** Draw the entire W3D Display */
+//=============================================================================
+//DECLARE_PERF_TIMER(W3DDisplay_draw)
+// ?draw@W3DDisplay@@UAEXXZ present-unmatched
 void W3DDisplay::draw()
 {
+    //USE_PERF_TIMER(W3DDisplay_draw)
     if (ApplicationHWnd && IsIconic(ApplicationHWnd)) return;
     updateAverageFPS();
     reinterpret_cast<BfmeQ1087 *>(this)->bfmeGo1087A();
-    if (callback2c==0x0042f9f0) rva006F0300();
-    else if (callback2c==0x0043413f) rva006F2CC0();
-    else if (callback2c==0x0040d779) rva006EE800();
+    // compute debug statistics for display later
+    if (callback2c==reinterpret_cast<DebugDisplayCallback006F3FC0 *>(j_0002f9f0)) rva006F0300();
+    else if (callback2c==reinterpret_cast<DebugDisplayCallback006F3FC0 *>(j_0003413f)) rva006F2CC0();
+    else if (callback2c==reinterpret_cast<DebugDisplayCallback006F3FC0 *>(j_0000d779)) rva006EE800();
     bool frozen = !Rva012F1464->fieldc4;
+    /// @todo: I'm assuming the first view is our main 3D view.
     W3DView *view = reinterpret_cast<RvaDrawSlots *>(this)->slot74();
+    // hack to let client spin fast in network games but still do effects at the same pace. -MDC
     unsigned delta = Rva012F1464->slot68() - Rva012BAA2C;
     if (frozen) delta=0;
     else Rva012BAA2C = Rva012F1464->slot68();
@@ -217,31 +244,40 @@ void W3DDisplay::draw()
     if (!Rva012F0898->isGamePaused() && Rva012ED5C8->fieldc59) fast=true;
     if (Rva012F076C->isTimeFast()) fast=true;
     if (!frozen && fast && !Rva012F0898->field11d && (Rva012F1464->slot68()%30)!=0) {
-        view->updateCameraMovements();
+        view->updateCameraMovements();  // Update camera motion effects.
         Rva012F8064 += Rva012BB1CC;
         WW3D::Sync(Rva012F8064);
         return;
     }
-    Debug_Statistics::Begin_Statistics();
+    Debug_Statistics::Begin_Statistics(); //reset all counters (polygons, vertices, etc) before drawing
+    //update state of all the terrain tracks (fade, remove, etc.)
+    /// @todo: Is there a better place to put per-frame updates like this?
     if (Rva012ED5C8->fieldbb9!=1 && Rva012F9D98) Rva012F9D98->update();
+    /// @todo Decouple framerate from timestep
+    // for now, use constant time steps to avoid animations running independent of framerate
     Rva012F8064 += Rva012BB1CC*delta;
+    // allow W3D to update its internals
+    //	WW3D::Sync( GetTickCount() );
     WW3D::Sync(Rva012F8064);
+    // Fast & Frozen time limits the time to 33 fps.
     static int prevTime=timeGetTime();
     int now=timeGetTime();
     if (Rva012F1600->slotd8()>1) {
         --Rva012BAA5C;
         if (Rva012BAA5C>1) return;
         Rva012BAA5C=Rva012F1600->slotd8();
-    } else prevTime=now-30;
+        // limit the framerate, because while fast time is on, the game logic is running as fast as it can.
+    } else prevTime=now-30; // do the first frame immediately.
     if (field111) return;
     do {
         if (Rva012ED5C8->fieldbb9!=1) {
+            // limit the framerate
             while (Rva012ED5C8->field1e && now-prevTime <29) now=timeGetTime();
             prevTime=now;
         }
         if (Rva012F804C>0 && Rva012ED5C8->fieldecc) {
             Rva012ED5C8->fielded0=true;
-            Rva012ED5C8->fielded4=Rva0111E36C/(float)Rva012ED5C8->fieldecc;
+            Rva012ED5C8->fielded4=6.28318530718f/(float)Rva012ED5C8->fieldecc;
             RECT rect;
             POINT point;
             GetClientRect(ApplicationHWnd,&rect);
@@ -255,25 +291,25 @@ void W3DDisplay::draw()
             int height=rect.bottom-rect.top;
             char *image=new char[Rva012ED5C8->fieldecc*height*width*3];
             for(int i=0; i<Rva012ED5C8->fieldecc; ++i) {
-                Rva012ED5C8->fielded8=((float)i*Rva010A13C4)/(float)Rva012ED5C8->fieldecc;
+                Rva012ED5C8->fielded8=((float)i*(-6.28318530718f))/(float)Rva012ED5C8->fieldecc;
                 Rva012ED5C8->fielded1=(i==Rva012ED5C8->fieldecc-1);
                 if (!rva006EB500(now)) frozen=false;
                 int count=Rva012ED5C8->fieldecc;
-                captureScreen(image+((count/2+i)%count)*width*3,count*width*3);
+                captureScreen(image+((count/2+i)%count)*width*3,StrideValue006F3FC0(count*width*3));
             }
             --(*reinterpret_cast<volatile int *>(&Rva012F804C));
-            saveScreenShot(image,Rva012ED5C8->fieldecc*width,height);
+            saveScreenShot(image,StrideValue006F3FC0(Rva012ED5C8->fieldecc*width),height);
             delete []image;
             Rva012ED5C8->fielded0=false;
         } else if (!rva006EB500(now)) break;
     } while (frozen && !Rva012F1600->slot74() &&
              (Rva012F0898->field10c==1 || Rva012F0898->field10c==5 || Rva012F0898->isGamePaused()));
     if (Rva012F804C>0 && !Rva012ED5C8->fieldecc) {
-        --Rva012F804C;
+        --(*reinterpret_cast<volatile int *>(&Rva012F804C));
         reinterpret_cast<RvaDrawSlots *>(this)->slot124();
     }
     Rva00754A10();
-}
+}  // end draw
 
 // Evidence: primary W3DDisplay vtable 0x0111EDD0 slot 7 -> ILT 0x000093EF -> RVA 0x006F3FC0.
 // Boundary ends with ret at 0x006F445F, size 1184 (Ghidra fragmented size 1178 is stale).
