@@ -36879,7 +36879,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_001b0e90@@YAXXZ,,0x001B0E90,337,game/gen_asm/d_001aba80.asm,matched,gen-dump;ghidra=FUN_005b0e90
 ?d_001b26d0@@YAXXZ,,0x001B26D0,137,game/gen_asm/d_001aba80.asm,matched,gen-dump;ghidra=FUN_005b26d0
 ?d_001b3b70@@YAXXZ,,0x001B3B70,185,game/gen_asm/d_001aba80.asm,matched,gen-dump;ghidra=FUN_005b3b70
-?d_001b5b40@@YAXXZ,,0x001B5B40,144,game/gen_asm/d_001b5b40.asm,matched,gen-dump;ghidra=FUN_005b5b40
 ?d_001b5d70@@YAXXZ,,0x001B5D70,14,game/GameEngine/Source/Common/VtableSlot2StoreThunk.cpp,matched,object-symbol=?getSixtieth@VtableSlot2StoreThunk@@QBE?AUVtableSlot2Result@@XZ;Open-BFME5 clean C++ vtable slot 2 value return
 ?d_001b65e0@@YAXXZ,,0x001B65E0,14,game/GameEngine/Source/Common/VtableSlot2StoreThunk.cpp,matched,object-symbol=?getSixtyFirst@VtableSlot2StoreThunk@@QBE?AUVtableSlot2Result@@XZ;Open-BFME5 clean C++ vtable slot 2 value return
 ?d_001b6cb0@@YAXXZ,,0x001B6CB0,1,game/GameEngine/Source/Common/Rva0008TinyBodies.cpp,matched,Carved one-byte ret; address-derived identity preserves the boundary
@@ -37898,7 +37897,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0058d820@@YAXXZ,,0x0058D820,101,game/gen_asm/d_0058aec0.asm,matched,gen-dump;bounds=high
 ?d_0058e390@@YAXXZ,,0x0058E390,1810,game/gen_asm/d_0058b1f0.asm,matched,gen-dump;ghidra=FUN_0098e390
 ?d_0058fe20@@YAXXZ,,0x0058FE20,50,game/gen_asm/d_0058aec0.asm,matched,gen-dump;bounds=high
-?d_005900c0@@YAXXZ,,0x005900C0,764,game/gen_asm/d_0058b1f0.asm,matched,gen-dump;ghidra=FUN_009900c0
 ?d_00590480@@YAXXZ,,0x00590480,498,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_00990480
 ?d_00591640@@YAXXZ,,0x00591640,322,game/gen_asm/d_00499050.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00991640
 ?d_00593440@@YAXXZ,,0x00593440,482,game/gen_asm/d_0058b1f0.asm,matched,gen-dump;ghidra=FUN_00993440
@@ -172555,3 +172553,5 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?adjust003DAD60@Rva003DAD60@@QAE_NPAUCoord3D@@@Z,,0x003DAD60,170,game/GameEngine/Source/GameLogic/AI/Rva003DAD60Adjust.cpp,matched,Full RET4 extent; address-derived method; nested conversion and callback context lifetimes recover retail frame; decoded ILT 171E8 and 3C24 routes; evidence targets/game/reverse/identity_evidence/003dad60-wrapper.md;model=gpt-6.1-sol;host=fleet
 ?rva00592130@AptPalantirHeroSelector@@QAEXABVAsciiString@@H@Z,,0x00592130,265,game/GameEngine/Source/GameClient/GUI/Palantir/AptPalantirHeroSelectorRva00592130.cpp,matched,Native OVERRIDE and nested accessors; caller receiver plus 0x2B8 and RET8; identity evidence 00592130-native-override.md; inherited address-derived method;model=gpt-6.1-sol;host=fleet
 ?isValidContainerFor@TransportContain@@UBE_NPBVObject@@_N@Z,,0x0022DBA0,285,game/GameEngine/Source/GameLogic/Object/Contain/TransportContainIsValidContainerFor.cpp,matched,TransportContain secondary vtable slot 33 and matched SiegeEngineContain callers;identity-evidence=targets/game/reverse/identity_evidence/0022dba0-transport-validation.md;model=gpt-6.1-sol;host=fleet
+?rva005900C0@Rva00593E60State@@QAEXPAVRva0058BE30FourString@@@Z,,0x005900C0,764,game/GameEngine/Source/GameClient/GUI/Palantir/Palantir_rva005900C0.cpp,matched,wave15 conversion byte-exact 764/764; double-paren float cast flips x87 spill order; owner and record ABI proven by matched Rva00593E60State::update caller;model=gpt-5.2-codex;host=chalco.vps
+?rva001B5B40@Locomotor@@QBE_NPBVThing@@PBUCoord3D@@@Z,,0x001B5B40,144,game/GameEngine/Source/GameLogic/Object/Locomotor_rva001B5B40.cpp,matched,wave15 conversion byte-exact 144/144; parenthesised y product plus volatile offset.x read reproduce retail fld off.x then fmul dir.x; identity intentionally address-derived per prior verdict #20;model=gpt-5.2-codex;host=chalco.vps

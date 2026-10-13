@@ -1,5 +1,5 @@
 // ?rva005900C0@Rva00593E60State@@QAEXPAVRva0058BE30FourString@@@Z
-// partial score=0.9921 date=2026-09-29
+// Converted byte-exact (764/764 bytes), wave15 landing.
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 // Retail 0x005900C0, 764 bytes. The matched Rva00593E60State::update
 // establishes this owner and record ABI. Five text receivers at +14..24
@@ -61,7 +61,7 @@ void Rva00593E60State::rva005900C0(Rva0058BE30FourString *record) {
     int width,height,firstHeight,hotkeyHeight;
     m_ptr14->slot04(record->m_string0);
     m_ptr14->slot3C(&width,&height);
-    float total=(float)height;
+    float total=((float)height);
     m_ptr18->slot04(first);
     m_ptr18->slot3C(&width,&firstHeight);
     float firstSize=(float)firstHeight;

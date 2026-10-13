@@ -1,15 +1,9 @@
-// ?d_001b5b40@@YAXXZ
-// partial score=0.9861 date=2026-09-08
+// ?rva001B5B40@Locomotor@@QBE_NPBVThing@@PBUCoord3D@@@Z
+// Converted byte-exact (144/144 bytes), wave15 landing.
 // Retail RVA 0x001B5B40.
+#include "../../../../Libraries/Include/Lib/Coord3D.h"
 
 typedef float Real;
-
-struct Coord3D
-{
-	Real x;
-	Real y;
-	Real z;
-};
 
 class Thing
 {
@@ -17,7 +11,7 @@ public:
 	void getUnitDirectionVector2D(Coord3D &direction) const;
 
 	unsigned char m_unmodelled000[0x38];
-	Coord3D m_position;
+	Coord3D m_cachedPos;
 };
 
 class Overridable
@@ -67,14 +61,14 @@ class Locomotor
 {
 public:
 	virtual void slot(void);
-	bool bfmeIsPositionBehind(const Thing *thing, const Coord3D *position) const;
+	bool rva001B5B40(const Thing *thing, const Coord3D *position) const;
 
 private:
 	LocomotorTemplateOverride m_template;
 };
 
-// ?bfmeIsPositionBehind@Locomotor@@QBE_NPBVThing@@PBUCoord3D@@@Z
-bool Locomotor::bfmeIsPositionBehind(const Thing *thing,
+// ?rva001B5B40@Locomotor@@QBE_NPBVThing@@PBUCoord3D@@@Z
+bool Locomotor::rva001B5B40(const Thing *thing,
 	const Coord3D *position) const
 {
 	Coord3D direction;
@@ -87,10 +81,10 @@ bool Locomotor::bfmeIsPositionBehind(const Thing *thing,
 			thing->getUnitDirectionVector2D(*(Coord3D *)&direction);
 
 			offset.y = position->y;
-			*(volatile Real *)&offset.x = position->x - thing->m_position.x;
-			offset.y -= thing->m_position.y;
-			if (*(volatile Real *)&direction.y * offset.y
-				+ direction.x * offset.x
+			*(volatile Real *)&offset.x = position->x - thing->m_cachedPos.x;
+			offset.y -= thing->m_cachedPos.y;
+			if ((*(volatile Real *)&direction.y * offset.y)
+				+ direction.x * *(volatile Real *)&offset.x
 				< BfmeZeroRange)
 				return true;
 		}
