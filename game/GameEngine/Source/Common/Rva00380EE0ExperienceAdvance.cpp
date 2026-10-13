@@ -1,6 +1,5 @@
 // ?rva00380EE0@ExperienceLevelSystem@@QAEHPAVObject@@_N@Z
-// partial score=0.84 date=2026-09-10
-// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /I.
 //
 // Retail 0x00380EE0, 284 bytes.  The existing ExperienceTracker
 // addExperiencePoints body at 0x001B28C0 loads TheExperienceLevelSystem and
@@ -55,18 +54,9 @@ private:
 	Int m_scalarIndex;
 };
 
-class Object
-{
-public:
-	ExperienceTracker *getExperienceTracker() const
-	{
-		return m_experienceTracker;
-	}
-
-private:
-	unsigned char m_unmodelled_000[0x210];
-	ExperienceTracker *m_experienceTracker;
-};
+#define OBJECT_TU_MEMBERS ExperienceTracker *getExperienceTracker() const { return m_experienceTracker; }
+#include "game/GameEngine/Source/GameLogic/Object/object.h"
+#undef OBJECT_TU_MEMBERS
 
 class ExperienceLevel
 {
@@ -117,22 +107,21 @@ Int ExperienceLevelSystem::rva00380EE0(Object *object, Bool showFeedback)
 
 	Int currentExperience =
 		(Int)object->getExperienceTracker()->getCurrentExperience();
-	AsciiString levelName =
-		object->getExperienceTracker()->getCurrentLevelName();
-	ExperienceLevel *level = system->rva003806D0(
-		levels, levelName);
+	Bool again = true;
 	ExperienceLevel *selectedLevel = 0;
-	if (level == 0)
+	while (again)
 	{
-	}
-	else if (currentExperience < level->getRequiredExperience())
-	{
-	}
-	else
-	{
-		((Rva0037FE30 *)system)->record(
-			(Arg1 *)level, (ObjectView *)object, showFeedback);
-		selectedLevel = level;
+		AsciiString levelName = object->getExperienceTracker()->getCurrentLevelName();
+		ExperienceLevel *level = system->rva003806D0(levels, levelName);
+		if (level == 0)
+			break;
+		if (currentExperience >= level->getRequiredExperience())
+		{
+			((Rva0037FE30 *)system)->record((Arg1 *)level, (ObjectView *)object, showFeedback);
+			selectedLevel = level;
+		}
+		else
+			again = false;
 	}
 	if (selectedLevel != 0)
 		return selectedLevel->getRank();
