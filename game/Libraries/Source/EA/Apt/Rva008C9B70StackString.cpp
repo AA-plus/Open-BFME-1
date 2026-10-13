@@ -115,7 +115,7 @@ public:
     void append(void *);
 };
 // Retail +DE..EA loads a shared block then passes its characters at +8.
-extern BfmeStringData3AF0 *g_stringBlock01338724;
+BfmeStringData3AF0 *g_stringBlock01338724 = 0;
 
 __forceinline Rva008A9B00 *makeString008C9B70()
 {
