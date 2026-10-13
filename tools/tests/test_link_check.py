@@ -180,44 +180,90 @@ def test_a_file_named_twice_counts_once(monkeypatch, tmp_path, capsys):
     assert "1 of 1 link cleanly; LINKED 0 -> 100 bytes" in capsys.readouterr().out
 
 
-def test_a_file_new_since_the_census_is_previewed_after_every_census_object(monkeypatch, tmp_path, capsys):
-    assert _preview(monkeypatch, tmp_path, ["a.obj", "new.obj"]) == 0
+def _coff(defines=(), refers=()):
+    import struct
+    body = b"\xc3"
+    header = struct.pack("<HHIIIHH", 0x14C, 1, 0, 60 + len(body), len(defines) + len(refers), 0, 0)
+    sec = b".text\0\0\0" + struct.pack("<IIIIIIHHI", 0, 0, len(body), 60, 0, 0, 0, 0, 0x60500020)
+    symbols = b"".join(name.encode().ljust(8, b"\0") + struct.pack("<IhHBB", 0, 1 if name in defines else 0, 0x20, 2, 0)
+                       for name in (*defines, *refers))
+    return header + sec + body + symbols + struct.pack("<I", 4)
+
+
+def _new_files(monkeypatch, tmp_path, objects, order):
+    """A census of a.obj and b.obj (a.obj defines _g); `objects` {name: coff}
+    are new files whose current link order is `order`. Nothing but compiling
+    is stubbed: refresh and check_object run for real."""
+    import link_census
+    ix = {**index(strong={"_g": [0]}), "objects": ["a.obj", "b.obj"], "aliases": {},
+          "selection": {"exceptions": {}, "owners": {}},
+          "excuses": {"runtime": set(), "imported": {}, "stubs": {}}}
+    for name, raw in objects.items():
+        (tmp_path / name).write_bytes(raw)
+    monkeypatch.setattr(C, "load_index", lambda: ix)
+    monkeypatch.setattr(C, "resolve", lambda path, _: (path, tmp_path / path.replace(".cpp", ".obj")))
+    monkeypatch.setattr(C, "note_evaluated", lambda *a: None)
+    monkeypatch.setattr(link_census, "ledger", lambda: [])
+    monkeypatch.setattr(link_census, "data_ledger", lambda: [])
+    monkeypatch.setattr(link_census, "link_order", lambda rows, data: [Path(name) for name in order])
+    monkeypatch.setattr(C, "source_bytes", lambda sources: {s: 100 for s in sources})
+    return ix
+
+
+def test_two_new_files_defining_one_exclusive_symbol_both_collide(monkeypatch, tmp_path, capsys):
+    """Every new object is placed and refreshed in a normal check, so two new
+    files defining one symbol both fail as link.exe fails them (LNK2005), and
+    a new file's reference resolves against a census definition."""
+    ix = _new_files(monkeypatch, tmp_path, {"n1.obj": _coff(["_f"], ["_g"]), "n2.obj": _coff(["_f"])},
+                    ["a.obj", "n1.obj", "b.obj", "n2.obj"])
+    assert C.main(["n1.cpp", "n2.cpp"]) == 1
     out = capsys.readouterr().out
-    assert "new since census c, previewed as linked after every census object: new.cpp" in out
-    assert "new.cpp: LINKS  LINKED 0 -> 100 bytes" in out and "a.cpp: LINKS" in out
-    assert "2 of 2 link cleanly; LINKED 0 -> 200 bytes" in out
+    assert "new since census c, previewed at its link-order place: n1.cpp, n2.cpp" in out
+    assert out.count("duplicate   _f") == 2 and "unresolved" not in out
+    assert ix["objects"] == ["a.obj", "n1.obj", "b.obj", "n2.obj"]
+
+
+def test_a_new_file_links_when_its_references_resolve_in_the_census(monkeypatch, tmp_path, capsys):
+    _new_files(monkeypatch, tmp_path, {"n1.obj": _coff(["_f"], ["_g"])}, ["n1.obj", "a.obj", "b.obj"])
+    assert C.main(["n1.cpp"]) == 0
+    assert "n1.cpp: LINKS  LINKED 0 -> 100 bytes" in capsys.readouterr().out
 
 
 def test_census_only_still_reads_a_new_file_s_own_object(monkeypatch, tmp_path, capsys):
-    refreshed = []
-    import link_census
-    ix = index()
-    monkeypatch.setattr(C, "load_index", lambda: ix)
-    monkeypatch.setattr(C, "resolve", lambda path, _: (path.replace(".obj", ".cpp"), tmp_path / path))
-    monkeypatch.setattr(link_census, "ledger", lambda: None)
-    monkeypatch.setattr(link_census, "RetailTruth", lambda _: None)
-    monkeypatch.setattr(C, "refresh", lambda index, objects, truth: refreshed.append([o.name for o in objects]))
-    monkeypatch.setattr(C, "source_bytes", lambda sources: {s: 1 for s in sources})
-    monkeypatch.setattr(C, "check_object", lambda *a: {k: [] for k in
-                        ("unresolved", "duplicates", "comdat", "addresses", "selected")})
-    C.main(["--census-only", "a.obj", "new.obj"])
-    assert refreshed == [["new.obj"]] and ix["objects"] == ["a.obj", "b.obj", "c.obj", "new.obj"]
+    _new_files(monkeypatch, tmp_path, {"n1.obj": _coff(["_g"])}, ["a.obj", "b.obj", "n1.obj"])
+    assert C.main(["--census-only", "n1.cpp"]) == 1
+    assert "duplicate   _g" in capsys.readouterr().out
 
 
-def test_two_new_files_defining_one_exclusive_symbol_collide(monkeypatch):
-    """The case the old refusal guarded: two new objects both looked clean
-    while link.exe fails LNK2005. Placed after the census, they collide."""
-    import link_census
-    from types import SimpleNamespace
-    ix = index(strong={"g": [0]})
-    ix["objects"] += ["n1.obj", "n2.obj"]
-    monkeypatch.setattr(link_census, "object_facts", lambda obj, truth, **kwargs: ([], ["f"], ["g"], []))
-    monkeypatch.setattr(link_census, "common_definitions", lambda obj, **kwargs: {})
-    objs = [SimpleNamespace(name=n, read_bytes=lambda: b"x") for n in ("n1.obj", "n2.obj")]
-    C.refresh(ix, objs, None)
-    assert ix["strong"]["f"] == [3, 4]
-    assert C.duplicate("f", 3, True, 3, ix) and C.duplicate("f", 4, True, 4, ix)
-    assert not C.duplicate("g", 0, True, 0, ix)
+def test_a_new_file_no_matched_row_places_is_refused(monkeypatch, tmp_path):
+    _new_files(monkeypatch, tmp_path, {"n1.obj": _coff(["_f"])}, ["a.obj", "b.obj"])
+    with pytest.raises(SystemExit, match="no matched ledger or data row places it.*n1.cpp"):
+        C.main(["n1.cpp"])
+
+
+def test_a_new_object_goes_to_its_link_order_place_not_last():
+    """Which definition is first decides a duplicate: a new SELECT_ANY copy
+    linked before an ANY copy that precedes an exclusive one collides, the
+    same copy linked last folds silently (??4AsciiString@@QAEAAV0@PBD@Z)."""
+    ix = {**index(strong={"x": [1]}, comdat={"x": [(0, "d", None)]}), "objects": ["a.obj", "b.obj"],
+          "aliases": {"y": [(1, "x")]}, "common": {"z": [(1, 4)]},
+          "selection": {"exceptions": {"x": 1, "w": None}, "owners": {}}}
+    C.place_new(ix, ["n.obj"], ["n.obj", "a.obj", "b.obj"])
+    assert ix["objects"] == ["n.obj", "a.obj", "b.obj"]
+    assert ix["strong"] == {"x": [2]} and ix["comdat"] == {"x": [(1, "d", None)]}
+    assert ix["aliases"] == {"y": [(2, "x")]} and ix["common"] == {"z": [(2, 4)]}
+    assert ix["selection"]["exceptions"] == {"x": 2, "w": None}
+    assert C.duplicate("x", 0, False, 0, ix)
+    last = {**index(strong={"x": [1]}, comdat={"x": [(0, "d", None)]}), "objects": ["a.obj", "b.obj"]}
+    C.place_new(last, ["n.obj"], ["a.obj", "b.obj", "n.obj"])
+    assert last["objects"][2] == "n.obj" and not C.duplicate("x", 2, False, 2, last)
+
+
+def test_an_object_with_no_known_source_outside_the_census_is_refused(tmp_path):
+    obj = tmp_path / "handmade.obj"
+    obj.write_bytes(_coff(["_f"]))
+    with pytest.raises(SystemExit, match="no source is known"):
+        C.resolve(str(obj), index())
 
 
 # Prediction-only previews avoid building global weak-provider contexts.

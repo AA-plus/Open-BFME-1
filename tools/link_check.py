@@ -756,6 +756,36 @@ def wrong_selected(obj, fact, own, position, index, *, common_names=()):
     return found
 
 
+def place_new(index, names, order):
+    """Insert objects the census never saw into index["objects"] at their
+    place in `order` (current link order, object names): after the nearest
+    census object that precedes them there. Every position the index stores
+    (definition tables, aliases, /MAP exceptions) is renumbered to match."""
+    known = {name: i for i, name in enumerate(index["objects"])}
+    after = {}
+    for name in dict.fromkeys(names):
+        at = order.index(name)
+        before = next((known[o] for o in reversed(order[:at]) if o in known), -1)
+        after.setdefault(before, []).append((at, name))
+    objects, moved = [], {}
+    for old in range(-1, len(index["objects"])):
+        if old >= 0:
+            moved[old] = len(objects)
+            objects.append(index["objects"][old])
+        objects.extend(name for _, name in sorted(after.get(old, ())))
+    shift = moved.__getitem__
+    index["objects"] = objects
+    index["strong"] = {name: [shift(i) for i in found] for name, found in index["strong"].items()}
+    for table in ("comdat", "common", "aliases"):
+        if table in index:
+            index[table] = {name: [(shift(entry[0]), *entry[1:]) for entry in entries]
+                            for name, entries in index[table].items()}
+    selection = index.get("selection")
+    if selection and "exceptions" in selection:
+        index["selection"] = {**selection, "exceptions": {name: None if holder is None else shift(holder)
+                                                          for name, holder in selection["exceptions"].items()}}
+
+
 def resolve(argument, index):
     """(source or None, object path) for a source path or an object path. A
     source is compiled when its object is not current (build.compile_rows); an
@@ -769,6 +799,9 @@ def resolve(argument, index):
             raise SystemExit(f"link_check: {argument} does not exist; nothing to check (never LINKS)")
         by_object = {entry["object"]: source for source, entry in index["blockers"].items()}
         source = by_object.get(obj.name)
+        if source is None and obj.name not in index["objects"]:
+            raise SystemExit(f"link_check: {argument} is in no census and no source is known for it, so it "
+                             f"cannot be shown current; check its source instead")
         if source is not None and not link_census.object_current(ROOT / source, obj):
             raise SystemExit(f"link_check: {obj.name} is not current for {source}; "
                              f"check the source instead (it recompiles)")
@@ -1382,16 +1415,20 @@ def main(argv=None):
                      (resolve(path, index) for path in args.paths)}.values())  # a file named twice counts once
     outside = sorted(source or obj.name for source, obj in resolved if obj.name not in index["objects"])
     if outside:
-        # A file added after the census: place its object after every census
-        # object (link order of a new file is unknown; appending keeps the
-        # census's own first-definition positions) and judge it like the
-        # others, so two new objects defining one exclusive symbol still
-        # collide (LNK2005) and its unresolved names meet the census's
-        # definitions.
-        index["objects"] = list(index["objects"]) + sorted(
-            {obj.name for _, obj in resolved if obj.name not in index["objects"]})
-        print(f"link_check: new since census {index['meta'].get('commit', '?')}, previewed as linked after "
-              f"every census object: {', '.join(outside)}")
+        # A file added after the census goes where the census would link it
+        # (link_census.link_order: the lowest retail RVA of its matched rows),
+        # since which definition is first decides duplicates and COMDAT
+        # selection. Then it is judged like a census file.
+        order = [path.name for path in link_census.link_order(ledger or (), link_census.data_ledger())]
+        unplaced = sorted(source or obj.name for source, obj in resolved
+                          if obj.name not in index["objects"] and obj.name not in order)
+        if unplaced:
+            raise SystemExit(f"link_check: new since census {index['meta'].get('commit', '?')} and no matched "
+                             f"ledger or data row places it in link order, so not previewable: "
+                             f"{', '.join(unplaced)}")
+        place_new(index, [obj.name for _, obj in resolved if obj.name not in index["objects"]], order)
+        print(f"link_check: new since census {index['meta'].get('commit', '?')}, previewed at its link-order "
+              f"place: {', '.join(outside)}")
     if not args.census_only:
         refresh(index, [obj for _, obj in resolved], truth)
     elif outside:
