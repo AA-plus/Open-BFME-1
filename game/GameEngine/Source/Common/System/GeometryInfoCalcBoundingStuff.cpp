@@ -113,10 +113,8 @@ __declspec(noinline) Real GeometryShape::rva0087ED00() const
 	return result;
 }
 
-// ?rva0087ED70@GeometryShape@@QBEMXZ: a semantically faithful but not
-// byte-exact model of retail 0x0087ED70 (228 bytes; this compiles to 224),
-// kept visible only so calcBoundingStuff's register allocation matches.
-// The cylinder case adds the offset length, as retail does at +0x80..+0xB3.
+// Complete retail-proven 228-byte body; visible noinline preserves the
+// caller's EDX shape pointer without a second competing definition.
 __declspec(noinline) Real GeometryShape::rva0087ED70() const
 {
 	Real result = 0.0f;
@@ -125,16 +123,26 @@ __declspec(noinline) Real GeometryShape::rva0087ED70() const
 		case GEOMETRY_SPHERE:
 			result = sqrt(sqr(m_offset.x) + sqr(m_offset.y) + sqr(m_offset.z)) + m_majorRadius;
 			break;
+
 		case GEOMETRY_CYLINDER:
-			result = sqrt(sqr(sqrt(sqr(m_offset.x) + sqr(m_offset.y)) + m_majorRadius) +
-				sqr(fabs(m_offset.z) + m_height * 0.5)) +
-				sqrt(sqr(m_offset.x) + sqr(m_offset.y) + sqr(m_offset.z));
+		{
+			Real planar = sqrt(sqr(m_offset.x) + sqr(m_offset.y)) + m_majorRadius;
+			Real vertical = fabs(m_offset.z) + m_height * 0.5;
+			Real offsetLength = sqrt(sqr(m_offset.x) + sqr(m_offset.y) + sqr(m_offset.z));
+			planar = sqr(planar);
+			planar += sqr(vertical);
+			result = sqrt(planar) + offsetLength;
 			break;
+		}
+
 		case GEOMETRY_BOX:
-			result = sqrt(sqr(fabs(m_offset.x) + m_majorRadius) +
-				sqr(fabs(m_offset.y) + m_minorRadius) +
-				sqr(fabs(m_offset.z) + m_height * 0.5));
+		{
+			Real x = fabs(m_offset.x) + m_majorRadius;
+			Real y = fabs(m_offset.y) + m_minorRadius;
+			Real z = fabs(m_offset.z) + m_height * 0.5;
+			result = sqrt((sqr(x) + sqr(y)) + sqr(z));
 			break;
+		}
 	}
 	return result;
 }
