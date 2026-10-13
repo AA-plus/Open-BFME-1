@@ -163,14 +163,30 @@ def verdict(method, cls, caller_names):
     is 17 bytes precisely BECAUSE Base64Pipe::Flush is 299 and does the work, so
     the family median -- which counts the derived implementations -- makes every
     base look like an outlier. A caller with the SAME method name in a DIFFERENT
-    class is a derived override calling its base, and that clears it."""
-    same_method, own_class, named = [], [], []
+    class is a derived override calling its base, and that clears it.
+
+    A CONSTRUCTOR OR DESTRUCTOR CAN NEVER INDICT. Its method field is the
+    synthetic ~ctor/dtor marker, so it cannot equal any real method name, and a
+    mismatch that can never occur is not evidence -- the same reason an
+    anonymous caller is skipped below. 0x00983200 is the live case: the body is
+    ?Set_Name@CompositeRenderObjClass@@, caller-decided correct
+    (identity_evidence/caller-decided-2.md), and its only matched callers are
+    HLodClass constructors naming the object they build (hlod.cpp:1141).
+    Counting them indicted the row the moment the Set_Name family median
+    crossed MIN_MEDIAN. A ctor/dtor naming the row's own class still clears."""
+    same_method, own_class, named, methodless = [], [], [], []
     for name in caller_names:
         m, k = method_and_class(name)
         # An anonymous caller (?d_/?j_/placeholder) carries no method or class, so
         # it can neither clear nor indict; counting it turned every newly dumped
         # caller into "callers exist" without any identity evidence.
         if m is None and k is None:
+            continue
+        if m == "~ctor/dtor":
+            if k == cls:
+                own_class.append(name)
+            else:
+                methodless.append(name)
             continue
         named.append(name)
         if m == method and k != cls:
@@ -183,6 +199,8 @@ def verdict(method, cls, caller_names):
         return "CLEARED - called by its own class"
     if named:
         return "callers exist, none same-method or same-class"
+    if methodless:
+        return "UNDECIDED - ctor callers carry no method evidence"
     return "UNDECIDED - no matched caller"
 
 

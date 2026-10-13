@@ -57,7 +57,6 @@ extern GlobalData *TheWritableGlobalData;
 #include "Common/FileSystem.h"
 
 #include "Common/MapObject.h"
-#include "Common/Registry.h"
 #include "W3DDevice/GameClient/W3DFileSystem.h"
 // DEFINES ////////////////////////////////////////////////////////////////////////////////////////
 

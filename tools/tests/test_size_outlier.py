@@ -102,3 +102,21 @@ def test_no_caller_is_undecided_not_confirmed():
     """Silence is not evidence. Seven of the fourteen have no matched caller at
     all, and none of them is thereby a defect."""
     assert size_outlier.verdict("f", "C", []).startswith("UNDECIDED")
+
+
+def test_a_constructor_caller_cannot_indict():
+    """0x00983200: ?Set_Name@CompositeRenderObjClass@@ is indicted by nothing
+    but HLodClass constructors naming the object they build (hlod.cpp:1141),
+    and the row is caller-decided correct (caller-decided-2.md). A ctor's
+    method field is the synthetic ~ctor/dtor marker, so its mismatch carries
+    no identity evidence -- the same reason an anonymous caller is skipped."""
+    verdict = size_outlier.verdict("Set_Name", "CompositeRenderObjClass",
+                                   ["??0HLodClass@@QAE@ABVHLodDefClass@@@Z"])
+    assert verdict.startswith("UNDECIDED")
+    assert "callers exist" not in verdict
+
+
+def test_one_named_caller_still_indicts_beside_a_constructor():
+    verdict = size_outlier.verdict("f", "C", ["??0Other@@QAE@XZ",
+                                              "?g@Other@@QAEXXZ"])
+    assert verdict == "callers exist, none same-method or same-class"
