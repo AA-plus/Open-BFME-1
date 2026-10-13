@@ -1,5 +1,5 @@
 // ?startNewGame@GameLogic@@QAEX_N@Z
-// partial score=0.3205547559858694 date=2026-09-27
+// partial score=0.3214 date=2026-09-27
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/buddythread /Iinputs/reference/shims/sweep
 // stlport
 // BANKED RECONSTRUCTION, NOT VERIFIED FOR LANDING.
