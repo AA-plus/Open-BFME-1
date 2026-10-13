@@ -1,5 +1,5 @@
 // ?process@Rva0015A960BucketOwner@@QAEXPBUCoord2D@@H@Z
-// partial score=0.25 date=2026-09-16
+// partial score=0.4353 date=2026-10-13
 // cl: /O2 /Ob0
 // Open-BFME: address-derived owner for the retail bucket pass at 0x0015A960.
 
@@ -61,7 +61,7 @@ public:
 };
 
 extern AI *TheAI;
-extern Real g_bfmeADL;
+static const Real g_bfmeADL = 0.5f;
 
 class Rva0015A600BucketCall
 {
