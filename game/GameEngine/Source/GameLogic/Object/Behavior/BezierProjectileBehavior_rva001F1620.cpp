@@ -1,6 +1,6 @@
 // ?rva001F1620@BezierProjectileBehavior@@QAEX_N@Z
-// partial score=0.9109 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /MD /O2 /Ob2 /GX- /D_STLP_USE_STATIC_LIB /Igame/Libraries/Include
+// Evidence: targets/game/reverse/identity_evidence/001f1620-mask-scope-recovery.md
 #include <string.h>
 
 typedef bool Bool;
@@ -201,9 +201,11 @@ void BezierProjectileBehavior::rva001F1620(Bool)
 		list = *(ListNode * volatile *)((char *)this + 0x7c);
 	}
 	clearLinks();
-	const ModelConditionFlags set(4, 0x30000);
-	ModelConditionFlags clear;
-	object->clearAndSetModelConditionFlags001C7720(set, clear);
+	{
+		const ModelConditionFlags set(4, 0x30000);
+		ModelConditionFlags clear;
+		object->clearAndSetModelConditionFlags001C7720(set, clear);
+	}
 
 	BezierProjectileBehaviorModuleData *data = m_moduleData;
 	if (data->m_killInsteadOfDestroy)
