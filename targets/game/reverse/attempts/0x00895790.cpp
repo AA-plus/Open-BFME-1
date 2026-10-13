@@ -1,5 +1,5 @@
-// ?d_00895790@@YAXXZ
-// partial score=0.181185 date=2026-09-25
+// ?rva00895790@Rva00894120Vector@@QAEXABVBfmeStrVKI@@III@Z
+// partial score=0.1638 date=2026-10-13
 // cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 extern "C" int memcmp(const void *, const void *, unsigned int);
 #pragma intrinsic(memcmp)
@@ -32,6 +32,7 @@ class Rva00894120Vector
 public:
  void rva00895790(const BfmeStrVKI &key,unsigned expected,unsigned replacement,unsigned fallback);
  void helper(void *,void *,void *);
+ void insert(Rva00895790Item *position,Rva00895790Item *first,Rva00895790Item *last) { helper(&first,&last,&position); }
  unsigned m_count;
  char m_pad04[4];
  Rva00895790Item *m_items;
@@ -53,8 +54,5 @@ void Rva00894120Vector::rva00895790(const BfmeStrVKI &key,unsigned expected,unsi
   }while(item!=m_items+count);
  }
  Rva00895790Item value(key,fallback);
- Rva00895790Item *position=m_items+m_count;
- Rva00895790Item *last=&value+1;
- Rva00895790Item *first=&value;
- helper(&first,&last,&position);
+ insert(m_items+m_count,&value,&value+1);
 }
