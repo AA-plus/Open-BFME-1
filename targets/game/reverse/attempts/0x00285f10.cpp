@@ -1,83 +1,116 @@
-// ??0BannerCarrierUpdate@@QAE@PAVThing@@PBVModuleData@@@Z
-// partial score=0.45 date=2026-09-12
-// cl: /DNDEBUG /MD /EHsc
-// Open-BFME5: de-lift attempt. BannerCarrierUpdate has no Zero Hour
-// counterpart (BFME-original class); field layout recovered directly from
-// retail bytes at 0x00285F10 (single vtable slot, no base-class call).
-// NOT LANDED: see reverse/re_attempts.log for the residual.
+// ??0BattlePlanUpdateModuleData@@QAE@XZ
+// partial score=1.0 date=2026-10-13
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
+// stlport
+// readable body of ??0BattlePlanUpdateModuleData@@QAE@XZ: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source/GameLogic/Object/Update/BattlePlanUpdate.cpp
+//
+// BattlePlanUpdateModuleData::BattlePlanUpdateModuleData, retail 0x00285F10,
+// 164 bytes (plain ret at +0xA3). The matched
+// BattlePlanUpdate::friend_newModuleData (0x00119D50) allocates 0xA0 bytes
+// and constructs them through ILT 0x000287C7, which jumps here; the matched
+// scalar deleting destructor (0x00285FE0) and destructor (0x00286010) follow
+// directly. The body stores the vftable 0x010BBFC0 and then initialises every
+// member in Zero Hour's declaration order: the AsciiString members are the
+// zero handles, the two KindOf masks are cleared 192-bit sets, and the tail
+// is Zero Hour's scalar defaults. BFME also zeroes m_transitionIdleFrames.
 
-class Thing;
-class ModuleData;
+#include <bitset>
 
-class BannerCarrierMask
+#include "ascii_string.h"
+
+template <unsigned int BitCount>
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/BitFlags.h
+class BitFlags
 {
 public:
+	BitFlags() {}
+
 	void clear()
 	{
-		for (int i = 0; i < 6; ++i)
-			m_words[i] = 0;
+		m_bits.reset();
 	}
 
 private:
-	unsigned int m_words[6];
+	std::bitset<BitCount> m_bits;
 };
 
-class BannerCarrierUpdate
+typedef BitFlags<192> KindOfMaskType;
+
+class SpecialPowerTemplate;
+
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Module.h
+class ModuleData
 {
 public:
-	BannerCarrierUpdate(Thing *thing, const ModuleData *moduleData);
-	virtual ~BannerCarrierUpdate();
+	virtual ~ModuleData() {}
 
 private:
-	int m_data04;
-	int m_data08;
-	int m_data0C;
-	int m_data10;
-	int m_data14;
-	int m_data18;
-	int m_data1C;
-	int m_data20;
-	int m_data24;
-	int m_data28;
-	int m_data2C;
-	int m_data30;
-	int m_data34;
-	int m_data38;
-	int m_data3C;
-	int m_data40;
-	int m_data44;
-	int m_data48;
-	int m_data4C;
-	int m_data50;
-	BannerCarrierMask m_kindOf;
-	BannerCarrierMask m_forbiddenKindOf;
-	float m_data84;
-	float m_data88;
-	float m_data8C;
-	bool m_data90;
-	float m_data94;
-	int m_data98;
-	int m_data9C;
+	unsigned int m_moduleTagNameKey;
 };
 
-// ??0BannerCarrierUpdate@@QAE@PAVThing@@PBVModuleData@@@Z
-BannerCarrierUpdate::BannerCarrierUpdate(Thing *thing, const ModuleData *moduleData)
-	: m_data08(0), m_data0C(0), m_data10(0), m_data14(0), m_data18(0), m_data1C(0),
-	  m_data20(0), m_data24(0), m_data28(0), m_data2C(0), m_data30(0), m_data34(0),
-	  m_data38(0), m_data3C(0), m_data40(0), m_data44(0), m_data48(0), m_data4C(0),
-	  m_data50(0)
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/GameCommon.h
+enum MaxHealthChangeType
 {
-	m_kindOf.clear();
-	m_forbiddenKindOf.clear();
-	m_data84 = 1.0f;
-	m_data88 = 1.0f;
-	m_data8C = 1.0f;
-	m_data90 = true;
-	m_data94 = 1.0f;
-	m_data98 = 1;
-	m_data9C = 0;
-}
+	SAME_CURRENTHEALTH,
+	PRESERVE_RATIO,
+	ADD_CURRENT_HEALTH_TOO
+};
 
-BannerCarrierUpdate::~BannerCarrierUpdate()
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Module/BattlePlanUpdate.h
+class BattlePlanUpdateModuleData : public ModuleData
+{
+public:
+	SpecialPowerTemplate *m_specialPowerTemplate;			// +0x08
+
+	unsigned int m_bombardmentPlanAnimationFrames;			// +0x0C
+	unsigned int m_holdTheLinePlanAnimationFrames;			// +0x10
+	unsigned int m_searchAndDestroyPlanAnimationFrames;		// +0x14
+	unsigned int m_transitionIdleFrames;				// +0x18
+
+	AsciiString m_bombardmentUnpackName;				// +0x1C
+	AsciiString m_bombardmentPackName;
+	AsciiString m_bombardmentMessageLabel;
+	AsciiString m_bombardmentAnnouncementName;
+	AsciiString m_searchAndDestroyUnpackName;
+	AsciiString m_searchAndDestroyIdleName;
+	AsciiString m_searchAndDestroyPackName;
+	AsciiString m_searchAndDestroyMessageLabel;
+	AsciiString m_searchAndDestroyAnnouncementName;
+	AsciiString m_holdTheLineUnpackName;
+	AsciiString m_holdTheLinePackName;
+	AsciiString m_holdTheLineMessageLabel;
+	AsciiString m_holdTheLineAnnouncementName;			// +0x4C
+
+	unsigned int m_battlePlanParalyzeFrames;			// +0x50
+	KindOfMaskType m_validMemberKindOf;				// +0x54
+	KindOfMaskType m_invalidMemberKindOf;				// +0x6C
+
+	float m_holdTheLineArmorDamageScalar;				// +0x84
+	float m_searchAndDestroySightRangeScalar;			// +0x88
+	float m_strategyCenterSearchAndDestroySightRangeScalar;	// +0x8C
+	bool m_strategyCenterSearchAndDestroyDetectsStealth;		// +0x90
+	float m_strategyCenterHoldTheLineMaxHealthScalar;		// +0x94
+	MaxHealthChangeType m_strategyCenterHoldTheLineMaxHealthChangeType;	// +0x98
+
+	AsciiString m_visionObjectName;					// +0x9C
+
+	BattlePlanUpdateModuleData();
+	virtual ~BattlePlanUpdateModuleData();
+};
+
+// ??0BattlePlanUpdateModuleData@@QAE@XZ
+BattlePlanUpdateModuleData::BattlePlanUpdateModuleData() :
+	m_specialPowerTemplate(0),
+	m_bombardmentPlanAnimationFrames(0),
+	m_holdTheLinePlanAnimationFrames(0),
+	m_searchAndDestroyPlanAnimationFrames(0),
+	m_transitionIdleFrames(0),
+	m_battlePlanParalyzeFrames(0),
+	m_holdTheLineArmorDamageScalar(1.0f),
+	m_searchAndDestroySightRangeScalar(1.0f),
+	m_strategyCenterSearchAndDestroySightRangeScalar(1.0f),
+	m_strategyCenterSearchAndDestroyDetectsStealth(true),
+	m_strategyCenterHoldTheLineMaxHealthScalar(1.0f),
+	m_strategyCenterHoldTheLineMaxHealthChangeType(PRESERVE_RATIO)
 {
 }
