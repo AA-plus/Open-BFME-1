@@ -219,8 +219,12 @@ def judge(obj, eh_tables, row, label):
             found.append({"parent": t["parent"], "tables": "differ"})
             continue
         states = [i for i, (_, a) in enumerate(theirs) if a == f]
-        found.append({"parent": t["parent"], "states": states, "labels": sorted({ours[i][1] for i in states})})
-    agreeing = [x for x in found if "labels" in x]
+        # a state whose object action is None carries no label: it neither
+        # proves nor contradicts one, and None is never a label to propose
+        found.append({"parent": t["parent"], "states": states,
+                      "labels": sorted({ours[i][1] for i in states if ours[i][1] is not None})})
+    agreeing = [x for x in found if x.get("labels")]
+    differing = any(x.get("tables") == "differ" for x in found)
     labels = sorted({lab for x in agreeing for lab in x["labels"]})
     present = label in obj.defined
     # the look-alikes of the pinned label, or of the state's label when the pin is gone
@@ -231,24 +235,32 @@ def judge(obj, eh_tables, row, label):
         twins = sorted(n for n in obj.defined if LABEL.match(n) and n != probe and obj.signature(n) == sig)
     base = {"twins": twins, "ambiguous": bool(twins), "parents": found, "pin_defined": present}
     if not agreeing:
-        why = "tables differ" if found else "no ledgered parent in this object reaches this address"
+        if any("labels" in x for x in found):
+            why = "the object has no action at retail's states for this address"
+        else:
+            why = "tables differ" if found else "no ledgered parent in this object reaches this address"
         return {**base, "verdict": "unprovable", "why": why, "unique": present and not twins}
     if len(labels) > 1:
         return {**base, "verdict": "split", "labels": labels, "unique": False}
     # exactly one label at F's retail states: the state index names it, so
-    # byte twins no longer leave the choice open
-    proof = {"unique": True, "twin_proof": "state-index" if twins else None}
+    # byte twins no longer leave the choice open -- unless another parent that
+    # reaches F has tables that differ, which leaves the proof incomplete
+    proof = {"unique": not differing or not twins,
+             "twin_proof": "state-index" if twins and not differing else None}
     if labels == [label]:
         return {**base, **proof, "verdict": "proven"}
     return {**base, **proof, "verdict": "wrong" if present else "stale", "correct": labels[0]}
 
 
 def kind_of(result):
-    """Report column: unique, twin-proven (byte twins told apart by state
-    index), ambiguous (twins nothing separates), unanchored (unprovable and
-    the pin is gone, so its twins cannot be looked for) or unknown (no object)."""
+    """Report column: split (retail's states for the address carry several
+    labels), unique, twin-proven (byte twins told apart by state index),
+    ambiguous (twins nothing separates), unanchored (unprovable and the pin is
+    gone, so its twins cannot be looked for) or unknown (no object)."""
     if result.get("ambiguous") is None:
         return "unknown"
+    if result.get("verdict") == "split":
+        return "split"
     if result.get("ambiguous"):
         return "twin-proven" if result.get("unique") else "ambiguous"
     return "unique" if result.get("unique", True) else "unanchored"
@@ -388,7 +400,7 @@ def main(argv=None):
     if args.fix:
         fixes = {}
         for r in results:
-            if r["verdict"] in ("wrong", "stale") and r.get("unique"):
+            if r["verdict"] in ("wrong", "stale") and r.get("unique") and r.get("correct"):
                 states = "; ".join(f"{p['parent']} states {p['states']}" for p in r["parents"] if "states" in p)
                 fixes[(r["name"], int(r["rva"], 16))] = (r["label"], r["correct"], states)
         apply_fixes(fixes, args.model)
