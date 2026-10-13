@@ -1,5 +1,5 @@
 // ?grabSinglePlayerInfo@@YAXXZ
-// partial score=0.9768 date=2026-10-13
+// partial score=0.9807 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringbaseascii /Igame/Libraries/Source/WWVegas/WWLib
 
 #include <string.h>
@@ -258,8 +258,9 @@ enum
 static __forceinline Color accumulateScore(ScoreGather &sg, Player *player)
 {
 	ScoreKeeper *sk = player->getScoreKeeper();
-	sg.m_totalBuildingsBuilt += sk->getTotalBuildingsBuilt();
-	Int buildingsDestroyed = sg.m_totalBuildingsDestroyed + sk->getTotalBuildingsDestroyed();
+	Int buildingsDestroyed = sk->getTotalBuildingsBuilt();
+	sg.m_totalBuildingsBuilt += buildingsDestroyed;
+	buildingsDestroyed = sg.m_totalBuildingsDestroyed + sk->getTotalBuildingsDestroyed();
 	Int buildingsLost = sg.m_totalBuildingsLost + sk->getTotalBuildingsLost();
 	sg.m_totalBuildingsDestroyed = buildingsDestroyed;
 	Int unitsBuilt = sk->getTotalUnitsBuilt();
