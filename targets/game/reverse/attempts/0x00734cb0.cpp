@@ -1,5 +1,5 @@
 // ?loadTreesInVertexAndIndexBuffers@W3DTreeBuffer@@IAEXPAV?$RefMultiListIterator@VRenderObjClass@@@@@Z
-// partial score=0.9562 date=2026-10-01
+// partial score=0.9589 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/shims/sweep
 // BFME tree vertex/index loading, RVA 0x00734CB0, full decoded size 3285.
 // Derived from EA GeneralsMD W3DTreeBuffer.cpp, with retail-only layouts and
@@ -182,8 +182,8 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
         }
         lightRay[i]=Vector3(-lightDirection.X,-lightDirection.Y,-lightDirection.Z);
         lightDiffuse[i].red=rvaMax(lightScale*(*(const volatile Real *)&objectLighting[i].diffuse.red),0.0f);
-        lightDiffuse[i].blue=rvaMax(lightScale*objectLighting[i].diffuse.blue,0.0f);
-        lightDiffuse[i].green=rvaMax(lightScale*objectLighting[i].diffuse.green,0.0f);
+        lightDiffuse[i].blue=rvaMax(lightScale*(*(const volatile Real *)&objectLighting[i].diffuse.blue),0.0f);
+        lightDiffuse[i].green=rvaMax(lightScale*(*(const volatile Real *)&objectLighting[i].diffuse.green),0.0f);
     }
     for (Int bNdx=0;bNdx<m_bufferCount;++bNdx) {
         m_curNumTreeVertices[bNdx]=0;
