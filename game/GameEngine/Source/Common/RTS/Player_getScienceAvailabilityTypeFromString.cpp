@@ -27,7 +27,10 @@ public:
 
 	Header *m_data;
 
-private:
+public:
+	// Retail-proven prefix-compare shape (same spelling as the StringBase
+	// two-arg body): outlined as this TU's COMDAT, so this TU both provides
+	// and consumes AsciiString::compareNoCase(PBDH) with no outside reference.
 	int compareNoCase( const char *text, int length ) const
 	{
 		const int thisLength = m_data ? m_data->m_length : 0;
@@ -39,13 +42,6 @@ private:
 			return difference;
 		}
 		return thisLength - length;
-	}
-
-public:
-	int compareNoCase( const char *text ) const
-	{
-		const int length = text ? strlen( text ) : 0;
-		return compareNoCase( text, length );
 	}
 };
 
@@ -67,7 +63,7 @@ ScienceAvailabilityType Player::getScienceAvailabilityTypeFromString( const Asci
 {
 	for( Int i = 0; i < SCIENCE_AVAILABILITY_COUNT; i++ )
 	{
-		if( !name.compareNoCase( ScienceAvailabilityNames[ i ] ) )
+		if( !name.compareNoCase( ScienceAvailabilityNames[ i ], ScienceAvailabilityNames[ i ] ? strlen( ScienceAvailabilityNames[ i ] ) : 0 ) )
 		{
 			return (ScienceAvailabilityType)i;
 		}
