@@ -1,7 +1,9 @@
 // ?rva0010EA60@Rva0010EA60Owner@@QAEXPAXI@Z
-// partial score=0.2951 date=2026-09-30
+// Retail 0010EA60: list nodes at owner+48/+4C; matched caller 0010F100.
+// Preserve retail post-deallocation value read; no semantic owner claimed.
 // cl: /DNDEBUG /MD /EHsc
 // stlport
+#define _STLP_USE_STATIC_LIB 1
 #include <list>
 #include <utility>
 class Rva0010EA60Owner
@@ -18,12 +20,11 @@ void Rva0010EA60Owner::rva0010EA60(void *, unsigned key)
     Entries::iterator it = m_4c.begin();
     while (it != m_4c.end())
     {
-        if (it->second >= key)
+        Entries::reference entry = *it;
+        if (entry.second >= key)
         {
-            Entries::iterator removed = it++;
-            std::pair<void *, unsigned> *entry = &*removed;
-            m_4c.erase(removed);
-            m_48.remove(entry->first);
+            it = m_4c.erase(it);
+            m_48.remove(entry.first);
         }
         else
             ++it;
