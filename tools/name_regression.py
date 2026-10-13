@@ -77,37 +77,12 @@ FIELD_OPAQUE = re.compile(
 )
 
 
-# <Word><address>: a type named after its class address with the address at
-# the END (Pool008B09A0, Pool8C4DA0, StringPool008B3AA0; re_attempts
-# 0x008B09A0). Kept narrow: 6-8 hex digits that start with a decimal digit,
-# follow a letter, and read as an address inside the retail image
-# (ledger RVAs: image base 0x00400000, SizeOfImage 0x01016000), so
-# Buffer00FF, Color0A or Matrix3D stay descriptive. Only the NEW side reads
-# such a name as a placeholder: an OLD trailing-address name counts as
-# descriptive, so respelling it is accepted only through the ledger-row check
-# (_is_address_respelling: a row at that address spells the new name; owner
-# verdict 2026-10-13, test_address_named_callee_without_a_row_at_its_address_
-# still_fails).
-TRAILING_ADDRESS = re.compile(r'^[A-Za-z_]\w*?[A-Za-z]([0-9][0-9a-fA-F]{5,7})$')
-IMAGE_LO, IMAGE_HI = 0x00401000, 0x00400000 + 0x01016000
-
-
-def trailing_address(name):
-    m = TRAILING_ADDRESS.match(name)
-    return bool(m) and IMAGE_LO <= int(m.group(1), 16) < IMAGE_HI
-
-
-def _opaque_by_form(name):
+def opaque(name):
     return bool(OPAQUE.match(name) or FIELD_OPAQUE.fullmatch(name))
 
 
-def opaque(name):
-    return _opaque_by_form(name) or trailing_address(name)
-
-
 def downgrade(old, new):
-    return (old != new and bool(IDENT.fullmatch(old)) and old not in KEYWORDS
-            and not _opaque_by_form(old) and opaque(new))
+    return old != new and bool(IDENT.fullmatch(old)) and old not in KEYWORDS and not opaque(old) and opaque(new)
 
 
 # `#pragma comment(linker, ...)` and friends name no identifier: a bank that

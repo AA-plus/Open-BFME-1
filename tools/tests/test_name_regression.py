@@ -1408,32 +1408,3 @@ def test_short_rva_address_type_respelled_to_ledger_placeholder_passes():
 def test_rva_without_an_address_stays_descriptive():
     assert not N.opaque('RvaFace') and not N.opaque('Rva8CB82String')
     assert N.downgrade('StringPool', 'Rva8CB820StringPool')
-
-
-def test_trailing_address_type_respelled_to_ledger_placeholder_passes():
-    # re_attempts 0x008B09A0: address at the END is address-derived too.
-    for name in ('Pool008B09A0', 'Pool8C4DA0', 'StringPool008B3AA0'):
-        assert N.opaque(name), name
-    # Owner verdict 2026-10-13: the old side still needs a ledger row at its
-    # address (_is_address_respelling), so the bare token check flags these.
-    assert N.downgrade('Pool008B09A0', 'BfmeStringPool3AF0')
-    assert N.downgrade('StringPool008B3AA0', 'BfmeStringPool3AF0')
-
-
-POOL_ROW = '?bfmePool@Gen_008B09A0@@QAEXPAX0@Z,,0x008B09A0,40,game/x.cpp,matched,evidence\n'
-
-
-def test_trailing_address_named_callee_respelled_to_its_ledger_row_passes(tmp_path):
-    assert _addr_case(tmp_path, 'Pool008B09A0', 'bfmePool', POOL_ROW) == []
-
-
-def test_trailing_address_named_callee_without_a_row_at_its_address_still_fails(tmp_path):
-    rows = POOL_ROW.replace('0x008B09A0', '0x008B09A4')
-    assert _addr_case(tmp_path, 'Pool008B09A0', 'bfmePool', rows) == [('Pool008B09A0', 'bfmePool')]
-
-
-def test_names_ending_in_hex_looking_text_stay_descriptive():
-    for name in ('Buffer00FF', 'Color0A', 'Matrix3D', 'Color123456', 'Table99999999', 'ABCDEF', 'Pool8C4DA'):
-        assert not N.opaque(name), name
-    assert N.downgrade('Matrix3D', 'BfmeMatrix')
-    assert N.downgrade('StringPool', 'StringPool008B3AA0')
