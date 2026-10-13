@@ -1,5 +1,5 @@
-// ?d_009aa4f0@@YAXXZ
-// partial score=0.292079 date=2026-09-23
+// ?Rva009AA4F0ScalePlanes@@YAPAURva009AA4F0Block@@PAURva009AA4F0Context@@HPAU1@HH@Z
+// partial score=0.2871 date=2026-10-13
 // ?Rva009AA4F0ScalePlanes@@YAPAURva009AA4F0Block@@PAURva009AA4F0Context@@HPAU1@HH@Z
 
 struct Rva009AA260Context
@@ -57,38 +57,41 @@ static int Rva009AA4F0Align(
 	return (((int)(dimension + 7) / 8 * 8 * scale) / ratio);
 }
 
+struct Rva009AA4F0Dimensions { unsigned int height, scaledHeight, width, scaledWidth; };
+
 Rva009AA4F0Block *__cdecl Rva009AA4F0ScalePlanes(
 	Rva009AA4F0Context *context, int offset, Rva009AA4F0Block *block,
 	int lumaOffset, int chromaOffset)
 {
+	Rva009AA4F0Dimensions dims;
 	int hratio = context->m_hratio;
-	unsigned int height = context->m_height;
+	dims.height = context->m_height;
 	int hscale = context->m_hscale;
-	unsigned int scaledHeight =
-		(height * hratio + hscale - 1) / hscale;
+	dims.scaledHeight =
+		(dims.height * hratio + hscale - 1) / hscale;
 	int vscale = context->m_vscale;
-	unsigned int width = context->m_width;
-	unsigned int scaledWidth =
-		(width * context->m_vratio + vscale - 1) / vscale;
+	dims.width = context->m_width;
+	dims.scaledWidth =
+		(dims.width * context->m_vratio + vscale - 1) / vscale;
 	int alignedHeight = Rva009AA4F0Align(
-		scaledHeight, hscale, hratio);
+		dims.scaledHeight, hscale, hratio);
 	int alignedWidth = Rva009AA4F0Align(
-		scaledWidth, vscale, context->m_vratio);
+		dims.scaledWidth, vscale, context->m_vratio);
 
 	int scaleResult = Rva009AA260Scale(
 		(Rva009AA260Context *)context,
 		context->m_source0 + offset,
 		context->m_bytes + context->m_atB4 * 2,
-		scaledHeight, height,
+		dims.scaledHeight, dims.height,
 		block->m_at18 + lumaOffset, block->m_at08,
-		scaledWidth, width);
+		dims.scaledWidth, dims.width);
 
 	for (int row = 0; row < alignedWidth; ++row)
-		memset(block->m_at18 + lumaOffset + height +
+		memset(block->m_at18 + lumaOffset + dims.height +
 			row * block->m_at08,
-			0, alignedHeight - height);
+			0, alignedHeight - dims.height);
 
-	for (int row = width; row < alignedWidth; ++row)
+	for (int row = dims.width; row < alignedWidth; ++row)
 		memset(block->m_at18 + lumaOffset + row * block->m_at08,
 			0, alignedHeight);
 
@@ -99,15 +102,15 @@ Rva009AA4F0Block *__cdecl Rva009AA4F0ScalePlanes(
 		(Rva009AA260Context *)context,
 		context->m_source1 + offset,
 		(context->m_bytes >> 1) + context->m_atB4,
-		(scaledHeight + 1) >> 1, (scaledWidth + 1) >> 1,
+		(dims.scaledHeight + 1) >> 1, (dims.scaledWidth + 1) >> 1,
 		block->m_at1C + chromaOffset, block->m_at14,
-		(height + 1) >> 1, (width + 1) >> 1);
+		(dims.height + 1) >> 1, (dims.width + 1) >> 1);
 	Rva009AA260Scale(
 		(Rva009AA260Context *)context,
 		context->m_source2 + offset,
 		(context->m_bytes >> 1) + context->m_atB4,
-		(scaledHeight + 1) >> 1, (scaledWidth + 1) >> 1,
+		(dims.scaledHeight + 1) >> 1, (dims.scaledWidth + 1) >> 1,
 		block->m_at20 + chromaOffset, block->m_at14,
-		(height + 1) >> 1, (width + 1) >> 1);
+		(dims.height + 1) >> 1, (dims.width + 1) >> 1);
 	return block;
 }
