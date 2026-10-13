@@ -1,7 +1,5 @@
 // ?bfmeSubmitEVA@Rva00893030Manager@@QAEXPAVBfmeStrVKI@@@Z
-// partial score=0.961 date=2026-10-09
 // cl: /EHsc
-// Retail manager submission with two scoped reference handles.
 
 struct BfmeHdrVKI
 {
@@ -66,6 +64,8 @@ public:
     void *m_argument;
     Rva00895D30Dependencies *m_object;
     void *m_buffer;
+    // ?object00895D30@BfmeDropObjectA@@QBEPAURva00895D30Dependencies@@XZ absent-from-retail
+    Rva00895D30Dependencies *object00895D30() const { return m_object; }
 };
 
 class Rva00894D90Accessor
@@ -112,7 +112,8 @@ class Rva008956C0List
 public:
     int contains008956C0(RefHandle008956C0 candidate);
 };
-extern Rva008956C0List *g_bfmeTracker4310;
+class BfmeTracker4310;
+extern BfmeTracker4310 *g_bfmeTracker4310;
 
 class Rva00893030Manager
 {
@@ -172,11 +173,11 @@ void Rva00893030Manager::bfmeSubmitEVA(BfmeStrVKI *name)
     }
     else if (object->m_kind == 3 || object->m_kind == 4 || object->m_kind == 5)
     {
-        for (int i = 0; i < object->m_object->m_count; ++i)
+        for (int i = 0; i < object->object00895D30()->m_count; ++i)
         {
-            RefHandle008958D0 child = find008958D0(&BfmeStrVKI(object->m_object->m_entries[i].m_name));
-            if (child.m_object && !g_bfmeTracker4310->contains008956C0(child))
-                bfmeSubmitEVA(&BfmeStrVKI(object->m_object->m_entries[i].m_name));
+            RefHandle008958D0 child = find008958D0(&BfmeStrVKI(object->object00895D30()->m_entries[i].m_name));
+            if (child.m_object && !((Rva008956C0List *)g_bfmeTracker4310)->contains008956C0(child))
+                bfmeSubmitEVA(&BfmeStrVKI(object->object00895D30()->m_entries[i].m_name));
         }
     }
     if (Rva00894D90Accessor::decrement(&object->m_refCount) == 0)

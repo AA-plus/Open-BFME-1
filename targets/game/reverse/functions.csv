@@ -38376,7 +38376,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00894ff0@@YAXXZ,,0x00894FF0,32,game/gen_asm/d_00891ca0.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret-tail refs=0
 ?d_00895510@@YAXXZ,,0x00895510,308,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c95510
 ?d_00895790@@YAXXZ,,0x00895790,287,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c95790
-?d_00895d30@@YAXXZ,,0x00895D30,462,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c95d30
 ?d_008961e0@@YAXXZ,,0x008961E0,316,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c961e0
 ?d_00896390@@YAXXZ,,0x00896390,214,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c96390
 ?d_008965b0@@YAXXZ,,0x008965B0,352,game/gen_asm/d_00894a90.asm,matched,gen-dump;ghidra=FUN_00c965b0
@@ -172556,3 +172555,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?j_0002DA10@@YAXXZ,,0x0002DA10,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk to matched target 0x0064C4C0;model=claude-sonnet-5-5;host=SARUMAN
 ?bfmeGo002BD940@Rva002BD940Owner@@QAEXXZ,,0x002BD940,358,game/GameEngine/Source/GameLogic/Object/Update/AIUpdate/Rva002BD940PositionAdjustment.cpp,matched,thiscall no stack args; same receiver from matched 0x002C12E0; six-word filter copy view; ordered position operand reads; evidence=targets/game/reverse/identity_evidence/002bd940-position-load-order.md;model=gpt-6.1-sol;host=fleet
 ?locoUpdate_maintainCurrentPosition@Locomotor@@QAE_NPAVObject@@@Z,,0x001BCB10,616,game/GameEngine/Source/GameLogic/Object/Locomotor_maintainCurrentPosition.cpp,matched,Complete maintenance dispatcher;canonical Object and Thing;address-derived state view;identity and boundary evidence targets/game/reverse/identity_evidence/001bcb10-layout-view.md;model=gpt-6.1-sol;host=fleet
+?bfmeSubmitEVA@Rva00893030Manager@@QAEXPAVBfmeStrVKI@@@Z,,0x00895D30,462,game/Libraries/Source/Apt/Rva00895D30ManagerSubmit.cpp,matched,Address-derived manager submit established by matched bfmeSubmitNameEVA caller;dependency accessor restores retail temporary structure;complete ABI and unwind evidence targets/game/reverse/identity_evidence/00895d30-dependency-accessor.md;model=gpt-6.1-sol;host=fleet

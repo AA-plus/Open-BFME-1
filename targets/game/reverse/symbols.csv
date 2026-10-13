@@ -91174,3 +91174,4 @@ rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?rva0003F418Target@@YAXXZ,0x001D6A70,No-argument tail-thunk view of independently matched matched target of ILT 0003F418
 ?rva00048B9ETarget@@YAXXZ,0x001EE950,No-argument tail-thunk view of independently matched matched target of ILT 00048B9E
 ?rva0002DA10Target@@YAXXZ,0x0064C4C0,No-argument tail-thunk view of independently matched matched target of ILT 0002DA10
+?d_00895d30@@YAXXZ,0x00895D30,legacy address-only alias of retained bfmeSubmitEVA body;complete caller 0x00896060 at +0x38 directly calls this body;identity evidence 00895d30-dependency-accessor.md
