@@ -91209,3 +91209,4 @@ rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?m@Gen_007e86c0@@QAEXXZ,0x007E86C0,Legacy generated caller name retained after destructor recovery; retail MOV[ECX]VA01129358 and RET+6 prove seven-byte no-argument thiscall body
 ?bfmeGo1046E@BfmeD1046@@QAEXXZ,0x008BE6D0,Legacy cleanup caller spelling; matched constructor and unwind lifetimes prove owned-pointer destructor; RET+2d and INT3+2e prove46B; evidence=identity_evidence/008be6d0-owned-pointer-destructor.md
 ?shader@StreakCalls005F43B0@@QAEXVShaderClass@@@Z,0x00918DA0,additive: retail call target of the red row ?draw@LightningDraw005F43B0@@QAEHPAX0PAH@Z
+??0Gen0000D33C@@QAE@PAVGameFont@@MMHHHH@Z,0x004354F0,Address-derived product constructor; retail ILT 0x00026AFD jumps here; complete 517-byte callee consumes font two floats and four ints; evidence=targets/game/reverse/identity_evidence/006ee3f0-descriptor-reset.md

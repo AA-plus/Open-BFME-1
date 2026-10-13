@@ -38068,7 +38068,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_006ebc30@@YAXXZ,,0x006EBC30,192,game/gen_asm/d_006e7d70.asm,matched,gen-dump;bounds=high
 ?d_006ebd20@@YAXXZ,,0x006EBD20,405,game/gen_asm/d_006e0580.asm,matched,gen-dump;ghidra=FUN_00aebd20
 ?d_006ee0c0@@YAXXZ,,0x006EE0C0,641,game/gen_asm/d_006e7d70.asm,matched,gen-dump;bounds=high
-?d_006ee3f0@@YAXXZ,,0x006EE3F0,240,game/gen_asm/d_006ebf20.asm,matched,gen-dump;ghidra=FUN_00aee3f0
 ?d_006ee800@@YAXXZ,,0x006EE800,2784,game/gen_asm/d_006ebf20.asm,matched,gen-dump;ghidra=FUN_00aee800
 ?d_006f21b0@@YAXXZ,,0x006F21B0,1285,game/gen_asm/d_006ebf20.asm,matched,gen-dump;ghidra=FUN_00af21b0
 ?d_006f2cc0@@YAXXZ,,0x006F2CC0,3881,game/gen_asm/d_006f2cc0.asm,matched,gen-dump;ghidra=FUN_00af2cc0
@@ -172553,3 +172552,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ??0Rva00359530StringRecordTable@@QAE@ABV0@@Z,,0x0035E1F0,352,game/GameEngine/Source/Common/Rva00359530StringRecordTableCopy0035E1F0.cpp,matched,Native STLport copy constructor; address-derived owner; complete caller and record helper ABI and unwind ownership independently decoded; existing native scoped base and cleanup identities; identity-evidence=targets/game/reverse/identity_evidence/0035e1f0-native-bindings.md;model=gpt-6.1-sol;host=fleet
 ??0Rva0061DA30Base@@QAE@VAsciiString@@@Z,,0x0061DA30,252,game/GameEngine/Source/GameLogic/LivingWorld/Rva0061DA30BaseConstructor.cpp,matched,Constructor with by-value canonical AsciiString; explicit retail vtable layout view; identity-evidence=targets/game/reverse/identity_evidence/0061da30-constructor-store-order.md;model=gpt-6.1-sol;host=fleet
 ?draw@LightningDraw005F43B0@@QAEHPAX0PAH@Z,,0x005F43B0,2220,game/GameEngine/Source/GameClient/System/FXParticleSystem/LightningDrawModuleDraw005F43B0.cpp,matched,wave16 converted: volatile-rank TU-local Cross_Product replicas pin the three x87 operand picks; dead int[4] allocator keeps +32B; 4-byte preset shader word passed by value via recorded ShaderClass statics + g_Va0x012D6E* globals to the landed same-int setter;model=gpt-6.1-sol;host=chalco.vps
+?rva006EE3F0@W3DDisplay@@UAEEPAURva006EE3F0Descriptor@@MMHHHH@Z,,0x006EE3F0,240,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayRva006EE3F0.cpp,matched,W3DDisplay vtable slot23 and ILT00018B47; descriptor reset loop; ABI float pair and four ints; identity-evidence=targets/game/reverse/identity_evidence/006ee3f0-descriptor-reset.md;model=gpt-6.1-sol;host=fleet
