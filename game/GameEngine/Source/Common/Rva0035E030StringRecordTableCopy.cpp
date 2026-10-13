@@ -1,11 +1,11 @@
-// ??0Rva0035E030@@QAE@ABV0@@Z
-// partial score=0.7068 date=2026-10-09
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
-// Rva0035E030 copies the index range and deep-copies the string-record range.
 #define _STLP_NO_EXCEPTIONS 1
 #include "ascii_string.h"
+// Scope the native base to the retail copy used by this constructor.
+#define _Vector_base Rva001F9330VectorBase
 #include <vector>
+#undef _Vector_base
 
 template <int N>
 class Open2Gap

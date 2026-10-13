@@ -37174,8 +37174,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0035d9b0@@YAXXZ,,0x0035D9B0,662,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075d9b0
 ?d_0035dd40@@YAXXZ,,0x0035DD40,363,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075dd40
 ?d_0035df10@@YAXXZ,,0x0035DF10,227,game/gen_asm/d_003519c0.asm,matched,gen-dump;bounds=high
-?d_0035e030@@YAXXZ,,0x0035E030,307,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075e030
-?d_0035e163@@YAXXZ,,0x0035E163,24,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=Catch@0075e163
 ?d_0035e1f0@@YAXXZ,,0x0035E1F0,307,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075e1f0
 ?d_0035e323@@YAXXZ,,0x0035E323,24,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=Catch@0075e323
 ?d_0035e5a0@@YAXXZ,,0x0035E5A0,284,game/gen_asm/d_0035aa50.asm,matched,gen-dump;ghidra=FUN_0075e5a0
@@ -172555,3 +172553,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?isValidContainerFor@TransportContain@@UBE_NPBVObject@@_N@Z,,0x0022DBA0,285,game/GameEngine/Source/GameLogic/Object/Contain/TransportContainIsValidContainerFor.cpp,matched,TransportContain secondary vtable slot 33 and matched SiegeEngineContain callers;identity-evidence=targets/game/reverse/identity_evidence/0022dba0-transport-validation.md;model=gpt-6.1-sol;host=fleet
 ?rva005900C0@Rva00593E60State@@QAEXPAVRva0058BE30FourString@@@Z,,0x005900C0,764,game/GameEngine/Source/GameClient/GUI/Palantir/Palantir_rva005900C0.cpp,matched,wave15 conversion byte-exact 764/764; double-paren float cast flips x87 spill order; owner and record ABI proven by matched Rva00593E60State::update caller;model=gpt-5.2-codex;host=chalco.vps
 ?rva001B5B40@Locomotor@@QBE_NPBVThing@@PBUCoord3D@@@Z,,0x001B5B40,144,game/GameEngine/Source/GameLogic/Object/Locomotor_rva001B5B40.cpp,matched,wave15 conversion byte-exact 144/144; parenthesised y product plus volatile offset.x read reproduce retail fld off.x then fmul dir.x; identity intentionally address-derived per prior verdict #20;model=gpt-5.2-codex;host=chalco.vps
+??0Rva0035E030@@QAE@ABV0@@Z,,0x0035E030,352,game/GameEngine/Source/Common/Rva0035E030StringRecordTableCopy.cpp,matched,Native STLport copy constructor; address-derived owner; complete caller and record helper ABI and unwind ownership independently decoded; scoped native base avoids conflicting shared int-base pin; identity-evidence=targets/game/reverse/identity_evidence/0035e030-scoped-base.md;model=gpt-6.1-sol;host=fleet
