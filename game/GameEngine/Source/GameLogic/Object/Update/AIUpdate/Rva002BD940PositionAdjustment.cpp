@@ -1,11 +1,8 @@
-// ?bfmeGo002BD940@Rva002BD940Owner@@QAEXXZ
-// partial score=0.8966 date=2026-10-10
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/bfmekindof /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
 // stlport
 #define BFME_STLP_NODE_ALLOC 1
 #define Matrix4x4 Matrix4  // BFME renamed it
 #define __PLACEMENT_VEC_NEW_INLINE  // always.h/GameMemory.h define array placement-new themselves
-// stlport
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
@@ -33,14 +30,17 @@ public:
 	PartitionFilter *m_next;
 };
 
+// The six-word copy view preserves the existing constructor declaration.
+// The retail predicate restricts the final word to 21 meaningful bits.
 class PartitionFilterAcceptByKindOf : public PartitionFilter
 {
 public:
-	__declspec(noinline) PartitionFilterAcceptByKindOf(const BitFlags<181> &mustBeSet, const BitFlags<181> &mustBeClear)
+	// ??0PartitionFilterAcceptByKindOf@@QAE@ABV?$BitFlags@$0MA@@@0@Z present-unmatched
+	__declspec(noinline) PartitionFilterAcceptByKindOf(const BitFlags<192> &mustBeSet, const BitFlags<192> &mustBeClear)
 		: m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) {}
 	virtual bool allow(Object *objOther);
 private:
-	BitFlags<181> m_mustBeSet, m_mustBeClear;
+	BitFlags<192> m_mustBeSet, m_mustBeClear;
 };
 
 class PartitionManager
@@ -72,7 +72,7 @@ void Rva002BD940Owner::bfmeGo002BD940()
 	pos.y = owner->m_position.y;
 	pos.z = owner->m_position.z;
 
-	PartitionFilterAcceptByKindOf filterKind(BitFlags<181>(BitFlags<181>::kInit, 7, 10, 11), *(const BitFlags<181> *)&__identifier("?KINDOFMASK_NONE@@3V?$BitFlags@$0MA@@@B"));
+	PartitionFilterAcceptByKindOf filterKind(BitFlags<192>(BitFlags<192>::kInit, 7, 10, 11), *(const BitFlags<192> *)&__identifier("?KINDOFMASK_NONE@@3V?$BitFlags@$0MA@@@B"));
 
 	Object *target = ThePartitionManager->getClosestObject(&pos, rawRadius * 2.0f, 0, &filterKind);
 	if (target)
@@ -86,7 +86,10 @@ void Rva002BD940Owner::bfmeGo002BD940()
 		delta.scale(2.0f);
 		delta.x += GetGameLogicRandomValueReal(-0.1f, 0.1f, "F:\\bfme\\Code\\gameengine\\Source\\GameLogic\\Object\\Update\\AIUpdate\\GiantBirdAIUpdate.cpp", 3655);
 		delta.y += GetGameLogicRandomValueReal(-0.1f, 0.1f, "F:\\bfme\\Code\\gameengine\\Source\\GameLogic\\Object\\Update\\AIUpdate\\GiantBirdAIUpdate.cpp", 3656);
-		pos.add(&delta);
+		// Preserve the retail x87 load order for the position operands.
+		pos.x = *(const volatile float *)&pos.x + delta.x;
+		pos.y = *(const volatile float *)&pos.y + delta.y;
+		pos.z = *(const volatile float *)&pos.z + delta.z;
 		((Thing *)owner)->setPosition(&pos);
 	}
 }

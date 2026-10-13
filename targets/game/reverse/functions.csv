@@ -37117,7 +37117,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_002ba390@@YAXXZ,,0x002BA390,1159,game/gen_asm/d_002afb20.asm,matched,gen-dump;ghidra=FUN_006ba390
 ?d_002baa40@@YAXXZ,,0x002BAA40,353,game/gen_asm/d_002baa40.asm,matched,gen-dump;ghidra=FUN_006baa40
 ?d_002bac00@@YAXXZ,,0x002BAC00,657,game/gen_asm/d_002baa40.asm,matched,gen-dump;ghidra=FUN_006bac00
-?d_002bd940@@YAXXZ,,0x002BD940,358,game/gen_asm/d_002baa40.asm,matched,gen-dump;ghidra=FUN_006bd940
 ?d_002be4a0@@YAXXZ,,0x002BE4A0,1160,game/gen_asm/d_002baa40.asm,matched,gen-dump;ghidra=FUN_006be4a0
 ?d_002bfb00@@YAXXZ,,0x002BFB00,1671,game/gen_asm/d_002baa40.asm,matched,gen-dump;ghidra=FUN_006bfb00
 ?d_002c0fe0@@YAXXZ,,0x002C0FE0,290,game/gen_asm/d_002bbb80.asm,matched,gen-dump;bounds=high
@@ -172556,3 +172555,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?j_00048B9E@@YAXXZ,,0x00048B9E,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk to matched target 0x001EE950;model=claude-sonnet-5-5;host=SARUMAN
 ??0RepeatedByteString0089E030@@QAE@HI@Z,,0x0089E030,133,game/GameEngine/Source/Common/BfmeConv1420.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/0089e030-RepeatedByteString0089E030-constructor.md;model=gpt-6.1-sol;host=fleet
 ?j_0002DA10@@YAXXZ,,0x0002DA10,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk to matched target 0x0064C4C0;model=claude-sonnet-5-5;host=SARUMAN
+?bfmeGo002BD940@Rva002BD940Owner@@QAEXXZ,,0x002BD940,358,game/GameEngine/Source/GameLogic/Object/Update/AIUpdate/Rva002BD940PositionAdjustment.cpp,matched,thiscall no stack args; same receiver from matched 0x002C12E0; six-word filter copy view; ordered position operand reads; evidence=targets/game/reverse/identity_evidence/002bd940-position-load-order.md;model=gpt-6.1-sol;host=fleet
