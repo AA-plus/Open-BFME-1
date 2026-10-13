@@ -2769,8 +2769,7 @@ void PathfindLayer::allocateCellsForWallLayer(const IRegion2D *extent, ObjectID 
  * Classifies the pathfind cells for the bridge layer.
  */
 // ?classifyCells@PathfindLayer@@QAEXXZ
-// Body in AIPathfind_classifyCells.asm (exact 1405B retail @ 0x3FC790).
-// Queue 0x73F191 was mid-body noise; C++ blocked by PathfindCell 16B packing.
+// Body in AIPathfind_classifyCells.cpp (exact 1405B retail @ 0x3FC790).
 
 /**
  * Classifies the pathfind cells for the wall bridge layer.

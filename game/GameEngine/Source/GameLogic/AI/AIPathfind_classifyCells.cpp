@@ -1,8 +1,9 @@
-// ?classifyCells@PathfindLayer@@QAEXXZ
-// partial score=0.9758 date=2026-10-11
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Include
+// PathfindLayer::classifyCells, retail 0x003FC790 (1405 bytes).
 
 #include <math.h>
+extern "C" void _ReadWriteBarrier(void);
+#pragma intrinsic(_ReadWriteBarrier)
 
 typedef int Int;
 typedef float Real;
@@ -336,6 +337,8 @@ void PathfindLayer::classifyCells(void)
 			Rva003FC790Set(&center, &topLeftCorner);
 			center.x += g_bfmeK1266C;
 			center.y += g_bfmeK1266C;
+			// Retail reads the packed cell type only after both center stores.
+			_ReadWriteBarrier();
 			if (cell->getType() != PathfindCell::CELL_IMPASSABLE) {
 				if (cell->getConnectLayer() != LAYER_GROUND) {
 					Real groundHeight = TheTerrainLogic->getLayerHeight(
