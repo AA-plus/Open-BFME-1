@@ -100,7 +100,6 @@ def added_lift_lines(old, new, lines=None):
     # for growth even when no added line names __emit. Macros defined in a
     # header are not followed (a gap that predates 47cf6cb).
     _PRELUDE.clear()  # per run: ":" and revs mean a different tree per call
-    _CHANGED.clear()
     removed, added, path, touched = collections.Counter(), [], None, []
     for line in lines:
         if line.startswith("+++ b/"):
@@ -134,9 +133,6 @@ def added_lift_lines(old, new, lines=None):
                 continue
         first, count = bad.get(path, (line[1:].strip()[:80], 0))
         bad[path] = (first, count + 1)
-    for path in users_of_changed_names(old, new, lines):
-        if path not in touched:
-            touched.append(path)
     for path in touched:
         if path in bad or not path.endswith(tuple(CPP_SUFFIXES) + (".h", ".hpp", ".inl")):
             continue
@@ -144,7 +140,7 @@ def added_lift_lines(old, new, lines=None):
             new_text = file_text(new, path)
             grown[path] = emit_growth(file_text(old, path), new_text,
                                       header_prelude(old), header_prelude(new)) \
-                if LIFT_RE.search(new_text) or "##" in new_text or header_prelude(new) else []
+                if LIFT_RE.search(new_text) or header_prelude(new) else []
         if grown[path]:
             bad[path] = ("emitted bytes grow in " + ", ".join(grown[path])[:80], 1)
     return [(p, "%s  (%d such lines)" % (first, count)) for p, (first, count) in bad.items()]
@@ -179,48 +175,12 @@ def file_text(rev, path):
     return "" if data is None else data.decode("utf-8", errors="replace")
 
 
-def _definitions(text):
-    """{name: definitions} of every constant and macro a text defines."""
-    text = _strip_comments(text)
-    defs = {k: tuple(v) for k, v in _constants(text).items()}
-    for name, value in _macro_table(text).items():
-        defs[name] = defs.get(name, ()) + (value,)
-    return defs
-
-
-def users_of_changed_names(old, new, lines):
-    """game/ files that use a #define/enum/const whose definition this diff
-    changes: a header-only edit of `#define OP 0x90` must re-judge every
-    unchanged .cpp emitting `__emit OP`, function by function. One `git grep
-    -lw` per revision, and only when some definition actually changed."""
-    paths = {line[6:] for line in lines if line.startswith(("+++ b/", "--- a/"))}
-    changed = set()
-    for path in paths:
-        if not path.startswith("game/") or path.startswith("game/gen_small/"):
-            continue
-        before, after = _definitions(file_text(old, path)), _definitions(file_text(new, path))
-        changed |= {n for n in set(before) | set(after) if before.get(n) != after.get(n)}
-    _CHANGED.clear()
-    _CHANGED.update(changed)
-    _PRELUDE.clear()
-    if not changed:
-        return []
-    found = set()
-    for rev in (old, new):
-        cmd = ["git", "grep", "-l", "-I", "-w"] + (["--cached"] if rev == ":" else [])
-        cmd += sum((["-e", n] for n in sorted(changed)), [])
-        cmd += ([] if rev == ":" else [rev]) + ["--", "game/", ":(exclude)game/gen_small/"]
-        out = subprocess.run(cmd, capture_output=True, text=True).stdout
-        found |= {p.split(":", 1)[1] if rev != ":" else p for p in out.splitlines()}
-    return sorted(found)
-
-
 def _strip_comments(text):
     text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
     return re.sub(r"//[^\n]*", " ", text)
 
 
-_PRELUDE, _CHANGED = {}, set()
+_PRELUDE = {}
 
 
 def header_prelude(rev):
@@ -232,15 +192,6 @@ def header_prelude(rev):
     base = ["git", "grep", "-l", "-I"] + (["--cached"] if rev == ":" else [])
     tail = [] if rev == ":" else [rev]
     seen, pattern, texts = set(), [r"-E", r"\b__?emit\b"], []
-    if _CHANGED:
-        # Headers defining a name this diff changes (users_of_changed_names),
-        # so a constant re-valued in a header resolves in its users.
-        proc = subprocess.run(base + ["-w"] + sum((["-e", n] for n in sorted(_CHANGED)), [])
-                              + tail + ["--"] + list(_HEADER_GLOBS), capture_output=True, text=True)
-        for p in proc.stdout.splitlines():
-            p = p.split(":", 1)[1] if rev != ":" else p
-            seen.add(p)
-            texts.append(_strip_comments(file_text(rev, p)))
     for _ in range(8):
         proc = subprocess.run(base + pattern + tail + ["--"] + list(_HEADER_GLOBS),
                               capture_output=True, text=True)
@@ -335,8 +286,7 @@ def _macro_table(text):
 
 def _emit_macros(table):
     """Names of macros whose expansion reaches __emit (fixpoint)."""
-    # A pasting macro can spell __emit from pieces, so it counts (fails closed).
-    emit = {n for n, (_, body) in table.items() if LIFT_RE.search(body) or "##" in body}
+    emit = {n for n, (_, body) in table.items() if LIFT_RE.search(body)}
     while True:
         more = {n for n, (_, body) in table.items() if n not in emit
                 and any(re.search(r"\b%s\b" % re.escape(e), body) for e in emit)}
@@ -388,9 +338,6 @@ def _expand(text, table, emit, limit=16):
                     continue
                 for p, a in zip(params, args + [""] * len(params)):
                     body = re.sub(r"\b%s\b" % re.escape(p), lambda _m, a=a: a, body)
-            # `##` pastes tokens (CAT(__em,it) -> __emit); the result is
-            # rescanned on the next round like any other expansion.
-            body = re.sub(r"\s*##\s*", "", body)
             out.append(text[pos:m.start()] + " " + body + " ")
             pos, changed = end, True
         if not changed:
