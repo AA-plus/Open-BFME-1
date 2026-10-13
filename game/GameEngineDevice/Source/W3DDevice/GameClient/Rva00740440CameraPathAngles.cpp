@@ -1,7 +1,14 @@
-// cl: /DNDEBUG /MD /Igame/Libraries/Source/WWVegas/WWLib
-// BFME camera-path angle helper at retail 0x00740440.
+// cl: /DNDEBUG /MD /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath
+// BFME camera-path angle helper at retail 0x00740440 (347 bytes, ret 0xC).
+// Its only caller is 0x00740F60 (via ILT 0x00020266). The body is BFME's form
+// of Zero Hour's W3DView::setupWaypointPath angle loop: it walks the path's
+// waypoints and stores each segment's heading (acos of the normalised x step,
+// mirrored for a negative y step, less pi/2, then normAngle). With orient off
+// it fills the angles with the given one. The ILT oracle contradicts the old
+// descriptive name, so the method keeps the address.
 
 #include <math.h>
+#include "vector2.h"
 
 typedef float Real;
 typedef bool Bool;
@@ -39,55 +46,12 @@ struct Rva00740AE0Elem
 	int m_10;
 };
 
-class WWMath
-{
-	public:
-	static __forceinline Real Acos(Real value)
-	{
-		return (Real)acos(value);
-	}
-	static __forceinline Real Sqrt(Real value)
-	{
-		Real result;
-		__asm {
-			fld [value]
-			fsqrt
-			fstp [result]
-		}
-		return result;
-	}
-	static __forceinline void SqrtTo(Real value, Real *result)
-	{
-		__asm {
-			fld [value]
-			fsqrt
-			mov eax, [result]
-			fstp dword ptr [eax]
-		}
-	}
-};
-
 extern void __fastcall normAngle(Real &angle);
-
-class Vector2
-{
-public:
-	Real X;
-	Real Y;
-	__forceinline Real Length(void) const
-	{
-		return WWMath::Sqrt(Length2());
-	}
-	__forceinline Real Length2(void) const
-	{
-		return X * X + Y * Y;
-	}
-};
 
 class Rva00740440 : public Rva00740AE0Base
 {
 public:
-	void setCameraPathAngles(Bool orient, Real angle, int firstWaypoint);
+	void rva00740440(Bool orient, Real angle, int firstWaypoint);
 
 private:
 	Rva00740AE0Elem m_waypoints[255];
@@ -100,7 +64,7 @@ private:
 	int m_numWaypoints;
 };
 
-void Rva00740440::setCameraPathAngles(Bool orient, Real angle, int firstWaypoint)
+void Rva00740440::rva00740440(Bool orient, Real angle, int firstWaypoint)
 {
 	Real *cameraAngle = m_cameraAngles;
 	int i;

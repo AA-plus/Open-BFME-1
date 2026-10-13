@@ -19778,5 +19778,25 @@
   "after_sha256": "d26de534b5ff8d939b2143cbf5cba4aaf2e99d23a43c0a46de8524e526b91515",
   "evidence": "targets/game/reverse/identity_evidence/000d6100-player-rva0058b590-value.md",
   "reason": "positional false pairing: the stash's unused BfmeObjectHashNode::m_object was dropped; the node's m_value field is unchanged"
+ },
+ {
+  "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/Rva00740440CameraPathAngles.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/Rva00740440CameraPathAngles.cpp",
+  "old_name": "setCameraPathAngles",
+  "new_name": "rva00740440",
+  "before_sha256": "82966f30ff2f4231577a1190c8f2b3605d03dd08b079845d9bf1c67c856e5565",
+  "after_sha256": "4251ac9308b3e300af0cc41672ab844fb51561dc946ce8e496c8d11780e1f53e",
+  "evidence": "targets/game/reverse/identity_evidence/00740440-camera-path-angles.md",
+  "reason": "invented name contradicted by the ILT oracle at ILT 0x00020266; no caller supplies a real name, so the method keeps its address"
+ },
+ {
+  "old_path": "targets/game/reverse/functions.csv",
+  "new_path": "targets/game/reverse/functions.csv",
+  "old_name": "setCameraPathAngles",
+  "new_name": "rva00740440",
+  "before_sha256": "bf8a027381cd0828624ccef88938afaa9bbbed90142effca0654388743452496",
+  "after_sha256": "3cf3e3d8973ad0c384f8596c37404ef3b27861374cb88f88b19e3674521d5601",
+  "evidence": "targets/game/reverse/identity_evidence/00740440-camera-path-angles.md",
+  "reason": "invented name contradicted by the ILT oracle at ILT 0x00020266; no caller supplies a real name, so the method keeps its address"
  }
 ]
