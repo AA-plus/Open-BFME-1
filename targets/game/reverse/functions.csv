@@ -36903,7 +36903,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_001ba1c0@@YAXXZ,,0x001BA1C0,1615,game/gen_asm/d_001b5b40.asm,matched,gen-dump;ghidra=FUN_005ba1c0
 ?d_001bb530@@YAXXZ,,0x001BB530,1337,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_005bb530
 ?d_001bbc50@@YAXXZ,,0x001BBC50,1791,game/gen_asm/d_001b5b40.asm,matched,gen-dump;ghidra=FUN_005bbc50
-?d_001bcb10@@YAXXZ,,0x001BCB10,577,game/gen_asm/d_001b5b40.asm,matched,gen-dump;ghidra=FUN_005bcb10
 ?d_001bce20@@YAXXZ,,0x001BCE20,542,game/gen_asm/d_001b5b40.asm,matched,gen-dump;ghidra=FUN_005bce20
 ?d_001c2380@@YAXXZ,,0x001C2380,727,game/gen_asm/d_001bd560.asm,matched,gen-dump;ghidra=FUN_005c2380
 ?d_001c6870@@YAXXZ,,0x001C6870,933,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp end=ret+int3 callers=1
@@ -172556,3 +172555,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ??0RepeatedByteString0089E030@@QAE@HI@Z,,0x0089E030,133,game/GameEngine/Source/Common/BfmeConv1420.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/0089e030-RepeatedByteString0089E030-constructor.md;model=gpt-6.1-sol;host=fleet
 ?j_0002DA10@@YAXXZ,,0x0002DA10,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk to matched target 0x0064C4C0;model=claude-sonnet-5-5;host=SARUMAN
 ?bfmeGo002BD940@Rva002BD940Owner@@QAEXXZ,,0x002BD940,358,game/GameEngine/Source/GameLogic/Object/Update/AIUpdate/Rva002BD940PositionAdjustment.cpp,matched,thiscall no stack args; same receiver from matched 0x002C12E0; six-word filter copy view; ordered position operand reads; evidence=targets/game/reverse/identity_evidence/002bd940-position-load-order.md;model=gpt-6.1-sol;host=fleet
+?locoUpdate_maintainCurrentPosition@Locomotor@@QAE_NPAVObject@@@Z,,0x001BCB10,616,game/GameEngine/Source/GameLogic/Object/Locomotor_maintainCurrentPosition.cpp,matched,Complete maintenance dispatcher;canonical Object and Thing;address-derived state view;identity and boundary evidence targets/game/reverse/identity_evidence/001bcb10-layout-view.md;model=gpt-6.1-sol;host=fleet
