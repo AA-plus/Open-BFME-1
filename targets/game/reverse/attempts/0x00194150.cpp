@@ -1,28 +1,16 @@
 // ?getIndexedRecord@Rva00194150Table@@QBE_NHHAAVBuildListInfo@@H@Z
-// partial score=0.55 date=2026-09-09
-// ?getIndexedRecord@Rva00194150Table@@QBE_NHHAAVBuildListInfo@@H@Z
-// Open-BFME: clean reconstruction of retail 0x00194150.
-// Scans a fixed 32-entry keyed table and copies an indexed 140-byte
-// BuildListInfo record from one of two side-specific ranges.
-
-class BuildListInfo
-{
-public:
-	BuildListInfo &operator=(const BuildListInfo &);
-
-private:
-	unsigned char m_data[0x8C];
-};
-
+// partial score=0.1824 date=2026-10-13
+// cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringbaseascii /Iinputs/reference/shims/buildlistinfo /Iinputs/reference/shims/moduledata /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWLib
+// stlport
+#include "PreRTS.h"
+#include "GameLogic/SidesList.h"
+#include <vector>
+typedef char CheckBuildListSize[sizeof(BuildListInfo)==0x8C?1:-1];
 struct Rva00194150Entry
 {
 	int m_key;
-	BuildListInfo *m_begin0;
-	BuildListInfo *m_end0;
-	unsigned int m_spare0;
-	BuildListInfo *m_begin1;
-	BuildListInfo *m_end1;
-	unsigned int m_spare1;
+	std::vector<BuildListInfo> m_range0;
+	std::vector<BuildListInfo> m_range1;
 };
 
 class Rva00194150Table
@@ -54,25 +42,15 @@ bool Rva00194150Table::getIndexedRecord(int key, int index, BuildListInfo &dest,
 	return false;
 
 found:
-	BuildListInfo *begin;
-	BuildListInfo *end;
+	const std::vector<BuildListInfo> *range;
 	if (mode == 0)
-	{
-		begin = entry->m_begin0;
-		end = entry->m_end0;
-	}
+		range = &m_entries[i].m_range0;
+	else if (mode == 1)
+		range = &m_entries[i].m_range1;
 	else
-	{
-		if (mode != 1)
-			return false;
-		begin = entry->m_begin1;
-		end = entry->m_end1;
-	}
-
-	int count = end - begin;
-	if (index >= count)
+		return true;
+	if (index >= (int)range->size())
 		return false;
-
-	dest = begin[index];
+	dest = (*range)[index];
 	return true;
 }
