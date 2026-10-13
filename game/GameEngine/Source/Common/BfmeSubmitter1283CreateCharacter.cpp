@@ -1,23 +1,27 @@
 // ?create008BE760@BfmeSubmitter1283@@QAEXHPAXHHHHPAPAVBfmeNodeDX@@PAH@Z
-// partial score=0.984 date=2026-09-28
-// ?create008BE760@BfmeSubmitter1283@@QAEXHPAXHHHHPAPAVBfmeNodeDX@@PAH@Z
-// cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
-// Retail 0x008BE760, 1162 bytes (ret 0x20). Apt display-list placement: looks
-// the depth/name up (bfmeQuery1279), reuses or replaces the existing character,
-// allocates the per-kind record (descriptor kinds 5/4/2/10/1/8 -> node kinds
-// 13/14/15/16/12/17), links the node under its parent and returns it. Only
-// caller: BfmeSubmitter1283::bfmeSubmit1283 (BfmeSubmitColors1283.cpp), whose
-// declaration fixes the pinned address-derived name and signature.
+// Retail 0x008BE760, 1162 bytes (ret 0x20). Conversion EXACT modulo the 35
+// relocation slots.
 //
-// STATUS (opus-5.5, 2026-09-28): 1162/1162 bytes, 206 differing, instruction
-// shape 0.984. Residue: the frame is 0xC, not 0x8, because the second
-// kind-15 string temporary gets its own slot instead of packing onto `found`
-// (retail packs it there; the allocation temporaries do pack onto `previous`
-// once `previous` sits in a nested block), plus small register-order
-// differences. Kind 2's record stores go through the record variable (esi)
-// where retail uses eax: storing through a typed temporary instead makes the
-// compiler keep the descriptor in EBX and spill `this`.
-
+// Identity: the only caller is BfmeSubmitter1283::bfmeSubmit1283
+// (game/GameEngine/Source/Common/BfmeSubmitColors1283.cpp) whose class
+// declaration names this member and fixes the eight-argument thiscall
+// signature. Retail returns with ret 0x20 at +0x487 and INT3 padding starts
+// at +0x48A.
+//
+// Apt display-list placement: looks the key/name up (bfmeQuery1279), reuses or
+// replaces the existing character, allocates the per-kind record (descriptor
+// kinds 5/4/2/10/1/8 -> node kinds 13/14/15/16/12/17), links the node under
+// its parent and returns it.
+//
+// Shape notes the byte gate required:
+//  - the real 185-byte BfmeQuery1279::bfmeQuery1279 body must be visible
+//    (noinline) so the local frame is 8 bytes;
+//  - kind 5 reads the flags word into a local before OR-ing 0x3000000;
+//  - kind 2 stores through the typed record local;
+//  - `kind = 15;` materialises before the final descriptor store;
+//  - the isContainer()/depth pair needs the container pointer in a named
+//    local, matching retail's register rotation.
+// cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 typedef bool Bool;
 
 extern "C" int memcmp(const void *, const void *, unsigned int);
@@ -105,11 +109,12 @@ public:
 };
 
 // Kind-13 record: the vptr-only derived class whose out-of-line constructor is
-// ??0Rva008BD2B0@@QAE@XZ (vtable 0x01136DD0), inlined here.
-class Detail008BE760 : public Gen_008AC620
+// ??0Rva008BD2B0@@QAE@XZ (vtable 0x01136DD0, recorded as ??_7Rva008BD2B0@@6B@),
+// inlined here.
+class Rva008BD2B0 : public Gen_008AC620
 {
 public:
-	Detail008BE760() {}
+	Rva008BD2B0() {}
 	virtual void handle();
 };
 
@@ -191,7 +196,15 @@ public:
 class BfmeTab1024
 {
 public:
-	void bfmeAdd1024(BfmeStrVKI *name, class BfmeNodeDX *node);
+	// Pinned spelling: ?bfmeAdd1024@BfmeTab1024@@QAEXHH@Z at 0x0089D890.
+	void bfmeAdd1024(int name, int node);
+};
+
+class BfmeNode1285
+{
+public:
+	// Pinned spelling: ?bfmeSetState1285@BfmeNode1285@@QAEXH@Z at 0x008D3050.
+	void bfmeSetState1285(int state);
 };
 
 class BfmeNodeDX
@@ -205,8 +218,6 @@ public:
 		return ((m_flags & 63) == 13 && !((unsigned char)~(m_flags >> 15) & 1)) ||
 			((m_flags & 63) == 18 && !((unsigned char)~(m_flags >> 15) & 1));
 	}
-	void bfmeSetState1285(int state);
-
 	unsigned int m_flags;
 	int m_key;
 	BfmeStrVKI m_name;
@@ -228,12 +239,33 @@ struct BfmeContainer1024
 
 class BfmeNestedBE;
 class BfmeNodeEA;
+struct BfmeQueryData1279
+{
+	unsigned short m_refCount;
+	unsigned short m_length;
+	unsigned int m_capacity;
+	char m_text[1];
+};
+
+struct BfmeQueryNode1279
+{
+	void *m_vtable;
+	unsigned int m_flags;
+	int m_key;
+	BfmeQueryData1279 *m_name;
+	char m_padding10[0x58 - 0x10];
+	BfmeQueryNode1279 *m_next;
+};
+
 class BfmeQuery1279
 {
 public:
-	void bfmeQuery1279(void *key, int name, void **previous, void **found);
+	__declspec(noinline) void bfmeQuery1279(void *key, int name, void **previous, void **found);
 	BfmeNestedBE *bfmeCreate1284(void *key, int kind, int record);
 	BfmeNestedBE *bfmeInsert1279(int key, BfmeNestedBE *node);
+
+private:
+	BfmeQueryNode1279 *m_root;
 };
 void bfmeUnlink(BfmeNodeEA *node);
 
@@ -299,10 +331,12 @@ void BfmeSubmitter1283::create008BE760(int key, void *descriptorArg, int nameArg
 		int kind = 13;
 		if (((Rva008BE760Descriptor *)descriptorArg)->kind == 5)
 		{
-			Detail008BE760 *r = new Detail008BE760;
+			Rva008BD2B0 *r = new Rva008BD2B0;
 			r->m_18 = -1;
-			r->m_1c |= 0x3000000;
+			int f = r->m_1c;
+			f |= 0x3000000;
 			kind = 13;
+			r->m_1c = f;
 			record = r;
 		}
 		else if (((Rva008BE760Descriptor *)descriptorArg)->kind == 4)
@@ -314,8 +348,7 @@ void BfmeSubmitter1283::create008BE760(int key, void *descriptorArg, int nameArg
 		}
 		else if (((Rva008BE760Descriptor *)descriptorArg)->kind == 2)
 		{
-			record = new Rva008BE450SizedDeleting;
-			Rva008BE450SizedDeleting *r = (Rva008BE450SizedDeleting *)record;
+			Rva008BE450SizedDeleting *r = new Rva008BE450SizedDeleting;
 			r->m_descriptor = (int *)descriptorArg;
 			r->m_24 = ((Rva008BE760Descriptor *)descriptorArg)->m_20;
 			r->m_60 = ((Rva008BE760Descriptor *)descriptorArg)->m_24;
@@ -324,8 +357,9 @@ void BfmeSubmitter1283::create008BE760(int key, void *descriptorArg, int nameArg
 			r->m_5c = ((Rva008BE760Descriptor *)descriptorArg)->m_14;
 			r->m_50 = ((Rva008BE760Descriptor *)descriptorArg)->m_08;
 			r->m_58 = ((Rva008BE760Descriptor *)descriptorArg)->m_10;
-			r->m_54 = ((Rva008BE760Descriptor *)descriptorArg)->m_0c;
 			kind = 15;
+			r->m_54 = ((Rva008BE760Descriptor *)descriptorArg)->m_0c;
+			record = r;
 		}
 		else if (((Rva008BE760Descriptor *)descriptorArg)->kind == 10)
 		{
@@ -346,7 +380,10 @@ void BfmeSubmitter1283::create008BE760(int key, void *descriptorArg, int nameArg
 			record = r;
 		}
 		if (parent->isContainer())
-			record->m_08 = ((BfmeContainer1024 *)parent->m_record)->m_depth;
+		{
+			BfmeContainer1024 *container = (BfmeContainer1024 *)parent->m_record;
+			record->m_08 = container->m_depth;
+		}
 		else
 			record->m_08 = -1;
 
@@ -388,7 +425,7 @@ void BfmeSubmitter1283::create008BE760(int key, void *descriptorArg, int nameArg
 		{
 			node->m_name = *name;
 			if (name->m_data != &g_bfmeDefaultString1284)
-				((BfmeContainer1024 *)parent->m_record)->m_names->bfmeAdd1024(name, node);
+				((BfmeContainer1024 *)parent->m_record)->m_names->bfmeAdd1024((int)name, (int)node);
 		}
 	}
 
@@ -400,7 +437,44 @@ done:
 	node->m_record->m_descriptor = (int *)descriptorArg;
 	node->m_record->m_04 = value;
 	if (((Rva008BE760Descriptor *)descriptorArg)->kind == 4)
-		node->bfmeSetState1285(1);
+		((BfmeNode1285 *)node)->bfmeSetState1285(1);
 	*output = node;
 	*created = isNew;
+}
+
+void BfmeQuery1279::bfmeQuery1279(void *key, int name, void **previousResult, void **nodeResult)
+{
+	BfmeQuery1279 *self = this;
+	BfmeQueryNode1279 *node = self->m_root->m_next;
+	BfmeQueryNode1279 *namePrevious = self->m_root;
+
+	if (name != 0 && node != 0) {
+		do {
+			if (((unsigned char)(~(node->m_flags >> 15)) & 1) != 0) {
+				BfmeQueryData1279 *wanted = *(BfmeQueryData1279 **)name;
+				unsigned int wantedLength = *(const unsigned short *)((const char *)wanted + 2);
+				unsigned int nodeLength = *(const unsigned short *)((const char *)node->m_name + 2);
+				if (wantedLength == nodeLength &&
+					(wanted == node->m_name || memcmp(wanted->m_text, node->m_name->m_text, wantedLength) == 0)) {
+					*nodeResult = node;
+					*previousResult = namePrevious;
+					return;
+				}
+			}
+			namePrevious = node;
+			node = node->m_next;
+		} while (node != 0);
+	}
+
+	node = self->m_root->m_next;
+	BfmeQueryNode1279 *keyPrevious = self->m_root;
+	while (node != 0 && node->m_key < (int)key) {
+		keyPrevious = node;
+		node = node->m_next;
+	}
+	if (node != 0 && node->m_key == (int)key)
+		*nodeResult = node;
+	else
+		*nodeResult = 0;
+	*previousResult = keyPrevious;
 }
