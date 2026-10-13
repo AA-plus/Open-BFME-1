@@ -20,10 +20,20 @@ def fake_run(gate):
     file is written outside the fixture."""
     def run(command, **kwargs):
         if command and command[0] == "git":
+            run.git.append(list(command[1:]))
             return SimpleNamespace(returncode=1, stdout=b"", stderr=b"")
         assert set(kwargs) == {"cwd", "env"}, kwargs
         return SimpleNamespace(returncode=gate)
+    run.git = []
     return run
+
+
+STAMP_CALL = ["rev-parse", "--git-path", "bfme-gate-writers"]
+
+
+def stamp_reached():
+    """True when add_match reached gate_writers.stamp (its first git call) under fake_run."""
+    return STAMP_CALL in add_match.subprocess.run.git
 
 
 PUBLIC = "_Native@24"
@@ -205,8 +215,10 @@ def test_archive_replacement_preserves_transaction_and_binary_member(route, monk
     if gate:
         with pytest.raises(SystemExit): add_match.main()
         assert before == (functions.read_bytes(), deleted.read_bytes(), route.path.read_bytes())
+        assert not stamp_reached()          # a red gate stamps nothing
     else:
         add_match.main()
+        assert stamp_reached()              # a verified relabel stamps gate_writers
         assert OLD not in functions.read_text()
         assert PUBLIC in functions.read_text()
         assert OLD in deleted.read_text()

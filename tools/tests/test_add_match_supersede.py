@@ -23,10 +23,20 @@ def fake_run(gate):
     file is written outside the fixture."""
     def run(command, **kwargs):
         if command and command[0] == "git":
+            run.git.append(list(command[1:]))
             return SimpleNamespace(returncode=1, stdout=b"", stderr=b"")
         assert set(kwargs) == {"cwd", "env"}, kwargs
         return SimpleNamespace(returncode=gate)
+    run.git = []
     return run
+
+
+STAMP_CALL = ["rev-parse", "--git-path", "bfme-gate-writers"]
+
+
+def stamp_reached():
+    """True when add_match reached gate_writers.stamp (its first git call) under fake_run."""
+    return STAMP_CALL in add_match.subprocess.run.git
 
 
 
@@ -71,6 +81,7 @@ def test_replace_rva_tombstones_the_superseded_scaffold(tmp_path, monkeypatch):
 
     add_match.main()
 
+    assert stamp_reached()                  # a verified relabel stamps gate_writers
     ledger = functions.read_text(encoding="utf-8")
     assert "?d_00abcd00@@YAXXZ" not in ledger
     assert REAL in ledger
