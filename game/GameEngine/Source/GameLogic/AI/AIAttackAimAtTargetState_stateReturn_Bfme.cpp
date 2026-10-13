@@ -1,22 +1,28 @@
 // ?stateReturn@Gen00039BD5@@QAE?AW4StateReturnType@@_N@Z
-// partial score=0.971 date=2026-09-28
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
-// Retail 0x0017BA90 (897 B, ret 4): the AIAttackAimAtTargetState per-frame worker.
-// Matched AIAttackAimAtTargetState::onEnter calls it with 1 through ILT 0x00039BD5,
-// and vtable slot 6's forwarder 0x001840D0 calls it with 0. Rewritten cold from
-// retail on the ZH AIAttackAimAtTargetState::update skeleton.
-// PARAMETER IS Bool: retail re-reads `byte ptr [esp+0x34]` at every use, while an
-// Int parameter is cached in edi. The pinned caller name
-// ?stateReturn@Gen00039BD5@@QAE?AW4StateReturnType@@H@Z (onEnter) therefore needs
-// a correction to ...@_N@Z when this lands (callers push the same immediate).
-// Model: Coord3D = member-wise copy ctor + IMPLICIT operator=; the aim delta is
-// assigned under `if (weapon)`; the angle offset goes through a named local.
-// SCOPE: the Zero Hour "no else here!" block encloses REL_THRESH through the
-// aim-success test; with targetPos declared inside it, retail's load-all victim
-// position copy follows (26 wrong bytes left, all in the "Ram" contact block,
-// where retail places `gotContact = false` before the contact call).
+// Retail 0x0017BA90 (897 B, ret 4 at +0x37E, INT3 padding from +0x381): the
+// AIAttackAimAtTargetState per-frame worker.  Matched onEnter 0x00183E40 calls
+// it with 1 through ILT 0x00039BD5, and vtable 0x01097C60 slot 6's forwarder
+// 0x001840D0 calls it with 0.  Rewritten cold from retail on the ZH
+// AIAttackAimAtTargetState::update skeleton; the class name stays
+// address-derived, as in the onEnter TU.
+// PARAMETER IS Bool: retail re-reads `byte ptr [esp+0x34]` at every use, while
+// an Int parameter is cached in edi (Int measured 893 B with 239 diffs).  The
+// onEnter TU still declares the ...@H@Z spelling and needs the same correction
+// whenever it is revisited; both callers push the same immediate.
+// LAYOUT: the Ram-contact false arm must precede the contact call.  Spelling
+// its guard `(...) == false` with the false arm first is the one form MSVC 7.1
+// leaves in retail's order -- `!`, De Morgan, ternary and arm-swap spellings
+// all canonicalize back to then-first.  Coord3D = member-wise copy ctor +
+// IMPLICIT operator=; the aim delta is assigned under `if (weapon)`; the angle
+// offset goes through a named local.  The Zero Hour "no else here!" block
+// encloses REL_THRESH through the aim-success test; with targetPos declared
+// inside it, retail's load-all victim position copy follows.
 #include <math.h>
 
+// class-gate: allow Coord3D the canonical bare header drops the member-wise
+// copy constructor; adopting it moves 458 bytes (896/897 B), so this view needs
+// the local ctor.
 typedef int Int;
 typedef bool Bool;
 typedef float Real;
@@ -213,12 +219,12 @@ StateReturnType Gen00039BD5::stateReturn(Bool firstTime)
 		if (m_isAttackingObject)
 		{
 			Bool gotContact;
-			if (weapon && (victim->isKindOf(KINDOF_BFME_3B) || victim->isKindOf(KINDOF_BFME_88)) &&
+			if ((weapon && (victim->isKindOf(KINDOF_BFME_3B) || victim->isKindOf(KINDOF_BFME_88)) &&
 				(((Gen_001e1760 *)weapon->m_template)->m() ||
-				 ((Rva001E1770ByteField *)weapon->m_template)->get()))
-				gotContact = victim->getWorldspaceBestContactPoint(&targetPos, source->getPosition(), "Ram", 0, 0x2a, false);
-			else
+				 ((Rva001E1770ByteField *)weapon->m_template)->get())) == false)
 				gotContact = false;
+			else
+				gotContact = victim->getWorldspaceBestContactPoint(&targetPos, source->getPosition(), "Ram", 0, 0x2a, false);
 			if (!victim->isKindOf(KINDOF_BFME_95) && !gotContact)
 				targetPos = *victim->getPosition();
 		}
