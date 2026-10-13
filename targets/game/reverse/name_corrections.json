@@ -19818,5 +19818,15 @@
   "after_sha256": "bb54817a94ea200b54bd036148ebb24dcb1fd881f689208d4ab10d9f5e7f74e1",
   "evidence": "targets/game/reverse/identity_evidence/00268ba0-start-power-recharge-swap.md",
   "reason": "ILT oracle contradicts ?startPowerRecharge@SpecialPowerModule@@UAEXXZ at 0x0026AE00 and confirms it at 0x00268BA0; the 0x0026AE00 owner is not identified, so its class is address-derived"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x001b3b70.cpp",
+  "new_path": "targets/game/reverse/attempts/0x001b3b70.cpp",
+  "old_name": "xfer",
+  "new_name": "rva001B3B70",
+  "before_sha256": "b99687ee3596355562c6ec44ae4e115fda4a17626b1b21872de971e5ddebd2a1",
+  "after_sha256": "435d2915b61974852a4b98b9bc0de3f35153e01c6943cc4fb8ddadfbd39edb0b",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "0x001B3B70 sits in ??_7GhostObject@@6B@ slot 3 and ilt_oracle CONTRADICTS ?xfer@GhostObject (M and U spellings); the bank keeps an address-derived method name"
  }
 ]

@@ -1,7 +1,11 @@
-// ?xfer@Gen_001B3B70@@QAEXPAVXfer@@@Z (identity unknown)
-// partial score=0.6 date=2026-09-07
+// ?d_001b3b70@@YAXXZ
+// partial score=0.5946 date=2026-10-13
+// ?rva001B3B70@GhostObject@@UAEXPAVXfer@@@Z (table ??_7GhostObject@@6B@ slot 3; ILT window rejects ?xfer@GhostObject)
+// cl: /DNDEBUG /MD /EHsc
 
-typedef unsigned int UnsignedInt;
+typedef int ObjectID;
+#define NULL 0
+#define INVALID_ID 0
 
 struct XferVersion
 {
@@ -11,109 +15,107 @@ struct XferVersion
 
 struct XferException
 {
-	char *m_text;
-	int m_tag;
+	void *text;
+	int tag;
 };
 
-union XferLocal
-{
-	XferVersion m_version;
-	XferException m_error;
-};
-
-class BfmeObject
-{
-public:
-	char m_bfmeHead[0x74];
-	UnsignedInt m_bfmeID;
-};
+extern "C" XferException *__cdecl bfmeFormatText(
+	XferException *result, int tag, const char *format, ...);
+__declspec(noreturn) void __stdcall _CxxThrowException(void *object, void *throwInfo);
+extern int g_guardTargetTypeThrowInfo;
 
 class Xfer
 {
 public:
-	virtual void slot00(void);
-	virtual bool isLoading(void);
-	virtual void slot02(void);
-	virtual void slot03(void);
-	virtual bool isLightCRC(void);
-	virtual void slot05(void);
-	virtual void slot06(void);
-	virtual void slot07(void);
-	virtual void slot08(void);
-	virtual void slot09(void);
-	virtual Xfer &xferVersion(XferVersion *version);
-	virtual void slot11(void);
-	virtual void slot12(void);
-	virtual void slot13(void);
-	virtual void slot14(void);
-	virtual void slot15(void);
-	virtual void slot16(void);
-	virtual void slot17(void);
-	virtual void slot18(void);
-	virtual void slot19(void);
-	virtual void slot20(void);
-	virtual void slot21(void);
-	virtual void slot22(void);
-	virtual void slot23(void);
-	virtual void xferAt60(void *value);
-	virtual void slot24(void);
-	virtual void slot25(void);
-	virtual void xferAt6C(void *value);
+	virtual void slot00();
+	virtual bool isLoading();
+	virtual void slot08();
+	virtual void slot0c();
+	virtual bool isLightCRC();
+	virtual void slot14();
+	virtual void slot18();
+	virtual void slot1c();
+	virtual void slot20();
+	virtual void slot24();
+	virtual void xferVersion(XferVersion *version);
+	virtual void slot2c();
+	virtual void slot30();
+	virtual void slot34();
+	virtual void slot38();
+	virtual void slot3c();
+	virtual void slot40();
+	virtual void slot44();
+	virtual void slot48();
+	virtual void slot4c();
+	virtual void slot50();
+	virtual void slot54();
+	virtual void slot58();
+	virtual void slot5c();
+	virtual void slot60(void *value);
+	virtual void slot64();
+	virtual void slot68();
+	virtual void slot6c(void *value);
+};
+
+class MidVirtualSlot90Receiver;
+Xfer &Rva0010C3C0(MidVirtualSlot90Receiver *receiver, void *value);
+
+class Object
+{
+public:
+	ObjectID getID() const { return m_id; }
+private:
+	unsigned char m_pad[0x74];
+	ObjectID m_id;
 };
 
 class GameLogic
 {
 public:
-	BfmeObject *findObjectByID(UnsignedInt id);
+	Object *findObjectByID(ObjectID id);
 };
+extern GameLogic *TheGameLogic;
 
-#define TheGameLogic (*(GameLogic **)0x012F0898)
-
-extern "C" void __cdecl bfmeCalcTGC(void *xfer, int *value);
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern "C" int g_guardTargetTypeThrowInfo;
-
-class Gen_001B3B70
+class GhostObject
 {
 public:
-	void xfer(Xfer *xfer);
+	virtual ~GhostObject();
+	virtual void slot04();
+	virtual void slot08();
+	virtual void rva001B3B70(Xfer *xfer);
 
-	char m_bfmeHead[0x0c];
-	BfmeObject *m_bfmeObject;
-	char m_bfmeField10[0x0c];
-	char m_bfmeField1c;
+private:
+	unsigned char m_pad04[8];
+	Object *m_parentObject;
+	unsigned char m_field10[0xc];
+	unsigned char m_field1c[4];
 };
 
-void Gen_001B3B70::xfer(Xfer *xfer)
+void GhostObject::rva001B3B70(Xfer *xfer)
 {
 	if (xfer->isLightCRC())
 		return;
 
-	XferLocal local;
-	local.m_version.m_version = 1;
-	local.m_version.m_currentVersion = 1;
-	xfer->xferVersion(&local.m_version);
+	union { XferVersion version; XferException error; } local;
+	local.version.m_version = 1;
+	local.version.m_currentVersion = 1;
+	xfer->xferVersion(&local.version);
 
-	register int objectID = 0;
-	if (m_bfmeObject != 0)
-		objectID = m_bfmeObject->m_bfmeID;
-	bfmeCalcTGC(xfer, (int *)&objectID);
-
+	ObjectID parentObjectID = INVALID_ID;
+	if (m_parentObject)
+		parentObjectID = m_parentObject->getID();
+	Rva0010C3C0((MidVirtualSlot90Receiver *)xfer, &parentObjectID);
 	if (xfer->isLoading())
 	{
-		const int id = objectID;
-		GameLogic * const logic = TheGameLogic;
-		m_bfmeObject = logic->findObjectByID(id);
-		if (id != 0 && m_bfmeObject == 0)
+		ObjectID id = parentObjectID;
+		m_parentObject = TheGameLogic->findObjectByID(id);
+		if (id != INVALID_ID && m_parentObject == NULL)
 		{
-			bfmeFormatText(&local.m_error, 5, 0);
-			_CxxThrowException(&local.m_error, &g_guardTargetTypeThrowInfo);
+			bfmeFormatText(&local.error, 5, 0);
+			_CxxThrowException(&local.error, &g_guardTargetTypeThrowInfo);
 		}
 	}
 
-	xfer->xferAt6C(&m_bfmeField1c);
-	xfer->xferAt60(&m_bfmeField10);
+	xfer->slot6c(m_field1c);
+	xfer->slot60(m_field10);
 }
