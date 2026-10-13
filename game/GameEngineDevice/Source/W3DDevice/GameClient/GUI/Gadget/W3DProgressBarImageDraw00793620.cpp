@@ -1,16 +1,10 @@
-// ?W3DGadgetProgressBarImageDraw@@YAXPAVGameWindow@@PAVWinInstanceData@@@Z
-// partial score=0.9228 date=2026-09-23
+// ?W3DGadgetProgressBarImageDraw00793620@@YAXPAVGameWindow@@PAVWinInstanceData@@@Z
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHs-c-
-// W3DGadgetProgressBarImageDraw, retail 0x00793620 (868 bytes).
-//
-// The drift row included two alignment bytes at 0x0079361E.  Retail's first
-// instruction is the prologue at 0x00793620; the body ends at 0x00793983.
-// Keep the BFME ABI slice local: the vendored headers describe the shorter
-// Zero Hour WinInstanceData/GameWindow layout.
+// BFME ABI views; evidence: targets/game/reverse/identity_evidence/00793620-coordinate-lifetimes.md.
 
 typedef int Int;
 typedef unsigned int UnsignedInt;
-typedef unsigned char Bool;
+typedef bool Bool;
 typedef float Real;
 
 class Image
@@ -28,6 +22,8 @@ private:
 struct ICoord2D
 {
 	Int x, y;
+	// ??0ICoord2D@@QAE@XZ absent-from-retail
+	ICoord2D() {}
 };
 
 struct IRegion2D
@@ -56,10 +52,10 @@ public:
 class GameWindow
 {
 public:
-	void *winGetUserData(void);
+	void *winGetUserData(void) const;
 	Int winGetScreenPosition(Int *x, Int *y);
 	Int winGetSize(Int *width, Int *height);
-	UnsignedInt winGetStatus(void);
+	UnsignedInt winGetStatus(void) const;
 
 	const Image *winGetEnabledImage(Int index) { return m_enabledDrawData[index].image; }
 	const Image *winGetDisabledImage(Int index) { return m_disabledDrawData[index].image; }
@@ -140,7 +136,7 @@ public:
 	BFME_WINDOW_MANAGER_SLOT(57) BFME_WINDOW_MANAGER_SLOT(58) BFME_WINDOW_MANAGER_SLOT(59)
 	BFME_WINDOW_MANAGER_SLOT(60)
 	virtual void winDrawImage(const Image *image, Int startX, Int startY,
-																	Int endX, Int endY, Int color = 0xFFFFFFFF);
+																	Int endX, Int endY, UnsignedInt color = 0xFFFFFFFF);
 };
 #undef BFME_WINDOW_MANAGER_SLOT
 
@@ -151,7 +147,7 @@ enum { WIN_STATE_HILITED = 0x00000002 };
 
 inline Int BitTest(UnsignedInt bits, UnsignedInt mask) { return (bits & mask) != 0; }
 
-void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instData )
+void W3DGadgetProgressBarImageDraw00793620( GameWindow *window, WinInstanceData *instData )
 {
 	ICoord2D origin, size, start, end;
 	const Image *backLeft, *backRight, *backCenter, 
@@ -213,7 +209,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	if( backLeft == 0 || backRight == 0 ||
 			backCenter == 0 ||
 			barRight == 0)
-			// backSmallCenter == 0 ||barLeft == 0 ||barCenter == 0 || barSmallCenter == 0 )
+			// backSmallCenter == NULL ||barLeft == NULL ||barCenter == NULL || barSmallCenter == NULL )
 		return;
 
 	// get image sizes for the ends
@@ -225,10 +221,10 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 
 	// get two key points used in the end drawing
 	ICoord2D leftEnd, rightStart;
-	rightStart.y = origin.y + yOffset;
 	leftEnd.x = origin.x + leftSize.x + xOffset;
 	leftEnd.y = origin.y + size.y + yOffset;
 	rightStart.x = origin.x + size.x - rightSize.x + xOffset;
+	rightStart.y = origin.y + yOffset;
 
 	// draw the center repeating bar
 	Int centerWidth, pieces;
