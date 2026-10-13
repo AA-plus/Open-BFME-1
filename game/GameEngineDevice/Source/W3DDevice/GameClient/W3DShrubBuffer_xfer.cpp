@@ -1,13 +1,6 @@
-// ?xfer@W3DShrubBuffer@@MAEXPAVXfer@@@Z
-// partial score=0.8882 date=2026-09-30
-// ?xfer@W3DShrubBuffer@@MAEXPAVXfer@@@Z
+// ?xfer00721380@W3DShrubBuffer@@MAEXPAVXfer@@@Z
 // stlport
-// partial score=0.99743 date=2026-09-26
 // cl: /Igame/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WW3D2 /Igame /Igame/GameEngine/Include/Precompiled /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/shims/sweep /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
-// Native-header bank: 1553/1557 bytes, 166 differing nonrelocation bytes.
-// Shape 0.994 is diagnostic only; the measured raw-byte quality is 0.8882.
-// Retail loads treeType into EDI at 0x0072178E before this into EBX at 0x00721792.
-// The append callee 0x00720D10 and the 0x0071CD80 record copy are already typed.
 
 #define __PLACEMENT_VEC_NEW_INLINE
 #include <string.h>
@@ -44,7 +37,7 @@ struct Rva00721380Version : Xfer::Version
  }
 };
 
-// Landed cdecl helpers that transfer three floats, a drawable ID and a matrix.
+// Cdecl helpers transfer three floats, a drawable ID and a matrix.
 class BfmeSeedTarget;
 void bfmeHandOver_00001A50(BfmeSeedTarget *target, void *item);
 class MidVirtualSlot90Receiver;
@@ -74,7 +67,7 @@ public:
 	virtual const Rva00720D10Data *slot09() const;
 };
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Module.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Module.h
 class Rva00721380ModuleInfoView
 {
 public:
@@ -138,7 +131,7 @@ struct Rva00720D10Data
 	AsciiString m_textureName;
 };
 
-// The 0xA4-byte shrub record; 0x0071CD80 is its matched copy constructor.
+// Shrub record copied by the existing address-derived constructor.
 class Gen_0071CD80
 {
 public:
@@ -173,6 +166,15 @@ struct Rva00721380ShrubType
 	Int m_field58;
 };
 
+// Retail copies three floats into the outgoing argument and saves its address.
+// The view retains that copy lifetime without a coordinate destructor.
+struct Rva00721380CoordView
+{
+ Rva00721380CoordView() {}
+ Rva00721380CoordView(const Rva00721380CoordView &other) : x(other.x), y(other.y), z(other.z) {}
+ Real x, y, z;
+};
+
 class W3DShrubBuffer
 {
 public:
@@ -180,7 +182,7 @@ public:
 		const Rva00720D10Data *data, Int shadowKind, const AsciiString &textureName, const AsciiString &nameD);
 
 protected:
-	virtual void xfer(Xfer *xfer);
+	virtual void xfer00721380(Xfer *xfer);
 
 private:
 	unsigned char m_pad004[0xb8 - 4];
@@ -195,8 +197,13 @@ private:
 	Vector3 m_cameraLookAtVector;
 };
 
-// ?xfer@W3DShrubBuffer@@MAEXPAVXfer@@@Z
-void W3DShrubBuffer::xfer(Xfer *xfer)
+// ------------------------------------------------------------------------------------------------
+/** Xfer
+	* Version Info:
+	* 1: Initial version */
+// ------------------------------------------------------------------------------------------------
+// ?xfer00721380@W3DShrubBuffer@@MAEXPAVXfer@@@Z
+void W3DShrubBuffer::xfer00721380(Xfer *xfer)
 {
 	if (xfer->IsLightCRC())
 		return;
@@ -262,6 +269,7 @@ void W3DShrubBuffer::xfer(Xfer *xfer)
 			m_areaPartition[i] = -1;
 	}
 
+	// Save trees. [8/11/2003]
 	for (i = 0; i < numTrees; i++) {
 		Gen_0071CD80 tree;
 		memset(&tree, 0, sizeof(tree));
@@ -292,9 +300,9 @@ void W3DShrubBuffer::xfer(Xfer *xfer)
 		xfer->xferReal(&tree.location.X);
 		xfer->xferReal(&tree.location.Y);
 		xfer->xferReal(&tree.location.Z);
-		xfer->xferReal(&tree.scale);
+		xfer->xferReal(&tree.scale);	///< Scale at location.
 		BfmeParticleSystemXferMatrix(*xfer, &tree.transform);
-		Rva0010C3E0(reinterpret_cast<MidVirtualSlot90Receiver *>(xfer), &tree.drawableID);
+		Rva0010C3E0(reinterpret_cast<MidVirtualSlot90Receiver *>(xfer), &tree.drawableID);	///< Drawable this tree corresponds to.
 
 		Bool doShadow = false;
 		AsciiString textureName;
@@ -312,8 +320,10 @@ void W3DShrubBuffer::xfer(Xfer *xfer)
 			pos.x = tree.location.X;
 			pos.y = tree.location.Y;
 			pos.z = tree.location.Z;
-			rva00720D10(tree.drawableID, pos, tree.scale, &tree.transform, 0, m_treeTypes[treeType].m_data,
+			typedef void (W3DShrubBuffer::*AppendView)(UnsignedInt, Rva00721380CoordView, Real, const Matrix3D *, Real, const Rva00720D10Data *, Int, const AsciiString &, const AsciiString &);
+			AppendView append = reinterpret_cast<AppendView>(&W3DShrubBuffer::rva00720D10);
+			(this->*append)(tree.drawableID, reinterpret_cast<const Rva00721380CoordView &>(pos), tree.scale, &tree.transform, 0, m_treeTypes[treeType].m_data,
 				doShadow ? 1 : 0, textureName, "");
 		}
 	}
-}
+}  // end xfer
