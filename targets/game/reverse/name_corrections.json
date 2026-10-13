@@ -19718,5 +19718,15 @@
   "after_sha256": "a51b219ff93653d5d44c7db40967fa0dbaf168f283e3c7373471824a0c219215",
   "evidence": "targets/game/reverse/identity_evidence/006ecd30-texture-handle-assignment.md",
   "reason": "Slot-based indirect call and bank-only label do not establish drawImageCore; retain W3DDisplay owner with address-qualified method until its native name is witnessed."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00515810.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/BfmeAptScreenInGameChatRefreshFriendsList.cpp",
+  "old_name": "updateButtons",
+  "new_name": "Rva00006F4BUpdateButtons",
+  "before_sha256": "c048c76ce12c15580ce254c5501cb771b1de8b372823a54f8d89213ce986cfd0",
+  "after_sha256": "aeee3a3044a0e0bce50b87fc966947855cab8562d8b76b77b2314acfaca106a7",
+  "evidence": "targets/game/reverse/identity_evidence/0x00515810-updatebuttons-ilt-contradiction.md",
+  "reason": "The bank pinned the helper called at 0x00515810 as ?updateButtons@AptInGameChat@@QAEXXZ at ILT thunk 0x00006F4B; tools/ilt_oracle.py reports that identity CONTRADICTED (bare updateButtons p_false=3.26e-03; ?updateButtons@AptInGameChat@@QAEXXZ and its access-decorated spellings p_false=1.63e-03, outside every window of the target's slots 4878:5263-5287), so the descriptive name is unproven. The pin and the landed private method keep the call target while spelling the address-derived placeholder Rva00006F4BUpdateButtons; see targets/game/reverse/identity_evidence/0x00515810-updatebuttons-ilt-contradiction.md."
  }
 ]

@@ -1,5 +1,5 @@
 // ?Rva00515810@AptInGameChat@@QAEXXZ
-// partial score=0.4726 date=2026-10-13
+// matched 1166/1166 bytes (exact modulo relocations) 2026-10-13
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringinline
 // stlport
 //
@@ -65,14 +65,27 @@ typedef std::map<GPProfile, Gen_004E9FD0> BuddyInfoMap;
 class GameSpyInfo
 {
 public:
-#define GAMESPY_SLOT(n) virtual void slot##n() = 0
-	GAMESPY_SLOT(00); GAMESPY_SLOT(01); GAMESPY_SLOT(02); GAMESPY_SLOT(03);
-	GAMESPY_SLOT(04); GAMESPY_SLOT(05); GAMESPY_SLOT(06); GAMESPY_SLOT(07);
-	GAMESPY_SLOT(08); GAMESPY_SLOT(09); GAMESPY_SLOT(10); GAMESPY_SLOT(11);
-	GAMESPY_SLOT(12); GAMESPY_SLOT(13); GAMESPY_SLOT(14); GAMESPY_SLOT(15);
-	GAMESPY_SLOT(16); GAMESPY_SLOT(17); GAMESPY_SLOT(18); GAMESPY_SLOT(19);
-	GAMESPY_SLOT(20);
-#undef GAMESPY_SLOT
+	virtual void slot00() = 0;
+	virtual void slot01() = 0;
+	virtual void slot02() = 0;
+	virtual void slot03() = 0;
+	virtual void slot04() = 0;
+	virtual void slot05() = 0;
+	virtual void slot06() = 0;
+	virtual void slot07() = 0;
+	virtual void slot08() = 0;
+	virtual void slot09() = 0;
+	virtual void slot10() = 0;
+	virtual void slot11() = 0;
+	virtual void slot12() = 0;
+	virtual void slot13() = 0;
+	virtual void slot14() = 0;
+	virtual void slot15() = 0;
+	virtual void slot16() = 0;
+	virtual void slot17() = 0;
+	virtual void slot18() = 0;
+	virtual void slot19() = 0;
+	virtual void slot20() = 0;
 	virtual BuddyInfoMap *getBuddyMap() = 0;
 	virtual BuddyInfoMap *getBuddyRequestMap() = 0;
 };
@@ -80,24 +93,54 @@ public:
 class GameWindowManager
 {
 public:
-#define WINDOW_MANAGER_SLOT(n) virtual void slot##n() = 0
-	WINDOW_MANAGER_SLOT(00); WINDOW_MANAGER_SLOT(01); WINDOW_MANAGER_SLOT(02);
-	WINDOW_MANAGER_SLOT(03); WINDOW_MANAGER_SLOT(04); WINDOW_MANAGER_SLOT(05);
-	WINDOW_MANAGER_SLOT(06); WINDOW_MANAGER_SLOT(07); WINDOW_MANAGER_SLOT(08);
-	WINDOW_MANAGER_SLOT(09); WINDOW_MANAGER_SLOT(10); WINDOW_MANAGER_SLOT(11);
-	WINDOW_MANAGER_SLOT(12); WINDOW_MANAGER_SLOT(13); WINDOW_MANAGER_SLOT(14);
-	WINDOW_MANAGER_SLOT(15); WINDOW_MANAGER_SLOT(16); WINDOW_MANAGER_SLOT(17);
-	WINDOW_MANAGER_SLOT(18); WINDOW_MANAGER_SLOT(19); WINDOW_MANAGER_SLOT(20);
-	WINDOW_MANAGER_SLOT(21); WINDOW_MANAGER_SLOT(22); WINDOW_MANAGER_SLOT(23);
-	WINDOW_MANAGER_SLOT(24); WINDOW_MANAGER_SLOT(25); WINDOW_MANAGER_SLOT(26);
-	WINDOW_MANAGER_SLOT(27); WINDOW_MANAGER_SLOT(28); WINDOW_MANAGER_SLOT(29);
-	WINDOW_MANAGER_SLOT(30); WINDOW_MANAGER_SLOT(31); WINDOW_MANAGER_SLOT(32);
-	WINDOW_MANAGER_SLOT(33); WINDOW_MANAGER_SLOT(34); WINDOW_MANAGER_SLOT(35);
-	WINDOW_MANAGER_SLOT(36); WINDOW_MANAGER_SLOT(37); WINDOW_MANAGER_SLOT(38);
-	WINDOW_MANAGER_SLOT(39); WINDOW_MANAGER_SLOT(40); WINDOW_MANAGER_SLOT(41);
-	WINDOW_MANAGER_SLOT(42); WINDOW_MANAGER_SLOT(43);
+	virtual void slot00() = 0;
+	virtual void slot01() = 0;
+	virtual void slot02() = 0;
+	virtual void slot03() = 0;
+	virtual void slot04() = 0;
+	virtual void slot05() = 0;
+	virtual void slot06() = 0;
+	virtual void slot07() = 0;
+	virtual void slot08() = 0;
+	virtual void slot09() = 0;
+	virtual void slot10() = 0;
+	virtual void slot11() = 0;
+	virtual void slot12() = 0;
+	virtual void slot13() = 0;
+	virtual void slot14() = 0;
+	virtual void slot15() = 0;
+	virtual void slot16() = 0;
+	virtual void slot17() = 0;
+	virtual void slot18() = 0;
+	virtual void slot19() = 0;
+	virtual void slot20() = 0;
+	virtual void slot21() = 0;
+	virtual void slot22() = 0;
+	virtual void slot23() = 0;
+	virtual void slot24() = 0;
+	virtual void slot25() = 0;
+	virtual void slot26() = 0;
+	virtual void slot27() = 0;
+	virtual void slot28() = 0;
+	virtual void slot29() = 0;
+	virtual void slot30() = 0;
+	virtual void slot31() = 0;
+	virtual void slot32() = 0;
+	virtual void slot33() = 0;
+	virtual void slot34() = 0;
+	virtual void slot35() = 0;
+	virtual void slot36() = 0;
+	virtual void slot37() = 0;
+	virtual void slot38() = 0;
+	virtual void slot39() = 0;
+	virtual void slot40() = 0;
+	virtual void slot41() = 0;
+	virtual void slot42() = 0;
+	virtual void slot43() = 0;
+	virtual void slot44() = 0;
+	virtual void slot45() = 0;
+	virtual void slot46() = 0;
 	virtual void winSetLoneWindow( GameWindow *window ) = 0;
-#undef WINDOW_MANAGER_SLOT
 };
 
 extern GameSpyInfo *TheGameSpyInfo;
@@ -126,28 +169,24 @@ extern void GadgetListBoxSetSelected( GameWindow *listbox, const Int *selectList
 	Int count );
 extern void GadgetListBoxSetTopVisibleEntry( GameWindow *listbox, Int topEntry );
 
-// The list renderer is an existing ILT body. Its address is proven by the
-// friends-list call site, while its generated declaration carries no ABI.
-extern Int Rva00515810AddEntry( GameWindow *listbox, Int profileID,
-	void *record, Color color );
-#pragma comment(linker, "/alternatename:?Rva00515810AddEntry@@YAHPAVGameWindow@@HPAXH@Z=?j_000208d3@@YAXXZ")
+// The row-adder is an already matched body (0x0052DC00, 147 bytes, matched in
+// BfmeAptScreenOnlineChatAddFriend.cpp); this call site targets its
+// incremental-link thunk, so the matched ledger row resolves the displacement.
+extern Int Rva0052DC00AddFriend( GameWindow *listbox, Int profileID,
+	const AsciiString *name, Color color );
 
 class AptInGameChat
 {
 public:
 	void Rva00515810();
-	void updateButtons();
+	void Rva00006F4BUpdateButtons();
+	Int rva00512890( Int profileID, UnicodeString &result );
 
 private:
 	unsigned char m_unmodelled000[0x260];
 	GameWindow *m_chatEntry;
 	GameWindow *m_friendsList;
 };
-
-#pragma comment(linker, "/alternatename:?updateButtons@AptInGameChat@@QAEXXZ=?j_00006f4b@@YAXXZ")
-
-// ?Rva00512890@@YGHHAAVUnicodeString@@@Z
-extern "C" int __stdcall Rva00512890( Int profileID, UnicodeString &result );
 
 void AptInGameChat::Rva00515810()
 {
@@ -195,7 +234,7 @@ void AptInGameChat::Rva00515810()
 	{
 		unsigned char *record = (unsigned char *)it->value;
 		UnicodeString displayName;
-		Int state = Rva00512890( *(Int *)record, displayName );
+		Int state = rva00512890( *(Int *)record, displayName );
 		Int color = 0;
 		switch ( state )
 		{
@@ -209,25 +248,27 @@ void AptInGameChat::Rva00515810()
 			color = 0;
 			break;
 		}
-		Int index = Rva00515810AddEntry( m_friendsList, *(Int *)record,
-			record + 4, GameSpyColor[color] );
+		Int index = Rva0052DC00AddFriend( m_friendsList, *(Int *)record,
+			(const AsciiString *)(record + 4), GameSpyColor[color] );
 		if ( selectedProfiles.find( *(Int *)record ) != selectedProfiles.end() )
 			indicesToSelect.push_back( index );
 	}
-	std::sort( indicesToSelect.begin(), indicesToSelect.end() );
-	if ( indicesToSelect.size() != 0 )
+	Int selectedCount = (Int)indicesToSelect.size();
+	if ( selectedCount != 0 )
 	{
-		Int *newIndices = new Int[indicesToSelect.size()];
-		for ( Int i = 0; i < (Int)indicesToSelect.size(); ++i )
-			newIndices[i] = indicesToSelect[i];
-		GadgetListBoxSetSelected( m_friendsList, newIndices,
-			(Int)indicesToSelect.size() );
+		std::sort( indicesToSelect.begin(), indicesToSelect.end() );
+		Int *newIndices = new Int[selectedCount];
+		std::vector<Int>::iterator indexIt;
+		Int i;
+		for ( i = 0, indexIt = indicesToSelect.begin(); indexIt != indicesToSelect.end(); ++i, ++indexIt )
+			newIndices[i] = *indexIt;
+		GadgetListBoxSetSelected( m_friendsList, newIndices, selectedCount );
 		delete[] newIndices;
 	}
 
-	if ( (Int)indicesToSelect.size() != numSelected )
+	if ( selectedCount != numSelected )
 		TheWindowManager->winSetLoneWindow( 0 );
 
-	updateButtons();
 	GadgetListBoxSetTopVisibleEntry( m_friendsList, previousTopIndex );
+	Rva00006F4BUpdateButtons();
 }
