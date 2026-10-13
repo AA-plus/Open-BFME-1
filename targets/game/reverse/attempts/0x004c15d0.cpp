@@ -1,5 +1,5 @@
 // ?bfmeShowDN@ControlBar@@QAEXPAUBfmeMsgDN@@@Z
-// partial score=0.976 date=2026-09-28
+// partial score=0.9764 date=2026-09-28
 // ?bfmeShowDN@ControlBar@@QAEXPAUBfmeMsgDN@@@Z
 // cl: /DNDEBUG /DWIN32 /MD /EHsc
 // Retail 0x004C15D0, 678 bytes (ret 4). Three matched callers (ControlBarRva004C1B60.cpp,

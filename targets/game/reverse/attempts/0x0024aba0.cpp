@@ -1,5 +1,6 @@
 // ?d_0024aba0@@YAXXZ
-// partial score=0.975 date=2026-10-09
+// partial score=0.984 date=2026-10-13
+// frame-slot residue 9B; see identity_evidence/0024aba0-frame-slot-allocation.md
 // Evidence: targets/game/reverse/identity_evidence/0024aba0-native-transfer.md
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/GameEngine/Source/GameLogic/Object /Igame/GameEngine/Source/Common/System
 // stlport
@@ -11,6 +12,7 @@
 
 typedef Xfer Rva0024ABA0Target;
 typedef Xfer::Version Rva0024ABA0Pair;
+struct Rva0024ABA0Pair44 { Rva0024ABA0Pair p; unsigned char pad[2]; };
 typedef std::list<Object *> Rva0024ABA0List;
 typedef std::list<int> Rva0024ABA0ValueList;
 struct Rva00226FA0Less : std::less<int> {};
@@ -47,7 +49,8 @@ void Rva0024ABA0::method(Rva0024ABA0Target *target)
     seed(target);
     if (target->IsLightCRC())
         return;
-    Rva0024ABA0Pair version;
+    Rva0024ABA0Pair44 versionStorage;
+    Rva0024ABA0Pair &version = versionStorage.p;
     version.data[0] = 1;
     version.data[1] = 1;
     *target == version;
@@ -82,6 +85,7 @@ void Rva0024ABA0::method(Rva0024ABA0Target *target)
         }
     }
     *target == m_valueF4;
+    {
     int count;
     if (target->IsStoring())
     {
@@ -105,5 +109,6 @@ void Rva0024ABA0::method(Rva0024ABA0Target *target)
             *target == value;
             m_map[key] = value;
         }
+    }
     }
 }
