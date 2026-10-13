@@ -1,10 +1,11 @@
-// ?d_004b25d0@@YAXXZ
-// partial score=0.978021978 date=2026-09-27
+// ?method@Rva004B25D0@@QAEXAAVUnicodeString@@000@Z
+// partial score=0.978 date=2026-09-30
 // stlport
 // cl: /EHsc /Igame/Libraries/Source/WWVegas/WWLib /I.
 // Complete control-flow reconstruction of retail RVA 004B25D0, 1365 bytes.
-// Identity deliberately retains the address. String literals establish tooltip
-// behavior, not an owning class. Scratch only until caller AND helper ABIs match.
+// Tooltip strings identify the work, but they do not prove an owning class.
+// Keep the receiver name from its address until a caller proves the class.
+// The source compiles, but its register assignment still differs from retail.
 #include "ascii_string.h"
 #include "unicode_string.h"
 #include <new>
@@ -17,17 +18,7 @@ public: void construct(const UnicodeString&);
 };
 #pragma comment(linker, "/alternatename:?construct@WideCopy00888400@@QAEXABVUnicodeString@@@Z=??0?$StringBase@G@@AAE@ABV0@@Z")
 
-template<class T> inline StringBase<T>::~StringBase() { releaseBuffer(); }
-template<class T> inline void StringBase<T>::clear() { releaseBuffer(); }
 template<class T> inline bool StringBase<T>::isEmpty() const { return !m_data || !m_data->length; }
-template<class T> inline int StringBase<T>::getLength() const { return m_data ? m_data->length : 0; }
-template<class T> inline const T *StringBase<T>::str() const {
-    static const T TheNullChr = 0;
-    return m_data ? m_data->data : &TheNullChr;
-}
-template<class T> inline void StringBase<T>::swap(StringBase<T>& other) {
-    Header *tmp=m_data; m_data=other.m_data; other.m_data=tmp;
-}
 inline UnicodeString::UnicodeString() { ((StringBase<unsigned short>*)this)->m_data=0; }
 __forceinline UnicodeString::UnicodeString(const UnicodeString& other) {
     ((WideCopy00888400*)this)->construct(other);
@@ -143,11 +134,11 @@ static __declspec(noinline) void append004B2560(UnicodeString& out,const Unicode
     dest.concat((const unsigned short*)line.str(),line.getLength());
 }
 
-class TooltipText004B25D0 {
-public: void build(UnicodeString&,UnicodeString&,UnicodeString&,UnicodeString&);
+class Rva004B25D0 {
+public: void method(UnicodeString&,UnicodeString&,UnicodeString&,UnicodeString&);
     void *at00; int at04;
 };
-void TooltipText004B25D0::build(UnicodeString& name,UnicodeString& unused2,
+void Rva004B25D0::method(UnicodeString& name,UnicodeString& unused2,
                              UnicodeString& unused3,UnicodeString& description) {
     clear004B25D0(name); clear004B25D0(unused2);
     clear004B25D0(unused3); clear004B25D0(description);
