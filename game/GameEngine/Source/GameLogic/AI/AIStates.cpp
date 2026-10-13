@@ -1924,6 +1924,39 @@ void AIInternalMoveToState::startMoveSound(void)
 //-------------------------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------------------------------------
+// Retail's State vtable carries isIdle at +0x1c (StateMachine::isInIdleState
+// bodies at 0x000A1270 and 0x0016A190 call it there); the shared header's
+// State has it earlier, and its StateMachine reads m_currentState at +0x20
+// where retail reads +0x1c. This view mirrors the proven TU-local State
+// declarations (MemoryPoolObject destructor, three Snapshot hooks, onEnter,
+// onExit, update, then isIdle on slot 7) under a TU-local name so this TU's
+// accessor below emits the retail spelling. Xfer is only fwd-declared, as
+// in the proven TU.
+// Retail's StateMachine::isInIdleState reads m_currentState at +0x1c (bodies
+// at 0x000A1270 and 0x0016A190); the shared header's StateMachine reads
+// +0x20, so calling the header inline from this TU emitted a divergent copy
+// that stole the link from the four proven +0x1c copies. Route this TU's
+// calls through the retail spelling instead. The slot is spelled explicitly
+// (index 7 = +0x1c): virtual dispatch through any visible State declaration
+// provably miscompiles here (two view shapes both emitted slot +0x14), so
+// the compiler must not compute the slot. No /alternatename. auto_inline
+// off: the helper must stay outlined so the callers keep plain calls like
+// retail's.
+#pragma auto_inline(off)
+static Bool bfmeMachineIsIdle(const StateMachine *machine)
+{
+	// __fastcall passes the first argument in ecx, exactly where the
+	// callee (a thiscall body) takes its this pointer; the dummy second
+	// argument rides in edx and is ignored.
+	typedef Bool (__fastcall *IsIdleFn)(const void *self, int dummy);
+	const void *cur = *(const void *const *)((const char *)machine + 0x1c);
+	if (!cur)
+		return true;
+	const void *const *vtable = *(const void *const *const *)cur;
+	return ((IsIdleFn)vtable[7])(cur, 0);
+}
+#pragma auto_inline()
+
 class AIAttackMoveStateMachine : public StateMachine
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIAttackMoveStateMachine, "AIAttackMoveStateMachine" );
@@ -5041,14 +5074,14 @@ StateReturnType AIAttackMoveToState::update()
 		return STATE_SUCCESS;
 	}
 
-	if (!m_attackMoveMachine->isInIdleState()) 
+	if (!bfmeMachineIsIdle(m_attackMoveMachine)) 
 	{
 		ai->setLocomotorGoalNone();
 		owner->clearModelConditionState(MODELCONDITION_MOVING);
 		m_attackMoveMachine->updateStateMachine();
 		
 		// if the machine is now idling, then we need to attempt to get a new target
-		if (m_attackMoveMachine->isInIdleState()) {
+		if (bfmeMachineIsIdle(m_attackMoveMachine)) {
 			forceRetargetThisFrame = true;
 			shouldRepathThisFrame = true;
 			ai->friend_setLastCommandSource(m_commandSrc);
@@ -5057,7 +5090,7 @@ StateReturnType AIAttackMoveToState::update()
 		}
 	}
 
-	if (m_attackMoveMachine->isInIdleState())
+	if (bfmeMachineIsIdle(m_attackMoveMachine))
 	{
 
 		// Check to see if we have created a crate we need to pick up.
@@ -5677,14 +5710,14 @@ StateReturnType AIAttackFollowWaypointPathState::update()
 
 	Bool forceRetargetThisFrame = false;
 	Bool shouldRepathThisFrame = false;
-	if (!m_attackFollowMachine->isInIdleState()) 
+	if (!bfmeMachineIsIdle(m_attackFollowMachine)) 
 	{
 		ai->setLocomotorGoalNone();
 		owner->clearModelConditionState(MODELCONDITION_MOVING);
 		m_attackFollowMachine->updateStateMachine();
 		
 		// if the machine is now idling, then we need to attempt to get a new target
-		if (m_attackFollowMachine->isInIdleState()) 
+		if (bfmeMachineIsIdle(m_attackFollowMachine)) 
 		{
 			forceRetargetThisFrame = true;
 			shouldRepathThisFrame = true;
@@ -5695,7 +5728,7 @@ StateReturnType AIAttackFollowWaypointPathState::update()
 		}
 	}
 
-	if (m_attackFollowMachine->isInIdleState())
+	if (bfmeMachineIsIdle(m_attackFollowMachine))
 	{
 		// Check to see if we have created a crate we need to pick up.
 		Object* crate = ai->checkForCrateToPickup();
