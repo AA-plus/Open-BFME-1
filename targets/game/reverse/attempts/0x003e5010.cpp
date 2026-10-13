@@ -1,10 +1,13 @@
 // ?rva003E5010@Pathfinder@@QAEXPAVObject@@PAUCoord3D@@0_N@Z
-// partial score=0.96 date=2026-09-27
+// partial score=0.7567 date=2026-10-05
 // stlport
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /I.
 // Retail code at 0x003E5010 uses a four-argument Pathfinder thiscall.
 // A matched caller proves the argument types and Pathfinder owner.
 // No evidence proves a semantic method name, so this draft uses the RVA.
+// This scalar-cell version matches the 0x74-byte retail frame and 1262-byte size.
+// The probe reports 347 non-relocation differences and 21 structural differences.
+// The first raw mismatch is the saved-this stack slot at +0x19.
 
 #include "PreRTS.h"
 #include "../../../../game/GameEngine/Include/GameLogic/TerrainLogic.h"
@@ -185,9 +188,12 @@ void Pathfinder::rva003E5010(Object *source, Coord3D *destination,
 	if (!rva003E5010ObjectCell(this, target, &targetCell))
 		return;
 
-	Int radius;
-	Bool center;
-	getRadiusAndCenter(source, radius, center);
+	struct RadiusCenter
+	{
+		Bool center;
+		Int radius;
+	} radiusCenter;
+	getRadiusAndCenter(source, radiusCenter.radius, radiusCenter.center);
 
 	BfmeThingTemplate *firstTemplate = (BfmeThingTemplate *)
 		rva003E5010Template(source->m_template);
@@ -205,31 +211,31 @@ void Pathfinder::rva003E5010(Object *source, Coord3D *destination,
 	state.m_offset05 = computerControlled;
 	state.m_offset08 = maxLayer - 1;
 
-	ICoord2DPair sourceCell;
-	if (center)
-		sourceCell.x = REAL_TO_INT_FLOOR(destination->x * *(const Real *)0x01075c70);
+	Int sourceCellX;
+	Int sourceCellY;
+	if (radiusCenter.center)
+		sourceCellX = REAL_TO_INT_FLOOR(destination->x * *(const Real *)0x01075c70);
 	else
-		sourceCell.x = REAL_TO_INT_FLOOR(*(const Real *)0x0107533c +
+		sourceCellX = REAL_TO_INT_FLOOR(*(const Real *)0x0107533c +
 			destination->x * *(const Real *)0x01075c70);
-	if (center)
-		sourceCell.y = REAL_TO_INT_FLOOR(destination->y * *(const Real *)0x01075c70);
+	if (radiusCenter.center)
+		sourceCellY = REAL_TO_INT_FLOOR(destination->y * *(const Real *)0x01075c70);
 	else
-		sourceCell.y = REAL_TO_INT_FLOOR(*(const Real *)0x0107533c +
+		sourceCellY = REAL_TO_INT_FLOOR(*(const Real *)0x0107533c +
 			destination->y * *(const Real *)0x01075c70);
 
 	Int average = rva003E5010Average(source);
 	Int targetLayer = rva003E5010Layer(target);
-	Int sourceLayer = rva003E5010Layer(source);
 	Rva003D86E0Scanner scanner;
 	scanner.m_pathfinder = this;
 	scanner.m_field04 = &state;
-	scanner.m_layer = (PathfindLayerEnum)sourceLayer;
+	scanner.m_layer = (PathfindLayerEnum)rva003E5010Layer(source);
 	scanner.m_field14 = targetLayer;
 	scanner.m_cachedCellA = targetCell.x;
 	scanner.m_cachedCellB = targetCell.y;
-	scanner.m_originX = radius;
-	scanner.m_originY = radius + (center != 0);
-	if (average == 0 && rva003E5010Scan(&scanner, sourceCell.x, sourceCell.y))
+	scanner.m_originX = radiusCenter.radius;
+	scanner.m_originY = radiusCenter.radius + (radiusCenter.center != 0);
+	if (average == 0 && rva003E5010Scan(&scanner, sourceCellX, sourceCellY))
 		return;
 
 	Int lastX = -1;
@@ -242,12 +248,12 @@ void Pathfinder::rva003E5010(Object *source, Coord3D *destination,
 		Real candidateY = inverse * destination->y + fraction * target->m_position.y;
 		Int cellX;
 		Int cellY;
-		if (center)
+		if (radiusCenter.center)
 			cellX = REAL_TO_INT_FLOOR(candidateX * *(const Real *)0x01075c70);
 		else
 			cellX = REAL_TO_INT_FLOOR(*(const Real *)0x0107533c +
 				candidateX * *(const Real *)0x01075c70);
-		if (center)
+		if (radiusCenter.center)
 			cellY = REAL_TO_INT_FLOOR(candidateY * *(const Real *)0x01075c70);
 		else
 			cellY = REAL_TO_INT_FLOOR(*(const Real *)0x0107533c +
@@ -271,12 +277,12 @@ void Pathfinder::rva003E5010(Object *source, Coord3D *destination,
 				Real extraY = blend * destination->y + weight * target->m_position.y;
 				Int extraCellX;
 				Int extraCellY;
-				if (center)
+				if (radiusCenter.center)
 					extraCellX = REAL_TO_INT_FLOOR(extraX * *(const Real *)0x01075c70);
 				else
 					extraCellX = REAL_TO_INT_FLOOR(*(const Real *)0x0107533c +
 						extraX * *(const Real *)0x01075c70);
-				if (center)
+				if (radiusCenter.center)
 					extraCellY = REAL_TO_INT_FLOOR(extraY * *(const Real *)0x01075c70);
 				else
 					extraCellY = REAL_TO_INT_FLOOR(*(const Real *)0x0107533c +
@@ -304,5 +310,5 @@ void Pathfinder::rva003E5010(Object *source, Coord3D *destination,
 	if (source->m_adjustHistoryIndex == 8)
 		source->m_adjustHistoryIndex = 0;
 	PathfindLayerEnum layer = (PathfindLayerEnum)rva003E5010Layer(target);
-	rva003E5010Adjust(this, targetCell.x, targetCell.y, center, *destination, layer);
+	rva003E5010Adjust(this, targetCell.x, targetCell.y, radiusCenter.center, *destination, layer);
 }
