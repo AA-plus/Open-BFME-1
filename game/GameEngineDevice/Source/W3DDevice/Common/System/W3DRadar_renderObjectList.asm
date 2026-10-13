@@ -8,7 +8,6 @@ EXTERN ?PlayerList005999B0@@3PAUPlayers005999B0@@A:BYTE
 EXTERN ?Rva006C0890@@YAHHH@Z:NEAR
 EXTERN ?TheBfmeGenAE@@3PAVBfmeGenAE@@A:BYTE
 EXTERN ?_M_deallocate@?$__node_alloc@$00$0A@@_STL@@CAXPAXI@Z:NEAR
-EXTERN ?d_006c1d00@@YAXXZ:NEAR
 EXTERN ?g_Va012F7FD8@@3IA:BYTE
 EXTERN ?g_bfmeADL@@3MA:BYTE
 EXTERN ?g_bfmeLimitEK@@3MB:BYTE
@@ -26,6 +25,7 @@ EXTERN ?j_000330dc@@YAXXZ:NEAR
 EXTERN ?j_00033a1e@@YAXXZ:NEAR
 EXTERN ?j_0003add7@@YAXXZ:NEAR
 EXTERN ?j_00047bb3@@YAXXZ:NEAR
+EXTERN ?rva006C1D00@@YAXHHHPAVSurfaceClass@@@Z:NEAR
 EXTERN ?rva006C2A20@@YAXPAVSurfaceClass@@HHHHHPBE@Z:NEAR
 EXTERN ?rva006C2DD0@@YAXPAVSurfaceClass@@HHHHHQAY01$$CBE@Z:NEAR
 EXTERN ?rva006C42B0@@YA_NPBVObject@@PAH@Z:NEAR
@@ -156,9 +156,9 @@ public ?renderObjectList@W3DRadar@@IAEXPBVRadarObject@@PAVTextureClass@@_N@Z
     dd g_Va012F7F44
     db 089h, 05Ch, 024h, 030h, 089h, 07Ch, 024h, 024h, 074h, 04Fh, 08Dh, 049h, 000h, 08Bh, 075h, 000h
     db 08Bh, 07Dh, 008h, 08Bh, 045h, 004h, 08Dh, 05Ch, 024h, 014h
-    call ?d_006c1d00@@YAXXZ
+    call ?rva006C1D00@@YAXHHHPAVSurfaceClass@@@Z
     db 08Bh, 04Dh, 000h, 08Bh, 074h, 024h, 030h, 08Bh, 07Dh, 008h, 08Bh, 045h, 004h, 02Bh, 0F1h
-    call ?d_006c1d00@@YAXXZ
+    call ?rva006C1D00@@YAXHHHPAVSurfaceClass@@@Z
     db 08Bh, 044h, 024h, 024h, 08Bh, 008h, 03Bh, 04Dh, 000h, 07Dh, 004h, 089h, 06Ch, 024h, 024h, 08Bh
     db 044h, 024h, 03Ch, 083h, 0C5h, 00Ch, 03Bh, 0E8h, 075h, 0C0h, 08Bh, 06Ch, 024h, 038h, 08Bh, 07Ch
     db 024h, 024h, 08Bh, 05Ch, 024h, 030h, 08Bh, 077h, 004h, 08Bh, 047h, 008h, 046h, 03Bh, 0F0h, 07Dh
