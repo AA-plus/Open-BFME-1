@@ -1,6 +1,6 @@
 // ?visit@Rva21ABF0Worker@@QAEXPAX@Z
-// partial score=0.4566 date=2026-10-04
-// cl: /DNDEBUG /DWIN32 /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib
+// partial score=1.0 date=2026-10-13
+// cl: /DNDEBUG /DWIN32 /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath
 // stlport
 struct Rva21ABF0Node
 {
@@ -117,6 +117,8 @@ typedef float Real;
 
 #define _STLP_NO_EXCEPTIONS 1
 #include <bitset>
+#define _OPERATOR_NEW_DEFINED_
+#include "vector3.h"
 
 template <int N>
 class BitFlags
@@ -408,17 +410,16 @@ void Rva21ABF0Worker::visit(void *value)
 		Rva21ABF0PhysicsBehavior *physics = object->getPhysicsBehavior();
 		if (physics != 0)
 		{
-			Real forceScaleX = object->m_forceScaleX;
-			Real forceScaleY = object->m_forceScaleY;
+			Vector3 scaled(object->m_forceScaleX, object->m_forceScaleY, 1.0f);
 			int forceMagnitude = GetGameLogicRandomValue(
 				2, 5,
 				(char *)"F:\\bfme\\Code\\gameengine\\Source\\GameLogic\\Object\\Contain\\OpenContain.cpp",
 				0x840);
-			Coord3D force = {
-				forceScaleX * forceMagnitude,
-				forceMagnitude * forceScaleY,
-				(Real)forceMagnitude
-			};
+			scaled *= (Real)forceMagnitude;
+            Coord3D force;
+            force.x = scaled.X;
+            force.y = scaled.Y;
+            force.z = scaled.Z;
 			physics->applyMotiveForce(&force);
 		}
 
@@ -442,8 +443,10 @@ void Rva21ABF0Worker::visit(void *value)
 		}
 	}
 
+	else {
+	moduleData = m_moduleData;
 	damage = object->getBodyModule()->getMaxHealth() *
-		m_moduleData->m_damagePercentageToUnits;
+		moduleData->m_damagePercentageToUnits;
 	BFMEDamageInfo info;
 	info.in.m_damageType = DAMAGE_UNRESISTABLE;
 	info.in.m_deathType = DEATH_BURNED;
@@ -455,4 +458,5 @@ void Rva21ABF0Worker::visit(void *value)
 		return;
 	if (m_moduleData->m_damagePercentageToUnits == g_bfmeDefaultBU)
 		object->kill(DAMAGE_UNRESISTABLE, DEATH_NORMAL);
+}
 }
