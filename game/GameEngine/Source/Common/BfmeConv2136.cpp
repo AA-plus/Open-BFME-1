@@ -23,7 +23,11 @@ class Gen00971360
 public:
 	__forceinline Gen00971360() { m_bfmeRefXS = 0; }
 	Gen00971360(void *ref);
-	~Gen00971360();
+	~Gen00971360()
+	{
+		if (m_bfmeRefXS != 0)
+			static_cast<TextureClass *>(m_bfmeRefXS)->Release_Ref();
+	}
 
 	void *m_bfmeRefXS;
 };
