@@ -1,18 +1,11 @@
 // ?bfmeRunEQT@BfmeObjEQT@@QAEDPAX@Z
-// partial score=0.6932 date=2026-10-04
-struct Coord3D
-{
-	float x;
-	float y;
-	float z;
-
-	void set(const Coord3D *sourcePosition)
-	{
-		x = sourcePosition->x;
-		y = sourcePosition->y;
-		z = sourcePosition->z;
-	}
-};
+// partial score=0.9773 date=2026-10-13
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWMath
+#include "coord3d.h"
+inline Coord3D::Coord3D() {}
+inline Coord3D::Coord3D(const Coord3D &that) { x=that.x; y=that.y; z=that.z; }
+inline Coord3D::~Coord3D() {}
+inline void Coord3D::set(const Coord3DBase *that) { x=that->x; y=that->y; z=that->z; }
 
 #define BFME_HAVE_COORD3D
 #define THING_TU_MEMBERS const Coord3D *getPosition() const;
@@ -119,18 +112,9 @@ extern AI *TheAI;
 
 char BfmeObjEQT::bfmeRunEQT(void *arg)
 {
-	Object *object;
-	const Coord3D *ownerPosition = ((Object *)m_bfmeOwnerEQT)->getPosition();
-	Coord3D origin;
-	origin.x = ownerPosition->x;
-	origin.y = ownerPosition->y;
-	unsigned int originZ = *(const unsigned int *)((const unsigned char *)ownerPosition + 8);
-	_ReadWriteBarrier();
-	object = (Object *)arg;
-	const Coord3D *objectPosition = object->getPosition();
-	Coord3D victimPos;
-	victimPos.set(objectPosition);
-	*(unsigned int *)((unsigned char *)&origin + 8) = originZ;
+	Object *object = (Object *)arg;
+	Coord3D origin(*((Object *)m_bfmeOwnerEQT)->getPosition());
+	Coord3D victimPos(*object->getPosition());
 
 	Overridable *objectTemplate = (Overridable *)object->m_template;
 	if (objectTemplate != 0)
@@ -138,6 +122,7 @@ char BfmeObjEQT::bfmeRunEQT(void *arg)
 		Overridable *nextOverride = *(Overridable **)((unsigned char *)objectTemplate + 4);
 		if (nextOverride != 0)
 			objectTemplate = (Overridable *)nextOverride->getFinalOverride();
+	}
 		if (*(const unsigned int *)((const unsigned char *)objectTemplate + 0xCC) & 0x08000000)
 		{
 			AI *ai = TheAI;
@@ -145,7 +130,6 @@ char BfmeObjEQT::bfmeRunEQT(void *arg)
 			if (pathfinder != 0)
 				pathfinder->bfmeAdjustLOSPoints(&victimPos, &origin);
 		}
-	}
 
 	Object *owner = (Object *)m_bfmeOwnerEQT;
 	Overridable *ownerTemplate = (Overridable *)owner->m_template;
@@ -158,17 +142,16 @@ char BfmeObjEQT::bfmeRunEQT(void *arg)
 	if ((*(const unsigned char *)((const unsigned char *)ownerTemplate + 0xC8) & 0x80) != 0)
 		goto skipGeometryHeight;
 	origin.z += ((GeometryInfo *)((unsigned char *)owner + 0xAC))->getMaxHeightAbovePosition();
-	victimPos.z += ((GeometryInfo *)((unsigned char *)object + 0xAC))->getMaxHeightAbovePosition();
 skipGeometryHeight:
+	victimPos.z += ((GeometryInfo *)((unsigned char *)object + 0xAC))->getMaxHeightAbovePosition();
 
 	if (!TheTerrainLogic->isClearLineOfSight(*(const Coord3D *)&origin,
 		*(const Coord3D *)&victimPos))
 		return 0;
 
 	AI *ai = TheAI;
-	Pathfinder *pathfinder = ai != 0 ? *(Pathfinder **)((unsigned char *)ai + 0x0C) : 0;
-	if (pathfinder != 0 &&
-		pathfinder->isAttackViewBlockedByObstacle((const Object *)m_bfmeOwnerEQT, (const Object *)object))
+	if (ai != 0 &&
+		(*(Pathfinder **)((unsigned char *)ai + 0x0C))->isAttackViewBlockedByObstacle((const Object *)m_bfmeOwnerEQT, (const Object *)object))
 		return 0;
 
 	return 1;
