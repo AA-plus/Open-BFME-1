@@ -37,6 +37,7 @@ extern void rva00036458Target(void);
 extern void rva00037F4CTarget(void);
 extern void rva00044BFCTarget(void);
 extern void rva0004B0F1Target(void);
+extern void rva0000DE77Target(void);
 extern void rva0000C054Target(void);
 extern void rva000082F6Target(void);
 extern void rva00002874Target(void);
@@ -79,6 +80,7 @@ extern void rva00044E31Target(void);
 #pragma comment(linker, "/alternatename:?rva00044BFCTarget@@YAXXZ=?getInstance@?$ConcreteModuleClass@V?$ModuleTag@$07$E?LIFE_EVENT_MODULE_KEY@FXParticleSystem@@3QBDB$E?LIFE_EVENT_MODULE_NAME@2@3QBDBVLifeEventModule@2@VLifeEventModuleTemplate@2@VParticleLifeEventModule@2@VParticleLifeEventModuleTemplate@2@@FXParticleSystem@@@FXParticleSystem@@SAABV12@XZ")
 #pragma comment(linker, "/alternatename:?rva00044E31Target@@YAXXZ=??1LifeEventModuleTemplate@FXParticleSystem@@UAE@XZ")
 #pragma comment(linker, "/alternatename:?rva0004B0F1Target@@YAXXZ=?getInstance@?$ConcreteModuleClass@V?$ModuleTag@$03$E?HEMISPHERICAL_EMISSION_VELOCITY_MODULE_KEY@FXParticleSystem@@3QBDB$E?HEMISPHERICAL_EMISSION_VELOCITY_MODULE_NAME@2@3QBDBVHemisphericalEmissionVelocityModule@2@VHemisphericalEmissionVelocityModuleTemplate@2@V?$DefaultParticleModule@$03@2@V?$DefaultParticleModuleTemplate@$03@2@@FXParticleSystem@@@FXParticleSystem@@SAABV12@XZ")
+#pragma comment(linker, "/alternatename:?rva0000DE77Target@@YAXXZ=Gen_treeraw_00668150")
 #pragma comment(linker, "/alternatename:?rva0000C054Target@@YAXXZ=dup_1265d0")
 #pragma comment(linker, "/alternatename:?rva000082F6Target@@YAXXZ=?insert_unique@?$_Rb_tree@HU?$pair@$$CBHUGen_t_00654460_p12cd@@@_STL@@U?$_Select1st@U?$pair@$$CBHUGen_t_00654460_p12cd@@@_STL@@@2@U?$less@H@2@V?$allocator@U?$pair@$$CBHUGen_t_00654460_p12cd@@@_STL@@@2@@_STL@@QAE?AU?$_Rb_tree_iterator@U?$pair@$$CBHUGen_t_00654460_p12cd@@@_STL@@U?$_Nonconst_traits@U?$pair@$$CBHUGen_t_00654460_p12cd@@@_STL@@@2@@2@U32@ABU?$pair@$$CBHUGen_t_00654460_p12cd@@@2@@Z")
 #pragma comment(linker, "/alternatename:?rva00002874Target@@YAXXZ=??0DrawableModule@@QAE@PAVThing@@PBVModuleData@@@Z")
@@ -291,4 +293,9 @@ void j_000082F6(void)
 void j_0000C054(void)
 {
 	rva0000C054Target();
+}
+
+void j_0000DE77(void)
+{
+	rva0000DE77Target();
 }
