@@ -1,19 +1,11 @@
 // cl: /DNDEBUG /MD /EHsc /Igame/GameEngine/Source/Common/System
 
 #include "game_client_random_variable.h"
-
-class Xfer;
+#include "snapshot.h"
 
 namespace FXParticleSystem
 {
-class LightningDrawModuleInfoCleanupBase
-{
-public:
-    LightningDrawModuleInfoCleanupBase() {}
-    ~LightningDrawModuleInfoCleanupBase();
-};
-
-class LightningDrawModuleInfo : public LightningDrawModuleInfoCleanupBase
+class LightningDrawModuleInfo : public Snapshot
 {
 public:
     LightningDrawModuleInfo();
