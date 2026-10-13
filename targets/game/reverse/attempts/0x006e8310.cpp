@@ -1,5 +1,8 @@
+// ?update@Rva006E8310TransitionState@@QAEXXZ
+// partial score=0.7459 date=2026-10-13
 // ?d_006e8310@@YAXXZ
-// partial score=0.10 date=2026-09-25
+// Scratch extern data names are UNBOUND; no new retail bindings are claimed.
+// Three RGB aggregate lifetimes and interpolation operands follow retail disassembly.
 // ?update@Rva006E8310TransitionState@@QAEXXZ
 // cl: /DNDEBUG /MD /EHsc
 
@@ -87,14 +90,14 @@ public:
 	Real blue;
 };
 
-#define TheGameClient (*(Rva006E8310GameClient **)0x012F1464)
-#define TheDisplay (*(Rva006E8310Display **)0x012F1270)
-#define Rva006E8310GlobalDataPtr (*(Rva006E8310GlobalDataLayout **)0x012ED5C8)
-#define TheTerrainRenderObject (*(Rva006C8E00Dispatch **)0x012F7FE0)
-#define Rva006E8310Zero (*(const Real *)0x01075350)
-#define g_bfmeDefaultBU (*(const Real *)0x01075334)
-#define Rva006E8310Uint32Scale (*(const Real *)0x01075358)
-#define Rva006E8310FrameScale (*(const Real *)0x012BAA30)
+extern Rva006E8310GameClient *TheGameClient;
+extern Rva006E8310Display *TheDisplay;
+extern Rva006E8310GlobalDataLayout *Rva006E8310GlobalDataPtr;
+extern Rva006C8E00Dispatch *TheTerrainRenderObject;
+extern const Real Rva006E8310Zero;
+extern const Real g_bfmeDefaultBU;
+extern const Real Rva006E8310Uint32Scale;
+extern const Real Rva006E8310FrameScale;
 
 static Rva006E8310TerrainLighting *lightingAt(unsigned char *base,
 	int timeOfDay, unsigned int offset)
@@ -105,13 +108,11 @@ static Rva006E8310TerrainLighting *lightingAt(unsigned char *base,
 
 void Rva006E8310TransitionState::update()
 {
-	if (Rva006E8310Zero < duration)
+	if (duration != Rva006E8310Zero)
 	{
 
-	int elapsed = TheGameClient->getFrame() - startFrame;
+	unsigned int elapsed = TheGameClient->getFrame() - startFrame;
 	Real fraction = static_cast<Real>(elapsed);
-	if (elapsed < 0)
-		fraction += Rva006E8310Uint32Scale;
 	fraction *= Rva006E8310FrameScale;
 	fraction /= duration;
 	if (fraction >= g_bfmeDefaultBU)
@@ -141,23 +142,15 @@ void Rva006E8310TransitionState::update()
 		const Rva006E8310TerrainLighting &a = terrain[i];
 		const Rva006E8310TerrainLighting &b = objects[i];
 		const Rva006E8310TerrainLighting &c = active[i];
-		const Real redValue = from * red + to * a.diffuse.red;
-		const Real greenValue = from * green + to * a.diffuse.green;
-		const Real blueValue = from * blue + to * a.diffuse.blue;
-
-		TheDisplay->setLighting(i,
-			from * a.diffuse.red + to * b.diffuse.red,
-			from * a.diffuse.green + to * b.diffuse.green,
-			from * a.diffuse.blue + to * b.diffuse.blue);
-		TheDisplay->setObjectLighting(i,
-			from * a.diffuse.red + to * c.diffuse.red,
-			from * a.diffuse.green + to * c.diffuse.green,
-			from * a.diffuse.blue + to * c.diffuse.blue);
-
-		current->red = redValue;
-		current->green = greenValue;
-		current->blue = blueValue;
-		++current;
+		Rva006E8310Rgb color = { from * a.diffuse.red + to * red,
+            from * a.diffuse.green + to * green, from * a.diffuse.blue + to * blue };
+        Rva006E8310Rgb objectColor = { from * b.diffuse.red + to * red,
+            from * b.diffuse.green + to * green, from * b.diffuse.blue + to * blue };
+        Rva006E8310Rgb activeColor = { from * c.diffuse.red + to * red,
+            from * c.diffuse.green + to * green, from * c.diffuse.blue + to * blue };
+        TheDisplay->setLighting(i, objectColor.red, objectColor.green, objectColor.blue);
+        TheDisplay->setObjectLighting(i, activeColor.red, activeColor.green, activeColor.blue);
+        Rva006E8310GlobalDataPtr->current[i] = color;
 	}
 
 	if (TheTerrainRenderObject != 0)

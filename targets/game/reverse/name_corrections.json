@@ -19798,5 +19798,15 @@
   "after_sha256": "3cf3e3d8973ad0c384f8596c37404ef3b27861374cb88f88b19e3674521d5601",
   "evidence": "targets/game/reverse/identity_evidence/00740440-camera-path-angles.md",
   "reason": "invented name contradicted by the ILT oracle at ILT 0x00020266; no caller supplies a real name, so the method keeps its address"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x006e8310.cpp",
+  "new_path": "targets/game/reverse/attempts/0x006e8310.cpp",
+  "old_name": "current",
+  "new_name": "Rva006E8310GlobalDataPtr",
+  "before_sha256": "f70354a9072e6aaca25459c6e6b31afba59ef45845ee790231b51077a508505a",
+  "after_sha256": "db37d69ef29a2c211c772c065042bcc378991818f64fc605f8f4c62c8ff55efd",
+  "evidence": "targets/game/reverse/identity_evidence/006e8310-current-false-pair.md",
+  "reason": "False token pairing: current member and local pointer persist in both snapshots; the pre-existing global pointer now qualifies current[i] for aggregate assignment. Neither identifier was renamed."
  }
 ]
