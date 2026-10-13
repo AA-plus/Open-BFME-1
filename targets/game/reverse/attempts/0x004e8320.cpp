@@ -1,7 +1,6 @@
 // ?grabSinglePlayerInfo@@YAXXZ
-// partial score=0.9334 date=2026-10-01
+// partial score=0.9768 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringbaseascii /Igame/Libraries/Source/WWVegas/WWLib
-// BFME score-screen single-player aggregation, retail 0x004E8320.
 
 #include <string.h>
 
@@ -10,7 +9,7 @@ extern "C" int __cdecl memcmp(const void *left, const void *right, unsigned int 
 
 typedef int Int;
 typedef bool Bool;
-typedef int Color;
+typedef unsigned int Color;
 
 template <typename T> struct StringData
 {
@@ -112,7 +111,7 @@ public:
 	Int getTotalMoneyEarned() { return m_totalMoneyEarned; }
 	Int getTotalMoneySpent() { return m_totalMoneySpent; }
 	Int getTotalUnitsDestroyed();
-	Int getTotalUnitsBuilt() { return *(const volatile Int *)&m_totalUnitsBuilt; }
+	Int getTotalUnitsBuilt() { return m_totalUnitsBuilt; }
 	Int getTotalUnitsLost() { return m_totalUnitsLost; }
 	Int getTotalBuildingsDestroyed();
 	Int getTotalBuildingsBuilt() { return m_totalBuildingsBuilt; }
@@ -252,21 +251,35 @@ enum
 	USA_ENEMY,
 	CHINA_ENEMY,
 	GLA_ENEMY,
-	MAX_RELATIONS
+	MAX_RELATIONS // keep me last
 };
 
-static __forceinline void accumulateScore(ScoreGather &sg, ScoreKeeper *sk)
+// ?accumulateScore@@YAIAAUScoreGather@@PAVPlayer@@@Z absent-from-retail
+static __forceinline Color accumulateScore(ScoreGather &sg, Player *player)
 {
+	ScoreKeeper *sk = player->getScoreKeeper();
 	sg.m_totalBuildingsBuilt += sk->getTotalBuildingsBuilt();
-	sg.m_totalBuildingsDestroyed += sk->getTotalBuildingsDestroyed();
-	sg.m_totalBuildingsLost += sk->getTotalBuildingsLost();
-	sg.m_totalMoneySpent += sk->getTotalMoneySpent();
+	Int buildingsDestroyed = sg.m_totalBuildingsDestroyed + sk->getTotalBuildingsDestroyed();
+	Int buildingsLost = sg.m_totalBuildingsLost + sk->getTotalBuildingsLost();
+	sg.m_totalBuildingsDestroyed = buildingsDestroyed;
+	Int unitsBuilt = sk->getTotalUnitsBuilt();
+	Int moneySpent = sk->getTotalMoneySpent();
+	sg.m_totalBuildingsLost = buildingsLost;
 	sg.m_totalMoneyEarned += sk->getTotalMoneyEarned();
-	sg.m_totalUnitsBuilt += sk->getTotalUnitsBuilt();
+	sg.m_totalMoneySpent += moneySpent;
+	sg.m_totalUnitsBuilt += unitsBuilt;
 	sg.m_totalUnitsDestroyed += sk->getTotalUnitsDestroyed();
-	sg.m_totalUnitsLost += sk->getTotalUnitsLost();
+	Int unitsLost = sk->getTotalUnitsLost();
+	const PlayerTemplate *fact = player->getPlayerTemplate();
+	sg.m_totalUnitsLost += unitsLost;
+	const Image *image = fact->getSideIconImage();
+	Color color = player->getPlayerColor();
+	sg.m_sideImage = image;
+	return color;
 }
 
+/**	Grab the single player info */
+//-------------------------------------------------------------------------------------------------
 void grabSinglePlayerInfo()
 {
 	Int playerCount = 0;
@@ -311,9 +324,12 @@ void grabSinglePlayerInfo()
 		return;
 
 	AsciiString side;
+	// okay, there's all kinds of hard coding going on here.  THe reason why! well,
+	// We have no way of telling what sides we have in the game.  Hence, the hardcoding.
 	for (Int j = 0; j < MAX_RELATIONS; ++j)
 	{
 		Bool isFriend = true;
+		// set the string we'll be compairing to
 		switch (j)
 		{
 		case USA_ENEMY:
@@ -357,10 +373,7 @@ void grabSinglePlayerInfo()
 					if ((isFriend == true && localPlayer->getRelationship(player->getDefaultTeam()) == ALLIES) ||
 						(isFriend == false && localPlayer->getRelationship(player->getDefaultTeam()) == ENEMIES))
 					{
-						ScoreKeeper *sk = player->getScoreKeeper();
-						accumulateScore(sg, sk);
-						sg.m_sideImage = player->getPlayerTemplate()->getSideIconImage();
-						color = player->getPlayerColor();
+						color = accumulateScore(sg, player);
 						populate = true;
 					}
 				}
