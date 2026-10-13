@@ -1,5 +1,13 @@
-// ?bfmeSetupXA@BfmePoolXA@@QAEXPAVBfmeSpecXA@@@Z
-// partial score=0.9658 date=2026-09-08
+// Storage setup at retail RVA 0x008C6130; inherited names describe local views.
+// Counter008C6130 is a four-byte view that preserves the update schedule.
+struct Counter008C6130
+{
+    int value;
+    // ??BCounter008C6130@@QBEHXZ absent-from-retail
+    __forceinline operator int() const { return value; }
+    // ??4Counter008C6130@@QAEAAU0@H@Z absent-from-retail
+    __forceinline Counter008C6130 &operator=(int n) { value = n; return *this; }
+};
 extern "C" void *__cdecl memset(void *d, int c, unsigned int n);
 
 extern void *(__cdecl *Rva008C5D70Alloc)(unsigned int n);
@@ -43,7 +51,7 @@ public:
 	int m_bfme3CXA;
 	int m_bfme40XA;
 	int *m_bfme44XA;
-	int m_bfme48XA;
+	Counter008C6130 m_bfme48XA;
 	int m_bfme4CXA;
 	int m_bfme50XA;
 	int *m_bfme54XA;
@@ -52,6 +60,7 @@ public:
 	int m_bfme80XA;
 };
 
+// ?bfmeSetupXA@BfmePoolXA@@QAEXPAVBfmeSpecXA@@@Z
 void BfmePoolXA::bfmeSetupXA(BfmeSpecXA *s)
 {
 	int a = s->m_bfme20XA;

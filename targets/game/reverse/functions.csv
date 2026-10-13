@@ -38385,7 +38385,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_008c4a30@@YAXXZ,,0x008C4A30,873,game/gen_asm/d_00882630.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00cc4a30
 ?d_008c5a60@@YAXXZ,,0x008C5A60,189,game/gen_asm/d_008c4940.asm,matched,gen-dump;int3-carved start=int3-aligned;abs-ref end=ret+int3 refs=1
 ?d_008c5f30@@YAXXZ,,0x008C5F30,114,game/gen_asm/d_008c3e70.asm,matched,gen-dump;bounds=high
-?d_008c6130@@YAXXZ,,0x008C6130,234,game/gen_asm/d_008c39e0.asm,matched,gen-dump;ghidra=FUN_00cc6130
 ?d_008c6460@@YAXXZ,,0x008C6460,94,game/gen_asm/d_008c39e0.asm,matched,gen-dump;ghidra=FUN_00cc6460
 ?d_008c64c0@@YAXXZ,,0x008C64C0,470,game/gen_asm/d_008c39e0.asm,matched,gen-dump;ghidra=FUN_00cc64c0
 ?d_008c66a0@@YAXXZ,,0x008C66A0,129,game/gen_asm/d_008c4940.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
@@ -172555,3 +172554,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?rva001F1620@BezierProjectileBehavior@@QAEX_N@Z,,0x001F1620,449,game/GameEngine/Source/GameLogic/Object/Behavior/BezierProjectileBehavior_rva001F1620.cpp,matched,converted dump; primary Bezier receiver and ret4 from complete callers via ILT00012E8B; mask lifetime scope; identity_evidence=targets/game/reverse/identity_evidence/001f1620-mask-scope-recovery.md;model=gpt-6.1-sol;host=fleet
 ?DivideInternalFPF@@YAXPAUInternalFPF@@00@Z,,0x00879F60,801,game/Libraries/Source/Benchmark/emfloat.cpp,matched,BYTEmark division identified by complete SetupCPUEmFloatArrays and DoEmFloatIteration callers; private register ABI; complete switch tables; induction-origin reduction; evidence=targets/game/reverse/identity_evidence/00879f60-loop-origin.md;model=gpt-6.1-sol;host=fleet
 ?update@Rva0040EE90Owner@@QAEXXZ,,0x0040EE90,282,game/GameEngine/Source/GameClient/Rva0040EE90OwnerUpdate.cpp,matched,Address-derived no-argument thiscall; exact pre-decrement predicate scheduling; evidence=targets/game/reverse/identity_evidence/0040ee90-update.md;model=gpt-6.1-sol;host=fleet
+?bfmeSetupXA@BfmePoolXA@@QAEXPAVBfmeSpecXA@@@Z,,0x008C6130,234,game/Libraries/Source/Apt/BfmePoolXA008C6130Setup.cpp,matched,cpp-reconstruction;inherited opaque storage views;counter assignment view matches tail;evidence=targets/game/reverse/identity_evidence/008c6130-counter-assignment-view.md;model=gpt-6.1-sol;host=fleet
