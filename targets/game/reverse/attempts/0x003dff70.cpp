@@ -1,6 +1,10 @@
-// ?d_003dff70@@YAXXZ
-// partial score=0.4282 date=2026-10-04
-// cl: /DNDEBUG /MD /Igame/GameEngine/Source/GameLogic/Object /Igame/GameEngine/Source/Common/Thing
+// ?checkFootprint003DFF70@Pathfinder@@QAE_NPBVObject@@HHW4PathfindLayerEnum@@H_NPAH@Z
+// partial score=0.5087 date=2026-10-13
+// Native Overridable/OVERRIDE access preserves kindof offset+C8; native base is12B.
+// Measured against full816B boundary:822B377diff (prior824B438diff).
+// No identity/signature/pin changes; bank only. Lookup visibility worsens844B705diff.
+// stlport
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /I. /Igame/GameEngine/Source/GameLogic/Object /Igame/GameEngine/Source/Common/Thing
 //
 // Retail 0x003DFF70 (816 bytes through ret 0x1c): a BFME variant of the Zero
 // Hour Pathfinder::checkDestination (AIPathfind.cpp:4924) that also reports a
@@ -20,30 +24,30 @@ typedef int Int;
 typedef bool Bool;
 typedef float Real;
 typedef unsigned int ObjectID;
+const ObjectID INVALID_ID=0;
 
-const ObjectID INVALID_ID = 0;
 
-struct ICoord2D { Int x, y; };
-struct IRegion2D { ICoord2D lo, hi; };
-struct Coord3D { Real x, y, z; };
+
+enum Relationship { ENEMIES=0, NEUTRAL=1, ALLIES=2 };
+
+
+
+
+
+
+
 
 enum PathfindLayerEnum { LAYER_GROUND = 1 };
-enum Relationship { ENEMIES = 0, NEUTRAL = 1, ALLIES = 2 };
 
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Overridable.h
-class Overridable
-{
-public:
-	const Overridable *getFinalOverride() const;
 
-	void *m_vtable;
-	Overridable *m_nextOverride;
-};
+#include "Common/GameMemory.h"
+#include "Common/Overridable.h"
+#include "Common/Override.h"
 
 class ThingTemplate : public Overridable
 {
 public:
-	unsigned char m_beforeKindof[0xc8 - 0x08];
+	unsigned char m_beforeKindof[0xc8 - 0x0c];
 	unsigned int m_kindof[4];	// +0xC8 KindOf bit words
 };
 
@@ -55,7 +59,7 @@ public:
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Object.h
 #define OBJECT_TU_MEMBERS \
- const ThingTemplate *getTemplate() const { const Overridable *t=m_template; if(t && t->m_nextOverride) t=t->m_nextOverride->getFinalOverride(); return (const ThingTemplate *)t; } \
+ const ThingTemplate *getTemplate() const { return OVERRIDE<ThingTemplate>(m_template); } \
  ObjectID getID() const { return (ObjectID)m_id; } \
  AIUpdateInterface *getAIUpdateInterface() const { return m_ai; } \
  Bool bfmeIsComputerControlled() const; \
