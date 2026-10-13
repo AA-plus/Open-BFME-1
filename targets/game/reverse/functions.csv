@@ -38378,7 +38378,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0089d180@@YAXXZ,,0x0089D180,825,game/gen_asm/d_00882630.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00c9d180
 ?d_0089d890@@YAXXZ,,0x0089D890,814,game/gen_asm/d_00882630.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00c9d890
 ?d_0089e2b0@@YAXXZ,,0x0089E2B0,503,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_00c9e2b0
-?d_0089e930@@YAXXZ,,0x0089E930,290,game/gen_asm/d_0089a830.asm,matched,gen-dump;ghidra=FUN_00c9e930
 ?d_0089ea60@@YAXXZ,,0x0089EA60,204,game/gen_asm/d_0089a830.asm,matched,gen-dump;ghidra=FUN_00c9ea60
 ?d_0089eb30@@YAXXZ,,0x0089EB30,285,game/gen_asm/d_0089a830.asm,matched,gen-dump;ghidra=FUN_00c9eb30
 ?d_0089ecd0@@YAXXZ,,0x0089ECD0,275,game/gen_asm/d_00891ca0.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
@@ -172556,3 +172555,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?_bfme_newMap@VictorySystem@@UAEXXZ,,0x001DF4A0,747,game/GameEngine/Source/GameLogic/System/VictorySystemNewMap.cpp,matched,identity=existing VictorySystem vtable slot+0x24 and decoded caller; evidence=targets/game/reverse/identity_evidence/001df4a0-new-map.md; complete ABI and unwind verified; literal constants and nonthrowing finder;model=gpt-6.1-sol;host=fleet
 ?run@Rva008CCED0BytecodeRunner@@QAEPAEPAX0H@Z,,0x008CCED0,375,game/Libraries/Source/Apt/Rva008CCED0BytecodeRunner.cpp,matched,Bounded bytecode runner thiscall ret0C with cursor result; evidence=targets/game/reverse/identity_evidence/008cced0-runner-and-shape.md;model=gpt-6.1-sol;host=fleet
 ?method@Rva007AA820@@QAEXPAPAVCameraClass@@@Z,,0x007AA820,422,game/GameEngineDevice/Source/W3DDevice/GameClient/Water/Rva007AA820WaterDraw.cpp,matched,Complete opaque water-list traversal; visible non-retaining quad helper; evidence=targets/game/reverse/identity_evidence/007aa820-visible-quad.md;model=gpt-6.1-sol;host=fleet
+?rva0089E930@EAStringC@@QBE?AV1@PBD@Z,,0x0089E930,290,game/Libraries/Source/EA/Apt/AptString/EAStringCReserveCtor.cpp,matched,Complete RET8 extent through +11F; existing address-qualified EAStringC identity and decoded reserve/text constructors; prior identity_evidence/0089e930-bfme2-concat.md. Authentic reserve ctor visibility plus native sibling payload-pointer lifetime; no new pins.;model=gpt-6-astra;host=GreatFaram

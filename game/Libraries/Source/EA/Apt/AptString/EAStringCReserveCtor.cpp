@@ -1,6 +1,9 @@
 // cl: /O2 /DNDEBUG /MD /EHsc
 
 #pragma intrinsic(memcpy)
+extern "C" unsigned int __cdecl strlen(const char *);
+#pragma intrinsic(strlen)
+class BfmeStrVKI { public: void bfmeSetVKI(const char *); };
 extern "C" void *__cdecl memcpy(void *, const void *, unsigned int);
 
 struct BfmeStringPool3AF0
@@ -43,6 +46,9 @@ public:
 	}
 
 	EAStringC rva0089E0C0(const EAStringC &other) const;
+	EAStringC rva0089E930(const char *other) const;
+	EAStringC(StringDataC *data) : m_pData(data) { ++m_pData->m_uRefCount; }
+	EAStringC(const char *text) { ((BfmeStrVKI *)this)->bfmeSetVKI(text); }
 	char *GetInternalBuffer() const { return reinterpret_cast<char *>(m_pData) + sizeof(StringDataC); }
 };
 
@@ -89,3 +95,26 @@ EAStringC EAStringC::rva0089E0C0(const EAStringC &other) const
 	m_pData->m_uHash = 0;
 	return result;
 }
+
+EAStringC EAStringC::rva0089E930(const char *other) const
+{
+	unsigned int thisSize = m_pData->m_uSize;
+	if (thisSize == 0)
+		return EAStringC(other);
+
+	unsigned int otherSize = strlen(other);
+	if (otherSize == 0)
+		return *this;
+
+	EAStringC result(thisSize + otherSize);
+	const char *source = GetInternalBuffer();
+	StringDataC *resultData = result.m_pData;
+	char *dst = (char *)(resultData + 1);
+	memcpy(dst, source, thisSize);
+	memcpy(dst + thisSize, other, otherSize);
+	(dst + otherSize)[thisSize] = 0;
+	resultData->m_uSize = thisSize + otherSize;
+	m_pData->m_uHash = 0;
+	return EAStringC(resultData);
+}
+
