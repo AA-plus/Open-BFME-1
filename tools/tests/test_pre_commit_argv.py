@@ -65,7 +65,7 @@ git() {
         'diff --cached --quiet -- targets/game/reverse/functions.csv') return 1 ;;
         'diff --cached --name-only --no-renames --diff-filter=D') return 0 ;;
         'diff --cached --quiet -- targets/game/reverse/symbols.csv'|'diff --cached --quiet -- targets/game/reverse/data_rows.csv'|'diff --cached --quiet -- targets/game/reverse/pin_consistency_baseline.csv') return 0 ;;
-        'diff --cached --quiet -- targets/game/reverse/full_gate_baseline.txt targets/game/reverse/dir32_known_red.txt targets/game/reverse/dir32_unowned_known.txt') return 0 ;;
+        'diff --cached --quiet -- targets/game/reverse/full_gate_baseline.txt targets/game/reverse/dir32_known_red.txt targets/game/reverse/dir32_unowned_known.txt') return "${BASELINE_STAGED:-0}" ;;
         'diff --quiet -- targets/game/reverse/functions.csv') return 0 ;;
         'diff --quiet -- '*) return 0 ;;
         'diff --name-only -z') return 0 ;;
@@ -374,3 +374,18 @@ def test_find_declared_unmatched_reads_staged_sources_on_stdin(hook_runner):
     assert result.returncode == 0, result.stderr
     assert 'tools/find_declared_unmatched.py --fail --staged --paths-from -' in (root / 'guards').read_text()
     assert (root / 'find-declared-stdin').read_bytes() == source.encode() + b'\0'
+
+
+def test_a_staged_baseline_is_validated_and_a_failed_validation_refuses(hook_runner):
+    # The stub used to say "no baseline staged" every time, so the hook's
+    # gate_baseline.py --validate branch never ran in any test.
+    result, _, root = hook_runner(PATHS, extra_env={'BASELINE_STAGED': '1'})
+    assert result.returncode == 0, result.stderr
+    assert 'tools/gate_baseline.py --validate' in (root / 'guards').read_text()
+    for call in (root / 'calls').iterdir():
+        call.unlink()
+    result, chunks, _ = hook_runner(PATHS, extra_env={'BASELINE_STAGED': '1'}, fail_tool='gate_baseline')
+    assert result.returncode != 0
+    assert 'full-gate baseline may only shrink' in result.stderr
+    assert 'PRE-COMMIT OK' not in result.stdout
+    assert not chunks
