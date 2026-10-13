@@ -1,16 +1,17 @@
-// ?updateCenter@HeightMapRenderObjClass@@UAEXPAVCameraClass@@PAV?$RefMultiListIterator@VRenderObjClass@@@@@Z
-// partial score=0.9138104838709677 date=2026-09-23
+// ?updateCenter@HeightMapRenderObjClass006D2A00@@UAEXPAVCameraClass@@PAV?$RefMultiListIterator@VRenderObjClass@@@@@Z
+// partial score=0.9934 date=2026-10-13
 // cl: /DNDEBUG /MD /EHs-c- /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib
 #include "vector3.h"
-// Identity: ctor RVA006D1C80 installs VA0111DC88; slot135 routes
-// through ILT RVA000155DC to this body. Ret8 at RVA006D31BD: 1984 bytes.
-// BFME ABI views: Zero Hour's terrain class has a different extent.
+// Retail VA0111DC88 slot135 routes through ILT RVA000155DC to this body.
+// The address-derived BFME view preserves the decoded member offsets.
 class RenderObjClass { public: Vector3 Get_Position() const; };
 class CameraClass : public RenderObjClass {};
 template<class T> class RefMultiListIterator;
 class BaseHeightMapRenderObjClass { public: virtual void updateCenter(CameraClass*,RefMultiListIterator<RenderObjClass>*); };
 class Rva007287E0StateReset { public: int setAndClear(unsigned char*); };
 class Rva0072EA60 { public: void apply(int,int,int,int,bool); };
+extern void j_00031de0();
+union Rva006D2A00NeighborCall { void (*f)(); void (Rva0072EA60::*m)(int,int,int,int,bool); };
 class W3DTerrainBackground {
 public:
  int field_00; char pad04[0x30]; int field_34; char pad38[0x1c]; float field_54; char pad58[0x6c];
@@ -19,10 +20,12 @@ public:
 struct Rva006D2A00State { int value; unsigned char changed; char pad5[3]; };
 struct Rva006D2A00Map { char pad[0x120e8]; int field_120e8,field_120ec; };
 struct Rva006D2A00Global { char pad[0xecc]; int field_ecc; };
-extern bool Rva00EF08A0;
-extern Rva006D2A00Global *Rva00EED5C8;
+extern bool Rva012F08A0;
+extern void *Rva012ED5C8;
+#define Rva00EF08A0 Rva012F08A0
+#define Rva00EED5C8 ((Rva006D2A00Global*)Rva012ED5C8)
 extern int Rva00EF8018,Rva00EF8010,Rva00EF8014;
-class HeightMapRenderObjClass {
+class HeightMapRenderObjClass006D2A00 {
 public:
  char pad0[0x2ff0]; Rva006D2A00Map *field_2ff4; char pad2ff8[0x11]; bool field_3009;
  char pad300a[0xca]; Rva006D2A00State *field_30d4; W3DTerrainBackground *field_30d8;
@@ -32,7 +35,7 @@ public:
  virtual void updateCenter(CameraClass*,RefMultiListIterator<RenderObjClass>*);
 };
 // Primary vptr is followed by 0x2ff0 bytes, placing the map pointer at +0x2ff4.
-void HeightMapRenderObjClass::updateCenter(CameraClass *camera,RefMultiListIterator<RenderObjClass>*lights) {
+void HeightMapRenderObjClass006D2A00::updateCenter(CameraClass *camera,RefMultiListIterator<RenderObjClass>*lights) {
  if(Rva00EF08A0) { ((BaseHeightMapRenderObjClass*)this)->BaseHeightMapRenderObjClass::updateCenter(camera,lights); return; }
  Vector3 old=field_3108;
  field_3108=camera->Get_Position();
@@ -97,7 +100,8 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera,RefMultiListItera
     changed=field_30d4[index-1].changed||field_30d4[down].changed||field_30d4[index+1].changed||field_30d4[up].changed;
    }
   }
-  ((Rva0072EA60*)tile)->apply(left,bottom,right,top,changed);
+  Rva006D2A00NeighborCall call;call.f=&j_00031de0;
+  (((Rva0072EA60*)tile)->*call.m)(left,bottom,right,top,changed);
  }
  if(field_30f8) {
   int y=field_2ff4->field_120ec,x=field_2ff4->field_120e8/16;
@@ -117,13 +121,14 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera,RefMultiListItera
    }
    if(field_30fc<field_30dc) {
     field_3100=low;
-    for(int pass=20;pass>0;pass--) {
+    for(int pass=0;pass<20;pass++) {
      float mid=(high+low)*0.5f;
      int count=0;
      W3DTerrainBackground *tile=field_30d8;
      for(int n=field_30dc;n>0;n--,tile++) if(tile->field_00!=2 && tile->field_54<mid)count++;
-     if(count==field_30fc) {field_3100=mid;break;}
-     if(count>field_30fc) high=mid; else {low=mid;field_3100=mid;}
+     int desired=*(const volatile int*)&field_30fc;
+     if(count==desired) {field_3100=mid;break;}
+     if(count>desired) high=mid; else {low=mid;field_3100=mid;}
     }
    }
   } else field_30fc=field_30dc;
