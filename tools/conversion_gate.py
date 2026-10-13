@@ -87,12 +87,8 @@ def added_lift_lines(old, new, lines=None):
     # existing lift, not a new one: re_attempts 59794 added a tick parameter to
     # the unchanged naked CommUdpProcess so its C caller could pass it, and was
     # charged with adding a naked body. Only a line naming the same function
-    # cancels by name. An __emit line names none, so it cancels only against a
-    # removed line of identical text in the same file (a multiset): git re-shows
-    # a TU's existing __emit lines as -/+ pairs when a hunk shifts around them
-    # (re_attempts 0x006D88A0, removing ~W3DBridge from W3DBridgeBuffer.cpp),
-    # and a re-shown line is not a new lift. A genuinely new __emit still counts.
-    removed, removed_text, added, path = collections.Counter(), collections.Counter(), [], None
+    # cancels; an __emit line names none and always counts.
+    removed, added, path = collections.Counter(), [], None
     for line in lines:
         if line.startswith("+++ b/"):
             path = line[6:]
@@ -105,7 +101,6 @@ def added_lift_lines(old, new, lines=None):
             if is_lift_line(line):
                 name = declared_name(COMMENT_RE.sub(" ", line[1:]))
                 if line[0] == "-":
-                    removed_text[(path, line[1:].strip())] += 1
                     if name:
                         removed[(path, name)] += 1
                 else:
@@ -114,10 +109,6 @@ def added_lift_lines(old, new, lines=None):
     for path, name, line in added:
         if name and removed[(path, name)]:
             removed[(path, name)] -= 1
-            continue
-        text = line[1:].strip()
-        if not name and removed_text[(path, text)]:
-            removed_text[(path, text)] -= 1
             continue
         first, count = bad.get(path, (line[1:].strip()[:80], 0))
         bad[path] = (first, count + 1)
