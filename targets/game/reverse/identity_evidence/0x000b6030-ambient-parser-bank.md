@@ -139,3 +139,28 @@ permission to rename production audio owners. The two holder spellings remain
 unproved against the selected ThingRef/Rva00087750Ref/Rva000B5FD0Ref providers.
 The ThingTemplate receiver label is independently contradicted by the original
 Object caller's drawable/final-template argument order as described above.
+## Block-order session 2026-10-13 (t=~30min model=gpt-5.2-codex)
+
+Fresh reprobe of the bank: 976/976 B, 58 relocs, 33 non-reloc diffs, first +0x35E,
+shape 0.987, three relocation sites unaligned inside the single +0x35E..+0x39E window.
+
+Retail tail shape: `test edi,edi; jne 0x390` defers the drawable else arm past the
+join body; the template arm stays inline (`mov ecx,[esp+0x34]; test; je 0x39B;
+push 0x57; call`); fallthrough join `test eax,eax; je 0x39B`; body; `jmp DONE`;
+0x390: drawable call; `jmp 0x36E` back to the join test; TRUE store; DONE.
+
+New spellings probed this session (all 976/976 unless noted):
+
+- `if (drawableReceiver == 0) { if (templateReceiver != 0) ... } else drawable...`
+  (v4/v6) canonicalizes to `jne 0x370` + `jmp 0x379` + drawable arm at 0x370, same 33 diffs.
+- `drawable ? drawable->getSound(0x57) : (template ? template->get(0x57) : 0)` (v1)
+  and if/else-if chains (v2/v5/v8/v11): mirror layout, 42 diffs.
+- duplicated full bodies in both arms (v10): MSVC tail-merges; identical 33-diff bytes.
+- goto/label forms (v3): EH frame changes, 1031 B, rejected.
+
+Conclusion: MSVC 7.1 canonicalizes every tested spelling to either the else-adjacent
+layout (ours) or its mirror; retail's third layout (else emitted after the join body,
+back-jump to the shared join, no jump after the inline arm) is not reachable from these
+statement/expression spellings. Attributed to backend block scheduling; no source lever
+found. Bank unchanged; score 0.9662; blocker=codegen-order/branch/final-enabled-fallback.
+Scratch: build/w3db6030/v1..v11*.cpp with .log diffs.

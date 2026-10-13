@@ -1,5 +1,5 @@
 // ?d_00375650@@YAXXZ
-// partial score=0.98 date=2026-09-28
+// partial score=0.8554 date=2026-09-28
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/GameEngine/Source
 // stlport
 // CastleBehavior::rva00375650, retail 0x00375650 (747 bytes).
