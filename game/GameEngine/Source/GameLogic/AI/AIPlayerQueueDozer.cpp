@@ -1,6 +1,5 @@
-// ?queueDozer@AIPlayer@@MAEXXZ
-// partial score=0.85 date=2026-09-26
 // cl: /DNDEBUG /DWIN32 /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
+// stlport
 // readable body of ?queueDozer@AIPlayer@@MAEXXZ: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source/GameLogic/AI/AIPlayer.cpp
 //
 // AIPlayer::queueDozer, 0x001657E0, 490 bytes.
@@ -14,12 +13,18 @@
 //
 // Layout: AIPlayer build queue head +0x04, m_player +0x0C, m_teamDelay +0x24;
 // Player default team +0x230, can-build-units flag +0x294; ThingFactory first
-// template +0x08; ThingTemplate KindOf word +0xC8 (KINDOF_DOZER bit 14), name
-// +0x20, next template +0x38C; WorkOrder and TeamInQueue as in
-// AIPlayerDozer.cpp and AIPlayerCheckReadyTeams.cpp. WorkOrder's constructor
+// template +0x08; ThingTemplate name +0x20, KindOf mask +0xC8 (BFME's
+// BitFlags<192>; KINDOF_DOZER is bit 14), next template +0x38C; WorkOrder and
+// TeamInQueue as in AIPlayerDozer.cpp and AIPlayerCheckReadyTeams.cpp.
+//
+// The kind test goes through BitFlags/bitset::test as in Zero Hour's
+// TEST_KINDOFMASK: that keeps retail's word load and `test ah,0x40`, where a
+// raw `word & mask` makes MSVC hoist the mask into a register. WorkOrder's constructor
 // stores the existing retail table 0x01096964, as TeamInQueueXfer.cpp does;
 // TeamInQueue's is the out-of-line 0x00161220.
 
+#define _STLP_NO_EXCEPTIONS 1
+#include <bitset>
 #include "ascii_string.h"
 
 typedef bool Bool;
@@ -29,7 +34,7 @@ typedef unsigned int UnsignedInt;
 #define NULL 0
 #define FALSE 0
 
-enum { KINDOF_DOZER = 14 };
+enum KindOfType { KINDOF_DOZER = 14 };
 
 extern const AsciiString Rva01336E50EmptyString;
 
@@ -69,20 +74,33 @@ public:
 	Overridable *m_nextOverride;					// +0x04
 };
 
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/BitFlags.h
+template <size_t NUMBITS>
+class BitFlags
+{
+public:
+	Bool test(Int i) const { return m_bits.test(i); }
+
+private:
+	_STL::bitset<NUMBITS> m_bits;
+};
+typedef BitFlags<192> KindOfMaskType;
+#define TEST_KINDOFMASK(m, i) ((m).test(i))
+
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/ThingTemplate.h
 class ThingTemplate : public Overridable
 {
 public:
 	const AsciiString &getName() const { return m_nameString; }
-	UnsignedInt isKindOf(Int t) const { return m_kindOf & (1 << t); }
+	Bool isKindOf(KindOfType t) const { return TEST_KINDOFMASK(m_kindof, t); }
 	const ThingTemplate *friend_getNextTemplate() const { return m_nextTemplate; }
 
 private:
 	unsigned char m_unmodelled008[0x20 - 0x08];
 	AsciiString m_nameString;					// +0x20
 	unsigned char m_unmodelled024[0xc8 - 0x24];
-	UnsignedInt m_kindOf;						// +0xC8
-	unsigned char m_unmodelled0cc[0x38c - 0xcc];
+	KindOfMaskType m_kindof;					// +0xC8
+	unsigned char m_unmodelled0e0[0x38c - 0xe0];
 	ThingTemplate *m_nextTemplate;					// +0x38C
 };
 
@@ -172,12 +190,16 @@ private:
 	Bool m_canBuildUnits;						// +0x294
 };
 
+// Retail WorkOrder's installed table; this TU stores that existing vptr and
+// emits no table.
+extern int Gen01096964;
+
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AIPlayer.h
 class WorkOrder
 {
 public:
 	WorkOrder()
-		: m_vptr((void *)0x01096964), m_thing(NULL), m_factoryID(0), m_next(NULL),
+		: m_vptr((void *)&Gen01096964), m_thing(NULL), m_factoryID(0), m_next(NULL),
 		  m_numCompleted(0), m_numRequired(1), m_isResourceGatherer(false)
 	{
 	}
