@@ -27,7 +27,7 @@ class BfmeN1242 { public:
 extern AptValue *g_bfmeFallbackDB;
 struct Rva008AE770Stack { int field00; };
 extern Rva008AE770Stack Rva008AE770TheStack;
-extern "C" void *bfmeMove1242(void *,const void *,unsigned);
+extern "C" void *memmove(void *,const void *,unsigned);
 AptValue *splice008B9A40(AptValue *value,int argc)
 {
  if(value->kind()==22 && !value->invalid()) {
@@ -44,13 +44,13 @@ AptValue *splice008B9A40(AptValue *value,int argc)
    AptValue *old=(AptValue *)(array->field20[start+i]&~1);
    if(old) old->release();
   }
-  bfmeMove1242(array->field20+start,array->field20+start+count,(array->field28-count-start)*4);
+  memmove(array->field20+start,array->field20+start+count,(array->field28-count-start)*4);
   for(i=0;i<count;++i) array->field20[i-count+array->field28]=0;
   array->field28-=count;
   if(argc>2) {
    int add=argc-2;
    array->bfmeReserve1242(array->field28+add);
-   bfmeMove1242(array->field20+start+add,array->field20+start,(array->field28-start)*4);
+   memmove(array->field20+start+add,array->field20+start,(array->field28-start)*4);
    array->field28+=add;
    for(int k=0;k<add;++k) {
     array->field20[start+k]=0;
