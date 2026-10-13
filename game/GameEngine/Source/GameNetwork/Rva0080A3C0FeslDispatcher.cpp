@@ -196,7 +196,7 @@ class Rva007E8810Message
 {
 public:
  Rva007E8810Message();
- ~Rva007E8810Message() { ((Gen_007e86c0 *)this)->m(); }
+ ~Rva007E8810Message();
  unsigned m_00, m_04, m_08, m_0c, m_10, m_14, m_18, m_1c, m_20, m_24, m_28, m_2c;
  char m_30;
 };
