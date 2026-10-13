@@ -1,5 +1,7 @@
-// A body that empties its vector and refills it from another object's, then
-// marks a singleton dirty if it was asked to.
+// cl: /EHsc /MD /D_STLP_USE_STATIC_LIB
+// stlport
+// A body that empties its image vector and refills it from another object's,
+// then marks ControlBar dirty if it was asked to.
 //
 // The append is the usual inlined vector push: the fast path constructs in
 // place, which is where the null test on the finish pointer comes from, and
@@ -11,6 +13,16 @@
 // lands on the parameter slot the flag arrives in, which is the slot read
 // again after the loop. A one-byte temporary of the caller's own would sit in
 // the other parameter slot instead.
+
+#include <vector>
+
+class Image;
+
+class Rva004715B0Vector : public _STL::vector<const Image *>
+{
+public:
+	using _STL::vector<const Image *>::_M_insert_overflow;
+};
 
 extern "C" __declspec(dllimport) void * __cdecl memmove(void *destination, const void *source, unsigned int bytes);
 
@@ -48,12 +60,12 @@ public:
 		}
 		else
 		{
-			bfmeInsertOverflow(m_bfmeFinish, &value, flag, 1, 1);
+			reinterpret_cast<Rva004715B0Vector *>(this)->_M_insert_overflow(
+				reinterpret_cast<const Image **>(m_bfmeFinish),
+				reinterpret_cast<const Image *const &>(value),
+				*reinterpret_cast<const _STL::__true_type *>(flag), 1, true);
 		}
 	}
-
-	void bfmeInsertOverflow(int *position, const int *value, bool *flag, int count, int atEnd);
-								// retail thunk 0x0000A240 -> 0x0040A240
 
 	int *m_bfmeStart;					// +0x00
 	int *m_bfmeFinish;					// +0x04
