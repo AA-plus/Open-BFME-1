@@ -1,8 +1,21 @@
-// ?method@Rva005F31A0@@QAEHAAVRenderInfoClass@@PBVAABoxClass@@PAH@Z
-// partial score=0.999 date=2026-10-09
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/shims/sweep
-// Retail 0x005F31A0 has an integer return and three stack arguments.
-// The owner and the system fields retain address-derived identities.
+// ?method@Rva005F31A0@@QAEHAAVRenderInfoClass@@PBVAABoxClass@@PAH@Z
+// Open-BFME: FXParticleSystem draw-module pass, retail 0x005F31A0, 1048 bytes
+// (RET12 code through +0x3F7, then alignment and a seven-entry shader switch
+// table ending at 0x005F35B8). Walks the system's particle list, frustum-tests
+// each live particle, appends position/size/colour/angle into the four scratch
+// buffers and renders the accumulated batch through the second point-group
+// manager. EA source file (wb1): fxpsdefaultdrawmodule.cpp. The owner class and
+// the particle-system fields keep address-derived names; the ILT, vtable slot
+// 4 of 0x01112E78 and the caller at 0x006FA9B0 agree on the shape.
+//
+// The one byte that resisted earlier sessions is the byte-store SIB at +0x1E7:
+// retail encodes `mov [ecx+ebx], al` (angles base, count index) where the bank
+// emitted `mov [ebx+ecx], al`. MSVC 7.1 commutes the two-register address
+// before the encoder picks the base, but the choice follows the local-definition
+// order: declaring `count` before the four buffer pointers reproduces retail's
+// base/index assignment and makes the whole 1048-byte body exact.
+
 #include "vector3.h"
 #include "vector4.h"
 #include "sharebuf.h"
@@ -16,6 +29,12 @@ extern ShareBufferClass<Vector4> *g_vector4Buffer;
 extern ShareBufferClass<float> *g_floatBuffer;
 extern ShareBufferClass<unsigned char> *g_byteBuffer;
 extern PointGroupClass *TheBfmeSecondManager;
+extern const float g_Va011135A8;
+extern ShaderClass g_Va012D6E24;
+extern ShaderClass g_Va012D6E28;
+extern ShaderClass g_Va012D6E30;
+extern ShaderClass g_Va012D6E48;
+extern ShaderClass g_Va012D6E60;
 
 class Rva005C30A0Owner {
 public:
@@ -87,6 +106,7 @@ public:
 // ?method@Rva005F31A0@@QAEHAAVRenderInfoClass@@PBVAABoxClass@@PAH@Z
 int Rva005F31A0::method(RenderInfoClass &info, const AABoxClass *box, int *output)
 {
+    int count = 0;
     Vector3 *positions = g_vector3Buffer->Get_Array();
     float *sizes = g_floatBuffer->Get_Array();
     Vector4 *colors = g_vector4Buffer->Get_Array();
@@ -97,7 +117,6 @@ int Rva005F31A0::method(RenderInfoClass &info, const AABoxClass *box, int *outpu
     const float extentX = box->Extent.X;
     const float extentY = box->Extent.Y;
     const float extentZ = box->Extent.Z;
-    int count = 0;
     for (Particle *particle = m_field0004->m_field00A0; particle; particle = particle->m_field003C) {
         if (particle->isInvisible()) continue;
         float size = reinterpret_cast<Rva005C30A0Owner *>(particle)->Rva005C30A0();
@@ -120,7 +139,7 @@ int Rva005F31A0::method(RenderInfoClass &info, const AABoxClass *box, int *outpu
             colors[count].Z = 0.0f;
         }
         colors[count].W = reinterpret_cast<Rva005C3160Owner *>(particle)->Rva005C3160();
-        angles[count] = static_cast<unsigned char>(reinterpret_cast<Rva005C30A0Owner *>(particle)->Rva005C3120() * *reinterpret_cast<const float *>(0x011135A8));
+        angles[count] = static_cast<unsigned char>(reinterpret_cast<Rva005C30A0Owner *>(particle)->Rva005C3120() * g_Va011135A8);
         if (++count == 512) break;
     }
     if (count > 0) {
@@ -129,13 +148,13 @@ int Rva005F31A0::method(RenderInfoClass &info, const AABoxClass *box, int *outpu
             TheBfmeSecondManager->Set_Texture(reinterpret_cast<TextureClass *>(&texture));
             TheBfmeSecondManager->Set_Flag(PointGroupClass::TRANSFORM, true);
             switch (m_field0004->m_field0008) {
-                case 1: TheBfmeSecondManager->Set_Shader(*reinterpret_cast<const ShaderClass *>(0x012D6E2C)); break;
-                case 2: TheBfmeSecondManager->Set_Shader(*reinterpret_cast<const ShaderClass *>(0x012D6E30)); break;
-                case 3: TheBfmeSecondManager->Set_Shader(*reinterpret_cast<const ShaderClass *>(0x012D6E34)); break;
-                case 4: TheBfmeSecondManager->Set_Shader(*reinterpret_cast<const ShaderClass *>(0x012D6E48)); break;
-                case 5: TheBfmeSecondManager->Set_Shader(*reinterpret_cast<const ShaderClass *>(0x012D6E60)); break;
-                case 6: TheBfmeSecondManager->Set_Shader(*reinterpret_cast<const ShaderClass *>(0x012D6E24)); break;
-                case 7: TheBfmeSecondManager->Set_Shader(*reinterpret_cast<const ShaderClass *>(0x012D6E28)); break;
+                case 1: TheBfmeSecondManager->Set_Shader(ShaderClass::_PresetAdditiveSpriteShader); break;
+                case 2: TheBfmeSecondManager->Set_Shader(g_Va012D6E30); break;
+                case 3: TheBfmeSecondManager->Set_Shader(ShaderClass::_PresetAlphaSpriteShader); break;
+                case 4: TheBfmeSecondManager->Set_Shader(g_Va012D6E48); break;
+                case 5: TheBfmeSecondManager->Set_Shader(g_Va012D6E60); break;
+                case 6: TheBfmeSecondManager->Set_Shader(g_Va012D6E24); break;
+                case 7: TheBfmeSecondManager->Set_Shader(g_Va012D6E28); break;
             }
             TheBfmeSecondManager->Set_Point_Mode(PointGroupClass::QUADS);
             TheBfmeSecondManager->Set_Arrays(g_vector3Buffer, g_vector4Buffer, 0, g_floatBuffer, g_byteBuffer, 0, count);

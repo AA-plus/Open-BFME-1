@@ -1,5 +1,5 @@
 // ?lookup@PropertyLookup008B2F50@@QAEPAURva00899560Value@@PAVNativeProperties008B3C40@@PAUString008B3C40@@@Z
-// partial score=0.986 date=2026-09-28
+// partial score=0.9858 date=2026-09-28
 // cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 // RVA 008B2F50: base native-property dispatch of the Rva008B2EF0 wrapper class
 // (vtable 0x011369F0 slot 10, installed by the matched constructor 0x008B2EF0).
