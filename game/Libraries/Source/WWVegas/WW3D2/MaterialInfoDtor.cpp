@@ -6,7 +6,7 @@
 // final POD vector cleanup; TextureClass::Release_Ref can still unwind.
 
 class VertexMaterialClass;
-extern const void *g_0113C5CC[];
+extern "C" const void *__identifier("??_7?$VectorClass@PAVVertexMaterialClass@@@@6B@")[];
 void __cdecl operator delete[](void *) throw();
 
 class TextureClass
@@ -56,7 +56,7 @@ private:
 class MaterialVector {
 public:
  ~MaterialVector() {
-  Vtable=(unsigned)g_0113C5CC;
+  Vtable=(unsigned)__identifier("??_7?$VectorClass@PAVVertexMaterialClass@@@@6B@");
   if(Vector && IsAllocated) { delete[] Vector; Vector=0; }
   IsAllocated=false;
   VectorMax=0;
