@@ -92,8 +92,14 @@ def added_lift_lines(old, new, lines=None):
     # text, per function), so a hunk that merely re-shows a function's existing
     # __emit lines passes (re_attempts 0x006D88A0, removing ~W3DBridge from
     # W3DBridgeBuffer.cpp) while bytes removed from one function never pay
-    # for bytes added to another.
-    removed, added, path = collections.Counter(), [], None
+    # for bytes added to another. Bytes on preprocessor lines count under the
+    # macro's own key, and a function invoking an emit macro defined in the
+    # same file owns that macro's bytes, so `#define RAW __emit 0xC3` plus
+    # `__asm { RAW }` in a clean function is growth (orchestrator probe of
+    # 0204cb9c94). Every touched file whose NEW text mentions emit is checked
+    # for growth even when no added line names __emit. Macros defined in a
+    # header are not followed (a gap that predates 47cf6cb).
+    removed, added, path, touched = collections.Counter(), [], None, []
     for line in lines:
         if line.startswith("+++ b/"):
             path = line[6:]
@@ -103,6 +109,8 @@ def added_lift_lines(old, new, lines=None):
             if path is None or not path.startswith("game/") \
                     or path.startswith("game/gen_small/"):
                 continue
+            if line[0] == "+" and path not in touched:
+                touched.append(path)
             if is_lift_line(line):
                 name = declared_name(COMMENT_RE.sub(" ", line[1:]))
                 if line[0] == "-":
@@ -123,6 +131,15 @@ def added_lift_lines(old, new, lines=None):
                 continue
         first, count = bad.get(path, (line[1:].strip()[:80], 0))
         bad[path] = (first, count + 1)
+    for path in touched:
+        if path in bad or not path.endswith(tuple(CPP_SUFFIXES) + (".h", ".hpp", ".inl")):
+            continue
+        if path not in grown:
+            new_text = file_text(new, path)
+            grown[path] = emit_growth(file_text(old, path), new_text) \
+                if LIFT_RE.search(new_text) else []
+        if grown[path]:
+            bad[path] = ("emitted bytes grow in " + ", ".join(grown[path])[:80], 1)
     return [(p, "%s  (%d such lines)" % (first, count)) for p, (first, count) in bad.items()]
 
 
@@ -144,11 +161,26 @@ def emit_bytes_by_function(text):
     keyed None."""
     text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
     text = re.sub(r"//[^\n]*", " ", text)
-    text = re.sub(r"(?m)^[ \t]*#.*$", " ", text)
+    owners, macros = {}, {}
+
+    def directive(match):
+        line = " ".join(match.group(0).replace("\\\n", " ").split())
+        found = collections.Counter(_emit_value(v) for v in EMIT_BYTE_RE.findall(line))
+        if found:
+            name = re.match(r"#\s*define\s+(\w+)", line)
+            key = "#define " + name.group(1) if name else "#preprocessor"
+            owners.setdefault(key, collections.Counter()).update(found)
+            if name:
+                macros[name.group(1)] = found
+        return " "
+    text = re.sub(r"(?m)^[ \t]*#(?:[^\n]*\\\n)*[^\n]*", directive, text)
     text = re.sub(r'"(?:\\.|[^"\\\n])*"', '""', text)
-    owners, depth, func, func_depth, header = {}, 0, None, None, []
+    depth, func, func_depth, header = 0, None, None, []
     pos = 0
-    for match in re.finditer(r"[{};]|\b__?emit\s+(?:0[xX][0-9A-Fa-f]+|\d+)", text):
+    token = r"[{};]|\b__?emit\s+(?:0[xX][0-9A-Fa-f]+|\d+)"
+    if macros:
+        token += r"|\b(?:%s)\b" % "|".join(map(re.escape, macros))
+    for match in re.finditer(token, text):
         tok = match.group(0)
         if func is None:
             header.append(text[pos:match.start()])
@@ -168,10 +200,16 @@ def emit_bytes_by_function(text):
         elif tok == ";":
             if func is None:
                 header = []
+        elif tok in macros:
+            owners.setdefault(func, collections.Counter()).update(macros[tok])
         else:
-            value = EMIT_BYTE_RE.match(tok).group(1)
-            owners.setdefault(func, collections.Counter())[int(value, 16 if value[:2] in ("0x", "0X") else 10) & 0xFF] += 1
+            owners.setdefault(func, collections.Counter())[
+                _emit_value(EMIT_BYTE_RE.match(tok).group(1))] += 1
     return owners
+
+
+def _emit_value(value):
+    return int(value, 16 if value[:2] in ("0x", "0X") else 10) & 0xFF
 
 
 def emit_growth(old_text, new_text):

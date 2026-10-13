@@ -88,6 +88,27 @@ def test_deleted_function_frees_nothing():
     assert len(_gate(before, after)) == 1
 
 
+def test_define_macro_bypass_refused():
+    # orchestrator probe of 0204cb9c94: a #define carrying __emit, used in a clean function.
+    before = {"game/a.cpp": "int Clean(int a)\n{\n return a;\n}\n"}
+    after = {"game/a.cpp": "#define RAW \\\n  __emit 0xC3\nint Clean(int a)\n{\n __asm { RAW }\n return a;\n}\n"}
+    assert len(_gate(before, after)) == 1
+
+
+def test_existing_emit_macro_reused_in_other_function_refused():
+    base = "#define RAW __emit 0xC3\nvoid Dump()\n{\n __asm { RAW }\n}\n"
+    before = {"game/a.cpp": base + "int Clean(int a)\n{\n return a;\n}\n"}
+    after = {"game/a.cpp": base + "int Clean(int a)\n{\n __asm { RAW }\n return a;\n}\n"}
+    assert len(_gate(before, after)) == 1
+
+
+def test_clean_edit_beside_emit_macro_passes():
+    base = "#define RAW __emit 0xC3\nvoid Dump()\n{\n __asm { RAW }\n}\n"
+    before = {"game/a.cpp": base + "int Clean(int a)\n{\n return a;\n}\n"}
+    after = {"game/a.cpp": base + "int Clean(int a)\n{\n return a + 1;\n}\n"}
+    assert _gate(before, after) == []
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):
