@@ -1,5 +1,8 @@
 // ?Rva000D4500CastleSearchCallback@@YAHPAVObject@@PAX@Z
-// partial score=0.9817 date=2026-10-05
+// partial score=0.989 date=2026-10-13
+// ?Rva000D4500CastleSearchCallback@@YAHPAVObject@@PAX@Z
+// Native visible GameLogic lookup fixes owner-ID EDX setup; only kind-mask load width/register remains.
+// stlport
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/GameEngine/Source
 // Retail 0x000D4500, 273 bytes: the Player::iterateObjects callback that
 // Player::rva000D4660 (0x000D4660) pushes with its four-word search record
@@ -95,11 +98,8 @@ private:
 	Int m_ownerID;										///< retail this+0xA0
 };
 
-class GameLogic
-{
-public:
-	Object *findObjectByID( Int id );					///< 0x0009A510
-};
+#define BFME_GAMELOGIC_LOOKUP_VISIBLE
+#include "Common/Thing/GameLogicObjectLookup.h"
 extern GameLogic *TheGameLogic;
 
 int Rva000CDA90Compare( Object *first, CastleBehavior *firstCastle,
