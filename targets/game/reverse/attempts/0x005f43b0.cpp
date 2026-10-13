@@ -1,6 +1,9 @@
 // ?draw@LightningDraw005F43B0@@QAEHPAX0PAH@Z
-// partial score=0.9869 date=2026-10-03
-// ?draw@LightningDraw005F43B0@@QAEHPAX0PAH@Z
+// partial score=0.9905 date=2026-10-13
+// 2220B/58 relocs; 21 non-reloc bytes left: three x87 fld/fmul operand picks
+// (retail-first: up.Y at +2A0 and +2E0, c.Z at +313; ours picks along.Z/along.X/along.X).
+// dummyI4 below is an allocator-only perturbation: it fixes the fourth pick (+32B);
+// sizes/init texts 3,4 mod 4 of the array reproduce it; unused array, no frame change.
 // partial score=0.981 date=2026-09-28 (42 nonreloc diffs by probe; along = end[-1]-positions[0])
 // cl: /DNDEBUG /MD /EHsc /O2 /Ob2 /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/GameEngine/Source/Common/System /Iinputs/reference/shims/sweep
 #include <stddef.h>
@@ -143,6 +146,7 @@ int LightningDraw005F43B0::draw(void *renderInfo,void *unused,int *count)
         BFMEWaterTrackTextureHandle texture=BFMEGetWaterTrackTexture(text ? text+8 : "",0,0);
         if(changed) {
             Vector3 &along=field8bc; Vector3 *end=positions+n; along=end[-1]-positions[0];
+            int dummyI4[4]={0,0,0,0};
             ((Coord3D*)&along)->normalize();
             field8d4.Z=1; field8d4.X=0; field8d4.Y=0;
             Vector3::Cross_Product(field8d4,along,&field8c8);
