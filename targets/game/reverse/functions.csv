@@ -37533,7 +37533,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_004327e0@@YAXXZ,,0x004327E0,387,game/gen_asm/d_004171c0.asm,matched,gen-dump;bounds=high
 ?d_00433dc0@@YAXXZ,,0x00433DC0,360,game/gen_asm/d_0042c460.asm,matched,gen-dump;ghidra=FUN_00833dc0
 ?d_004340c0@@YAXXZ,,0x004340C0,177,game/gen_asm/d_004171c0.asm,matched,gen-dump;bounds=high
-?d_004341a0@@YAXXZ,,0x004341A0,508,game/gen_asm/d_004171c0.asm,matched,gen-dump;bounds=high
 ?d_00435170@@YAXXZ,,0x00435170,195,game/gen_asm/d_00435170.asm,matched,gen-dump;ghidra=FUN_00835170
 ?d_004354f0@@YAXXZ,,0x004354F0,517,game/gen_asm/d_00435170.asm,matched,gen-dump;ghidra=FUN_008354f0
 ?d_00435a40@@YAXXZ,,0x00435A40,747,game/gen_asm/d_00435170.asm,matched,gen-dump;ghidra=FUN_00835a40
@@ -172553,3 +172552,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?classic@locale@_STL@@SAABV12@XZ,,0x008321F0,6,game/Libraries/Source/STLport/LocaleClassic.cpp,matched,vendored=stlport-4.6; mov eax 0x012C7464 then ret; called as locale::classic() from num_get float parser (symbols.csv pin 0x008321F0); returns the static classic locale object;model=claude-opus-5-5;host=GreatFaram
 ?Set_Z_Translation@Matrix3D@@QAEXM@Z,,0x000C8F00,10,game/GameEngine/Source/Common/Thing/Thing.cpp,matched,model=claude-opus-5-5;host=GreatFaram
 ??0Rva0035D2B0Node@@QAE@XZ,,0x00354C10,76,game/GameEngine/Source/GameLogic/ScriptEngine/Rva0035D2B0NodeCtor.cpp,matched,ctor called by addNode 0x0035D2B0 via ILT 0x0004213B; proven layout is a 4-byte link + embedded Script subobject at +4; inlined inline Script::Script reproduces retail's late mov dl 1 scheduling; flat re-spellings hoist it (20 diffs);model=gpt-5.2-codex;host=chalco.vps
+?rva004341A0@Rva00434810SubtitleEntry@@UAEXHPAVRva0081D520Owner@@MMMM@Z,,0x004341A0,508,game/GameEngine/Source/GameClient/SubtitleEntryRender_rva004341A0.cpp,matched,subtitle entry render slot 1 of vtable 010F3920 (pinned ??_7Rva00434810SubtitleEntry@@6B@); class layout from matched constructor 0x00434810; owner is the matched Rva0081D520Owner::broadcast receiver; first vcall receiver written as the TheDisplay global encodes the retail ECX load and deferred EDI home copy;model=gpt-5.2-codex;host=chalco.vps
