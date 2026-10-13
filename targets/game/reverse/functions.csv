@@ -36894,7 +36894,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_001c2380@@YAXXZ,,0x001C2380,727,game/gen_asm/d_001bd560.asm,matched,gen-dump;ghidra=FUN_005c2380
 ?d_001c6870@@YAXXZ,,0x001C6870,933,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp end=ret+int3 callers=1
 ?d_001c7200@@YAXXZ,,0x001C7200,289,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_005c7200
-?d_001c86b0@@YAXXZ,,0x001C86B0,302,game/gen_asm/d_001c7e60.asm,matched,gen-dump;ghidra=FUN_005c86b0
 ?d_001c9490@@YAXXZ,,0x001C9490,426,game/gen_asm/d_001c7e60.asm,matched,gen-dump;ghidra=FUN_005c9490
 ?d_001ca2e0@@YAXXZ,,0x001CA2E0,367,game/gen_asm/d_001c7e60.asm,matched,gen-dump;ghidra=FUN_005ca2e0
 ?d_001cabe0@@YAXXZ,,0x001CABE0,376,game/gen_asm/d_001c7e60.asm,matched,gen-dump;ghidra=FUN_005cabe0
@@ -172555,3 +172554,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?bfmeStepE05B0_003E05B0@Pathfinder@@QAE_NPAVObject@@PAUICoord2D@@@Z,,0x003E05B0,715,game/GameEngine/Source/GameLogic/AI/PathfinderStepE05B0.cpp,matched,address-qualified bank method; complete RET 8 and matched callback caller ABI; identity_evidence/0x003e05b0-register-residue.md;model=gpt-6.1-sol;host=fleet
 ?validate@Rva0076F9E0Owner@@QBEXPAURva0076F9E0Names@@@Z,,0x0076F9E0,1603,game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DModelDrawWeaponBarrelValidation0076F9E0.cpp,matched,decoded thiscall one names pointer;complete ret4 boundary;visible non-retaining tree and lookup;identity-evidence=targets/game/reverse/identity_evidence/0076f9e0-visible-lookups.md;model=gpt-6.1-sol;host=fleet
 ?update@AICowerState@@UAE?AW4StateReturnType@@XZ,,0x00174210,334,game/GameEngine/Source/GameLogic/AI/AICowerState_update.cpp,matched,AICowerState inherited update proven by constructor literal and vtable slot 6; identity_evidence/00174210-update.md;model=gpt-6.1-sol;host=fleet
+?bfmeGetPosition421AE@Object@@QAEPBUCoord3D@@PAU2@0@Z,,0x001C86B0,302,game/GameEngine/Source/GameLogic/Object/ObjectGetPosition421AE.cpp,matched,Native BitFlags86 status test and post-call sample coordinates; preserved Object identity from decoded Drawable callers; evidence targets/game/reverse/identity_evidence/001c86b0-native-status.md;model=gpt-6.1-sol;host=fleet

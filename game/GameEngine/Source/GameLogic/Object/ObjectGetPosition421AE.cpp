@@ -1,9 +1,9 @@
 // ?bfmeGetPosition421AE@Object@@QAEPBUCoord3D@@PAU2@0@Z
-// partial score=0.9073 date=2026-10-13
 // cl: /DNDEBUG /MD /EHs-c- /Iinputs/reference/shims/sweep /Igame/GameEngine/Include /Igame/GameEngine/Source/Common/System /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib
 // stlport
-#include "../../../../game/GameEngine/Include/GameLogic/TerrainLogic.h"
+#include "../../../Include/GameLogic/TerrainLogic.h"
 #include "GameClient/Drawable.h"
+#include "Common/BitFlags.h"
 // Object::bfmeGetPosition421AE is named by DrawableUpdateDrawable.cpp.
 
 class HordeContainInterface
@@ -25,7 +25,7 @@ public:
 	HC_SLOT(72) HC_SLOT(73) HC_SLOT(74) HC_SLOT(75) HC_SLOT(76) HC_SLOT(77)
 	HC_SLOT(78) HC_SLOT(79) HC_SLOT(80) HC_SLOT(81) HC_SLOT(82) HC_SLOT(83)
 	HC_SLOT(84) HC_SLOT(85) HC_SLOT(86) HC_SLOT(87)
-	virtual void slot88(Coord3D *position, Coord3D *normal);
+	virtual const Coord3D *slot88(Coord3D *position, Coord3D *normal);
 #undef HC_SLOT
 };
 
@@ -42,6 +42,7 @@ public:
 #undef CM_SLOT
 };
 
+// This view includes the virtuals and fields absent from ObjectStatusBits.h.
 class Object
 {
 public:
@@ -55,11 +56,11 @@ public:
 	virtual void slot7();
 	virtual void slot8();
 	virtual void slot9();
-	virtual Drawable *getDrawable();
+	virtual Drawable *getDrawable() const;
 
 	unsigned char m_pad004[0x8c];
-	unsigned char m_status;
-	unsigned char m_pad091[0x16b];
+	BitFlags<86> m_status;
+	unsigned char m_pad091[0x160];
 	ContainModuleInterface *m_contain;
 	unsigned char m_pad200[0x114];
 	PathfindLayerEnum m_layer;
@@ -67,6 +68,13 @@ public:
 	const Coord3D *bfmeGetPosition421AE(Coord3D *position, Coord3D *normal);
 };
 
+class Rva001A7C20TerrainLogic
+{
+public:
+	PathfindLayerEnum getLayerForDestination(Object *object, const Coord3D *position);
+};
+
+// ?bfmeGetPosition421AE@Object@@QAEPBUCoord3D@@PAU2@0@Z
 const Coord3D *Object::bfmeGetPosition421AE(Coord3D *position, Coord3D *normal)
 {
 	ContainModuleInterface *contain = m_contain;
@@ -85,17 +93,16 @@ const Coord3D *Object::bfmeGetPosition421AE(Coord3D *position, Coord3D *normal)
 	{
 		const Matrix3D *matrix = drawable->getTransformMatrix();
 		Vector3 translation = matrix->Get_Translation();
-        Coord3D sample;
-        sample.x = translation.X;
-        sample.y = translation.Y;
-        sample.z = translation.Z;
+		Coord3D sample;
+		sample.x = translation.X;
+		sample.y = translation.Y;
+		sample.z = translation.Z;
 
-		if ((m_status & 0x40) != 0)
+		if (m_status.test(6))
 		{
-			PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(
-				this, &sample);
+			PathfindLayerEnum layer = ((Rva001A7C20TerrainLogic *)TheTerrainLogic)->getLayerForDestination(this, &sample);
 			sample.z = TheTerrainLogic->getLayerHeight(
-				translation.X, translation.Y, layer, normal, true);
+				sample.x, sample.y, layer, normal, true);
 		}
 		else if (normal != 0)
 		{
