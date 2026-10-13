@@ -1,9 +1,8 @@
 // Retail 0x006B3E30: start a sample for a playing-audio record once its file
 // is open. The flag tail gates the AIL stop/resume pair on the four
 // playing-state bytes at +0x39..+0x3C.
-// cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
-class AsciiString;
-extern const AsciiString Rva01336E50EmptyString;
+// cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
+#include "ascii_string.h"
 
 extern void j_0001978b(void);
 extern void j_00021ff3(void);
@@ -53,7 +52,7 @@ struct Rva006B3E30FileRef {
 	Rva006B3E30File *m_ptr;
 	bool isOpen() const { return m_ptr != 0; }
 	void *fileData() const { return m_ptr ? m_ptr->m_data : 0; }
-	const void *fileName() const { return m_ptr ? m_ptr : (const void *)&Rva01336E50EmptyString; }
+	const void *fileName() const { return m_ptr ? m_ptr : (const void *)&AsciiString::TheEmptyString; }
 };
 
 struct Rva006B3E30Playing
