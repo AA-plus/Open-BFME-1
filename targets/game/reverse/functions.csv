@@ -1573,7 +1573,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ??0?$SimpleDynVecClass@VVector3i16@@@@QAE@H@Z,,0x0078CAD0,56,game/Libraries/Source/WWVegas/WW3D2/decalmsh.cpp,matched,
 ??0?$SimpleDynVecClass@VVector4@@@@QAE@ABV0@@Z,,0x00918A20,39,game/Libraries/Source/WWVegas/WW3D2/streak.cpp,matched,
 ??0?$SimpleDynVecClass@VVector4@@@@QAE@H@Z,,0x0078CAD0,56,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,
-??0?$SimpleParameterClass@H$0A@@@QAE@PAXPBD@Z,,0x00002874,5,game/Libraries/Source/WWVegas/WWSaveLoad/SimpleParameterClassConstructorThunk.cpp,matched,Focused C++ template thunk for SimpleParameterClass int flags 0 constructor
 ??0?$SimpleVecClass@E@@QAE@H@Z,,0x00984660,39,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,
 ??0?$SimpleVecClass@K@@QAE@H@Z,,0x00945120,39,game/Libraries/Source/WWVegas/WW3D2/decalmsh.cpp,matched,
 ??0?$SimpleVecClass@M@@QAE@H@Z,,0x0078CA10,39,game/Libraries/Source/WWVegas/WWMath/lookuptable.cpp,matched,
@@ -172556,3 +172555,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?j_00002432@@YAXXZ,,0x00002432,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk jumps to matched W3DParticleSystemManager constructor;model=claude-sonnet-5-5;host=SARUMAN
 ?j_00001DA7@@YAXXZ,,0x00001DA7,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk to matched target 0x00135180;model=claude-sonnet-5-5;host=SARUMAN
 ?j_0000264E@@YAXXZ,,0x0000264E,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk to matched target 0x00288C50;model=claude-sonnet-5-5;host=SARUMAN
+?j_00002874@@YAXXZ,,0x00002874,5,game/GameEngine/Source/Common/RvaShard1TailThunks.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ilt-thunk-lift-name-corrections.md;five-byte ILT thunk to matched target 0x00113DA0;model=claude-sonnet-5-5;host=SARUMAN

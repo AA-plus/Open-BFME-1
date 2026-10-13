@@ -37,6 +37,7 @@ extern void rva00036458Target(void);
 extern void rva00037F4CTarget(void);
 extern void rva00044BFCTarget(void);
 extern void rva0004B0F1Target(void);
+extern void rva00002874Target(void);
 extern void rva0000264ETarget(void);
 extern void rva00001DA7Target(void);
 extern void rva00002432Target(void);
@@ -76,6 +77,7 @@ extern void rva00044E31Target(void);
 #pragma comment(linker, "/alternatename:?rva00044BFCTarget@@YAXXZ=?getInstance@?$ConcreteModuleClass@V?$ModuleTag@$07$E?LIFE_EVENT_MODULE_KEY@FXParticleSystem@@3QBDB$E?LIFE_EVENT_MODULE_NAME@2@3QBDBVLifeEventModule@2@VLifeEventModuleTemplate@2@VParticleLifeEventModule@2@VParticleLifeEventModuleTemplate@2@@FXParticleSystem@@@FXParticleSystem@@SAABV12@XZ")
 #pragma comment(linker, "/alternatename:?rva00044E31Target@@YAXXZ=??1LifeEventModuleTemplate@FXParticleSystem@@UAE@XZ")
 #pragma comment(linker, "/alternatename:?rva0004B0F1Target@@YAXXZ=?getInstance@?$ConcreteModuleClass@V?$ModuleTag@$03$E?HEMISPHERICAL_EMISSION_VELOCITY_MODULE_KEY@FXParticleSystem@@3QBDB$E?HEMISPHERICAL_EMISSION_VELOCITY_MODULE_NAME@2@3QBDBVHemisphericalEmissionVelocityModule@2@VHemisphericalEmissionVelocityModuleTemplate@2@V?$DefaultParticleModule@$03@2@V?$DefaultParticleModuleTemplate@$03@2@@FXParticleSystem@@@FXParticleSystem@@SAABV12@XZ")
+#pragma comment(linker, "/alternatename:?rva00002874Target@@YAXXZ=??0DrawableModule@@QAE@PAVThing@@PBVModuleData@@@Z")
 #pragma comment(linker, "/alternatename:?rva0000264ETarget@@YAXXZ=dup_288c50")
 #pragma comment(linker, "/alternatename:?rva00001DA7Target@@YAXXZ=??0?$_Vector_base@UGen_t_00135180_p4cd@@V?$allocator@UGen_t_00135180_p4cd@@@_STL@@@_STL@@QAE@IABV?$allocator@UGen_t_00135180_p4cd@@@1@@Z")
 #pragma comment(linker, "/alternatename:?rva00002432Target@@YAXXZ=??0W3DParticleSystemManager@@QAE@XZ")
@@ -270,4 +272,9 @@ void j_00001DA7(void)
 void j_0000264E(void)
 {
 	rva0000264ETarget();
+}
+
+void j_00002874(void)
+{
+	rva00002874Target();
 }
