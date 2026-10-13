@@ -1,5 +1,5 @@
 // ?bfmeSampleAirspace@AerialPathfinder@@QAEHPAVObject@@PBUCoord3D@@PAU3@@Z
-// partial score=0.97 date=2026-09-24
+// partial score=0.9711 date=2026-09-24
 // cl: /O2 /DNDEBUG /MD /EHsc-
 //
 // Retail 0x00149130, called five times by 0x00149470 with this, Object*,
