@@ -1,5 +1,5 @@
 // ?renderShoreLines@BaseHeightMapRenderObjClass@@IAEXPAVCameraClass@@@Z
-// partial score=0.9215 date=2026-10-11
+// partial score=0.9541 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/bfmeheightmap /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
 // stlport
 #define Matrix4x4 Matrix4
@@ -52,36 +52,56 @@ struct Rva006CCE70DeviceTable {
 };
 class ShorelineStateAdapter006CCE70 : public DX8Wrapper {
 public:
-    static __forceinline void setShoreWorldAndColor() {
+    static __forceinline void setShoreWorldAndColor(unsigned value) {
         unsigned changed = (*reinterpret_cast<volatile unsigned *>(&render_state_changed) & ~(1u << 18)) | 1u;
         unsigned previous = *reinterpret_cast<volatile unsigned *>(&RenderStates[D3DRS_COLORWRITEENABLE]);
-        volatile float *world = reinterpret_cast<volatile float *>(&render_state.world);
-        world[0] = 1.0f;
-        world[1] = 0.0f;
-        world[2] = 0.0f;
-        world[3] = 0.0f;
-        world[4] = 0.0f;
-        world[5] = 1.0f;
-        world[6] = 0.0f;
-        world[7] = 0.0f;
-        world[8] = 0.0f;
-        world[9] = 0.0f;
-        world[10] = 1.0f;
-        world[11] = 0.0f;
-        world[12] = 0.0f;
-        world[13] = 0.0f;
-        world[14] = 0.0f;
+        if (previous == value) {
+            float *world = reinterpret_cast<float *>(&render_state.world);
+            world[15] = 1.0f;
+            world[14] = 0.0f;
+            world[13] = 0.0f;
+            world[12] = 0.0f;
+            world[11] = 0.0f;
+            world[10] = 1.0f;
+            world[9] = 0.0f;
+            world[8] = 0.0f;
+            world[7] = 0.0f;
+            world[6] = 0.0f;
+            world[5] = 1.0f;
+            world[4] = 0.0f;
+            world[3] = 0.0f;
+            world[2] = 0.0f;
+            world[1] = 0.0f;
+            world[0] = 1.0f;
+            *reinterpret_cast<volatile unsigned *>(&render_state_changed) = changed;
+            return;
+        }
+        float *world = reinterpret_cast<float *>(&render_state.world);
         world[15] = 1.0f;
+        world[14] = 0.0f;
+        world[13] = 0.0f;
+        world[12] = 0.0f;
+        world[11] = 0.0f;
+        world[10] = 1.0f;
+        world[9] = 0.0f;
+        world[8] = 0.0f;
+        world[7] = 0.0f;
+        world[6] = 0.0f;
+        world[5] = 1.0f;
+        world[4] = 0.0f;
+        world[3] = 0.0f;
+        world[2] = 0.0f;
+        world[1] = 0.0f;
+        world[0] = 1.0f;
         *reinterpret_cast<volatile unsigned *>(&render_state_changed) = changed;
-        if (previous == D3DCOLORWRITEENABLE_ALPHA) return;
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED
         if (WW3D::Is_Snapshot_Activated()) {
             StringClass value_name(0, true);
-            Get_DX8_Render_State_Value_Name(value_name, D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_ALPHA);
+            Get_DX8_Render_State_Value_Name(value_name, D3DRS_COLORWRITEENABLE, value);
         }
 #endif
-        RenderStates[D3DRS_COLORWRITEENABLE] = D3DCOLORWRITEENABLE_ALPHA;
-        D3DDevice->SetRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_ALPHA);
+        RenderStates[D3DRS_COLORWRITEENABLE] = value;
+        D3DDevice->SetRenderState(D3DRS_COLORWRITEENABLE, value);
         number_of_DX8_calls++;
         DX8_RECORD_RENDER_STATE_CHANGE();
     }
@@ -118,8 +138,9 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 		return;
 	}
 
+	//Check if video card is capable of using this effect
 	if (Rva00903060Get() != 21) {
-		return;
+		return;	//can't apply effect on cards without destination alpha
 	}
 
 	Int vertexCount = 0;
@@ -146,7 +167,8 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 	TextureBaseClass *&destAlphaTexture =
 		*reinterpret_cast<TextureBaseClass **>(heightMap + 0x3090);
 	BoxSetTexture(0, destAlphaTexture);
-	ShorelineStateAdapter006CCE70::setShoreWorldAndColor();
+	//Enabled writes to destination alpha only
+	ShorelineStateAdapter006CCE70::setShoreWorldAndColor(D3DCOLORWRITEENABLE_ALPHA);
 	BaseHeightMapScorchSetZBias(1);
 	ShorelineStateAdapter006CCE70::setShoreStage();
 
@@ -157,7 +179,7 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 			DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,
 			DEFAULT_MAX_BATCH_SHORELINE_TILES * 6);
 
-			{
+			{	//Need to put this in another code block so vb/ib gets automatically locked/unlocked by destructors
 				BoxDynamicVBAccessClass::WriteLockClass lock(&vb_access);
 				VertexFormatXYZNDUV2 *vb = lock.Get_Formatted_Vertex_Array();
 				DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
@@ -168,9 +190,10 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 					return;
 				}
 
+				//Loop over visible terrain and extract all the tiles that need shoreline blend
 				for (; j < *reinterpret_cast<Int *>(heightMap + 0x30c4); ++j) {
 					if (vertexCount >= DEFAULT_MAX_BATCH_SHORELINE_TILES * 4) {
-						break;
+						break;	//no room in vertex buffer
 					}
 
 					ShorelineTile006C76B0 *shoreInfo =
@@ -178,7 +201,7 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 					Int x = shoreInfo->m_xy & 0xffff;
 					Int y = shoreInfo->m_xy >> 16;
 
-					if (x >= drawStartX && x < drawEdgeX && y >= drawStartY && y < drawEdgeY) {
+					if (x >= drawStartX && x < drawEdgeX && y >= drawStartY && y < drawEdgeY) {	//this tile is inside visible region
 						Int ndx = y * width + x;
 						Real terrainZ0 = samples[ndx] * 0.0390625f;
 						Real terrainZ1 = samples[ndx + 1] * 0.0390625f;
@@ -234,15 +257,17 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 				}
 				DX8Wrapper::Set_Index_Buffer(ib_access, 0);
 				DX8Wrapper::Set_Vertex_Buffer(*reinterpret_cast<const DynamicVBAccessClass *>(&vb_access));
-			}
+			}//lock and fill ib/vb
 		}
 		if (indexCount > 0 && vertexCount > 0) {
-			DX8Wrapper::Draw_Triangles(0, indexCount / 3, 0, vertexCount);
+			DX8Wrapper::Draw_Triangles(0, indexCount / 3, 0, vertexCount);	//draw a quad, 2 triangles, 4 verts
 		}
 
 		vertexCount = 0;
 		indexCount = 0;
-	}
+	}//for all shore tiles
+
+	//Disable writes to destination alpha
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,
 		D3DCOLORWRITEENABLE_BLUE | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_RED);
 	BaseHeightMapScorchSetZBias(0);
