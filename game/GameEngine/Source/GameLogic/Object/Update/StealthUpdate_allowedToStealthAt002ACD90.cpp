@@ -1,4 +1,4 @@
-// cl: /O2 /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/GameEngine/Source /Igame/Libraries/Source/WWVegas/WWLib
+// cl: /O2 /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /I. /Igame/GameEngine/Source /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 //
 // StealthUpdate stealth-eligibility test at a position, retail 0x002ACD90
@@ -22,12 +22,7 @@ typedef float Real;
 typedef int Int;
 typedef unsigned int UnsignedInt;
 
-struct Coord3D
-{
-	Real x;
-	Real y;
-	Real z;
-};
+#include "game/Libraries/Include/Lib/Coord3D.h"
 #define BFME_HAVE_COORD3D
 
 enum NameKeyType
@@ -200,6 +195,7 @@ public:
 class StealthUpdate
 {
 public:
+	Bool rva002AD100() const;
 	Bool allowedToStealthAt002ACD90(const Coord3D *pos, const Coord3D *containerPos) const;
 
 	Object *getObject() const { return m_object; }
@@ -311,4 +307,16 @@ Bool StealthUpdate::allowedToStealthAt002ACD90(const Coord3D *pos, const Coord3D
 	}
 
 	return true;
+}
+
+// RVA 002AD100 forwards the current and resolved object positions.
+// Address retained: the original method spelling is not established.
+// See identity_evidence/002ad100-native-stealth-wrapper.md.
+Bool StealthUpdate::rva002AD100() const
+{
+	Object *p = (Object *)((RvaC4390Second *)getObject())->resolve(0);
+	if (p == 0)
+		return allowedToStealthAt002ACD90(&getObject()->m_cachedPos, &getObject()->m_cachedPos);
+	else
+		return allowedToStealthAt002ACD90(&getObject()->m_cachedPos, &p->m_cachedPos);
 }
