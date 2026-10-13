@@ -539,3 +539,22 @@ def test_twice_failed_proof_reason_keeps_the_real_error(tmp_path, monkeypatch):
         returncode=2, stdout=b'', stderr=notes + b"a.cpp(1) : fatal error C1083: Cannot open include file\r\n"))
     assert not receipt.current(source, obj)
     assert "preprocessor error: a.cpp(1) : fatal error C1083" in receipt.why[str(obj)]
+
+
+def test_preprocessor_that_cannot_start_is_a_proof_failure_and_retried(tmp_path, monkeypatch):
+    """owner verdict 2026-10-13 (adversarial review round 2: test gaps): an
+    OSError starting the preprocessor is ProofFailed, so it gets the one retry."""
+    source, header, obj, command, env, _ = fixture(tmp_path, monkeypatch)
+    receipt = proofs.Receipts(tmp_path / 'inputs.json')
+    assert build.try_compile_source(source, obj, input_proof=receipt)[0]
+    real, calls = proofs.capture_preprocessor, []
+    def flaky(*args):
+        calls.append(1)
+        if len(calls) == 1:
+            raise OSError('spawn failed')
+        return real(*args)
+    monkeypatch.setattr(proofs, 'capture_preprocessor', flaky)
+    assert receipt.current(source, obj) and len(calls) == 2
+    monkeypatch.setattr(proofs, 'capture_preprocessor', lambda *a: (_ for _ in ()).throw(OSError('gone')))
+    with pytest.raises(proofs.ProofFailed, match='preprocessor did not run'):
+        proofs.snapshot(source, command, env)

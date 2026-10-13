@@ -775,3 +775,14 @@ def test_the_printed_record_command_records_a_census_bound_block(tmp_path, monke
                                "7d308168db") == {"game/T/b.cpp": "blocked 0x00000700 at census 7d308168db"}
     finally:
         re_log._reset()
+
+
+def test_census_only_refreshes_every_new_file_so_new_files_see_each_other(monkeypatch, tmp_path, capsys):
+    """owner verdict 2026-10-13 (adversarial review round 2: test gaps): under
+    --census-only the census holds nothing for new files, so each one is
+    refreshed from its own object; a reference between two new files resolves."""
+    _new_files(monkeypatch, tmp_path, {"n1.obj": _coff(["_f"], ["_h"]), "n2.obj": _coff(["_h"])},
+               ["a.obj", "b.obj", "n1.obj", "n2.obj"])
+    assert C.main(["--census-only", "n1.cpp", "n2.cpp"]) == 0
+    out = capsys.readouterr().out
+    assert "unresolved" not in out and "2 of 2 link cleanly" in out

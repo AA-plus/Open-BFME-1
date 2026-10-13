@@ -355,3 +355,17 @@ def test_fix_repoints_a_wrong_mapping_end_to_end(linked, monkeypatch, tmp_path):
     assert f"object-symbol={pinned};" not in text.split("\r\n")[1]
     assert text.split("\r\n")[2] == parent.rstrip("\r\n")
     assert built and "game/t.cpp" in built[0]
+
+
+def test_fix_restores_the_ledger_when_byte_verify_fails(monkeypatch, tmp_path):
+    """owner verdict 2026-10-13 (adversarial review round 2: test gaps): a
+    failed build.py verify leaves functions.csv byte-identical to before."""
+    ledger = tmp_path / "functions.csv"
+    raw = (b"name,alias,target_rva,target_size,source,status,notes\r\n"
+           b"uw_x,,0x00000100,4,game/t.cpp,matched,gen-funclet;object-symbol=$L1\r\n")
+    ledger.write_bytes(raw)
+    monkeypatch.setattr(build, "FUNCTIONS", ledger)
+    monkeypatch.setattr(ep.subprocess, "run", lambda cmd, **kw: subprocess.CompletedProcess(cmd, 1, "bad", ""))
+    with pytest.raises(SystemExit, match="ledger restored"):
+        ep.apply_fixes({("uw_x", 0x100): ("$L1", "$L2", "0")}, "m")
+    assert ledger.read_bytes() == raw
