@@ -19758,5 +19758,15 @@
   "after_sha256": "698725ec9925c2a51af48cc087d7b17b2896641dd39715a0de7e7878d49ba7c0",
   "evidence": "targets/game/reverse/identity_evidence/001f8ab0-dynamic-portal-lookup.md",
   "reason": "WorkerAIUpdate::getModuleNameKey is refuted for 0x001F8AB0: the body ignores ecx, reads an Object from its one stack argument and returns that object's DynamicPortalBehaviour module (cdecl); the EA name is unproven, so it keeps its address (rva001F8AB0)."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x0069f2f0.cpp",
+  "new_path": "targets/game/reverse/attempts/0x00883b70.cpp",
+  "old_name": "refreshPair",
+  "new_name": "rva00883c0",
+  "before_sha256": "ad41811ee60adb139549e435bff41ebe6800bb0431c821549bf9ce13a4bfab0d",
+  "after_sha256": "aaa98329e5d27c081026b92eaa8bda9196a44b6bda3aacb3dc507df73ab6c08f",
+  "evidence": "targets/game/reverse/identity_evidence/0069f2f0-00883b70-false-bank-pairing.md",
+  "reason": "Git -M1% falsely pairs different-RVA audio bank deletion and memory-pool bank addition. refreshPair remains in its native audio owner; rva00883c0 predates this bank in the independently matched memory-pool owner at00883CC0. No identifier was renamed."
  }
 ]
