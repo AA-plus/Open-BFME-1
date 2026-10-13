@@ -65,7 +65,7 @@ git() {
         'diff --cached --quiet -- targets/game/reverse/functions.csv') return 1 ;;
         'diff --cached --name-only --no-renames --diff-filter=D') return 0 ;;
         'diff --cached --quiet -- targets/game/reverse/symbols.csv'|'diff --cached --quiet -- targets/game/reverse/data_rows.csv'|'diff --cached --quiet -- targets/game/reverse/pin_consistency_baseline.csv') return 0 ;;
-        'diff --cached --quiet -- targets/game/reverse/full_gate_baseline.txt targets/game/reverse/dir32_known_red.txt') return 0 ;;
+        'diff --cached --quiet -- targets/game/reverse/full_gate_baseline.txt targets/game/reverse/dir32_known_red.txt targets/game/reverse/dir32_unowned_known.txt') return 0 ;;
         'diff --quiet -- targets/game/reverse/functions.csv') return 0 ;;
         'diff --quiet -- '*) return 0 ;;
         'diff --name-only -z') return 0 ;;
