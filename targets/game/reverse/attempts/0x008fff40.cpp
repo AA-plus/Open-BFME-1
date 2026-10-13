@@ -1,5 +1,5 @@
 // ?Rva008FFF40@Rva00900FF0@@UAEXXZ
-// partial score=0.9978 date=2026-10-10
+// partial score=1.0 date=2026-10-13
 // ?Rva008FFF40@Rva00900FF0@@UAEXXZ
 // stlport
 // cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/Compression /Iinputs/reference/shims/sweep
@@ -10,6 +10,7 @@
 
 #define _STLP_NO_EXCEPTIONS 1
 #include <string>
+#include <vector>
 #include "wwstring.h"
 class MeshClass;
 class MaterialInfoClass;
@@ -36,20 +37,18 @@ extern BFMEWaterTrackTextureHandle BFMEGetWaterTrackTexture(
 
 typedef _STL::string Rva00900FF0InnerVector;
 
-class Rva00900FF0VecOfVec
+class Rva00900FF0VecOfVec : public _STL::_Vector_base<Rva00900FF0InnerVector, _STL::allocator<Rva00900FF0InnerVector> >
 {
 public:
-	Rva00900FF0VecOfVec(const Rva00900FF0VecOfVec &source);
-	~Rva00900FF0VecOfVec();
-	bool empty() const { return m_start==m_finish; }
-	unsigned size() const { return (unsigned)(m_finish-m_start); }
-	void pop_back() { if(!empty()) (--m_finish)->~Rva00900FF0InnerVector(); }
-
-	Rva00900FF0InnerVector *m_start;
-	Rva00900FF0InnerVector *m_finish;
-	Rva00900FF0InnerVector *m_endOfStorage;
+ Rva00900FF0VecOfVec(const Rva00900FF0VecOfVec &source);
+ ~Rva00900FF0VecOfVec();
+ bool empty() const { return _M_start==_M_finish; }
+ unsigned size() const { return (unsigned)(_M_finish-_M_start); }
+ void pop_back() { if(!empty()) (--_M_finish)->~Rva00900FF0InnerVector(); }
+ Rva00900FF0InnerVector *begin() { return _M_start; }
+ Rva00900FF0InnerVector *end() { return _M_finish; }
+ Rva00900FF0InnerVector &back() { return *(end()-1); }
 };
-
 
 class Rva00900FF0VectorHolder
 {
@@ -295,8 +294,8 @@ static __declspec(noinline) bool Rva008FF0F0Method(RenderObjClass *object, Rva00
 {
     if (!object) return false;
     if (first->empty()) return false;
-    char *meshName=(char *)(first->m_finish-1)->c_str();
-    char *textureName=(char *)(second->m_finish-1)->c_str();
+    char *meshName=(char *)first->back().c_str();
+    char *textureName=(char *)second->back().c_str();
     bool result=false;
     if (strcmp(object->Get_Name(),meshName)==0)
         result=Rva008FF060Method(object,textureName,index);
@@ -364,7 +363,7 @@ void Rva00900FF0::Rva008FFF40(void)
                 first.pop_back();
             }
         } else {
-            char *name=(char *)(m_vec28.m_finish-1)->c_str();
+            char *name=(char *)m_vec28.back().c_str();
             Rva008FF060Method(m_render70,name,m_field6c);
             for(int i=0;i<m_render70->Get_Num_Sub_Objects();++i) {
                 RenderObjClass *sub=m_render70->Get_Sub_Object(i);
@@ -377,11 +376,11 @@ void Rva00900FF0::Rva008FFF40(void)
     } else if(!m_vec40.empty()) {
         Rva008FEB90(m_render70);
         for(unsigned i=0;i<m_vec40.size();++i)
-            Rva008FF6A0(m_render70,m_vec40.m_start+i,m_vec4c.m_start+i,m_vector58.m_start[i]);
+            Rva008FF6A0(m_render70,m_vec40.begin()+i,m_vec4c.begin()+i,m_vector58.m_start[i]);
     } else if(hasBoth) {
         Rva008FEB90(m_render70);
-        char *textureName=(char *)(m_vec28.m_finish-1)->c_str();
-        char *oldTextureName=(char *)(m_vec1c.m_finish-1)->c_str();
+        char *textureName=(char *)m_vec28.back().c_str();
+        char *oldTextureName=(char *)m_vec1c.back().c_str();
         m_render70->replaceTexture(BFMEGetWaterTrackTexture(oldTextureName,0,0),BFMEGetWaterTrackTexture(textureName,0,0));
     }
     if(hasFlags) {
