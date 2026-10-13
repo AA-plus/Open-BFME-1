@@ -70,3 +70,15 @@ index 5cf051ad91..b771ac1d46 100644
 +
 +template wchar_t _STL::basic_ios<wchar_t, _STL::char_traits<wchar_t> >::fill(wchar_t);
 ```
+
+## Publication disposition
+
+The initializer promotion was never published. The coordinator preserved its
+source and the failed provider patches, and selected the unrelated reviewed
+commits into a fresh integration branch without the initializer promotion.
+A proposed reversal in the old integration worktree was itself rejected by
+the conversion-direction gate and remains preserved there; it was not retried
+or included in this publication. Thus this branch has no initializer source
+change, ledger demotion, or claimed new linked credit at 0083F9B0. The historical
+round42 statement that the candidate was accepted refers to scoped byte
+verification, not acceptance for publication.
