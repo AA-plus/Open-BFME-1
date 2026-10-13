@@ -37,6 +37,7 @@ extern void rva00036458Target(void);
 extern void rva00037F4CTarget(void);
 extern void rva00044BFCTarget(void);
 extern void rva0004B0F1Target(void);
+extern void rva0002DA10Target(void);
 extern void rva00048B9ETarget(void);
 extern void rva0003F418Target(void);
 extern void rva0003E22ATarget(void);
@@ -91,6 +92,7 @@ extern void rva00044E31Target(void);
 #pragma comment(linker, "/alternatename:?rva00044BFCTarget@@YAXXZ=?getInstance@?$ConcreteModuleClass@V?$ModuleTag@$07$E?LIFE_EVENT_MODULE_KEY@FXParticleSystem@@3QBDB$E?LIFE_EVENT_MODULE_NAME@2@3QBDBVLifeEventModule@2@VLifeEventModuleTemplate@2@VParticleLifeEventModule@2@VParticleLifeEventModuleTemplate@2@@FXParticleSystem@@@FXParticleSystem@@SAABV12@XZ")
 #pragma comment(linker, "/alternatename:?rva00044E31Target@@YAXXZ=??1LifeEventModuleTemplate@FXParticleSystem@@UAE@XZ")
 #pragma comment(linker, "/alternatename:?rva0004B0F1Target@@YAXXZ=?getInstance@?$ConcreteModuleClass@V?$ModuleTag@$03$E?HEMISPHERICAL_EMISSION_VELOCITY_MODULE_KEY@FXParticleSystem@@3QBDB$E?HEMISPHERICAL_EMISSION_VELOCITY_MODULE_NAME@2@3QBDBVHemisphericalEmissionVelocityModule@2@VHemisphericalEmissionVelocityModuleTemplate@2@V?$DefaultParticleModule@$03@2@V?$DefaultParticleModuleTemplate@$03@2@@FXParticleSystem@@@FXParticleSystem@@SAABV12@XZ")
+#pragma comment(linker, "/alternatename:?rva0002DA10Target@@YAXXZ=?insert_unique@?$_Rb_tree@V?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@U?$pair@$$CBV?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@H@2@U?$_Select1st@U?$pair@$$CBV?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@H@_STL@@@2@U?$less@V?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@H@_STL@@@2@@_STL@@QAE?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBV?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@H@_STL@@U?$_Nonconst_traits@U?$pair@$$CBV?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@H@_STL@@@2@@_STL@@_N@2@ABU?$pair@$$CBV?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@H@2@@Z")
 #pragma comment(linker, "/alternatename:?rva00048B9ETarget@@YAXXZ=??0SpyVisionUpdate@@QAE@PAVThing@@PBVModuleData@@@Z")
 #pragma comment(linker, "/alternatename:?rva0003F418Target@@YAXXZ=??0?$_Vector_base@UGen_t_001d6a70_p4cd@@V?$allocator@UGen_t_001d6a70_p4cd@@@_STL@@@_STL@@QAE@IABV?$allocator@UGen_t_001d6a70_p4cd@@@1@@Z")
 #pragma comment(linker, "/alternatename:?rva0003E22ATarget@@YAXXZ=Gen_treeraw_005d2df0")
@@ -375,4 +377,9 @@ void j_0003F418(void)
 void j_00048B9E(void)
 {
 	rva00048B9ETarget();
+}
+
+void j_0002DA10(void)
+{
+	rva0002DA10Target();
 }
