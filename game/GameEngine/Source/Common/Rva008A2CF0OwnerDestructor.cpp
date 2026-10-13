@@ -38,12 +38,26 @@ private:
 	Rva008A0E70Entry *m_entries[0x40];
 };
 
-class BfmeE1046;
+class BfmeQ1046
+{
+public:
+    virtual void bfmeV01046();
+    virtual void bfmeV11046();
+    virtual void bfmeStop1046();
+    char m_bfmePad[0x4c];
+    int m_bfme50;
+};
+
+struct BfmeE1046
+{
+    BfmeQ1046 *m_bfmeQ;
+};
 
 class BfmeD1046
 {
 public:
 	void bfmeGo1046E(void);
+	void bfmeReset1046(int n);
 
 	BfmeE1046 *m_bfmeP;
 };
@@ -51,10 +65,7 @@ public:
 class Gen_008BE660
 {
 public:
-	~Gen_008BE660()
-	{
-		m_value.bfmeGo1046E();
-	}
+	__declspec(noinline) ~Gen_008BE660();
 
 private:
 	BfmeD1046 m_value;
@@ -134,4 +145,16 @@ Rva008A2CF0Owner::~Rva008A2CF0Owner()
 	void *bytes = m_value0c;
 	unsigned int size = m_value12a0 * 4;
 	TheBfmeFree(bytes, size);
+}
+
+// RET+0x2d then INT3 proves the complete 46-byte destructor at008BE6D0.
+Gen_008BE660::~Gen_008BE660()
+{
+    m_value.bfmeReset1046(0);
+    BfmeE1046 *p = m_value.m_bfmeP;
+    if (p != 0) {
+        p->m_bfmeQ->m_bfme50 = 0;
+        p->m_bfmeQ->bfmeStop1046();
+        TheBfmeFree(p, 4);
+    }
 }
