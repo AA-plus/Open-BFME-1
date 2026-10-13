@@ -493,7 +493,8 @@ def admit(path, reason, tokens=None, before=None, now=None, scope=None):
 
     SCOPE (a set of tokens, or None for all of PATH): rescan and rewrite only PATH's
     lines whose token is in SCOPE, plus lines still carrying a pending allowance for
-    BEFORE (re-stamped); every other line of PATH is kept byte for byte, allow= and all."""
+    BEFORE (re-stamped); every other line of PATH is kept byte for byte, allow= and all,
+    except that a count above the file's is lowered (dropped at 0), never raised."""
     path = path.replace("\\", "/")
     if not reason or len(reason.strip()) < 8:
         sys.exit("hatch_counters: admit needs a reason (8+ chars)")
@@ -525,7 +526,16 @@ def admit(path, reason, tokens=None, before=None, now=None, scope=None):
         pending = {k[2] for k, line in path_lines if k in old_allow and old_allow[k] in {before, blob} - {None}
                    and int(line.split("\t")[3]) > head.get(k, 0)}   # admitted, not yet committed
         scope = {str(t) for t in scope} | pending
-        keep += [(k, line) for k, line in path_lines if k[2] not in scope]
+        for k, line in path_lines:              # out of scope: verbatim, but never stale-high
+            if k[2] in scope:
+                continue
+            cells = line.split("\t")
+            if new.get(k, 0) < int(cells[3]):
+                if new.get(k, 0) <= 0:
+                    continue                        # the occurrence is gone: drop its line
+                cells[3] = str(new[k])
+                line = "\t".join(cells)
+            keep.append((k, line))
         new = collections.Counter({k: n for k, n in new.items() if k[2] in scope})
     admitted, refused = [], []
     for key in sorted(new):

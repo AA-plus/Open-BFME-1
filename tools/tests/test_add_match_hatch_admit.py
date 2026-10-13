@@ -105,3 +105,32 @@ def test_landing_a_row_leaves_unrelated_register_lines_byte_for_byte(tree):
     assert stale[0] in lines
     assert not any("0x00BF4000" in l for l in lines)
     assert gate(tree) == []
+
+
+def test_scoped_run_still_tightens_stale_high_lines(tree):
+    """Review HC-1: a hand-deleted alias row's register line shrinks on the next scoped
+    add_match run, so re-adding that alias by hand is refused again."""
+    append_and_admit(tree, "?d_1@@YAXXZ,,0x00004000,9,game/a.cpp,matched,object-symbol=$L1", 0x4000,
+                     "object-symbol=$L1")
+    append_and_admit(tree, "?d_3@@YAXXZ,,0x00005000,9,game/c.cpp,matched,object-symbol=$L3", 0x5000,
+                     "object-symbol=$L3")
+    git(tree, "add", ".")
+    git(tree, "commit", "-qm", "landed")
+    register = tree / hatch_counters.BASELINE
+    marked = [l for l in register.read_text().splitlines() if "0x00005000" in l][0]
+    ledger = tree / LEDGER
+    ledger.write_bytes(ledger.read_bytes().replace(
+        b"?d_1@@YAXXZ,,0x00004000,9,game/a.cpp,matched,object-symbol=$L1\n", b""))
+    git(tree, "add", ".")
+    git(tree, "commit", "-qm", "hand delete")
+    append_and_admit(tree, "?d_2@@YAXXZ,,0x00C70890,20,game/b.cpp,matched,object-symbol=_$E2", 0xC70890,
+                     "object-symbol=_$E2")
+    lines = register.read_text().splitlines()
+    assert not any("0x00004000" in l for l in lines)
+    assert marked in lines
+    assert gate(tree) == []
+    git(tree, "commit", "-qm", "x")
+    append_and_admit(tree, "?alias@@YAXXZ,,0x00004000,5,game/d.cpp,matched,object-symbol=?real@@YAXXZ",
+                     0x4000, "object-symbol=?real@@YAXXZ")
+    problems = gate(tree)
+    assert problems and all("0x00004000" in p for p in problems)
