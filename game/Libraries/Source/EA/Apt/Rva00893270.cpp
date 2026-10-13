@@ -34,10 +34,9 @@ public:
 		++sharedEmptyString012D5298()->m_refCount;
 	}
 
-	BfmeStrVKI(const char *text)
-	{
-		bfmeSetVKI(text);
-	}
+	// The const-char constructor's retail body is the bfmeSetVKI body at
+	// 0x0089E680 (symbols.csv alias pin): declare only, emit no COMDAT here.
+	BfmeStrVKI(const char *text);
 
 	~BfmeStrVKI()
 	{

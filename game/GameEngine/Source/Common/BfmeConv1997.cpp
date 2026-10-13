@@ -20,10 +20,9 @@ extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class BfmeStrVKI
 {
 public:
-	BfmeStrVKI(const char *text)
-	{
-		bfmeSetVKI(text);
-	}
+	// The const-char constructor's retail body is the bfmeSetVKI body at
+	// 0x0089E680 (symbols.csv alias pin): declare only, emit no COMDAT here.
+	BfmeStrVKI(const char *text);
 	void __declspec(nothrow) bfmeSetVKI(const char *text);
 	~BfmeStrVKI()
 	{
